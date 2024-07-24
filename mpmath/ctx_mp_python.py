@@ -3,10 +3,10 @@ import sys
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
-                    from_Decimal, from_float, from_int, from_man_exp,
-                    from_npfloat, from_rational, from_str, fzero, int_types,
-                    mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate, mpc_div,
-                    mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
+                    format_mpf, from_Decimal, from_float, from_int,
+                    from_man_exp, from_npfloat, from_rational, from_str, fzero,
+                    int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
+                    mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
                     mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
                     mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
                     mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
@@ -354,6 +354,9 @@ class _mpf(mpnumeric):
         if t is NotImplemented:
             return t
         return t ** s
+
+    def __format__(s, format_spec):
+        return format_mpf(s._mpf_, format_spec)
 
     def sqrt(s):
         return s.context.sqrt(s)
