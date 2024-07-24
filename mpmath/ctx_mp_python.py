@@ -73,15 +73,14 @@ class mpf(mpnumeric):
         elif isinstance(val, str):
             val = from_str(val, prec, rounding, base)
         else:
-            val = cls.mpf_convert_arg(val, prec, rounding)
+            val = v.mpf_convert_arg(val, prec, rounding)
         v._mpf_ = mpf_pos(val, prec, rounding)
         return v
 
-    @classmethod
     def mpf_convert_arg(cls, x, prec, rounding):
         if isinstance(x, int_types): return from_int(x)
         if isinstance(x, float): return from_float(x)
-        if isinstance(x, cls.context.constant): return x.func(prec, rounding)
+        if isinstance(x, constant): return x.func(prec, rounding)
         if isinstance(x, numbers.Rational): return from_rational(x.numerator,
                                                                  x.denominator,
                                                                  prec, rounding)
@@ -226,7 +225,7 @@ class mpf(mpnumeric):
             tval = other._mpc_
             mpc = type(other)
             val = mpc_mpf_sub(sval, tval, prec, rounding)
-            obj = new(mpc)
+            obj = ctx.mpc()
             obj._mpc_ = val
             return obj
         try:
@@ -479,9 +478,10 @@ class mpc(mpnumeric):
     def __hash__(s):
         return mpc_hash(s._mpc_)
 
-    def mpc_convert_lhs(cls, x):
+    def mpc_convert_lhs(s, x):
+        ctx = s.context
         try:
-            y = cls.context.convert(x)
+            y = ctx.convert(x)
             return y
         except TypeError:
             return NotImplemented
@@ -550,9 +550,9 @@ class mpc(mpnumeric):
         return v
 
     def __rmul__(s, t):
-        cls, new, (prec, rounding) = s._ctxdata
+        mpc, new, (prec, rounding) = s._ctxdata
         if isinstance(t, int_types):
-            v = new(cls)
+            v = mpc()
             v._mpc_ = mpc_mul_int(s._mpc_, t, prec, rounding)
             return v
         t = s.mpc_convert_lhs(t)
