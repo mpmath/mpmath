@@ -359,30 +359,31 @@ class _mpf(mpnumeric):
         """
         ``mpf`` objects allow for formatting similar to Python floats:
 
-            >>> from mpmath import workdps, pi
-            >>> with workdps(100):
-            >>>     print('{:105.100f}'.format(pi())
-               3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170680
-            >>>     print(f"{10*pi():.20e}")
+            >>> from mpmath import fp, mp, pi
+            >>> mp.dps = 50
+            >>> print('{:55.50f}'.format(pi))
+               3.14159265358979323846264338327950288419716939937511
+            >>> print(f"{10*pi:.20e}")
             3.14159265358979323846e+01
 
-        The format specification adopts the same general form as `Python's
-        Format Specification Mini-Language <FS_>`_. The only format types
-        supported by ``mpf`` are ``"e"``, ``"E"``, ``"f"``, ``"F"``, ``"g"`` ,
+        The format specification adopts the same general form as Python's
+        :external:ref:`formatspec`. The only format types supported by ``mpf``
+        as of now are ``"e"``, ``"E"``, ``"f"``, ``"F"``, ``"g"`` ,
         and ``"G"``.
 
         The formatter does not track the actual precision of the ``mpf``
         objects. If precision is left as default, the resulting string is
-        exactly the same as if printing a regular ``float``:
+        exactly the same as if printing a regular :external:class:`float`.
 
-            >>> print('{:30.25f}'.format(mpf('1.22')))
+            >>> mp.dps = fp.dps
+            >>> print('{:.25f}'.format(mp.mpf('1.22')))
             1.2199999999999999733546474
-            >>> print('{:30.25f}'.format(1.22))
+            >>> print('{:.25f}'.format(1.22))
             1.2199999999999999733546474
-            >>> with workdps(50):
-            >>>     print('{:30.25f}'.format(mpf('1.22')))
+            >>> mp.dps = 50
+            >>> print('{:.25f}'.format(mp.mpf('1.22')))
             1.2200000000000000000000000
-            >>>     print('{:30.25f}'.format(1.22))
+            >>> print('{:.25f}'.format(1.22))
             1.2199999999999999733546474
 
 
