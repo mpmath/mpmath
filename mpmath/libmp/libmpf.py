@@ -1568,7 +1568,7 @@ def format_scientific(s,
                       base=10,
                       capitalize=False,
                       alternate=False,
-                      no_neg_0=False):
+                      rounding=round_nearest):
 
     sep = 'E' if capitalize else 'e'
 
@@ -1577,10 +1577,15 @@ def format_scientific(s,
     sign, digits, exponent = to_digits_exp(
             s, max(dps+10, int(s[3]/blog2_10)+10), base)
 
+    if rounding == round_ceiling:
+        rounding = round_down if sign == '-' else round_up
+    elif rounding == round_floor:
+        rounding = round_up if sign == '-' else round_down
+
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
-    digits, exp_add = round_digits(digits, dps, base)
+    digits, exp_add = round_digits(digits, dps, base, rounding)
     exponent += exp_add
 
     if strip_zeros:
@@ -1657,7 +1662,7 @@ def format_mpf(num, format_spec):
                 base=10,
                 capitalize=capitalize,
                 alternate=format_dict['alternate'],
-                no_neg_0=format_dict['no_neg_0']
+                rounding=format_dict['rounding']
                 )
 
     nchars = len(digits) + len(sign)
