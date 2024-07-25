@@ -358,11 +358,11 @@ class _mpf(mpnumeric):
         """
         ``mpf`` objects allow for formatting similar to Python floats:
 
-            >>> from mpmath import workdps, pi
-            >>> with workdps(100):
-            >>>     print('{:105.100f}'.format(pi())
+            >>> from mpmath import pi, mp
+            >>> mp.dps = 100
+            >>> print('{:105.100f}'.format(pi()))
                3.1415926535897932384626433832795028841971693993751058209749445923078164062862089986280348253421170680
-            >>>     print(f"{10*pi():.20e}")
+            >>> print(f"{10*pi():.20e}")
             3.14159265358979323846e+01
 
         The format specification adopts the same general form as `Python's
@@ -372,20 +372,19 @@ class _mpf(mpnumeric):
 
         The formatter does not track the actual precision of the ``mpf``
         objects. If precision is left as default, the resulting string is
-        exactly the same as if printing a regular ``float``:
+        exactly the same as if printing a regular ``float``::
 
-            >>> print('{:30.25f}'.format(mpf('1.22')))
+            >>> mp.dps = 15
+            >>> print('{:.25f}'.format(1.22))
             1.2199999999999999733546474
-            >>> print('{:30.25f}'.format(1.22))
+            >>> print('{:.25f}'.format(mp.mpf('1.22')))
             1.2199999999999999733546474
-            >>> with workdps(50):
-            >>>     print('{:30.25f}'.format(mpf('1.22')))
+            >>> mp.dps = 30
+            >>> print('{:.25f}'.format(mp.mpf('1.22')))
             1.2200000000000000000000000
-            >>>     print('{:30.25f}'.format(1.22))
-            1.2199999999999999733546474
 
-        In addition to the normal Python features, formatting in ``mpmath``
-        supports four different kinds of rounding:
+        In addition to the normal Python features, the ``mpf.__format__``
+        method supports four different kinds of rounding:
 
             * 'U': rounding towards plus infinity
             * 'D': rounding towards minus infinity
@@ -393,23 +392,23 @@ class _mpf(mpnumeric):
             * 'N': rounding to nearest (default)
 
         The rounding option must be set before the presentation type. For
-        example:
+        example::
 
-            >>> print('{:.5Uf}'.format(mpf('1.2345678')))
+            >>> print('{:.5Uf}'.format(mp.mpf('1.2345678')))
             1.23457
-            >>> print('{:.5Df}'.format(mpf('1.2345678')))
+            >>> print('{:.5Df}'.format(mp.mpf('1.2345678')))
             1.23456
-            >>> print('{:.5Zf}'.format(mpf('1.2345678')))
+            >>> print('{:.5Zf}'.format(mp.mpf('1.2345678')))
             1.23456
-            >>> print('{:.5Nf}'.format(mpf('1.2345678')))
+            >>> print('{:.5Nf}'.format(mp.mpf('1.2345678')))
             1.23457
-            >>> print('{:.5Uf}'.format(mpf('-1.2345678')))
+            >>> print('{:.5Uf}'.format(mp.mpf('-1.2345678')))
             -1.23456
-            >>> print('{:.5Df}'.format(mpf('-1.2345678')))
+            >>> print('{:.5Df}'.format(mp.mpf('-1.2345678')))
             -1.23457
-            >>> print('{:.5Zf}'.format(mpf('-1.2345678')))
+            >>> print('{:.5Zf}'.format(mp.mpf('-1.2345678')))
             -1.23456
-            >>> print('{:.5Nf}'.format(mpf('-1.2345678')))
+            >>> print('{:.5Nf}'.format(mp.mpf('-1.2345678')))
             -1.23457
 
         .. _FS: https://docs.python.org/3/library/string.html#formatspec
