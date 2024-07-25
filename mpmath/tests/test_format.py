@@ -504,6 +504,39 @@ def test_mpf_fmt():
         assert f"{mp.mpf('0.24'):=+020.2e}" == '+000000000002.40e-01'
         assert f"{mp.mpf('0.24'):=+020.2g}" == '+0000000000000000.24'
 
+        # Tests for different kinds of rounding
+        num = mp.mpf('-1.23456789999901234567')
+        assert f"{num:=.2Uf}" == "-1.23"
+        assert f"{num:=.2Df}" == "-1.24"
+        assert f"{num:=.2Zf}" == "-1.23"
+        assert f"{num:=.2Nf}" == "-1.23"
+
+        assert f"{num:=.3Uf}" == "-1.234"
+        assert f"{num:=.3Df}" == "-1.235"
+        assert f"{num:=.3Zf}" == "-1.234"
+        assert f"{num:=.3Nf}" == "-1.235"
+
+        assert f"{num:=.10Uf}" == "-1.2345678999"
+        assert f"{num:=.10Df}" == "-1.2345679000"
+        assert f"{num:=.10Zf}" == "-1.2345678999"
+        assert f"{num:=.10Nf}" == "-1.2345679000"
+
+        num = mp.mpf('1.23456789999901234567')
+        assert f"{num:=.2Uf}" == "1.24"
+        assert f"{num:=.2Df}" == "1.23"
+        assert f"{num:=.2Zf}" == "1.23"
+        assert f"{num:=.2Nf}" == "1.23"
+
+        assert f"{num:=.3Uf}" == "1.235"
+        assert f"{num:=.3Df}" == "1.234"
+        assert f"{num:=.3Zf}" == "1.234"
+        assert f"{num:=.3Nf}" == "1.235"
+
+        assert f"{num:=.10Uf}" == "1.2345679000"
+        assert f"{num:=.10Df}" == "1.2345678999"
+        assert f"{num:=.10Zf}" == "1.2345678999"
+        assert f"{num:=.10Nf}" == "1.2345679000"
+
 
 def test_mpf_fmt_special():
     assert f'{inf:f}' == 'inf'
