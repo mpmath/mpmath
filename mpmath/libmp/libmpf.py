@@ -1108,32 +1108,32 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
 
-    Supports three kinds of rounding: floor, ceil, or nearest.
+    Supports three kinds of rounding: up, down, or nearest.
     '''
 
     assert len(digits) > dps
-    assert rounding in (round_nearest, round_ceiling, round_floor)
+    assert rounding in (round_nearest, round_up, round_down)
 
     exponent = 0
 
-    if rounding == round_floor:
+    if rounding == round_down:
         return digits[:dps], 0
     elif rounding == round_nearest:
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
         rnd_digs = stddigits[:base]
 
-    round_up = False
+    do_round_up = False
     # The first digit after dps is a 5.
     if digits[dps] == rnd_digs[0]:
         for i in range(dps+1, len(digits)):
             if digits[i] != '0':
-                round_up = True
+                do_round_up = True
                 break
         if digits[dps-1] in stddigits[1:base:2]:
-            round_up = True
+            do_round_up = True
 
-    if not round_up:
+    if not do_round_up:
         digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
 
     # Rounding up kills some instances of "...99999"
@@ -1471,7 +1471,8 @@ def format_fixed(s,
                  sep_range=3,
                  base=10,
                  alternate=False,
-                 no_neg_0=False):
+                 no_neg_0=False,
+                 rounding=round_nearest):
     '''
     Format a number into fixed point.
     Returns the sign character, and the string that represents the number in
@@ -1488,6 +1489,11 @@ def format_fixed(s,
     sign, digits, exponent = to_digits_exp(
             s, max(precision+exponent+4, int(s[3]/blog2_10)), base)
     dps = precision + exponent + 1
+
+    if rounding == round_ceiling:
+        rounding = round_down if sign == '-' else round_up
+    elif rounding == round_floor:
+        rounding = round_up if sign == '-' else round_down
 
     # Hack: if the digits are all 9s, then we will lose one dps when rounding
     # up.
@@ -1508,7 +1514,7 @@ def format_fixed(s,
         if no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
     else:
-        digits, exp_add = round_digits(digits, dps, base)
+        digits, exp_add = round_digits(digits, dps, base, rounding)
         exponent += exp_add
 
         # Here we prepend the corresponding 0s to the digits string, according
@@ -1638,7 +1644,8 @@ def format_mpf(num, format_spec):
                 sep_range=3,
                 base=10,
                 alternate=format_dict['alternate'],
-                no_neg_0=format_dict['no_neg_0']
+                no_neg_0=format_dict['no_neg_0'],
+                rounding=format_dict['rounding']
                 )
     else:  # The format type is scientific
         sign, digits = format_scientific(
