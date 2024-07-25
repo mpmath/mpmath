@@ -1102,16 +1102,25 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(digits, dps, base):
+def round_digits(digits, dps, base, rounding=round_nearest):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
+
+    Supports three kinds of rounding: floor, ceil, or nearest.
     '''
 
     assert len(digits) > dps
+    assert rounding in (round_nearest, round_ceiling, round_floor)
+
     exponent = 0
 
-    rnd_digs = stddigits[(base//2 + base % 2):base]
+    if rounding == round_floor:
+        return digits[:dps], 0
+    elif rounding == round_nearest:
+        rnd_digs = stddigits[(base//2 + base % 2):base]
+    else:
+        rnd_digs = stddigits[:base]
 
     round_up = False
     # The first digit after dps is a 5.
@@ -1654,7 +1663,7 @@ def format_mpf(num, format_spec):
                 rpad*format_dict['fill_char']
 
     return lpad*format_dict['fill_char'] + sign + digits \
-            + rpad*format_dict['fill_char']
+        + rpad*format_dict['fill_char']
 
 
 #----------------------------------------------------------------------------#
