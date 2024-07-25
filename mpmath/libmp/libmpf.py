@@ -43,12 +43,12 @@ round_fast = round_down
 def prec_to_dps(n):
     """Return number of accurate decimals that can be represented
     with a precision of n bits."""
-    return max(1, int(round(int(n)/3.3219280948873626)-1))
+    return max(1, int(round(int(n)/blog2_10)-1))
 
 def dps_to_prec(n):
     """Return the number of bits required to represent n decimals
     accurately."""
-    return max(1, int(round((int(n)+1)*3.3219280948873626)))
+    return max(1, int(round((int(n)+1)*blog2_10)))
 
 def repr_dps(n):
     """Return the number of decimal digits required to represent
@@ -79,6 +79,7 @@ finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
 math_float_inf = math.inf
+blog2_10 = 3.3219280948873626
 
 
 #----------------------------------------------------------------------------#
@@ -361,7 +362,7 @@ def from_Decimal(x, prec=0, rnd=round_fast):
     if x.is_nan(): return fnan
     if x.is_infinite(): return fninf if x.is_signed() else finf
     if not prec:
-        prec = int(len(x.as_tuple()[1])*3.3219280948873626)
+        prec = int(len(x.as_tuple()[1])*blog2_10)
     return from_str(str(x), prec, rnd)
 
 def to_float(s, strict=False, rnd=round_fast):
@@ -1062,7 +1063,7 @@ def to_digits_exp(s, dps, base=10):
         return '', '0', 0
 
     if base == 10:
-        blog2 = 3.3219280948873626
+        blog2 = blog2_10
     elif pow(2, blog2 := int(math.log2(base))) == base:
         pass
     else:
@@ -1359,8 +1360,6 @@ def from_str(x, prec=0, rnd=round_fast, base=0):
 #----------------------------------------------------------------------------#
 #                              String formatting                             #
 #----------------------------------------------------------------------------#
-
-blog2_10 = 3.3219280948873626
 
 _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?:
