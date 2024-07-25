@@ -386,8 +386,21 @@ class _mpf(mpnumeric):
             >>> print('{:.25f}'.format(1.22))
             1.2199999999999999733546474
 
+        In addition to the normal Python features, the ``mpf.__format__``
+        method supports four different kinds of rounding:
 
-        .. _FS: https://docs.python.org/3/library/string.html#formatspec
+            * 'U': rounding towards plus infinity
+            * 'D': rounding towards minus infinity
+            * 'Z': rounding towards zero
+            * 'N': rounding to nearest (default)
+
+        The rounding option must be set before the presentation type. For
+        example::
+
+            >>> print('{:.5Uf}'.format(mp.mpf('-1.2345678')))
+            -1.23456
+            >>> print('{:.5Df}'.format(mp.mpf('-1.2345678')))
+            -1.23457
         """
 
         return format_mpf(s._mpf_, format_spec)
