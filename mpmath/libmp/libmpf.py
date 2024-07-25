@@ -1375,6 +1375,7 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
+    (?P<rounding>[UDZN])?
     (?P<type>[eEfFgG])
 """, re.DOTALL | re.VERBOSE).fullmatch
 
@@ -1415,6 +1416,7 @@ def read_format_spec(format_spec):
         'thousands_separators': '',
         'width': -1,
         'precision': 6,
+        'rounding': round_nearest,
         'type': 'f'
         }
 
@@ -1429,7 +1431,14 @@ def read_format_spec(format_spec):
             or format_dict['thousands_separators']
         format_dict['width'] = int(match['width'] or format_dict['width'])
         format_dict['precision'] = int(match['precision'] or format_dict['precision'])
+        rounding_char = match['rounding']
         format_dict['type'] = match['type'] or format_dict['type']
+
+        # ceil, floor, zero, nearest, down
+        if rounding_char is not None:
+            for a, b in zip(list('cfdn'), list('UDZN')):
+                if rounding_char == b:
+                    format_dict['rounding'] = a
 
         if match['zeropad'] and match['fill_char']:
             raise ValueError('Cannot specify both 0-padding and a fill '
