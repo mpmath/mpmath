@@ -1,4 +1,5 @@
 import numbers
+import sys
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
@@ -413,7 +414,6 @@ class _mpf(mpnumeric):
 
         .. _FS: https://docs.python.org/3/library/string.html#formatspec
         """
-
         return format_mpf(s._mpf_, format_spec)
 
     def sqrt(s):
@@ -672,7 +672,7 @@ complex_types = (complex, _mpc)
 
 class PythonMPContext:
     def __init__(ctx):
-        ctx._prec_rounding = [53, round_nearest]
+        ctx._prec_rounding = [sys.float_info.mant_dig, round_nearest]
         ctx.mpf = type('mpf', (_mpf,), {})
         ctx.mpc = type('mpc', (_mpc,), {})
         ctx.mpf._ctxdata = [ctx.mpf, new, ctx._prec_rounding]
@@ -694,8 +694,8 @@ class PythonMPContext:
         return a
 
     def default(ctx):
-        ctx._prec = ctx._prec_rounding[0] = 53
-        ctx._dps = 15
+        ctx._prec = ctx._prec_rounding[0] = sys.float_info.mant_dig
+        ctx._dps = sys.float_info.dig
         ctx.trap_complex = False
 
     def _set_prec(ctx, n):
