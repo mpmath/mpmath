@@ -1111,28 +1111,28 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     '''
 
     assert len(digits) > dps
-    assert rounding in (round_nearest, round_ceiling, round_floor)
+    assert rounding in (round_nearest, round_down, round_up)
 
     exponent = 0
 
-    if rounding == round_floor:
+    if rounding == round_down:
         return digits[:dps], 0
     elif rounding == round_nearest:
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
         rnd_digs = stddigits[:base]
 
-    round_up = False
+    tie_up = False
     # The first digit after dps is a 5.
     if digits[dps] == rnd_digs[0]:
         for i in range(dps+1, len(digits)):
             if digits[i] != '0':
-                round_up = True
+                tie_up = True
                 break
         if digits[dps-1] in stddigits[1:base:2]:
-            round_up = True
+            tie_up = True
 
-    if not round_up:
+    if not tie_up:
         digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
 
     # Rounding up kills some instances of "...99999"
