@@ -589,6 +589,7 @@ def test_mpf_fmt():
         assert f"{mp.mpf('-123.456'):.5Zg}" == "-123.45"
         assert f"{mp.mpf('-123.456'):.5Ng}" == "-123.46"
 
+
 def test_mpf_fmt_special():
     assert f'{inf:f}' == 'inf'
     assert f'{inf:+f}' == '+inf'

@@ -1123,6 +1123,7 @@ def round_digits(digits, dps, base, rounding=round_nearest):
         rnd_digs = stddigits[:base]
 
     tie_up = False
+
     # The first digit after dps is a 5.
     if digits[dps] == rnd_digs[0]:
         for i in range(dps+1, len(digits)):
@@ -1133,6 +1134,7 @@ def round_digits(digits, dps, base, rounding=round_nearest):
             tie_up = True
 
     if not tie_up:
+
         digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
 
     # Rounding up kills some instances of "...99999"
@@ -1441,6 +1443,7 @@ def read_format_spec(format_spec):
             or format_dict['thousands_separators']
         format_dict['width'] = int(match['width'] or format_dict['width'])
         format_dict['precision'] = int(match['precision'] or format_dict['precision'])
+        
         rounding_char = match['rounding']
         format_dict['type'] = match['type'] or format_dict['type']
 
@@ -1449,7 +1452,6 @@ def read_format_spec(format_spec):
             for a, b in zip(list('cfdn'), list('UDZN')):
                 if rounding_char == b:
                     format_dict['rounding'] = a
-
         if match['zeropad'] and match['fill_char']:
             raise ValueError('Cannot specify both 0-padding and a fill '
                              'character')
@@ -1569,6 +1571,7 @@ def format_scientific(s,
                       capitalize=False,
                       alternate=False,
                       rounding=round_nearest):
+
 
     sep = 'E' if capitalize else 'e'
 

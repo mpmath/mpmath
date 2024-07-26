@@ -904,7 +904,7 @@ maxterms, or set zeroprec."""
             >>> print(fsub(x, y, exact=True) + y)
             2.0
 
-        Exact addition can be inefficient and may be impossible to perform
+        Exact subtraction can be inefficient and may be impossible to perform
         with large magnitude differences::
 
             >>> fsub(1, '1e-100000000000000000000', prec=inf)
