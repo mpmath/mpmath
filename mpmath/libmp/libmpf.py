@@ -1443,7 +1443,6 @@ def read_format_spec(format_spec):
             or format_dict['thousands_separators']
         format_dict['width'] = int(match['width'] or format_dict['width'])
         format_dict['precision'] = int(match['precision'] or format_dict['precision'])
-        
         rounding_char = match['rounding']
         format_dict['type'] = match['type'] or format_dict['type']
 
