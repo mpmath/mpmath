@@ -1651,7 +1651,7 @@ def format_mpf(num, format_spec):
                 base=10,
                 alternate=format_dict['alternate'],
                 no_neg_0=format_dict['no_neg_0'],
-                rounding=format_dict['rounding'])
+                rounding=format_dict['rounding']
                 )
     else:  # The format type is scientific
         sign, digits = format_scientific(
