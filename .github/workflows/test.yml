@@ -1,5 +1,9 @@
 name: test
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 0 * * 2'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -51,7 +55,7 @@ jobs:
       run: pytest
     - name: Run coverage tests
       env:
-        PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
+        PYTEST_ADDOPTS: --cov mpmath --cov-append --cov-report=xml -n auto
       if: matrix.coverage
       run: |
         pytest
@@ -59,9 +63,10 @@ jobs:
         pytest mpmath/tests/test_cli.py
         coverage html
         coverage xml
+        diff-cover coverage.xml --fail-under=100 --compare-branch=origin/master
     - name: Upload coverage data
       if: matrix.coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         files: ./coverage.xml
         fail_ci_if_error: false

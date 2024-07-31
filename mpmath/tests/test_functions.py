@@ -301,6 +301,62 @@ def test_complex_sqrt_accuracy():
     test_mpc_sqrt([(random.uniform(0, 10),random.uniform(0, 10)) for i in range(N)])
     test_mpc_sqrt([(i + 0.1, (i + 0.2)*10**i) for i in range(N)])
 
+def test_asin():
+    pi4 = pi/4
+    assert asin(mpc(+inf, +inf)) == mpc(+pi4, +inf)
+    assert asin(mpc(+inf, -inf)) == mpc(+pi4, -inf)
+    assert asin(mpc(-inf, +inf)) == mpc(-pi4, +inf)
+    assert asin(mpc(-inf, -inf)) == mpc(-pi4, -inf)
+    r = asin(mpc(+inf, nan))
+    assert isnan(r.real) and r.imag == -inf
+    r = asin(mpc(-inf, nan))
+    assert isnan(r.real) and r.imag == -inf
+    r = asin(mpc(nan, +inf))
+    assert isnan(r.real) and r.imag == +inf
+    r = asin(mpc(nan, -inf))
+    assert isnan(r.real) and r.imag == -inf
+    pi2 = pi/2
+    assert asin(mpc(+inf, +1)) == mpc(pi2, +inf)
+    assert asin(mpc(+inf, -1)) == mpc(pi2, -inf)
+    assert asin(mpc(+inf, 0)) == mpc(pi2, -inf)
+    assert asin(mpc(-inf, +1)) == mpc(-pi2, +inf)
+    assert asin(mpc(-inf, -1)) == mpc(-pi2, -inf)
+    assert asin(mpc(-inf, 0)) == mpc(-pi2, inf)
+    assert asin(mpc(-2, 0)).ae(mpc(-pi2, -log(2 - sqrt(3))))
+    assert asin(mpc(+2, 0)).ae(mpc(+pi2, -log(2 + sqrt(3))))
+    assert asin(mpc(0.5, 0)).ae(pi/6)
+
+def test_acos():
+    pi4 = pi/4
+    assert acos(mpc(+inf, +inf)) == mpc(+pi4, -inf)
+    assert acos(mpc(+inf, -inf)) == mpc(+pi4, +inf)
+    assert acos(mpc(-inf, +inf)) == mpc(pi4*3, -inf)
+    assert acos(mpc(-inf, -inf)) == mpc(pi4*3, +inf)
+    r = acos(mpc(+inf, nan))
+    assert isnan(r.real) and r.imag == inf
+    r = acos(mpc(-inf, nan))
+    assert isnan(r.real) and r.imag == inf
+    r = acos(mpc(nan, +inf))
+    assert isnan(r.real) and r.imag == -inf
+    r = acos(mpc(nan, -inf))
+    assert isnan(r.real) and r.imag == +inf
+    pi2 = pi/2
+    assert acos(mpc(+inf, +1)) == mpc(0.0, -inf)
+    assert acos(mpc(+inf, -1)) == mpc(0.0, +inf)
+    assert acos(mpc(+inf, 0)) == mpc(0.0, +inf)
+    assert acos(mpc(-inf, +1)) == mpc(pi, -inf)
+    assert acos(mpc(-inf, -1)) == mpc(pi, +inf)
+    assert acos(mpc(-inf, 0)) == mpc(pi, -inf)
+    assert acos(mpc(+1, +inf)) == mpc(pi2, -inf)
+    assert acos(mpc(-1, +inf)) == mpc(pi2, -inf)
+    assert acos(mpc(0, +inf)) == mpc(pi2, -inf)
+    assert acos(mpc(+1, -inf)) == mpc(pi2, +inf)
+    assert acos(mpc(-1, -inf)) == mpc(pi2, +inf)
+    assert acos(mpc(0, -inf)) == mpc(pi2, +inf)
+    assert acos(mpc(-2, 0)).ae(mpc(pi, log(2 - sqrt(3))))
+    assert acos(mpc(+2, 0)).ae(mpc(0, log(2 + sqrt(3))))
+    assert acos(mpc(0.5, 0)).ae(pi/3)
+
 def test_atan():
     assert atan(-2.3).ae(math.atan(-2.3))
     assert atan(1e-50) == 1e-50
@@ -460,6 +516,8 @@ def test_reciprocal_functions():
     assert asec(3).ae(1.23095941734077468)
     assert acsc(3).ae(0.339836909454121937)
     assert acot(3).ae(0.321750554396642193)
+    assert acot(cmath.infj) == 0
+    assert acot(cmath.inf) == 0
     assert asech(0.5).ae(1.31695789692481671)
     assert acsch(3).ae(0.327450150237258443)
     assert acoth(3).ae(0.346573590279972655)
@@ -632,6 +690,7 @@ def test_root():
     assert nthroot(j, 1) == j
     assert nthroot(j, 0) == 1
     assert nthroot(j, -1) == -j
+    assert nthroot(j, 22).ae(cos(pi/44) + sin(pi/44)*1j)
     assert isnan(nthroot(nan, 1))
     assert isnan(nthroot(nan, 0))
     assert isnan(nthroot(nan, -1))
@@ -807,6 +866,7 @@ def test_expj():
     assert expjpi(j).ae(exp(-pi))
     assert expjpi(1+j).ae(exp(j*pi*(1+j)))
     assert expjpi(-10**15 * j).ae('2.22579818340535731e+1364376353841841')
+    assert expjpi(cmath.infj) == 0
 
 def test_sinc():
     assert sinc(0) == sincpi(0) == 1

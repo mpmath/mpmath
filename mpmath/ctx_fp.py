@@ -156,6 +156,7 @@ class FPContext(StandardBaseContext):
 
     ldexp = math.ldexp
     frexp = math.frexp
+    hypot = math.hypot
 
     def mag(ctx, z):
         if z:

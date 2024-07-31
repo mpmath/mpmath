@@ -241,6 +241,12 @@ def test_almost_equal():
     assert mpf(1.2).ae(mpf(1.20000001), 1e-7)
     assert not mpf(1.2).ae(mpf(1.20000001), 1e-9)
     assert not mpf(-0.7818314824680298).ae(mpf(-0.774695868667929))
+    assert inf.ae(inf)
+    assert not inf.ae(-inf)
+    assert not mpf(1.2).ae(nan)
+    assert not mpf(1.2).ae(inf)
+    assert not nan.ae(nan)
+    assert not nan.ae(inf)
 
 def test_arithmetic_functions():
     ops = [(operator.add, fadd), (operator.sub, fsub), (operator.mul, fmul),
@@ -544,6 +550,8 @@ def test_to_man_exp_deprecation():
 def test_rational_deprecation():
     with pytest.deprecated_call():
         assert mpmath.rational.mpq(1, 2) == MPQ(1, 2)
+    with pytest.deprecated_call():
+        pytest.raises(AttributeError, lambda: mpmath.rational.spam)
 
 
 def test_math2_deprecation():

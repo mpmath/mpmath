@@ -88,6 +88,10 @@ def mpc_sub_mpf(z, p, prec=0, rnd=round_fast):
     a, b = z
     return mpf_sub(a, p, prec, rnd), b
 
+def mpc_mpf_sub(p, z, prec=0, rnd=round_fast):
+    a, b = z
+    return mpf_sub(p, a, prec, rnd), mpf_neg(b, prec, rnd)
+
 def mpc_pos(z, prec, rnd=round_fast):
     a, b = z
     return mpf_pos(a, prec, rnd), mpf_pos(b, prec, rnd)
@@ -160,15 +164,6 @@ def mpc_mul_mpf(z, p, prec, rnd=round_fast):
     a, b = z
     re = mpf_mul(a, p, prec, rnd)
     im = mpf_mul(b, p, prec, rnd)
-    return re, im
-
-def mpc_mul_imag_mpf(z, x, prec, rnd=round_fast):
-    """
-    Multiply the mpc value z by I*x where x is an mpf value.
-    """
-    a, b = z
-    re = mpf_neg(mpf_mul(b, x, prec, rnd))
-    im = mpf_mul(a, x, prec, rnd)
     return re, im
 
 def mpc_mul_int(z, n, prec, rnd=round_fast):
@@ -251,7 +246,7 @@ def mpc_pow_int(z, n, prec, rnd=round_fast):
             return fzero, v
         elif n == 2:
             return mpf_neg(v), fzero
-        elif n == 3:
+        else:  # n == 3
             return fzero, mpf_neg(v)
     if n == 0: return mpc_one
     if n == 1: return mpc_pos(z, prec, rnd)
@@ -736,6 +731,31 @@ def acos_asin(z, prec, rnd, n):
         re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
     if im[3] >= 0:
         im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
+    # Correct real part for infinities and nan in imaginary component
+    if re == fnan and mpc_is_inf(z):
+        a, b = z
+        if a in (finf, fninf):
+            if b in (finf, fninf):
+                re = mpf_shift(mpf_pi(prec, rnd), -2)
+                if a == fninf:
+                    if n == 0:
+                        re = mpf_mul_int(re, 3, prec, rnd)
+                    else:
+                        re = mpf_neg(re)
+            elif b == fnan:
+                im = finf if n == 0 else fninf
+            else:
+                if n == 0:
+                    re = fzero if a == finf else mpf_pi(prec, rnd)
+                else:
+                    re = mpf_shift(mpf_pi(prec, rnd), -1)
+                    if a == fninf:
+                        re = mpf_neg(re)
+        else:  # a == fnan
+            if n == 0:
+                return fnan, mpf_neg(b)
+            else:
+                return fnan, b
     return re, im
 
 def mpc_acos(z, prec, rnd=round_fast):
