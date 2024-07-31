@@ -1391,6 +1391,12 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<type>[eEfFgG])
 """, re.DOTALL | re.VERBOSE).fullmatch
 
+_GMPY_ROUND_CHAR_DICT = {
+        'U': round_ceiling,
+        'D': round_floor,
+        'Z': round_down,
+        'N': round_nearest
+        }
 
 def calc_padding(nchars, width, align):
     '''
@@ -1446,11 +1452,9 @@ def read_format_spec(format_spec):
         rounding_char = match['rounding']
         format_dict['type'] = match['type'] or format_dict['type']
 
-        # ceil, floor, zero, nearest, down
         if rounding_char is not None:
-            for a, b in zip(list('cfdn'), list('UDZN')):
-                if rounding_char == b:
-                    format_dict['rounding'] = a
+            format_dict['rounding'] = _GMPY_ROUND_CHAR_DICT[rounding_char]
+
         if match['zeropad'] and match['fill_char']:
             raise ValueError('Cannot specify both 0-padding and a fill '
                              'character')
@@ -1491,11 +1495,6 @@ def format_fixed(s,
     sign, digits, exponent = to_digits_exp(
             s, max(precision+exponent+4, int(s[3]/blog2_10)), base)
     dps = precision + exponent + 1
-
-    if rounding == round_ceiling:
-        rounding = round_down if sign == '-' else round_up
-    elif rounding == round_floor:
-        rounding = round_up if sign == '-' else round_down
 
     # Hack: if the digits are all 9s, then we will lose one dps when rounding
     # up.
@@ -1579,11 +1578,6 @@ def format_scientific(s,
     sign, digits, exponent = to_digits_exp(
             s, max(dps+10, int(s[3]/blog2_10)+10), base)
 
-    if rounding == round_ceiling:
-        rounding = round_down if sign == '-' else round_up
-    elif rounding == round_floor:
-        rounding = round_up if sign == '-' else round_down
-
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
@@ -1625,6 +1619,13 @@ def format_mpf(num, format_spec):
     strip_last_zero = False
     strip_zeros = False
 
+    if format_dict['rounding'] == round_ceiling:
+        rounding = round_down if num[0] else round_up
+    elif format_dict['rounding'] == round_floor:
+        rounding = round_up if num[0] else round_down
+    else:
+        rounding = format_dict['rounding']
+
     if fmt_type == 'g':
         if not format_dict['alternate']:
             strip_last_zero = True
@@ -1653,7 +1654,7 @@ def format_mpf(num, format_spec):
                 base=10,
                 alternate=format_dict['alternate'],
                 no_neg_0=format_dict['no_neg_0'],
-                rounding=format_dict['rounding']
+                rounding=rounding
                 )
     else:  # The format type is scientific
         sign, digits = format_scientific(
@@ -1664,7 +1665,7 @@ def format_mpf(num, format_spec):
                 base=10,
                 capitalize=capitalize,
                 alternate=format_dict['alternate'],
-                rounding=format_dict['rounding']
+                rounding=rounding
                 )
 
     nchars = len(digits) + len(sign)
@@ -1677,7 +1678,7 @@ def format_mpf(num, format_spec):
                 rpad*format_dict['fill_char']
 
     return lpad*format_dict['fill_char'] + sign + digits \
-        + rpad*format_dict['fill_char']
+            + rpad*format_dict['fill_char']
 
 
 #----------------------------------------------------------------------------#
