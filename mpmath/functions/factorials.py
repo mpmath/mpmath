@@ -101,7 +101,7 @@ def barnesg(ctx, z):
         w = 1-z
         pi2 = 2*ctx.pi
         u = ctx.expjpi(2*w)
-        v = ctx.j*ctx.pi/12 - ctx.j*ctx.pi*w**2/2 + w*ctx.ln(1-u) - \
+        v = ctx.j*ctx.pi/12 - ctx.j*ctx.pi*w**2/2 + w*ctx.ln(ctx.mpc(1)-u) - \
             ctx.j*ctx.polylog(2, u)/pi2
         v = ctx.barnesg(2-z)*ctx.exp(v)/pi2**w
         if ctx._is_real_type(z):
