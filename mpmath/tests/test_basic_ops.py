@@ -1,13 +1,16 @@
 import decimal
+import math
 import operator
 import random
 
 import pytest
+from hypothesis import example, given, settings
+from hypothesis import strategies as st
 
 import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
-                    mpi, nan, ninf, nint, nint_distance, pi, workprec)
+                    mpi, nan, ninf, nint, nint_distance, nstr, pi, workprec)
 from mpmath.libmp import (MPQ, finf, fnan, fninf, fnone, fone, from_float,
                           from_int, from_pickable, from_str, mpf_add, mpf_mul,
                           mpf_sub, round_down, round_nearest, round_up, to_int,
@@ -607,3 +610,32 @@ def test_rand_precision():
 
 def test_issue_260():
     assert mpc(str(mpc(1j))) == mpc(1j)
+
+
+@settings(max_examples=10000)
+@given(st.floats(allow_nan=True,
+                 allow_infinity=True,
+                 allow_subnormal=True),
+       st.integers(min_value=0, max_value=15))
+@example(0.5, 0)
+@example(-0.5, 0)
+@example(1.5, 0)
+@example(-1.5, 0)
+@example(2.675, 2)
+@example(math.inf, 3)
+@example(-math.inf, 1)
+def test_round_bulk(x, n):
+    mp.prec = fp.prec
+    m = mpf(x)
+    mr = round(m, n)
+    xr = round(x, n)
+    if isnan(x):
+        assert isnan(mr)
+        assert isnan(xr)
+    else:
+        assert float(mr) == xr
+        # mp context doesn't support negative zero
+        if not xr and math.copysign(1., xr) == -1.:
+            return
+        assert nstr(mr, n=14, base=16, strip_zeros=False,
+                    show_zero_exponent=True, binary_exp=True) == xr.hex()
