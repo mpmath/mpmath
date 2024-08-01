@@ -164,6 +164,8 @@ def expm1(ctx, x):
 
 @defun_wrapped
 def log1p(ctx, x):
+    if not x:
+        return ctx.zero
     LOG1P_EXTRAPREC = 10  # ctx._wrap_specfun()
     # Note that all cases could by handled by log(1+c) provided the
     # add is done exactly. Our aim here is to be much faster than that,
