@@ -1195,7 +1195,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if show_zero_exponent:
                 t += sep + '+0'
             return prefix + t
-        if s == finf: return '+inf'
+        if s == finf: return 'inf'
         if s == fninf: return '-inf'
         if s == fnan: return 'nan'
         raise ValueError

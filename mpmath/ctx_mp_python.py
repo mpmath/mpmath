@@ -1095,7 +1095,7 @@ class PythonMPContext:
             >>> mag(0.01), int(ceil(log(0.01,2)))
             (-6, -6)
             >>> mag(0), mag(inf), mag(-inf), mag(nan)
-            (-inf, +inf, +inf, nan)
+            (-inf, inf, inf, nan)
 
         """
         if hasattr(x, "_mpf_"):

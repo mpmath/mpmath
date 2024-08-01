@@ -41,7 +41,7 @@ def test_basic_string():
     assert str(mpf("-2163048125l")) == '-2163048125.0'
     assert str(mpf("-2163048125L/1088391168")) == '-1.98738118113799'
     assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
-    assert str(mpf('inf')) == '+inf'
+    assert str(mpf('inf')) == 'inf'
 
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'

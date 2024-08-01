@@ -241,7 +241,7 @@ def kfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
         >>> kfrom(q=1)
         1
         >>> kfrom(q=-1)
-        (0.0 + +infj)
+        (0.0 + infj)
     """
     if k is not None:
         return ctx.convert(k)
@@ -662,10 +662,10 @@ def elliprf(ctx, x, y, z):
         >>> elliprf(2,2,2)**2
         0.5
         >>> elliprf(1,0,0); elliprf(0,0,1); elliprf(0,1,0); elliprf(0,0,0)
-        +inf
-        +inf
-        +inf
-        +inf
+        inf
+        inf
+        inf
+        inf
 
     Representing complete elliptic integrals in terms of `R_F`::
 
@@ -783,7 +783,7 @@ def elliprc(ctx, x, y, pv=True):
         3.141592653589793238462643
         3.141592653589793238462643
         >>> elliprc(1,0)
-        +inf
+        inf
         >>> elliprc(5,5)**2
         0.2
         >>> elliprc(1,inf); elliprc(inf,1); elliprc(inf,inf)
@@ -856,9 +856,9 @@ def elliprj(ctx, x, y, z, p, integration=1):
         1.380226776765915172432054
         1.380226776765915172432054
         >>> elliprj(1,3,2,0); elliprj(0,1,1,0); elliprj(0,0,0,0)
-        +inf
-        +inf
-        +inf
+        inf
+        inf
+        inf
         >>> elliprj(1,inf,1,0); elliprj(1,1,1,inf)
         0.0
         0.0
@@ -1050,8 +1050,8 @@ def ellipf(ctx, phi, m):
         1.415737208425956198892166
         1.415737208425956198892166
         >>> ellipf(pi/2+eps, 1); ellipf(-pi/2-eps, 1)
-        +inf
-        +inf
+        inf
+        inf
         >>> ellipf(1.5, 1)
         3.340677542798311003320813
 
@@ -1166,9 +1166,9 @@ def ellipe(ctx, *args):
         >>> ellipe(2)
         (0.5990701173677961037199612 + 0.5990701173677961037199612j)
         >>> ellipe(inf)
-        (0.0 + +infj)
+        (0.0 + infj)
         >>> ellipe(-inf)
-        +inf
+        inf
 
     Verifying the defining integral and hypergeometric
     representation::
@@ -1325,9 +1325,9 @@ def ellippi(ctx, *args):
         >>> ellippi(2,inf)
         0.0
         >>> abs(ellippi(1,5))
-        +inf
+        inf
         >>> abs(ellippi(0.25,1))
-        +inf
+        inf
 
     Evaluation in terms of simpler functions::
 
@@ -1373,13 +1373,13 @@ def ellippi(ctx, *args):
     Some degenerate cases::
 
         >>> ellippi(1,1)
-        +inf
+        inf
         >>> ellippi(1,0)
-        +inf
+        inf
         >>> ellippi(1,2,0)
-        +inf
+        inf
         >>> ellippi(1,2,1)
-        +inf
+        inf
         >>> ellippi(1,0,1)
         0.0
 
