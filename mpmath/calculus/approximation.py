@@ -75,6 +75,7 @@ def chebyfit(ctx, f, interval, N, error=False, asc=None):
 
     The polynomial can be evaluated using ``polyval``::
 
+        >>> poly = chebyfit(cos, [1, 2], 5, asc=True)
         >>> nprint(polyval(poly, 1.6, asc=True), 12)
         -0.0291858904138
         >>> nprint(cos(1.6), 12)
