@@ -249,9 +249,14 @@ def test_issue548():
     assert False
 
 def test_compatibility():
+    from packaging.version import Version, parse
     np = pytest.importorskip("numpy")
+    if parse(np.__version__) < Version('2.0.0b1'):
+        npcore = np.core
+    else:
+        npcore = np._core
     # numpy types
-    for nptype in np.core.numerictypes.typeDict.values():
+    for nptype in npcore.numerictypes.typeDict.values():
         if issubclass(nptype, np.complexfloating):
             x = nptype(complex(0.5, -0.5))
         elif issubclass(nptype, np.floating):
@@ -261,7 +266,7 @@ def test_compatibility():
         # Handle the weird types
         try: diff = np.abs(type(np.sqrt(x))(sqrt(x)) - np.sqrt(x))
         except: continue
-        assert diff < 2.0**-53
+        assert diff < np.float64(2.0**-53)
     assert mpf(np.float64('inf')) == inf
     assert isnan(mp.npconvert(np.float64('nan')))
     if hasattr(np, "float128"):
@@ -279,7 +284,10 @@ def test_compatibility():
     assert sqrt(Fraction(2, 3)).ae(sqrt(mpf('2/3')))
     assert sqrt(Decimal(2)/Decimal(3)).ae(sqrt(mpf('2/3')))
     mp.prec = oldprec
-    pytest.raises(TypeError, lambda: mpmathify(np.array(1)))
+    assert mpmathify(np.array(123)) == mpf(123)
+    assert mpmathify(np.array(1.25)) == mpf(1.25)
+    assert mpmathify(np.array(0.5+1j)) == mpc(0.5+1j)
+    pytest.raises(TypeError, lambda: mpmathify(np.array([1])))
 
 def test_issue465():
     assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')
