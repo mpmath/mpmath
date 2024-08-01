@@ -681,7 +681,7 @@ class PythonMPContext:
         prec, rounding = ctx._prec_rounding
         if isinstance(x, numbers.Rational):
             p, q = x.numerator, x.denominator
-            return ctx.make_mpf(from_rational(p, q, prec))
+            return ctx.make_mpf(from_rational(p, q, prec, rounding))
         if strings and isinstance(x, str):
             try:
                 _mpf_ = from_str(x, prec, rounding)
@@ -1095,7 +1095,7 @@ class PythonMPContext:
             >>> mag(0.01), int(ceil(log(0.01,2)))
             (-6, -6)
             >>> mag(0), mag(inf), mag(-inf), mag(nan)
-            (-inf, +inf, +inf, nan)
+            (-inf, inf, inf, nan)
 
         """
         if hasattr(x, "_mpf_"):

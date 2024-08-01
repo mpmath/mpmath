@@ -53,7 +53,7 @@ The ``mpf`` type is analogous to Python's built-in ``float``. It holds a real nu
     >>> mpf(mpf(2))
     mpf('2.0')
     >>> mpf("inf")
-    mpf('+inf')
+    mpf('inf')
 
 The ``mpc`` type represents a complex number in rectangular form as a pair of ``mpf`` instances. It can be constructed from a Python ``complex``, a real number, or a pair of real numbers:
 

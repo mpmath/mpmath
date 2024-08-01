@@ -193,12 +193,12 @@ Some transcendental functions are supported::
     >>> iv.exp(0)
     [1.0, 1.0]
     >>> iv.exp(['-inf','inf'])
-    [0.0, +inf]
+    [0.0, inf]
     >>>
     >>> iv.exp(['-inf',0])
     [0.0, 1.0]
     >>> iv.exp([0,'inf'])
-    [1.0, +inf]
+    [1.0, inf]
     >>> iv.exp([0,1])
     [1.0, 2.7182818284590455349]
     >>>
@@ -207,7 +207,7 @@ Some transcendental functions are supported::
     >>> iv.log([0,1])
     [-inf, 0.0]
     >>> iv.log([0,'inf'])
-    [-inf, +inf]
+    [-inf, inf]
     >>> iv.log(2)
     [0.69314718055994528623, 0.69314718055994539725]
     >>>
