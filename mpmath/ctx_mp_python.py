@@ -3,10 +3,10 @@ import sys
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
-                    from_Decimal, from_float, from_int, from_man_exp,
-                    from_npfloat, from_rational, from_str, fzero, int_types,
-                    mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate, mpc_div,
-                    mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
+                    format_mpf, from_Decimal, from_float, from_int,
+                    from_man_exp, from_npfloat, from_rational, from_str, fzero,
+                    int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
+                    mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
                     mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
                     mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
                     mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
@@ -346,6 +346,9 @@ class mpf(mpnumeric):
         if t is NotImplemented:
             return t
         return t ** s
+
+    def __format__(s, format_spec):
+        return format_mpf(s._mpf_, format_spec)
 
     def sqrt(s):
         return s.context.sqrt(s)
@@ -700,9 +703,10 @@ class PythonMPContext:
         scalar.
         """
         import numpy as np
-        if isinstance(x, np.integer): return ctx.make_mpf(from_int(int(x)))
-        if isinstance(x, np.floating): return ctx.make_mpf(from_npfloat(x))
-        if isinstance(x, np.complexfloating):
+        if isinstance(x, np.ndarray) and x.ndim == 0: x = x.item()
+        if isinstance(x, (np.integer, int)): return ctx.make_mpf(from_int(int(x)))
+        if isinstance(x, (np.floating, float)): return ctx.make_mpf(from_npfloat(x))
+        if isinstance(x, (np.complexfloating, complex)):
             return ctx.make_mpc((from_npfloat(x.real), from_npfloat(x.imag)))
         raise TypeError("cannot create mpf from " + repr(x))
 
