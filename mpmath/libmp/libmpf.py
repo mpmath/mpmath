@@ -1161,7 +1161,7 @@ def round_digits(digits, dps, base, rounding=round_nearest):
         digits = digits[:dps]
 
     return digits, exponent
- 
+
 
 def abs_rounding(rounding, sign):
     """
