@@ -8,6 +8,7 @@ import pytest
 from mpmath import inf, isnan, iv, mp, mpc, mpf, mpi, mpmathify, sqrt
 from mpmath.libmp import (fhalf, from_float, from_rational, from_str,
                           round_ceiling, round_floor, round_nearest,
+                          round_nearest_even, round_down, round_up,
                           to_rational, to_str)
 
 
@@ -51,6 +52,26 @@ def test_basic_string():
     assert to_str(from_str('1_234.567_8_9_1', 80), 24) == '1234.567891'
     assert to_str(from_str('1.0_0', 80), 24) == '1.0'
     assert to_str(from_str('.000', 80), 24) == '0.0'
+
+     # Rounding and tying types
+    assert to_str(from_str('0.25', 80), 1, rounding=round_nearest) == "0.3"
+    assert to_str(from_str('0.25', 80), 1, rounding=round_nearest_even) == "0.2"
+
+    assert to_str(from_str('1.2345678', 80), 4, rounding=round_nearest) == "1.235"
+    assert to_str(from_str('1.2345678', 80), 4, rounding=round_floor) == "1.234"
+    assert to_str(from_str('1.2345678', 80), 4, rounding=round_ceiling) == "1.235"
+    assert to_str(from_str('1.2345678', 80), 4, rounding=round_up) == "1.235"
+    assert to_str(from_str('1.2345678', 80), 4, rounding=round_down) == "1.234"
+
+    assert to_str(from_str('-1.2345678', 80), 4, rounding=round_nearest) == "-1.235"
+    assert to_str(from_str('-1.2345678', 80), 4, rounding=round_floor) == "-1.235"
+    assert to_str(from_str('-1.2345678', 80), 4, rounding=round_ceiling) == "-1.234"
+    assert to_str(from_str('-1.2345678', 80), 4, rounding=round_up) == "-1.235"
+    assert to_str(from_str('-1.2345678', 80), 4, rounding=round_down) == "-1.234"
+
+    with pytest.raises(NotImplementedError):
+        to_str(mpf('1.234'), 4, base=2, rounding=round_floor)
+        to_str(mpf('1.234'), 4, base=7, rounding=round_up)
 
 def test_from_str():
     assert mpf(from_str('ABC.ABC', base=16)) == mpf(float.fromhex('ABC.ABC'))
