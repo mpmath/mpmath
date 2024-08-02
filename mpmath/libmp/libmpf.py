@@ -1402,13 +1402,14 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
-    (?P<rounding>[UDZMN])?
+    (?P<rounding>[UDYZMN])?
     (?P<type>[eEfFgG])
 """, re.DOTALL | re.VERBOSE).fullmatch
 
 _GMPY_ROUND_CHAR_DICT = {
         'U': round_ceiling,
         'D': round_floor,
+        'Y': round_up,
         'Z': round_down,
         'M': round_nearest,
         'N': round_nearest_even
