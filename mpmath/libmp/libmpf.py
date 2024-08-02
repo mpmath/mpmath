@@ -34,6 +34,7 @@ class ComplexResult(ValueError):
 
 # All supported rounding modes
 round_nearest = sys.intern('n')
+round_nearest_even = sys.intern('m')
 round_floor = sys.intern('f')
 round_ceiling = sys.intern('c')
 round_up = sys.intern('u')
@@ -1112,31 +1113,34 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     '''
 
     assert len(digits) > dps
-    assert rounding in (round_nearest, round_up, round_down)
+    assert rounding in (
+            round_nearest_even, round_nearest, round_up, round_down)
 
     exponent = 0
 
     if rounding == round_down:
         return digits[:dps], 0
-    elif rounding == round_nearest:
+    elif rounding in (round_nearest, round_nearest_even):
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
         rnd_digs = stddigits[:base]
 
-    tie_up = False
+    if rounding == round_nearest_even:
+        tie_down = True
 
-    # The first digit after dps is a 5.
-    if digits[dps] == rnd_digs[0]:
-        for i in range(dps+1, len(digits)):
-            if digits[i] != '0':
-                tie_up = True
-                break
-        if digits[dps-1] in stddigits[1:base:2]:
-            tie_up = True
+        # The first digit after dps is a 5.
+        if digits[dps] == rnd_digs[0]:
+            if digits[dps-1] in stddigits[1:base:2]:
+                tie_down = False
+            else:
+                for i in range(dps+1, len(digits)):
+                    if digits[i] != '0':
+                        tie_down = False
+                        break
 
-    if not tie_up:
-
-        digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
+        # Subtract 1 from the next digit so that it will be rounded down.
+        if tie_down:
+            digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
 
     # Rounding up kills some instances of "...99999"
     if digits[dps] in rnd_digs:
