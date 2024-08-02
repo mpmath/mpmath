@@ -17,7 +17,7 @@ of the Mpmath with pip::
 
 or some specific version with::
 
-    pip install mpmath==0.19
+    pip install mpmath==1.3.0
 
 You can install also extra dependencies, e.g. `gmpy
 <https://github.com/aleaxit/gmpy>`_ support::
