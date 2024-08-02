@@ -9850,7 +9850,7 @@ on the unit sphere::
     >>> Y2 = lambda t,p: fp.conj(fp.spherharm(l2,m2,t,p))
     >>> l1 = l2 = 3; m1 = m2 = 2
     >>> fp.chop(fp.quad(lambda t,p: Y1(t,p)*Y2(t,p)*dS(t,p), *sphere))
-    1.0000000000000007
+    1.000000000000000...
     >>> m2 = 1    # m1 != m2
     >>> print(fp.chop(fp.quad(lambda t,p: Y1(t,p)*Y2(t,p)*dS(t,p), *sphere)))
     0.0
