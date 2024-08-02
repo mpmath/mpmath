@@ -33,8 +33,8 @@ class ComplexResult(ValueError):
     pass
 
 # All supported rounding modes
-round_nearest = sys.intern('n')
-round_nearest_even = sys.intern('m')
+round_nearest = sys.intern('n')  # Round to nearest with tying away from zero
+round_nearest_even = sys.intern('m')  # Round to nearest with tying to even
 round_floor = sys.intern('f')
 round_ceiling = sys.intern('c')
 round_up = sys.intern('u')
@@ -1402,7 +1402,7 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
-    (?P<rounding>[UDZN])?
+    (?P<rounding>[UDZMN])?
     (?P<type>[eEfFgG])
 """, re.DOTALL | re.VERBOSE).fullmatch
 
@@ -1410,7 +1410,8 @@ _GMPY_ROUND_CHAR_DICT = {
         'U': round_ceiling,
         'D': round_floor,
         'Z': round_down,
-        'N': round_nearest
+        'M': round_nearest,
+        'N': round_nearest_even
         }
 
 def calc_padding(nchars, width, align):
@@ -1449,7 +1450,7 @@ def read_format_spec(format_spec):
         'thousands_separators': '',
         'width': -1,
         'precision': 6,
-        'rounding': round_nearest,
+        'rounding': round_nearest_even,
         'type': 'f'
         }
 
@@ -1634,12 +1635,7 @@ def format_mpf(num, format_spec):
     strip_last_zero = False
     strip_zeros = False
 
-    if format_dict['rounding'] == round_ceiling:
-        rounding = round_down if num[0] else round_up
-    elif format_dict['rounding'] == round_floor:
-        rounding = round_up if num[0] else round_down
-    else:
-        rounding = format_dict['rounding']
+    rounding = abs_rounding(format_dict['rounding'], num[0])
 
     if fmt_type == 'g':
         if not format_dict['alternate']:

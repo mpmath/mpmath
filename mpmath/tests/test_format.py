@@ -564,85 +564,107 @@ def test_mpf_fmt():
         assert f"{num:=.2Uf}" == "-1.23"
         assert f"{num:=.2Df}" == "-1.24"
         assert f"{num:=.2Zf}" == "-1.23"
+        assert f"{num:=.2Mf}" == "-1.23"
         assert f"{num:=.2Nf}" == "-1.23"
 
         assert f"{num:=.3Uf}" == "-1.234"
         assert f"{num:=.3Df}" == "-1.235"
         assert f"{num:=.3Zf}" == "-1.234"
+        assert f"{num:=.3Mf}" == "-1.235"
         assert f"{num:=.3Nf}" == "-1.235"
 
         assert f"{num:=.10Uf}" == "-1.2345678999"
         assert f"{num:=.10Df}" == "-1.2345679000"
         assert f"{num:=.10Zf}" == "-1.2345678999"
+        assert f"{num:=.10Mf}" == "-1.2345679000"
         assert f"{num:=.10Nf}" == "-1.2345679000"
 
         num = mp.mpf('1.23456789999901234567')
         assert f"{num:=.2Uf}" == "1.24"
         assert f"{num:=.2Df}" == "1.23"
         assert f"{num:=.2Zf}" == "1.23"
+        assert f"{num:=.2Mf}" == "1.23"
         assert f"{num:=.2Nf}" == "1.23"
 
         assert f"{num:=.3Uf}" == "1.235"
         assert f"{num:=.3Df}" == "1.234"
         assert f"{num:=.3Zf}" == "1.234"
+        assert f"{num:=.3Mf}" == "1.235"
         assert f"{num:=.3Nf}" == "1.235"
 
         assert f"{num:=.10Uf}" == "1.2345679000"
         assert f"{num:=.10Df}" == "1.2345678999"
         assert f"{num:=.10Zf}" == "1.2345678999"
+        assert f"{num:=.10Mf}" == "1.2345679000"
         assert f"{num:=.10Nf}" == "1.2345679000"
 
         num = mp.mpf('-123.456789999901234567')
         assert f"{num:=.2Ue}" == "-1.23e+02"
         assert f"{num:=.2De}" == "-1.24e+02"
         assert f"{num:=.2Ze}" == "-1.23e+02"
+        assert f"{num:=.2Me}" == "-1.23e+02"
         assert f"{num:=.2Ne}" == "-1.23e+02"
 
         assert f"{num:=.3Ue}" == "-1.234e+02"
         assert f"{num:=.3De}" == "-1.235e+02"
         assert f"{num:=.3Ze}" == "-1.234e+02"
+        assert f"{num:=.3Me}" == "-1.235e+02"
         assert f"{num:=.3Ne}" == "-1.235e+02"
 
         assert f"{num:=.10Ue}" == "-1.2345678999e+02"
         assert f"{num:=.10De}" == "-1.2345679000e+02"
         assert f"{num:=.10Ze}" == "-1.2345678999e+02"
+        assert f"{num:=.10Me}" == "-1.2345679000e+02"
         assert f"{num:=.10Ne}" == "-1.2345679000e+02"
 
         num = mp.mpf('123456.789999901234567')
         assert f"{num:=.2Ue}" == "1.24e+05"
         assert f"{num:=.2De}" == "1.23e+05"
         assert f"{num:=.2Ze}" == "1.23e+05"
+        assert f"{num:=.2Me}" == "1.23e+05"
         assert f"{num:=.2Ne}" == "1.23e+05"
 
         assert f"{num:=.3Ue}" == "1.235e+05"
         assert f"{num:=.3De}" == "1.234e+05"
         assert f"{num:=.3Ze}" == "1.234e+05"
+        assert f"{num:=.3Me}" == "1.235e+05"
         assert f"{num:=.3Ne}" == "1.235e+05"
 
         assert f"{num:=.10Ue}" == "1.2345679000e+05"
         assert f"{num:=.10De}" == "1.2345678999e+05"
         assert f"{num:=.10Ze}" == "1.2345678999e+05"
+        assert f"{num:=.10Me}" == "1.2345679000e+05"
         assert f"{num:=.10Ne}" == "1.2345679000e+05"
 
         assert f"{mp.mpf('123.456'):.2Ug}" == "1.3e+02"
         assert f"{mp.mpf('123.456'):.2Dg}" == "1.2e+02"
         assert f"{mp.mpf('123.456'):.2Zg}" == "1.2e+02"
+        assert f"{mp.mpf('123.456'):.2Mg}" == "1.2e+02"
         assert f"{mp.mpf('123.456'):.2Ng}" == "1.2e+02"
 
         assert f"{mp.mpf('-123.456'):.2Ug}" == "-1.2e+02"
         assert f"{mp.mpf('-123.456'):.2Dg}" == "-1.3e+02"
         assert f"{mp.mpf('-123.456'):.2Zg}" == "-1.2e+02"
+        assert f"{mp.mpf('-123.456'):.2Mg}" == "-1.2e+02"
         assert f"{mp.mpf('-123.456'):.2Ng}" == "-1.2e+02"
 
         assert f"{mp.mpf('123.456'):.5Ug}" == "123.46"
         assert f"{mp.mpf('123.456'):.5Dg}" == "123.45"
         assert f"{mp.mpf('123.456'):.5Zg}" == "123.45"
+        assert f"{mp.mpf('123.456'):.5Mg}" == "123.46"
         assert f"{mp.mpf('123.456'):.5Ng}" == "123.46"
 
         assert f"{mp.mpf('-123.456'):.5Ug}" == "-123.45"
         assert f"{mp.mpf('-123.456'):.5Dg}" == "-123.46"
         assert f"{mp.mpf('-123.456'):.5Zg}" == "-123.45"
+        assert f"{mp.mpf('-123.456'):.5Mg}" == "-123.46"
         assert f"{mp.mpf('-123.456'):.5Ng}" == "-123.46"
+
+        # Special cases were tying is relevant (cases involve exact floats)
+        assert f"{mp.mpf('0.25'):.1Mf}" == "0.3"
+        assert f"{mp.mpf('0.25'):.1Nf}" == "0.2"
+        assert f"{mp.mpf('0.75'):.1Mf}" == "0.8"
+        assert f"{mp.mpf('0.75'):.1Nf}" == "0.8"
 
 
 def test_errors():
