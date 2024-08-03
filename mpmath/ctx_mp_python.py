@@ -137,9 +137,11 @@ class _mpf(mpnumeric):
     def __repr__(s):
         if s.context.pretty:
             return str(s)
-        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits)
+        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits,
+                                    rounding=s.context._prec_rounding[1])
 
-    def __str__(s): return to_str(s._mpf_, s.context._str_digits)
+    def __str__(s): return to_str(s._mpf_, s.context._str_digits,
+                                  rounding=s.context._prec_rounding[1])
     def __hash__(s): return mpf_hash(s._mpf_)
     def __int__(s): return int(to_int(s._mpf_))
     def __float__(s): return to_float(s._mpf_, rnd=s.context._prec_rounding[1])
@@ -398,7 +400,7 @@ class _constant(_mpf):
         return self.func(prec, rounding)
 
     def __repr__(self):
-        return "<%s: %s~>" % (self.name, self.context.nstr(self(dps=self._reprdps_getter())))
+        return "<%s: %s~>" % (self.name, self.context.nstr(self(dps=self._reprdps_getter()), rounding=self.context._prec_rounding[1]))
 
 
 class _mpc(mpnumeric):
@@ -446,7 +448,8 @@ class _mpc(mpnumeric):
         return "%s(real=%s, imag=%s)" % (type(s).__name__, r, i)
 
     def __str__(s):
-        return "(%s)" % mpc_to_str(s._mpc_, s.context._str_digits)
+        return "(%s)" % mpc_to_str(s._mpc_, s.context._str_digits,
+                                   rounding=s.context._prec_rounding[1])
 
     def __complex__(s):
         return mpc_to_complex(s._mpc_, rnd=s.context._prec_rounding[1])
