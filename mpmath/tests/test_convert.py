@@ -8,8 +8,7 @@ import pytest
 from mpmath import inf, isnan, iv, mp, mpc, mpf, mpi, mpmathify, sqrt
 from mpmath.libmp import (fhalf, from_float, from_rational, from_str,
                           round_ceiling, round_floor, round_nearest,
-                          round_nearest_even, round_down, round_up,
-                          to_rational, to_str)
+                          round_down, round_up, to_rational, to_str)
 
 
 def test_basic_string():
@@ -54,8 +53,7 @@ def test_basic_string():
     assert to_str(from_str('.000', 80), 24) == '0.0'
 
      # Rounding and tying types
-    assert to_str(from_str('0.25', 80), 1, rounding=round_nearest) == "0.3"
-    assert to_str(from_str('0.25', 80), 1, rounding=round_nearest_even) == "0.2"
+    assert to_str(from_str('0.25', 80), 1, rounding=round_nearest) == "0.2"
 
     assert to_str(from_str('1.2345678', 80), 4, rounding=round_nearest) == "1.235"
     assert to_str(from_str('1.2345678', 80), 4, rounding=round_floor) == "1.234"

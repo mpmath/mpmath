@@ -34,7 +34,6 @@ class ComplexResult(ValueError):
 
 # All supported rounding modes
 round_nearest = sys.intern('n')  # Round to nearest with tying away from zero
-round_nearest_even = sys.intern('m')  # Round to nearest with tying to even
 round_floor = sys.intern('f')
 round_ceiling = sys.intern('c')
 round_up = sys.intern('u')
@@ -1113,19 +1112,18 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     '''
 
     assert len(digits) > dps
-    assert rounding in (
-            round_nearest_even, round_nearest, round_up, round_down)
+    assert rounding in (round_nearest, round_up, round_down)
 
     exponent = 0
 
     if rounding == round_down:
         return digits[:dps], 0
-    elif rounding in (round_nearest, round_nearest_even):
+    elif rounding == round_nearest:
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
         rnd_digs = stddigits[:base]
 
-    if rounding == round_nearest_even:
+    if rounding == round_nearest:
         tie_down = True
 
         # The first digit after dps is a 5.
@@ -1411,8 +1409,7 @@ _GMPY_ROUND_CHAR_DICT = {
         'D': round_floor,
         'Y': round_up,
         'Z': round_down,
-        'M': round_nearest,
-        'N': round_nearest_even
+        'N': round_nearest,
         }
 
 def calc_padding(nchars, width, align):
@@ -1451,7 +1448,7 @@ def read_format_spec(format_spec):
         'thousands_separators': '',
         'width': -1,
         'precision': 6,
-        'rounding': round_nearest_even,
+        'rounding': round_nearest,
         'type': 'f'
         }
 
