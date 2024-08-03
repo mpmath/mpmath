@@ -46,11 +46,11 @@ def test_basic_string():
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'
     # issue 377
-    assert to_str(from_str('1_234.567891', 80), 24) == '1234.567891'
-    assert to_str(from_str('1_234.567_891', 80), 24) == '1234.567891'
-    assert to_str(from_str('1_234.567_8_9_1', 80), 24) == '1234.567891'
-    assert to_str(from_str('1.0_0', 80), 24) == '1.0'
-    assert to_str(from_str('.000', 80), 24) == '0.0'
+    assert to_str(from_str('1_234.567891', 80), 24, rounding=round_nearest) == '1234.567891'
+    assert to_str(from_str('1_234.567_891', 80), 24, rounding=round_nearest) == '1234.567891'
+    assert to_str(from_str('1_234.567_8_9_1', 80), 24, rounding=round_nearest) == '1234.567891'
+    assert to_str(from_str('1.0_0', 80), 24, rounding=round_nearest) == '1.0'
+    assert to_str(from_str('.000', 80), 24, rounding=round_nearest) == '0.0'
 
      # Rounding and tying types
     assert to_str(from_str('0.25', 80), 1, rounding=round_nearest) == "0.2"
@@ -81,17 +81,17 @@ def test_eps_repr():
     assert repr(mp.eps) == '<epsilon of working precision: 2.06795e-25~>'
 
 def test_to_str():
-    assert to_str(from_str('ABC.ABC', base=16), 6, base=16) == '0xabc.abc'
-    assert to_str(from_str('0x3.a7p10', base=16), 3, base=16) == '0xe9c.0'
-    assert to_str(from_str('0x1.4ace478p+33'), 7, base=16) == '0x2.959c8f@+8'
-    assert to_str(from_str('0o1101.100101'), 8, base=8) == '0o1101.1001'
-    assert to_str(from_str('0b1101.100101'), 10, base=2) == '0b1101.100101'
-    assert to_str(from_str('0x1.4ace478p+33'), 8, base=16, binary_exp=True) == '0x1.4ace478p+33'
-    assert to_str(from_str('0x1.4ace478p+33'), 7, base=16, binary_exp=True) == '0x1.4ace48p+33'
-    assert to_str(from_str('0x1.4ace478p+33'), 5, base=16, binary_exp=True) == '0x1.4acep+33'
-    assert to_str(from_str('1', base=16), 6, base=16, binary_exp=True) == '0x1.0'
+    assert to_str(from_str('ABC.ABC', base=16), 6, base=16, rounding=round_nearest) == '0xabc.abc'
+    assert to_str(from_str('0x3.a7p10', base=16), 3, base=16, rounding=round_nearest) == '0xe9c.0'
+    assert to_str(from_str('0x1.4ace478p+33'), 7, base=16, rounding=round_nearest) == '0x2.959c8f@+8'
+    assert to_str(from_str('0o1101.100101'), 8, base=8, rounding=round_nearest) == '0o1101.1001'
+    assert to_str(from_str('0b1101.100101'), 10, base=2, rounding=round_nearest) == '0b1101.100101'
+    assert to_str(from_str('0x1.4ace478p+33'), 8, base=16, binary_exp=True, rounding=round_nearest) == '0x1.4ace478p+33'
+    assert to_str(from_str('0x1.4ace478p+33'), 7, base=16, binary_exp=True, rounding=round_nearest) == '0x1.4ace48p+33'
+    assert to_str(from_str('0x1.4ace478p+33'), 5, base=16, binary_exp=True, rounding=round_nearest) == '0x1.4acep+33'
+    assert to_str(from_str('1', base=16), 6, base=16, binary_exp=True, rounding=round_nearest) == '0x1.0'
     pytest.raises(ValueError, lambda: to_str(from_str('1', base=16),
-                                             6, binary_exp=True))
+                                             6, binary_exp=True, rounding=round_nearest))
 
 def test_pretty():
     mp.pretty = True
@@ -104,19 +104,19 @@ def test_str_whitespace():
     assert mpf('1.26 ') == 1.26
 
 def test_str_format():
-    assert to_str(from_float(0.1),15,strip_zeros=False) == '0.100000000000000'
-    assert to_str(from_float(0.0),15,show_zero_exponent=True) == '0.0e+0'
-    assert to_str(from_float(0.0),0,show_zero_exponent=True) == '.0e+0'
-    assert to_str(from_float(0.0),0,show_zero_exponent=False) == '.0'
-    assert to_str(from_float(0.0),1,show_zero_exponent=True) == '0.0e+0'
-    assert to_str(from_float(0.0),1,show_zero_exponent=False) == '0.0'
-    assert to_str(from_float(1.23),3,show_zero_exponent=True) == '1.23e+0'
-    assert to_str(from_float(1.23456789000000e-2),15,strip_zeros=False,min_fixed=0,max_fixed=0) == '1.23456789000000e-2'
-    assert to_str(from_float(1.23456789000000e+2),15,strip_zeros=False,min_fixed=0,max_fixed=0) == '1.23456789000000e+2'
-    assert to_str(from_float(2.1287e14), 15, max_fixed=1000) == '212870000000000.0'
-    assert to_str(from_float(2.1287e15), 15, max_fixed=1000) == '2128700000000000.0'
-    assert to_str(from_float(2.1287e16), 15, max_fixed=1000) == '21287000000000000.0'
-    assert to_str(from_float(2.1287e30), 15, max_fixed=1000) == '2128700000000000000000000000000.0'
+    assert to_str(from_float(0.1),15,strip_zeros=False, rounding=round_nearest) == '0.100000000000000'
+    assert to_str(from_float(0.0),15,show_zero_exponent=True, rounding=round_nearest) == '0.0e+0'
+    assert to_str(from_float(0.0),0,show_zero_exponent=True, rounding=round_nearest) == '.0e+0'
+    assert to_str(from_float(0.0),0,show_zero_exponent=False, rounding=round_nearest) == '.0'
+    assert to_str(from_float(0.0),1,show_zero_exponent=True, rounding=round_nearest) == '0.0e+0'
+    assert to_str(from_float(0.0),1,show_zero_exponent=False, rounding=round_nearest) == '0.0'
+    assert to_str(from_float(1.23),3,show_zero_exponent=True, rounding=round_nearest) == '1.23e+0'
+    assert to_str(from_float(1.23456789000000e-2),15,strip_zeros=False,min_fixed=0,max_fixed=0, rounding=round_nearest) == '1.23456789000000e-2'
+    assert to_str(from_float(1.23456789000000e+2),15,strip_zeros=False,min_fixed=0,max_fixed=0, rounding=round_nearest) == '1.23456789000000e+2'
+    assert to_str(from_float(2.1287e14), 15, max_fixed=1000, rounding=round_nearest) == '212870000000000.0'
+    assert to_str(from_float(2.1287e15), 15, max_fixed=1000, rounding=round_nearest) == '2128700000000000.0'
+    assert to_str(from_float(2.1287e16), 15, max_fixed=1000, rounding=round_nearest) == '21287000000000000.0'
+    assert to_str(from_float(2.1287e30), 15, max_fixed=1000, rounding=round_nearest) == '2128700000000000000000000000000.0'
 
 def test_tight_string_conversion():
     # In an old version, '0.5' wasn't recognized as representing
@@ -139,11 +139,11 @@ def test_str_bugs():
     assert str(mpf('1e10000')) == '1.0e+10000'
 
 def test_str_prec0():
-    assert to_str(from_float(1.234), 0) == '.0e+0'
-    assert to_str(from_float(1e-15), 0) == '.0e-15'
-    assert to_str(from_float(1e+15), 0) == '.0e+15'
-    assert to_str(from_float(-1e-15), 0) == '-.0e-15'
-    assert to_str(from_float(-1e+15), 0) == '-.0e+15'
+    assert to_str(from_float(1.234), 0, rounding=round_nearest) == '.0e+0'
+    assert to_str(from_float(1e-15), 0, rounding=round_nearest) == '.0e-15'
+    assert to_str(from_float(1e+15), 0, rounding=round_nearest) == '.0e+15'
+    assert to_str(from_float(-1e-15), 0, rounding=round_nearest) == '-.0e-15'
+    assert to_str(from_float(-1e+15), 0, rounding=round_nearest) == '-.0e+15'
 
 def test_convert_rational():
     assert from_rational(30, 5, 53, round_nearest) == (0, 3, 1, 2)
