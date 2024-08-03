@@ -67,10 +67,6 @@ def test_basic_string():
     assert to_str(from_str('-1.2345678', 80), 4, rounding=round_up) == "-1.235"
     assert to_str(from_str('-1.2345678', 80), 4, rounding=round_down) == "-1.234"
 
-    with pytest.raises(NotImplementedError):
-        to_str(mpf('1.234'), 4, base=2, rounding=round_floor)
-        to_str(mpf('1.234'), 4, base=7, rounding=round_up)
-
 def test_from_str():
     assert mpf(from_str('ABC.ABC', base=16)) == mpf(float.fromhex('ABC.ABC'))
     assert mpf(from_str('0xABC.ABC')) == mpf(float.fromhex('ABC.ABC'))
