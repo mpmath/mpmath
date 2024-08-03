@@ -1121,7 +1121,7 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     elif rounding == round_nearest:
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
-        rnd_digs = stddigits[:base]
+        rnd_digs = stddigits[1:base]
 
     tie_up = False
 
