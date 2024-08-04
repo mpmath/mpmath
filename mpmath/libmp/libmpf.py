@@ -33,7 +33,7 @@ class ComplexResult(ValueError):
     pass
 
 # All supported rounding modes
-round_nearest = sys.intern('n')  # Round to nearest with tying away from zero
+round_nearest = sys.intern('n')
 round_floor = sys.intern('f')
 round_ceiling = sys.intern('c')
 round_up = sys.intern('u')
@@ -1417,16 +1417,15 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
-    (?P<rounding>[UDYZMN])?
+    (?P<rounding>[UDZN])?
     (?P<type>[eEfFgG])
 """, re.DOTALL | re.VERBOSE).fullmatch
 
 _GMPY_ROUND_CHAR_DICT = {
         'U': round_ceiling,
         'D': round_floor,
-        'Y': round_up,
         'Z': round_down,
-        'N': round_nearest,
+        'N': round_nearest
         }
 
 def calc_padding(nchars, width, align):
