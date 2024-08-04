@@ -1177,7 +1177,7 @@ def abs_rounding(rounding, sign):
 
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
            show_zero_exponent=False, base=10, binary_exp=False,
-           rounding=None):
+           rounding=round_nearest):
     """
     Convert a raw mpf to a floating-point literal in the given base
     with at most `dps` digits in the mantissa (not counting extra zeros
@@ -1207,12 +1207,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         if base not in (2, 16):
             raise ValueError("binary_exp option could be used for base 2 and 16")
 
-    if rounding is None:
-        warnings.warn("Calling to_str without specifying rounding mode is "
-                      "deprecated. The new default rounding mode will be "
-                      "round_nearest.", DeprecationWarning)
-    else:
-        rounding = abs_rounding(rounding, s[0])
+    rounding = abs_rounding(rounding, s[0])
 
     if base == 2:
         prefix = "0b"
@@ -1261,27 +1256,8 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 n = int(digits, 16) >> shift
                 digits = hex(n)[2:]
 
-        if rounding is None:
-            # Legacy code
-            # Rounding up kills some instances of "...99999"
-            if len(digits) > dps and digits[dps] in rnd_digs:
-                digits = digits[:dps]
-                i = dps - 1
-                dig = stddigits[base-1]
-                while i >= 0 and digits[i] == dig:
-                    i -= 1
-                if i >= 0:
-                    digits = digits[:i] + stddigits[int(digits[i], base) + 1] \
-                            + '0' * (dps - i - 1)
-                else:
-                    digits = '1' + '0' * (dps - 1)
-                    exponent += 1
-            else:
-                digits = digits[:dps]
-
-        else:
-            digits, exp_add = round_digits(digits, dps, base, rounding)
-            exponent += exp_add
+        digits, exp_add = round_digits(digits, dps, base, rounding)
+        exponent += exp_add
 
         # Prettify numbers close to unit magnitude
         if not binary_exp and min_fixed < exponent < max_fixed:
