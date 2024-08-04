@@ -539,6 +539,8 @@ def test_mpf_fmt():
         assert f"{mp.mpf('1e-50'):.50g}" == '1e-50'
         assert f"{mp.mpf('1e-50'):.50G}" == '1E-50'
 
+        assert f"{mp.mpf('1e-50'):}" == '1e-50'
+
         # thousands separator
         assert f"{mp.mpf('1e9'):,.0f}" == '1,000,000,000'
         assert f"{mp.mpf('123456789.0123456'):,.4f}" == '123,456,789.0123'
