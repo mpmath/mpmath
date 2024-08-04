@@ -1441,7 +1441,7 @@ def read_format_spec(format_spec):
         'width': -1,
         'precision': 6,
         'rounding': round_nearest,
-        'type': 'f'
+        'type': 'g'
         }
 
     if match := _FLOAT_FORMAT_SPECIFICATION_MATCHER(format_spec):
@@ -1468,6 +1468,8 @@ def read_format_spec(format_spec):
         if match['zeropad']:
             format_dict['align'] = '='
             format_dict['fill_char'] = '0'
+    elif not format_spec:
+        pass
     else:
         raise ValueError("Invalid format specifier '{}'".format(format_spec))
 
