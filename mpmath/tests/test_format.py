@@ -644,6 +644,34 @@ def test_mpf_fmt():
         assert f"{mp.mpf('-123.456'):.5Zg}" == "-123.45"
         assert f"{mp.mpf('-123.456'):.5Ng}" == "-123.46"
 
+        num = mp.mpf('0.1')
+        assert f"{-num:=.2Df}" == "-0.10"
+        assert f"{-num:=.3Df}" == "-0.100"
+        assert f"{-num:=.4Df}" == "-0.1000"
+        assert f"{-num:=.5Df}" == "-0.10000"
+        assert f"{-num:=.6Df}" == "-0.100000"
+        assert f"{-num:=.7Df}" == "-0.1000000"
+
+        assert f"{-num:=.2De}" == "-1.00e-01"
+        assert f"{-num:=.3De}" == "-1.000e-01"
+        assert f"{-num:=.4De}" == "-1.0000e-01"
+        assert f"{-num:=.5De}" == "-1.00000e-01"
+        assert f"{-num:=.6De}" == "-1.000000e-01"
+        assert f"{-num:=.7De}" == "-1.0000000e-01"
+
+        assert f"{num:=.2Uf}" == "0.10"
+        assert f"{num:=.3Uf}" == "0.100"
+        assert f"{num:=.4Uf}" == "0.1000"
+        assert f"{num:=.5Uf}" == "0.10000"
+        assert f"{num:=.6Uf}" == "0.100000"
+        assert f"{num:=.7Uf}" == "0.1000000"
+
+        assert f"{num:=.2Ue}" == "1.00e-01"
+        assert f"{num:=.3Ue}" == "1.000e-01"
+        assert f"{num:=.4Ue}" == "1.0000e-01"
+        assert f"{num:=.5Ue}" == "1.00000e-01"
+        assert f"{num:=.6Ue}" == "1.000000e-01"
+        assert f"{num:=.7Ue}" == "1.0000000e-01"
 
 def test_errors():
     with pytest.raises(ValueError):
