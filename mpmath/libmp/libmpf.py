@@ -1123,20 +1123,38 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     else:
         rnd_digs = stddigits[1:base]
 
+    tie_down = False
     tie_up = False
 
-    # The first digit after dps is a 5.
-    if digits[dps] == rnd_digs[0]:
-        for i in range(dps+1, len(digits)):
-            if digits[i] != '0':
-                tie_up = True
-                break
-        if digits[dps-1] in stddigits[1:base:2]:
-            tie_up = True
+    if rounding == round_nearest:
+        # The first digit after dps is a 5 and we should determine whether we
+        # round it up or down.
+        if digits[dps] == rnd_digs[0]:
+            tie_down = True
 
-    if not tie_up:
+            # If the digit we round to is even, we may round down if all the
+            # following digits are 0.
+            for i in range(dps+1, len(digits)):
+                if digits[i] != '0':
+                    tie_down = False
+                    break
+            # If the digit we round to is odd, we round up no matter what.
+            if digits[dps-1] in stddigits[1:base:2]:
+                tie_down = False
 
+    elif rounding == round_up:
+        # If any digit following a 0 is different from zero, we round up.
+        if digits[dps] == '0':
+            for i in range(dps+1, len(digits)):
+                if digits[i] != '0':
+                    tie_up = True
+                    break
+
+    # Add or subtract a unit to the digit following the one we round to.
+    if tie_down:
         digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
+    elif tie_up:
+        digits = digits[:dps] + '1'
 
     # Rounding up kills some instances of "...99999"
     if digits[dps] in rnd_digs:
