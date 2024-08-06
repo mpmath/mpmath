@@ -391,6 +391,7 @@ class _mpf(mpnumeric):
 
             * 'U': rounding towards plus infinity
             * 'D': rounding towards minus infinity
+            * 'Y': rounding away from zero
             * 'Z': rounding towards zero
             * 'N': rounding to nearest (default)
 
