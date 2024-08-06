@@ -30,6 +30,7 @@ low level routines:
   eig_tr_l : left  eigenvectors of an upper triangular matrix
 """
 
+from .matrices import _is_ndarray, _np_eye, _np_conj, _np_zeros
 
 class Eigen:
     pass
@@ -70,7 +71,7 @@ def hessenberg_reduce_0(ctx, A, T):
     # the upper right part of A (including diagonal and subdiagonal) becomes H.
 
 
-    n = A.rows
+    n = A.shape[0]
     if n <= 2: return
 
     for i in range(n-1, 1, -1):
@@ -154,7 +155,7 @@ def hessenberg_reduce_1(ctx, A, T):
       T    (input) On input, T is the same array as delivered by hessenberg_reduce_0.
     """
 
-    n = A.rows
+    n = A.shape[0]
 
     if n == 1:
         A[0,0] = 1
@@ -217,9 +218,12 @@ def hessenberg(ctx, A, overwrite_a = False):
     return value:   (Q, H)
     """
 
-    n = A.rows
+    n = A.shape[0]
 
     if n == 1:
+        if _is_ndarray(A):
+            Q = _np_eye(ctx, n)
+            return Q, A
         return (ctx.matrix([[1]]), A)
 
     if not overwrite_a:
@@ -284,7 +288,7 @@ def qr_step(ctx, n0, n1, A, Q, shift):
     #
     # the matrix on the left is our Givens rotation.
 
-    n = A.rows
+    n = A.shape[0]
 
     # first step
 
@@ -395,7 +399,7 @@ def hessenberg_qr(ctx, A, Q):
                 false, in which case the unitary matrix Q is not computated.
     """
 
-    n = A.rows
+    n = A.shape[0]
 
     norm = 0
     for x in range(n):
@@ -522,9 +526,12 @@ def schur(ctx, A, overwrite_a = False):
     warning: The Schur decomposition is not unique.
     """
 
-    n = A.rows
+    n = A.shape[0]
 
     if n == 1:
+        if _is_ndarray(A):
+            Q = _np_eye(ctx, n)
+            return Q, A
         return (ctx.matrix([[1]]), A)
 
     if not overwrite_a:
@@ -560,9 +567,12 @@ def eig_tr_r(ctx, A):
 
     # this subroutine is inspired by the lapack routines ctrevc.f,clatrs.f
 
-    n = A.rows
+    n = A.shape[0]
 
-    ER = ctx.eye(n)
+    if _is_ndarray(A):
+        ER = _np_eye(ctx, n)
+    else:
+        ER = ctx.eye(n)
 
     eps = ctx.eps
 
@@ -618,9 +628,12 @@ def eig_tr_l(ctx, A):
     return value:  EL
     """
 
-    n = A.rows
+    n = A.shape[0]
 
-    EL = ctx.eye(n)
+    if _is_ndarray(A):
+        EL = _np_eye(ctx, n)
+    else:
+        EL = ctx.eye(n)
 
     eps = ctx.eps
 
@@ -727,18 +740,27 @@ def eig(ctx, A, left = False, right = True, overwrite_a = False):
       - eig_sort for sorting of eigenvalues and eigenvectors
     """
 
-    n = A.rows
+    n = A.shape[0]
 
     if n == 1:
         if not (left or right):
+            if _is_ndarray(A):
+                # Instead of a list, return a shape (1,) array.
+                return A[0]
             return [A[0]]
 
         if left and (not right):
+            if _is_ndarray(A):
+                return A[0], _np_eye(ctx, n)
             return ([A[0]], ctx.matrix([[1]]))
 
         if right and (not left):
+            if _is_ndarray(A):
+                return A[0], _np_eye(ctx, n)
             return ([A[0]], ctx.matrix([[1]]))
 
+        if _is_ndarray(A):
+            return A[0], _np_eye(ctx, n), _np_eye(ctx, n)
         return ([A[0]], ctx.matrix([[1]]), ctx.matrix([[1]]))
 
     if not overwrite_a:
@@ -760,20 +782,29 @@ def eig(ctx, A, left = False, right = True, overwrite_a = False):
 
     hessenberg_qr(ctx, A, Q)
 
-    E = [0 for i in range(n)]
-    for i in range(n):
-        E[i] = A[i,i]
+    if _is_ndarray(A):
+        E = A.diagonal().copy()
+    else:
+        E = [0 for i in range(n)]
+        for i in range(n):
+            E[i] = A[i,i]
 
     if not (left or right):
         return E
 
     if left:
         EL = eig_tr_l(ctx, A)
-        EL = EL * Q.transpose_conj()
+        if _is_ndarray(A):
+            EL = EL.dot(_np_conj(ctx, Q).T)
+        else:
+            EL = EL * Q.transpose_conj()
 
     if right:
         ER = eig_tr_r(ctx, A)
-        ER = Q * ER
+        if _is_ndarray(A):
+            ER = Q.dot(ER)
+        else:
+            ER = Q * ER
 
     if left and (not right):
         return (E, EL)

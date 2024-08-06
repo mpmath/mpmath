@@ -35,6 +35,7 @@ low level routines:
 """
 
 from .eigen import defun
+from .matrices import _is_ndarray, _np_zeros
 
 
 def r_sy_tridiag(ctx, A, D, E, calc_ev = True):
@@ -73,7 +74,7 @@ def r_sy_tridiag(ctx, A, D, E, calc_ev = True):
     # note : the vector v of the i-th houshoulder reflector is stored in a[(i+1):,i]
     #        whereas v/<v,v> is stored in a[i,(i+1):]
 
-    n = A.rows
+    n = A.shape[0]
     for i in range(n - 1, 0, -1):
         # scale the vector
 
@@ -197,7 +198,7 @@ def c_he_tridiag_0(ctx, A, D, E, T):
       Stoer, Bulirsch - Introduction to Numerical Analysis.
     """
 
-    n = A.rows
+    n = A.shape[0]
     T[n-1] = 1
     for i in range(n - 1, 0, -1):
 
@@ -310,7 +311,7 @@ def c_he_tridiag_1(ctx, A, T):
 
     """
 
-    n = A.rows
+    n = A.shape[0]
 
     for i in range(n):
         if A[i,i] != 0:
@@ -351,7 +352,7 @@ def c_he_tridiag_2(ctx, A, T, B):
     references.
     """
 
-    n = A.rows
+    n = A.shape[0]
 
     for i in range(n):
         for k in range(n):
@@ -465,7 +466,7 @@ def tridiag_eigen(ctx, d, e, z = False):
 
                 if not isinstance(z, bool):
                     # calculate eigenvectors
-                    for w in range(z.rows):
+                    for w in range(z.shape[0]):
                         f = z[w,i+1]
                         z[w,i+1] = s * z[w,i] + c * f
                         z[w,i  ] = c * z[w,i] - s * f
@@ -490,7 +491,7 @@ def tridiag_eigen(ctx, d, e, z = False):
         d[i] = p
 
         if not isinstance(z, bool):
-            for w in range(z.rows):
+            for w in range(z.shape[0]):
                 p = z[w,i]
                 z[w,i] = z[w,k]
                 z[w,k] = p
@@ -557,8 +558,13 @@ def eigsy(ctx, A, eigvals_only = False, overwrite_a = False):
     if not overwrite_a:
         A = A.copy()
 
-    d = ctx.zeros(A.rows, 1)
-    e = ctx.zeros(A.rows, 1)
+    rows = A.shape[0]
+    if _is_ndarray(A):
+        d = _np_zeros(ctx, (rows,))
+        e = _np_zeros(ctx, (rows,))
+    else:
+        d = ctx.zeros(rows, 1)
+        e = ctx.zeros(rows, 1)
 
     if eigvals_only:
         r_sy_tridiag(ctx, A, d, e, calc_ev = False)
@@ -631,9 +637,15 @@ def eighe(ctx, A, eigvals_only = False, overwrite_a = False):
     if not overwrite_a:
         A = A.copy()
 
-    d = ctx.zeros(A.rows, 1)
-    e = ctx.zeros(A.rows, 1)
-    t = ctx.zeros(A.rows, 1)
+    rows = A.shape[0]
+    if _is_ndarray(A):
+        d = _np_zeros(ctx, (rows,))
+        e = _np_zeros(ctx, (rows,))
+        t = _np_zeros(ctx, (rows,))
+    else:
+        d = ctx.zeros(rows, 1)
+        e = ctx.zeros(rows, 1)
+        t = ctx.zeros(rows, 1)
 
     if eigvals_only:
         c_he_tridiag_0(ctx, A, d, e, t)
@@ -641,7 +653,7 @@ def eighe(ctx, A, eigvals_only = False, overwrite_a = False):
         return d
     else:
         c_he_tridiag_0(ctx, A, d, e, t)
-        B = ctx.eye(A.rows)
+        B = ctx.eye(rows)
         tridiag_eigen(ctx, d, e, B)
         c_he_tridiag_2(ctx, A, t, B)
         return (d, B)
@@ -712,7 +724,10 @@ def eigh(ctx, A, eigvals_only = False, overwrite_a = False):
     see also: eigsy, eighe, eig
     """
 
-    iscomplex = any(type(x) is ctx.mpc for x in A)
+    if _is_ndarray(A):
+        iscomplex = type(A[0,0]) is ctx.mpc
+    else:
+        iscomplex = any(type(x) is ctx.mpc for x in A)
 
     if iscomplex:
         return ctx.eighe(A, eigvals_only = eigvals_only, overwrite_a = overwrite_a)
@@ -937,9 +952,12 @@ def svd_r_raw(ctx, A, V = False, calc_u = False):
 
     """
 
-    m, n = A.rows, A.cols
+    m, n = A.shape
 
-    S = ctx.zeros(n, 1)
+    if _is_ndarray(A):
+        S = _np_zeros(ctx, (n,))
+    else:
+        S = ctx.zeros(n, 1)
 
     # work is a temporary array of size n
     work = ctx.zeros(n, 1)
@@ -1237,9 +1255,12 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
 
     """
 
-    m, n = A.rows, A.cols
+    m, n = A.shape
 
-    S = ctx.zeros(n, 1)
+    if _is_ndarray(A):
+        S = _np_zeros(ctx, (n,))
+    else:
+        S = ctx.zeros(n, 1)
 
     # work is a temporary array of size n
     work  = ctx.zeros(n, 1)
@@ -1584,7 +1605,7 @@ def svd_r(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
     see also: svd, svd_c
     """
 
-    m, n = A.rows, A.cols
+    m, n = A.shape
 
     if not compute_uv:
         if not overwrite_a:
@@ -1594,8 +1615,12 @@ def svd_r(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
         return S
 
     if full_matrices and n < m:
-        V = ctx.zeros(m, m)
-        A0 = ctx.zeros(m, m)
+        if _is_ndarray(A):
+            V = _np_zeros(ctx, (m, m))
+            A0 = _np_zeros(ctx, (m, m))
+        else:
+            V = ctx.zeros(m, m)
+            A0 = ctx.zeros(m, m)
         A0[:,:n] = A
         S = svd_r_raw(ctx, A0, V, calc_u = True)
 
@@ -1606,7 +1631,10 @@ def svd_r(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
     else:
         if not overwrite_a:
             A = A.copy()
-        V = ctx.zeros(n, n)
+        if _is_ndarray(A):
+            V = _np_zeros(ctx, (n, n))
+        else:
+            V = ctx.zeros(n, n)
         S = svd_r_raw(ctx, A, V, calc_u = True)
 
         if n > m:
@@ -1688,7 +1716,7 @@ def svd_c(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
     see also: svd, svd_r
     """
 
-    m, n = A.rows, A.cols
+    m, n = A.shape
 
     if not compute_uv:
         if not overwrite_a:
@@ -1698,8 +1726,12 @@ def svd_c(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
         return S
 
     if full_matrices and n < m:
-        V = ctx.zeros(m, m)
-        A0 = ctx.zeros(m, m)
+        if _is_ndarray(A):
+            V = _np_zeros(ctx, (m, m))
+            A0 = _np_zeros(ctx, (m, m))
+        else:
+            V = ctx.zeros(m, m)
+            A0 = ctx.zeros(m, m)
         A0[:,:n] = A
         S = svd_c_raw(ctx, A0, V, calc_u = True)
 
@@ -1710,7 +1742,10 @@ def svd_c(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
     else:
         if not overwrite_a:
             A = A.copy()
-        V = ctx.zeros(n, n)
+        if _is_ndarray(A):
+            V = _np_zeros(ctx, (n, n))
+        else:
+            V = ctx.zeros(n, n)
         S = svd_c_raw(ctx, A, V, calc_u = True)
 
         if n > m:
@@ -1795,7 +1830,10 @@ def svd(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False):
     see also: svd_r, svd_c
     """
 
-    iscomplex = any(type(x) is ctx.mpc for x in A)
+    if _is_ndarray(A):
+        iscomplex = type(A[0,0]) is ctx.mpc
+    else:
+        iscomplex = any(type(x) is ctx.mpc for x in A)
 
     if iscomplex:
         return ctx.svd_c(A, full_matrices = full_matrices, compute_uv = compute_uv, overwrite_a = overwrite_a)

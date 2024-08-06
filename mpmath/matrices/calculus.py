@@ -1,3 +1,5 @@
+from .matrices import _is_ndarray
+
 # TODO: should use diagonalization-based algorithms
 
 class MatrixCalculusMethods:
@@ -14,6 +16,7 @@ class MatrixCalculusMethods:
          - reduce the number of matrix multiplications to improve
            performance
         """
+        is_npobj = _is_ndarray(a)
         def eps_pade(p):
             return ctx.mpf(2)**(3-2*p) * \
                 ctx.factorial(p)**2/(ctx.factorial(2*p)**2 * (2*p + 1))
@@ -30,7 +33,7 @@ class MatrixCalculusMethods:
         ctx.dps += extra + 3
         try:
             a = a/2**j
-            na = a.rows
+            na = a.shape[0]
             den = ctx.eye(na)
             num = ctx.eye(na)
             x = ctx.eye(na)
@@ -46,7 +49,10 @@ class MatrixCalculusMethods:
                 f = f*f
         finally:
             ctx.prec = prec
-        return f*1
+        f *= 1
+        if is_npobj:
+            f = f.to_numpy()
+        return f
 
     def expm(ctx, A, method='taylor'):
         r"""
@@ -114,11 +120,12 @@ class MatrixCalculusMethods:
             prec = ctx.prec
             try:
                 A = ctx.matrix(A)
-                ctx.prec += 2*A.rows
+                ctx.prec += 2*A.shape[0]
                 res = ctx._exp_pade(A)
             finally:
                 ctx.prec = prec
             return res
+        is_npobj = _is_ndarray(A)
         A = ctx.matrix(A)
         prec = ctx.prec
         j = int(max(1, ctx.mag(ctx.mnorm(A,'inf'))))
@@ -141,6 +148,8 @@ class MatrixCalculusMethods:
         finally:
             ctx.prec = prec
         Y *= 1
+        if is_npobj:
+            Y = Y.to_numpy()
         return Y
 
     def cosm(ctx, A):
@@ -168,8 +177,13 @@ class MatrixCalculusMethods:
             [                                     0.0               (1.54308063481524 + 0.0j)]
         """
         B = 0.5 * (ctx.expm(A*ctx.j) + ctx.expm(A*(-ctx.j)))
-        if not sum(A.apply(ctx.im).apply(abs)):
-            B = B.apply(ctx.re)
+        if _is_ndarray(A):
+            import numpy as np
+            if abs(np.vectorize(ctx.im)(A).sum()) == 0:
+                B = np.vectorize(ctx.re)(B)
+        else:
+            if not sum(A.apply(ctx.im).apply(abs)):
+                B = B.apply(ctx.re)
         return B
 
     def sinm(ctx, A):
@@ -197,8 +211,13 @@ class MatrixCalculusMethods:
             [                                    0.0                  (0.0 - 1.1752011936438j)]
         """
         B = (-0.5j) * (ctx.expm(A*ctx.j) - ctx.expm(A*(-ctx.j)))
-        if not sum(A.apply(ctx.im).apply(abs)):
-            B = B.apply(ctx.re)
+        if _is_ndarray(A):
+            import numpy as np
+            if abs(np.vectorize(ctx.im)(A).sum()) == 0:
+                B = np.vectorize(ctx.re)(B)
+        else:
+            if not sum(A.apply(ctx.im).apply(abs)):
+                B = B.apply(ctx.re)
         return B
 
     def _sqrtm_rot(ctx, A, _may_rotate):
@@ -306,6 +325,10 @@ class MatrixCalculusMethods:
             4.53155328326114e-19
 
         """
+        is_npobj = _is_ndarray(A)
+        if is_npobj and (A == 0).all():
+            return A
+
         A = ctx.matrix(A)
         # Trivial
         if A*0 == A:
@@ -344,6 +367,8 @@ class MatrixCalculusMethods:
         finally:
             ctx.prec = prec
         Y *= 1
+        if is_npobj:
+            Y = Y.to_numpy()
         return Y
 
     def logm(ctx, A):
@@ -429,6 +454,7 @@ class MatrixCalculusMethods:
             [0.317662687717978  2.24003708791604    42.395212822267]
 
         """
+        is_npobj = _is_ndarray(A)
         A = ctx.matrix(A)
         prec = ctx.prec
         try:
@@ -459,6 +485,8 @@ class MatrixCalculusMethods:
         finally:
             ctx.prec = prec
         L *= 2**n
+        if is_npobj:
+            L = L.to_numpy()
         return L
 
     def powm(ctx, A, r):
@@ -514,6 +542,7 @@ class MatrixCalculusMethods:
             (8.81733464837593 - 0.0133048601383712j)
 
         """
+        is_npobj = _is_ndarray(A)
         A = ctx.matrix(A)
         r = ctx.convert(r)
         prec = ctx.prec
@@ -529,4 +558,6 @@ class MatrixCalculusMethods:
         finally:
             ctx.prec = prec
         v *= 1
+        if is_npobj:
+            v = v.to_numpy()
         return v
