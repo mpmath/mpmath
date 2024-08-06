@@ -1386,13 +1386,14 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
-    (?P<rounding>[UDZN])?
-    (?P<type>[eEfFgG])
+    (?P<rounding>[UDYZN])?
+    (?P<type>[eEfFgG])?
 """, re.DOTALL | re.VERBOSE).fullmatch
 
 _GMPY_ROUND_CHAR_DICT = {
         'U': round_ceiling,
         'D': round_floor,
+        'Y': round_up,
         'Z': round_down,
         'N': round_nearest
         }
@@ -1434,7 +1435,7 @@ def read_format_spec(format_spec):
         'width': -1,
         'precision': 6,
         'rounding': round_nearest,
-        'type': 'f'
+        'type': 'g'
         }
 
     if match := _FLOAT_FORMAT_SPECIFICATION_MATCHER(format_spec):
