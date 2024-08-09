@@ -17,7 +17,7 @@ of the Mpmath with pip::
 
 or some specific version with::
 
-    pip install mpmath==0.19
+    pip install mpmath==1.3.0
 
 You can install also extra dependencies, e.g. `gmpy
 <https://github.com/aleaxit/gmpy>`_ support::
@@ -84,7 +84,7 @@ Python interpreter and do the following::
 Using gmpy (optional)
 ---------------------
 
-If `gmpy <https://github.com/aleaxit/gmpy>`_ version 2.2.0rc1 or later is
+If `gmpy <https://github.com/aleaxit/gmpy>`_ version 2.2.0 or later is
 installed on your system, mpmath will automatically detect it and transparently
 use gmpy integers instead of Python integers.  This makes mpmath much faster,
 especially at high precision (approximately above 100 digits).
