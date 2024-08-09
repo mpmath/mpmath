@@ -420,7 +420,7 @@ Basic examples and limits::
     >>> sqrt(1+1j)
     (1.09868411346781 + 0.455089860562227j)
     >>> sqrt(inf)
-    +inf
+    inf
 
 Square root evaluation is fast at huge precision::
 
@@ -489,7 +489,7 @@ Some values of the exponential function::
     >>> exp(-1)
     0.3678794411714423215955238
     >>> exp(inf)
-    +inf
+    inf
     >>> exp(-inf)
     0.0
 
@@ -565,7 +565,7 @@ Computes the hyperbolic cosine of `x`,
     >>> cosh(1)
     1.543080634815243778477906
     >>> cosh(-inf), cosh(+inf)
-    (+inf, +inf)
+    (inf, inf)
 
 The hyperbolic cosine is an even, convex function with
 a global minimum at `x = 0`, having a Maclaurin series
@@ -595,7 +595,7 @@ Computes the hyperbolic sine of `x`,
     >>> sinh(1)
     1.175201193643801456882382
     >>> sinh(-inf), sinh(+inf)
-    (-inf, +inf)
+    (-inf, inf)
 
 The hyperbolic sine is an odd function, with a Maclaurin
 series that starts::
@@ -718,7 +718,7 @@ Intervals are supported via ``mpmath.iv.tan()``::
     >>> iv.tan([0,1])
     [0.0, 1.55740772465490223050697482944]
     >>> iv.tan([0,2])  # Interval includes a singularity
-    [-inf, +inf]
+    [-inf, inf]
 """
 
 sec = r"""
@@ -746,7 +746,7 @@ Intervals are supported via ``mpmath.iv.sec()``::
     >>> iv.sec([0,1])
     [1.0, 1.85081571768092561791175326276]
     >>> iv.sec([0,2])  # Interval includes a singularity
-    [-inf, +inf]
+    [-inf, inf]
 """
 
 csc = r"""
@@ -771,9 +771,9 @@ Intervals are supported via ``mpmath.iv.csc()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.csc([0,1])  # Interval includes a singularity
-    [1.18839510577812121626159943988, +inf]
+    [1.18839510577812121626159943988, inf]
     >>> iv.csc([0,2])
-    [1.0, +inf]
+    [1.0, inf]
 """
 
 cot = r"""
@@ -799,9 +799,9 @@ Intervals are supported via ``mpmath.iv.cot()``::
 
     >>> iv.dps = 25; iv.pretty = True
     >>> iv.cot([0,1])  # Interval includes a singularity
-    [0.642092615934330703006419974862, +inf]
+    [0.642092615934330703006419974862, inf]
     >>> iv.cot([1,2])
-    [-inf, +inf]
+    [-inf, inf]
 """
 
 acos = r"""
@@ -1627,7 +1627,7 @@ Some basic values and limits::
     >>> log(0)
     -inf
     >>> log(inf)
-    +inf
+    inf
 
 The natural logarithm is the antiderivative of `1/x`::
 
@@ -1957,7 +1957,7 @@ Basic values and limits::
     4 24.0
     5 120.0
     >>> fac(inf)
-    +inf
+    inf
     >>> fac(0.5), sqrt(pi)/2
     (0.886226925452758, 0.886226925452758)
 
@@ -2013,7 +2013,7 @@ Basic values and limits::
     4 6.0
     5 24.0
     >>> gamma(inf)
-    +inf
+    inf
     >>> gamma(0)
     Traceback (most recent call last):
       ...
@@ -2100,7 +2100,7 @@ The digamma function diverges logarithmically as `z \to \infty`,
 while higher orders tend to zero::
 
     >>> psi(0,inf), psi(1,inf), psi(2,inf)
-    (+inf, 0.0, 0.0)
+    (inf, 0.0, 0.0)
 
 Evaluation for a complex argument::
 
@@ -2181,7 +2181,7 @@ The first few harmonic numbers are::
 The infinite harmonic series `1 + 1/2 + 1/3 + \ldots` diverges::
 
     >>> harmonic(inf)
-    +inf
+    inf
 
 :func:`~mpmath.harmonic` is evaluated using the digamma function rather
 than by summing the harmonic series term by term. It can therefore
@@ -2462,7 +2462,7 @@ of the beta function is taken to result in ``+inf``::
     >>> beta(-3, 3)
     -0.333333333333333
     >>> beta(-2, 3)
-    +inf
+    inf
     >>> beta(inf, 1)
     0.0
     >>> beta(inf, 0)
@@ -2868,7 +2868,7 @@ but functions of higher degree are also supported via :func:`~mpmath.hyper`::
     >>> hyper([1,2,3,4], [5,6,7], 1)   # 4F3 at finite-valued branch point
     1.141783505526870731311423
     >>> hyper([4,5,6,7], [1,2,3], 1)   # 4F3 at pole
-    +inf
+    inf
     >>> hyper([1,2,3,4,5], [6,7,8,9], 10)    # 5F4
     (1.543998916527972259717257 - 0.5876309929580408028816365j)
     >>> hyper([1,2,3,4,5,6], [7,8,9,10,11], 1j)   # 6F5
@@ -2879,7 +2879,7 @@ Near `z = 1` with noninteger parameters::
     >>> hyper(['1/3',1,'3/2',2], ['1/5','11/6','41/8'], 1)
     2.219433352235586121250027
     >>> hyper(['1/3',1,'3/2',2], ['1/5','11/6','5/4'], 1)
-    +inf
+    inf
     >>> eps1 = extradps(6)(lambda: 1 - mpf('1e-6'))()
     >>> hyper(['1/3',1,'3/2',2], ['1/5','11/6','5/4'], eps1)
     2923978034.412973409330956
@@ -3268,7 +3268,7 @@ Evaluation with `z = 1`::
     >>> hyp2f1(-2.5, 3, 4, 1)
     0.06926406926406926406926407
     >>> hyp2f1(2, 3, 4, 1)
-    +inf
+    inf
 
 Evaluation for huge arguments::
 
@@ -3395,7 +3395,7 @@ Evaluation for arbitrary complex arguments::
 The `U` function may be singular at `z = 0`::
 
     >>> hyperu(1.5, 2, 0)
-    +inf
+    inf
     >>> hyperu(1.5, -2, 0)
     0.1719434921288400112603671
 
@@ -3588,7 +3588,7 @@ Evaluation at integers and poles::
     >>> gammainc(-3, -4, -5)
     (-0.2214577048967798566234192 + 0.0j)
     >>> lower_gamma(-3, 5)
-    +inf
+    inf
 
 If `z` is an integer, the recurrence reduces the incomplete gamma
 function to `P(a) \exp(-a) + Q(b) \exp(-b)` where `P` and
@@ -3768,7 +3768,7 @@ Basic values and limits::
     >>> erfi(-1)
     -1.65042575879754
     >>> erfi(inf)
-    +inf
+    inf
     >>> erfi(-inf)
     -inf
 
@@ -3820,7 +3820,7 @@ Special values include::
     >>> erfinv(0)
     0.0
     >>> erfinv(1)
-    +inf
+    inf
     >>> erfinv(-1)
     -inf
 
@@ -4023,7 +4023,7 @@ Some basic values and limits are::
     >>> ei(1)
     1.89511781635594
     >>> ei(inf)
-    +inf
+    inf
     >>> ei(-inf)
     0.0
 
@@ -4130,7 +4130,7 @@ Some basic values and limits::
     >>> findroot(li, 2)
     1.45136923488338105028396848589
     >>> li(inf)
-    +inf
+    inf
     >>> li(2, offset=True)
     0.0
     >>> li(1, offset=True)
@@ -4335,7 +4335,7 @@ Some values and limits::
     >>> chi(1)
     0.8378669409802082408946786
     >>> chi(inf)
-    +inf
+    inf
     >>> findroot(chi, 0.5)
     0.5238225713898644064509583
     >>> chi(2+3j)
@@ -4367,7 +4367,7 @@ Some values and limits::
     >>> shi(-1)
     -1.057250875375728514571842
     >>> shi(inf)
-    +inf
+    inf
     >>> shi(2+3j)
     (-0.1931890762719198291678095 + 2.645432555362369624818525j)
 
@@ -4650,11 +4650,11 @@ Integrals of the Ai-function can be evaluated at limit points::
     0.3333333332991690159427932
     0.3333333333333333333333333
     >>> airyai(+inf,-2); airyai(+inf,-3)
-    +inf
-    +inf
+    inf
+    inf
     >>> airyai(-1000000,-2); airyai(-inf,-2)
     666666.4078472650651209742
-    +inf
+    inf
     >>> airyai(-1000000,-3); airyai(-inf,-3)
     -333333074513.7520264995733
     -inf
@@ -4714,7 +4714,7 @@ Limits and values include::
     >>> airybi(-1)
     0.10399738949694461188869
     >>> airybi(inf); airybi(-inf)
-    +inf
+    inf
     0.0
 
 Evaluation is supported for large magnitudes of the argument::
@@ -4832,10 +4832,10 @@ Integrals of the Bi-function can be evaluated at limit points::
     0.0
     >>> airybi(10,-1); airybi(+inf,-1)
     147809803.1074067161675853
-    +inf
+    inf
     >>> airybi(+inf,-2); airybi(+inf,-3)
-    +inf
-    +inf
+    inf
+    inf
     >>> airybi(-1000000,-2); airybi(-inf,-2)
     0.4482883750599908479851085
     0.4482883573538263579148237
@@ -4846,7 +4846,7 @@ Integrals of the Bi-function can be evaluated at limit points::
     -inf
     >>> airybi(-100000,-4); airybi(-inf,-4)
     2241411040.437759489540248
-    +inf
+    inf
 
 """
 
@@ -5013,7 +5013,7 @@ Values and limits include::
     >>> ellipk(-inf)
     0.0
     >>> ellipk(1)
-    +inf
+    inf
     >>> ellipk(-1)
     1.31102877714605990523242
     >>> ellipk(2)
@@ -6158,9 +6158,9 @@ Arguments may be large::
 The point `x = 0` is a singularity (logarithmic if `n = 0`)::
 
     >>> besselk(0,0)
-    +inf
+    inf
     >>> besselk(1,0)
-    +inf
+    inf
     >>> for n in range(-4, 5):
     ...     print(besselk(n, '1e-1000'))
     ...
@@ -6326,17 +6326,17 @@ Some special values and limits are::
     >>> lambertw(e)
     1.0
     >>> lambertw(inf)
-    +inf
+    inf
     >>> lambertw(0, k=-1)
     -inf
     >>> lambertw(0, k=3)
     -inf
     >>> lambertw(inf, k=2)
-    (+inf + 12.56637061435917295385057j)
+    (inf + 12.56637061435917295385057j)
     >>> lambertw(inf, k=3)
-    (+inf + 18.84955592153875943077586j)
+    (inf + 18.84955592153875943077586j)
     >>> lambertw(-inf, k=3)
-    (+inf + 21.9911485751285526692385j)
+    (inf + 21.9911485751285526692385j)
 
 The `k = 0` and `k = -1` branches join at `z = -1/e` where
 `W(z) = -1` for both branches. Since `-1/e` can only be represented
@@ -6401,7 +6401,7 @@ Some elementary values and limits of the Barnes G-function::
     >>> barnesg(8)
     24883200.0
     >>> barnesg(inf)
-    +inf
+    inf
     >>> barnesg(0), barnesg(-1), barnesg(-2)
     (0.0, 0.0, 0.0)
 
@@ -6730,7 +6730,7 @@ Some special values::
     1.200973602347074224816022
     1.200973602347074224816022
     >>> loggamma(inf)
-    +inf
+    inf
 
 Huge arguments are permitted::
 
@@ -6802,7 +6802,7 @@ complex arguments::
     >>> siegeltheta(0)
     0.0
     >>> siegeltheta(inf)
-    +inf
+    inf
     >>> siegeltheta(-inf)
     -inf
     >>> siegeltheta(1)
@@ -7174,7 +7174,7 @@ with residue equal to the difference of the Mertens and
 Euler constants::
 
     >>> primezeta(1)
-    +inf
+    inf
     >>> extradps(25)(lambda x: primezeta(1+x)+log(x))(+eps)
     -0.31571845205389007685
     >>> mertens-euler
@@ -8104,7 +8104,7 @@ Evaluation for arbitrary real and complex arguments is supported::
 Evaluation at zero::
 
     >>> whitm(1,-1,0); whitm(1,-0.5,0); whitm(1,0,0)
-    +inf
+    inf
     nan
     0.0
 
@@ -8158,11 +8158,11 @@ Evaluation at zero::
     >>> for m in [-1, -0.5, 0, 0.5, 1]:
     ...     whitw(1, m, 0)
     ...
-    +inf
+    inf
     nan
     0.0
     nan
-    +inf
+    inf
 
 We can verify that :func:`~mpmath.whitw` numerically satisfies the
 differential equation for arbitrarily chosen values::
@@ -9154,7 +9154,7 @@ The ordinary Riemann zeta function::
     1.202056903159594285399738
     1.202056903159594285399738
     >>> dirichlet(1, [1])
-    +inf
+    inf
 
 The alternating zeta function::
 
@@ -9753,7 +9753,7 @@ Evaluation for arbitrary `z`::
     >>> eulerpoly(5, -inf)
     -inf
     >>> eulerpoly(6, -inf)
-    +inf
+    inf
 
 Computing Euler numbers::
 
@@ -9997,7 +9997,7 @@ Some values and limits::
     0.2988589049025509052765491
     0.2988589049025509052765491
     >>> scorerhi(+inf); scorerhi(-inf)
-    +inf
+    inf
     0.0
     >>> scorerhi(1)
     0.9722051551424333218376886

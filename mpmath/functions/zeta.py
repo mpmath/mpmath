@@ -953,7 +953,7 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
         >>> secondzeta(-8)
         -0.67236328125
         >>> secondzeta(-7)
-        +inf
+        inf
 
     **Implementation notes**
 

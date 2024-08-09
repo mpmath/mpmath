@@ -62,3 +62,6 @@ htmlcov/
 
 # PyCharm files
 .idea/
+
+# Ignore files cached by Hypothesis (including examples directory so far)
+.hypothesis/

@@ -75,12 +75,30 @@ def test_mpf_fmt_cpython():
     float.__format__, when dps is default.
     '''
 
+    # 'f' code formatting.
+
     # zeros
     assert f'{mp.mpf(0):.0f}' == '0'
     assert f'{mp.mpf(0):.1f}' == '0.0'
     assert f'{mp.mpf(0):.2f}' == '0.00'
     assert f'{mp.mpf(0):.3f}' == '0.000'
     assert f'{mp.mpf(0):.50f}' == '0.00000000000000000000000000000000000000000000000000'
+
+    # nan, infs
+    assert f'{inf:f}' == 'inf'
+    assert f'{inf:+f}' == '+inf'
+    assert f'{inf:F}' == 'INF'
+    assert f'{inf:+F}' == '+INF'
+
+    assert f'{ninf:f}' == '-inf'
+    assert f'{ninf:+f}' == '-inf'
+    assert f'{ninf:F}' == '-INF'
+    assert f'{ninf:+F}' == '-INF'
+
+    assert f'{nan:f}' == 'nan'
+    assert f'{nan:+f}' == '+nan'
+    assert f'{nan:F}' == 'NAN'
+    assert f'{nan:+F}' == '+NAN'
 
     # precision 0;  result should never include a .
     assert f'{mp.mpf(1.5):.0f}' == '2'
@@ -164,6 +182,22 @@ def test_mpf_fmt_cpython():
     assert f'{mp.mpf(0):.2e}' == '0.00e+00'
     assert f'{mp.mpf(0):.10e}' == '0.0000000000e+00'
     assert f'{mp.mpf(0):.50e}' == '0.00000000000000000000000000000000000000000000000000e+00'
+
+    # nan, infs
+    assert f'{inf:e}' == 'inf'
+    assert f'{inf:+e}' == '+inf'
+    assert f'{inf:E}' == 'INF'
+    assert f'{inf:+E}' == '+INF'
+
+    assert f'{ninf:e}' == '-inf'
+    assert f'{ninf:+e}' == '-inf'
+    assert f'{ninf:E}' == '-INF'
+    assert f'{ninf:+E}' == '-INF'
+
+    assert f'{nan:e}' == 'nan'
+    assert f'{nan:+e}' == '+nan'
+    assert f'{nan:E}' == 'NAN'
+    assert f'{nan:+E}' == '+NAN'
 
     # precision 0.  no decimal point in the output
     assert f'{mp.mpf(0.01):.0e}' == '1e-02'
@@ -286,6 +320,22 @@ def test_mpf_fmt_cpython():
     assert f'{mp.mpf(0):.10g}' == '0'
     assert f'{mp.mpf(0):.50g}' == '0'
     assert f'{mp.mpf(0):.100g}' == '0'
+
+    # nan, infs
+    assert f'{inf:g}' == 'inf'
+    assert f'{inf:+g}' == '+inf'
+    assert f'{inf:G}' == 'INF'
+    assert f'{inf:+G}' == '+INF'
+
+    assert f'{ninf:g}' == '-inf'
+    assert f'{ninf:+g}' == '-inf'
+    assert f'{ninf:G}' == '-INF'
+    assert f'{ninf:+G}' == '-INF'
+
+    assert f'{nan:g}' == 'nan'
+    assert f'{nan:+g}' == '+nan'
+    assert f'{nan:G}' == 'NAN'
+    assert f'{nan:+G}' == '+NAN'
 
     # precision 0 doesn't make a lot of sense for the 'g' code (what does
     # it mean to have no significant digits?); in practice, it's interpreted
@@ -421,6 +471,11 @@ def test_mpf_float():
         if num != 0 and random.randint(0, 1):
             num = -num
         assert fmt_str.format(num) == fmt_str.format(mp.mpf(num))
+
+    # Test the same random formats with special numbers
+    for num in (inf, -inf, nan, 0):
+        fmt_str = random_fmt()
+        assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
 
 
 def test_mpf_fmt():
@@ -588,58 +643,6 @@ def test_mpf_fmt():
         assert f"{mp.mpf('-123.456'):.5Dg}" == "-123.46"
         assert f"{mp.mpf('-123.456'):.5Zg}" == "-123.45"
         assert f"{mp.mpf('-123.456'):.5Ng}" == "-123.46"
-
-
-def test_mpf_fmt_special():
-    assert f'{inf:f}' == 'inf'
-    assert f'{inf:+f}' == '+inf'
-    assert f'{inf:F}' == 'INF'
-    assert f'{inf:+F}' == '+INF'
-
-    assert f'{ninf:f}' == '-inf'
-    assert f'{ninf:+f}' == '-inf'
-    assert f'{ninf:F}' == '-INF'
-    assert f'{ninf:+F}' == '-INF'
-
-    assert f'{nan:f}' == 'nan'
-    assert f'{nan:+f}' == '+nan'
-    assert f'{nan:F}' == 'NAN'
-    assert f'{nan:+F}' == '+NAN'
-
-    assert f'{inf:e}' == 'inf'
-    assert f'{inf:+e}' == '+inf'
-    assert f'{inf:E}' == 'INF'
-    assert f'{inf:+E}' == '+INF'
-
-    assert f'{ninf:e}' == '-inf'
-    assert f'{ninf:+e}' == '-inf'
-    assert f'{ninf:E}' == '-INF'
-    assert f'{ninf:+E}' == '-INF'
-
-    assert f'{nan:e}' == 'nan'
-    assert f'{nan:+e}' == '+nan'
-    assert f'{nan:E}' == 'NAN'
-    assert '{:+E}'.format(nan) == '+NAN'
-
-    assert f'{inf:g}' == 'inf'
-    assert f'{inf:+g}' == '+inf'
-    assert f'{inf:G}' == 'INF'
-    assert f'{inf:+G}' == '+INF'
-
-    assert f'{ninf:g}' == '-inf'
-    assert f'{ninf:+g}' == '-inf'
-    assert f'{ninf:G}' == '-INF'
-    assert f'{ninf:+G}' == '-INF'
-
-    assert f'{nan:g}' == 'nan'
-    assert f'{nan:+g}' == '+nan'
-    assert f'{nan:G}' == 'NAN'
-    assert f'{nan:+G}' == '+NAN'
-
-    # Test the same random formats with special numbers
-    for num in (float('inf'), -float('inf'), float('nan'), 0):
-        fmt_str = random_fmt()
-        assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
 
 
 def test_errors():

@@ -43,12 +43,12 @@ round_fast = round_down
 def prec_to_dps(n):
     """Return number of accurate decimals that can be represented
     with a precision of n bits."""
-    return max(1, int(round(int(n)/3.3219280948873626)-1))
+    return max(1, int(round(int(n)/blog2_10)-1))
 
 def dps_to_prec(n):
     """Return the number of bits required to represent n decimals
     accurately."""
-    return max(1, int(round((int(n)+1)*3.3219280948873626)))
+    return max(1, int(round((int(n)+1)*blog2_10)))
 
 def repr_dps(n):
     """Return the number of decimal digits required to represent
@@ -79,6 +79,7 @@ finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
 math_float_inf = math.inf
+blog2_10 = 3.3219280948873626
 
 
 #----------------------------------------------------------------------------#
@@ -361,7 +362,7 @@ def from_Decimal(x, prec=0, rnd=round_fast):
     if x.is_nan(): return fnan
     if x.is_infinite(): return fninf if x.is_signed() else finf
     if not prec:
-        prec = int(len(x.as_tuple()[1])*3.3219280948873626)
+        prec = int(len(x.as_tuple()[1])*blog2_10)
     return from_str(str(x), prec, rnd)
 
 def to_float(s, strict=False, rnd=round_fast):
@@ -1062,7 +1063,7 @@ def to_digits_exp(s, dps, base=10):
         return '', '0', 0
 
     if base == 10:
-        blog2 = 3.3219280948873626
+        blog2 = blog2_10
     elif pow(2, blog2 := int(math.log2(base))) == base:
         pass
     else:
@@ -1205,7 +1206,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if show_zero_exponent:
                 t += sep + '+0'
             return prefix + t
-        if s == finf: return '+inf'
+        if s == finf: return 'inf'
         if s == fninf: return '-inf'
         if s == fnan: return 'nan'
         raise ValueError
@@ -1371,8 +1372,6 @@ def from_str(x, prec=0, rnd=round_fast, base=0):
 #                              String formatting                             #
 #----------------------------------------------------------------------------#
 
-blog2_10 = 3.3219280948873626
-
 _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?:
         (?P<fill_char>.)?
@@ -1391,6 +1390,12 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<type>[eEfFgG])
 """, re.DOTALL | re.VERBOSE).fullmatch
 
+_GMPY_ROUND_CHAR_DICT = {
+        'U': round_ceiling,
+        'D': round_floor,
+        'Z': round_down,
+        'N': round_nearest
+        }
 
 def calc_padding(nchars, width, align):
     '''
@@ -1446,11 +1451,9 @@ def read_format_spec(format_spec):
         rounding_char = match['rounding']
         format_dict['type'] = match['type'] or format_dict['type']
 
-        # ceil, floor, zero, nearest, down
         if rounding_char is not None:
-            for a, b in zip(list('cfdn'), list('UDZN')):
-                if rounding_char == b:
-                    format_dict['rounding'] = a
+            format_dict['rounding'] = _GMPY_ROUND_CHAR_DICT[rounding_char]
+
         if match['zeropad'] and match['fill_char']:
             raise ValueError('Cannot specify both 0-padding and a fill '
                              'character')
@@ -1625,6 +1628,13 @@ def format_mpf(num, format_spec):
     strip_last_zero = False
     strip_zeros = False
 
+    if format_dict['rounding'] == round_ceiling:
+        rounding = round_down if num[0] else round_up
+    elif format_dict['rounding'] == round_floor:
+        rounding = round_up if num[0] else round_down
+    else:
+        rounding = format_dict['rounding']
+
     if fmt_type == 'g':
         if not format_dict['alternate']:
             strip_last_zero = True
@@ -1653,7 +1663,7 @@ def format_mpf(num, format_spec):
                 base=10,
                 alternate=format_dict['alternate'],
                 no_neg_0=format_dict['no_neg_0'],
-                rounding=format_dict['rounding']
+                rounding=rounding
                 )
     else:  # The format type is scientific
         sign, digits = format_scientific(
@@ -1664,7 +1674,7 @@ def format_mpf(num, format_spec):
                 base=10,
                 capitalize=capitalize,
                 alternate=format_dict['alternate'],
-                rounding=format_dict['rounding']
+                rounding=rounding
                 )
 
     nchars = len(digits) + len(sign)

@@ -145,7 +145,7 @@ are human-readable, but can be compiled to prettier HTML using
 
 The most recent documentation is also available in HTML format:
 
-https://mpmath.org/doc/current/
+https://mpmath.readthedocs.io/
 
 3. Running tests
 ----------------

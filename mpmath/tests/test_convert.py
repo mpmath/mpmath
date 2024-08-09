@@ -41,7 +41,7 @@ def test_basic_string():
     assert str(mpf("-2163048125l")) == '-2163048125.0'
     assert str(mpf("-2163048125L/1088391168")) == '-1.98738118113799'
     assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
-    assert str(mpf('inf')) == '+inf'
+    assert str(mpf('inf')) == 'inf'
 
     # issue 613
     assert str(mpf('2_5_0_0.0')) == '2500.0'
@@ -277,7 +277,10 @@ def test_compatibility():
     assert sqrt(Fraction(2, 3)).ae(sqrt(mpf('2/3')))
     assert sqrt(Decimal(2)/Decimal(3)).ae(sqrt(mpf('2/3')))
     mp.prec = oldprec
-    pytest.raises(TypeError, lambda: mpmathify(np.array(1)))
+    assert mpmathify(np.array(123)) == mpf(123)
+    assert mpmathify(np.array(1.25)) == mpf(1.25)
+    assert mpmathify(np.array(0.5+1j)) == mpc(0.5+1j)
+    pytest.raises(TypeError, lambda: mpmathify(np.array([1])))
 
 def test_issue465():
     assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')
