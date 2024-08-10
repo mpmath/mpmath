@@ -1121,26 +1121,40 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     elif rounding == round_nearest:
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
-        rnd_digs = stddigits[:base]
+        rnd_digs = stddigits[1:base]
+
+    tie_down = False
+    tie_up = False
 
     if rounding == round_nearest:
-        tie_down = True
-
-        # The first digit after dps is a 5.
+        # The first digit after dps is a 5 and we should determine whether we
+        # round it up or down.
         if digits[dps] == rnd_digs[0]:
+            tie_down = True
+
+            # If the digit we round to is even, we may round down if all the
+            # following digits are 0.
+            for i in range(dps+1, len(digits)):
+                if digits[i] != '0':
+                    tie_down = False
+                    break
+            # If the digit we round to is odd, we round up no matter what.
             if digits[dps-1] in stddigits[1:base:2]:
                 tie_down = False
-            else:
-                for i in range(dps+1, len(digits)):
-                    if digits[i] != '0':
-                        tie_down = False
-                        break
-    else:
-        tie_down = False
 
-    # Subtract 1 from the next digit so that it will be rounded down.
+    elif rounding == round_up:
+        # If any digit following a 0 is different from zero, we round up.
+        if digits[dps] == '0':
+            for i in range(dps+1, len(digits)):
+                if digits[i] != '0':
+                    tie_up = True
+                    break
+
+    # Add or subtract a unit to the digit following the one we round to.
     if tie_down:
         digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
+    elif tie_up:
+        digits = digits[:dps] + '1'
 
     # Rounding up kills some instances of "...99999"
     if digits[dps] in rnd_digs:
@@ -1417,13 +1431,14 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
-    (?P<rounding>[UDZN])?
-    (?P<type>[eEfFgG])
+    (?P<rounding>[UDYZN])?
+    (?P<type>[eEfFgG])?
 """, re.DOTALL | re.VERBOSE).fullmatch
 
 _GMPY_ROUND_CHAR_DICT = {
         'U': round_ceiling,
         'D': round_floor,
+        'Y': round_up,
         'Z': round_down,
         'N': round_nearest
         }
@@ -1465,7 +1480,7 @@ def read_format_spec(format_spec):
         'width': -1,
         'precision': 6,
         'rounding': round_nearest,
-        'type': 'f'
+        'type': 'g'
         }
 
     if match := _FLOAT_FORMAT_SPECIFICATION_MATCHER(format_spec):
