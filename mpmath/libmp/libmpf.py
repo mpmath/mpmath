@@ -1103,7 +1103,7 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(digits, dps, base, rounding=round_nearest):
+def round_digits(sign, digits, dps, base, rounding=round_nearest):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1112,7 +1112,15 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     '''
 
     assert len(digits) > dps
-    assert rounding in (round_nearest, round_up, round_down)
+    assert rounding in (round_nearest, round_up, round_down, round_ceiling,
+                        round_floor)
+
+    if rounding == round_ceiling:
+        rounding = round_down if sign else round_up
+    elif rounding == round_floor:
+        rounding = round_up if sign else round_down
+    else:
+        rounding = rounding
 
     exponent = 0
 
@@ -1161,20 +1169,6 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     return digits, exponent
 
 
-def abs_rounding(rounding, sign):
-    """
-    Take into account the sign to determine which kind of rounding the actual
-    digits will use.
-    """
-
-    if rounding == round_ceiling:
-        return round_down if sign else round_up
-    elif rounding == round_floor:
-        return round_up if sign else round_down
-    else:
-        return rounding
-
-
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
            show_zero_exponent=False, base=10, binary_exp=False,
            rounding=None):
@@ -1211,8 +1205,6 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         warnings.warn("Calling to_str without specifying rounding mode is "
                       "deprecated. The new default rounding mode will be "
                       "round_nearest.", DeprecationWarning)
-    else:
-        rounding = abs_rounding(rounding, s[0])
 
     if base == 2:
         prefix = "0b"
@@ -1280,7 +1272,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 digits = digits[:dps]
 
         else:
-            digits, exp_add = round_digits(digits, dps, base, rounding)
+            digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
             exponent += exp_add
 
         # Prettify numbers close to unit magnitude
@@ -1545,7 +1537,7 @@ def format_fixed(s,
         if no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
     else:
-        digits, exp_add = round_digits(digits, dps, base, rounding)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
         exponent += exp_add
 
         # Here we prepend the corresponding 0s to the digits string, according
@@ -1611,7 +1603,7 @@ def format_scientific(s,
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
-    digits, exp_add = round_digits(digits, dps, base, rounding)
+    digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
     exponent += exp_add
 
     if strip_zeros:
@@ -1649,7 +1641,7 @@ def format_mpf(num, format_spec):
     strip_last_zero = False
     strip_zeros = False
 
-    rounding = abs_rounding(format_dict['rounding'], num[0])
+    rounding = format_dict['rounding']
 
     if fmt_type == 'g':
         if not format_dict['alternate']:
