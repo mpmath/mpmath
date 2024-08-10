@@ -666,6 +666,70 @@ def test_mpf_fmt():
         assert f"{mp.mpf('0.25'):.1Nf}" == "0.2"
         assert f"{mp.mpf('0.75'):.1Nf}" == "0.8"
 
+        num = mp.mpf('0.1')
+        assert f"{-num:=.2Df}" == "-0.11"
+        assert f"{-num:=.3Df}" == "-0.101"
+        assert f"{-num:=.4Df}" == "-0.1001"
+        assert f"{-num:=.5Df}" == "-0.10001"
+        assert f"{-num:=.6Df}" == "-0.100001"
+        assert f"{-num:=.7Df}" == "-0.1000001"
+
+        assert f"{-num:=.2De}" == "-1.01e-01"
+        assert f"{-num:=.3De}" == "-1.001e-01"
+        assert f"{-num:=.4De}" == "-1.0001e-01"
+        assert f"{-num:=.5De}" == "-1.00001e-01"
+        assert f"{-num:=.6De}" == "-1.000001e-01"
+        assert f"{-num:=.7De}" == "-1.0000001e-01"
+
+        assert f"{num:=.2Uf}" == "0.11"
+        assert f"{num:=.3Uf}" == "0.101"
+        assert f"{num:=.4Uf}" == "0.1001"
+        assert f"{num:=.5Uf}" == "0.10001"
+        assert f"{num:=.6Uf}" == "0.100001"
+        assert f"{num:=.7Uf}" == "0.1000001"
+
+        assert f"{num:=.2Ue}" == "1.01e-01"
+        assert f"{num:=.3Ue}" == "1.001e-01"
+        assert f"{num:=.4Ue}" == "1.0001e-01"
+        assert f"{num:=.5Ue}" == "1.00001e-01"
+        assert f"{num:=.6Ue}" == "1.000001e-01"
+        assert f"{num:=.7Ue}" == "1.0000001e-01"
+
+        num = mp.mpf('0.25')
+        assert f"{-num:=.2Df}" == "-0.25"
+        assert f"{-num:=.3Df}" == "-0.250"
+        assert f"{-num:=.4Df}" == "-0.2500"
+        assert f"{-num:=.5Df}" == "-0.25000"
+        assert f"{-num:=.6Df}" == "-0.250000"
+        assert f"{-num:=.7Df}" == "-0.2500000"
+
+        assert f"{-num:=.2De}" == "-2.50e-01"
+        assert f"{-num:=.3De}" == "-2.500e-01"
+        assert f"{-num:=.4De}" == "-2.5000e-01"
+        assert f"{-num:=.5De}" == "-2.50000e-01"
+        assert f"{-num:=.6De}" == "-2.500000e-01"
+        assert f"{-num:=.7De}" == "-2.5000000e-01"
+
+        assert f"{num:=.2Uf}" == "0.25"
+        assert f"{num:=.3Uf}" == "0.250"
+        assert f"{num:=.4Uf}" == "0.2500"
+        assert f"{num:=.5Uf}" == "0.25000"
+        assert f"{num:=.6Uf}" == "0.250000"
+        assert f"{num:=.7Uf}" == "0.2500000"
+
+        assert f"{num:=.2Ue}" == "2.50e-01"
+        assert f"{num:=.3Ue}" == "2.500e-01"
+        assert f"{num:=.4Ue}" == "2.5000e-01"
+        assert f"{num:=.5Ue}" == "2.50000e-01"
+        assert f"{num:=.6Ue}" == "2.500000e-01"
+        assert f"{num:=.7Ue}" == "2.5000000e-01"
+
+        # Changing the work precision changes the number printed (This is
+        # expected behavior)
+        with mp.workdps(20):
+            assert f"{mp.mpf('0.1'):=.4Uf}" == "0.1000"
+            assert f"{mp.mpf('-0.1'):=.4Df}" == "-0.1000"
+
 
 def test_errors():
     with pytest.raises(ValueError):
