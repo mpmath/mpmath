@@ -3,14 +3,10 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 """
 
 import math
+import random
 import re
 import sys
 import warnings
-
-
-# Importing random is slow
-#from random import getrandbits
-getrandbits = None
 
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy
 from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
@@ -444,11 +440,7 @@ def to_fixed(s, prec):
 def mpf_rand(prec):
     """Return a raw mpf chosen randomly from [0, 1), with prec bits
     in the mantissa."""
-    global getrandbits
-    if not getrandbits:
-        import random
-        getrandbits = random.getrandbits
-    return from_man_exp(getrandbits(prec), -prec, prec, round_floor)
+    return from_man_exp(random.getrandbits(prec), -prec, prec, round_floor)
 
 def mpf_eq(s, t):
     """Test equality of two raw mpfs. This is simply tuple comparison
