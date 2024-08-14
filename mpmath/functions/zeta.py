@@ -288,6 +288,10 @@ def bernpoly(ctx, n, z):
     n = int(n)
     if n < 0:
         raise ValueError("Bernoulli polynomials only defined for n >= 0")
+    if ctx.isinf(z):
+        return z ** n
+    if ctx.isnan(z):
+        return z
     if n <= 3:
         if n == 0: return z ** 0
         if n == 1: return z - 0.5
@@ -297,10 +301,6 @@ def bernpoly(ctx, n, z):
         return ctx.bernoulli(n)
     if z == 0.5:
         return (ctx.ldexp(1,1-n)-1)*ctx.bernoulli(n)
-    if ctx.isinf(z):
-        return z ** n
-    if ctx.isnan(z):
-        return z
     if abs(z) > 2:
         def terms():
             t = ctx.one
