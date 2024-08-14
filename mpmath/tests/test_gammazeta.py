@@ -694,3 +694,7 @@ def test_issue_471():
     assert bernpoly(4, inf) == inf
     assert bernpoly(4, mpc(inf, 0)) == mpc(inf, 0)
     assert isnan(bernpoly(4, nan))
+
+def test_issue_472():
+    assert bernpoly(4, mpc(inf, 1e-50)) == mpc(inf, 0)
+    assert mpc(inf, 2)**4 == mpc(inf, 0)
