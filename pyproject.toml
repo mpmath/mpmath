@@ -35,7 +35,8 @@ tests = ['pytest>=6', 'numpy', 'packaging', 'pytest-timeout',
          'pexpect', 'ipython', 'hypothesis']
 develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
            'pytest-cov', 'wheel', 'build']
-gmpy = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
+gmpy2 = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
+gmpy = ['mpmath[gmpy2]']
 docs = ['sphinx',
         'matplotlib; platform_python_implementation!="PyPy"',
         'sphinxcontrib-autoprogram']
