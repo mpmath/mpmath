@@ -19,10 +19,10 @@ or some specific version with::
 
     pip install mpmath==1.3.0
 
-You can install also extra dependencies, e.g. `gmpy
+You can install also extra dependencies, e.g. `gmpy2
 <https://github.com/aleaxit/gmpy>`_ support::
 
-    pip install mpmath[gmpy]
+    pip install mpmath[gmpy2]
 
 .. tip::
 
@@ -81,18 +81,18 @@ Python interpreter and do the following::
        python -m mpmath
 
 
-Using gmpy (optional)
----------------------
+Using gmpy2 (optional)
+----------------------
 
-If `gmpy <https://github.com/aleaxit/gmpy>`_ version 2.2.0 or later is
+If `gmpy2 <https://github.com/aleaxit/gmpy>`_ version 2.2.0 or later is
 installed on your system, mpmath will automatically detect it and transparently
-use gmpy integers instead of Python integers.  This makes mpmath much faster,
+use gmpy2 integers instead of Python integers.  This makes mpmath much faster,
 especially at high precision (approximately above 100 digits).
 
-To verify that mpmath uses gmpy, check the internal variable ``BACKEND`` is
+To verify that mpmath uses gmpy2, check the internal variable ``BACKEND`` is
 equal to 'gmpy'.
 
-Using the gmpy backend can be disabled by setting the ``MPMATH_NOGMPY``
+Using the gmpy2 backend can be disabled by setting the ``MPMATH_NOGMPY``
 environment variable.  Note that the mode cannot be switched during runtime;
 mpmath must be re-imported for this change to take effect.
 

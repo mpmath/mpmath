@@ -39,7 +39,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade setuptools pip
-        pip install --upgrade .[develop,gmpy,docs,ci]
+        pip install --upgrade .[develop,gmpy2,docs,ci]
     - name: Remove gmpy (for coverage tests)
       if: matrix.nogmpy
       run: pip uninstall -y gmpy2
