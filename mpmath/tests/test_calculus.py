@@ -36,6 +36,9 @@ def test_polyval():
     assert polyval(p,4,asc=True) == 253
     assert polyval(p,4,derivative=True,asc=True) == (253, 190)
 
+def test_polyval_asc_false():
+    assert polyval([1, 2, 3], 2, asc=False) == 11
+
 def test_polyval_deprecated():
     with pytest.deprecated_call():
         p = [4, 0, -2, 5]
