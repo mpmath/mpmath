@@ -179,6 +179,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
                       "code to use ascending order, asc=True.",
                       DeprecationWarning)
         asc = False
+    if not asc:
         coeffs = coeffs[::-1]
 
     orig = ctx.prec

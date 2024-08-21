@@ -54,6 +54,11 @@ def test_polyroots():
     assert polyroots([1], asc=True) == []
     pytest.raises(ValueError, lambda: polyroots([0], asc=True))
 
+def test_polyroots_asc_false():
+    p, q = polyroots([1,2,3], asc=False)
+    assert p.ae(-1 - sqrt(2)*j)
+    assert q.ae(-1 + sqrt(2)*j)
+
 def test_polyroots_deprecated():
     with pytest.deprecated_call():
         p, q = polyroots([1,2,3])
