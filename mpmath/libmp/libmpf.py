@@ -1397,7 +1397,7 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
     (?P<rounding>[UDYZN])?
-    (?P<type>[eEfFgG])?
+    (?P<type>[eEfFgG%])?
 """, re.DOTALL | re.VERBOSE).fullmatch
 
 _GMPY_ROUND_CHAR_DICT = {
@@ -1488,6 +1488,8 @@ def format_fixed(s,
                  base=10,
                  alternate=False,
                  no_neg_0=False,
+                 percent=False,
+                 prec=0,
                  rounding=round_nearest):
     '''
     Format a number into fixed point.
@@ -1495,6 +1497,9 @@ def format_fixed(s,
     the correct format.
     Does not perform padding or aligning
     '''
+
+    if percent:
+        s = mpf_mul(s, from_int(100), prec=prec, rnd=round_nearest)
 
     # First, get the exponent to know how many digits we will need
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1568,6 +1573,9 @@ def format_fixed(s,
     if digits[-1] == "." and strip_last_zero:
         digits = digits[:-1]
 
+    if percent:
+        digits = digits + '%'
+
     return sign, digits
 
 
@@ -1608,7 +1616,7 @@ def format_scientific(s,
     return sign, digits + sep + f'{exponent:+03d}'
 
 
-def format_mpf(num, format_spec):
+def format_mpf(num, format_spec, prec):
     format_dict = read_format_spec(format_spec)
 
     capitalize = False
@@ -1616,6 +1624,11 @@ def format_mpf(num, format_spec):
         capitalize = True
 
     fmt_type = format_dict['type'].lower()
+    percent = False
+    if fmt_type == '%':
+        percent = True
+        fmt_type = 'f'
+
     precision = format_dict['precision']
 
     digits = ''
@@ -1664,6 +1677,8 @@ def format_mpf(num, format_spec):
                 base=10,
                 alternate=format_dict['alternate'],
                 no_neg_0=format_dict['no_neg_0'],
+                percent=percent,
+                prec=prec,
                 rounding=rounding
                 )
     else:  # The format type is scientific
