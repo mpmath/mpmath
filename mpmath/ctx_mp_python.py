@@ -356,7 +356,8 @@ class _mpf(mpnumeric):
         return t ** s
 
     def __format__(s, format_spec):
-        return format_mpf(s._mpf_, format_spec)
+        _, _, (prec, _) = s._ctxdata
+        return format_mpf(s._mpf_, format_spec, prec)
 
     def sqrt(s):
         return s.context.sqrt(s)
