@@ -1215,11 +1215,6 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         if base not in (2, 16):
             raise ValueError("binary_exp option could be used for base 2 and 16")
 
-    if rounding is None:
-        warnings.warn("Calling to_str without specifying rounding mode is "
-                      "deprecated. The new default rounding mode will be "
-                  "round_nearest.", DeprecationWarning)
-
     if base == 2:
         prefix = "0b"
     elif base == 8:
