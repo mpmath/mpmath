@@ -77,6 +77,12 @@ def test_to_str():
     assert to_str(from_str('1', base=16), 6, base=16, binary_exp=True) == '0x1.0'
     pytest.raises(ValueError, lambda: to_str(from_str('1', base=16),
                                              6, binary_exp=True))
+    assert to_str(from_str('1.9999999999', prec=53, base=10), 6, rounding=None) == '2.0'
+    assert to_str(from_str('9.9999999999', prec=53, base=10), 6, rounding=None) == '10.0'
+    pytest.raises(ValueError, lambda: to_str(from_str('1', base=16),
+                                             6, binary_exp=True))
+    with pytest.raises(ValueError):
+        to_str(from_str('1.99999999', prec=0), 6)
 
 def test_pretty():
     mp.pretty = True
