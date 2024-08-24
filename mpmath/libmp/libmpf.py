@@ -1171,7 +1171,7 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest):
 
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
            show_zero_exponent=False, base=10, binary_exp=False,
-           rounding=None):
+           rounding=round_nearest):
     """
     Convert a raw mpf to a floating-point literal in the given base
     with at most `dps` digits in the mantissa (not counting extra zeros
@@ -1200,11 +1200,6 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         sep = 'p'
         if base not in (2, 16):
             raise ValueError("binary_exp option could be used for base 2 and 16")
-
-    if rounding is None:
-        warnings.warn("Calling to_str without specifying rounding mode is "
-                      "deprecated. The new default rounding mode will be "
-                      "round_nearest.", DeprecationWarning)
 
     if base == 2:
         prefix = "0b"
