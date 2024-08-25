@@ -77,6 +77,8 @@ def test_to_str():
     assert to_str(from_str('1', base=16), 6, base=16, binary_exp=True) == '0x1.0'
     pytest.raises(ValueError, lambda: to_str(from_str('1', base=16),
                                              6, binary_exp=True))
+    pytest.raises(ValueError, lambda: to_str(from_str('1', base=16),
+                                             6, rounding='Y'))
 
 def test_pretty():
     mp.pretty = True
