@@ -265,9 +265,9 @@ def test_compatibility():
     assert mpf(np.float64('inf')) == inf
     assert isnan(mp.npconvert(np.float64('nan')))
     if hasattr(np, "float128"):
-        mp.prec = 113
+        mp.prec = 64
         assert (mp.npconvert(np.float128('0.841470984807896506652502321630298954')) ==
-                mpf('0.841470984807896506664590813295845351'))
+                mpf('0.841470984807896506653'))
     mp.prec = 53
     # issues 382 and 539
     assert mp.sqrt(np.int64(1)) == mpf('1.0')

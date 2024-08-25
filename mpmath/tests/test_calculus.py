@@ -36,6 +36,9 @@ def test_polyval():
     assert polyval(p,4,asc=True) == 253
     assert polyval(p,4,derivative=True,asc=True) == (253, 190)
 
+def test_polyval_asc_false():
+    assert polyval([1, 2, 3], 2, asc=False) == 11
+
 def test_polyval_deprecated():
     with pytest.deprecated_call():
         p = [4, 0, -2, 5]
@@ -50,6 +53,11 @@ def test_polyroots():
     #this is not a real test, it only tests a specific case
     assert polyroots([1], asc=True) == []
     pytest.raises(ValueError, lambda: polyroots([0], asc=True))
+
+def test_polyroots_asc_false():
+    p, q = polyroots([1,2,3], asc=False)
+    assert p.ae(-1 - sqrt(2)*j)
+    assert q.ae(-1 + sqrt(2)*j)
 
 def test_polyroots_deprecated():
     with pytest.deprecated_call():
