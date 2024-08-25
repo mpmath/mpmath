@@ -1215,6 +1215,13 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         if base not in (2, 16):
             raise ValueError("binary_exp option could be used for base 2 and 16")
 
+
+    if rounding not in (round_nearest, round_floor, round_ceiling, round_up,
+                        round_down):
+        raise ValueError("rounding should be one of " +
+                         ", ".join([round_nearest, round_floor, round_ceiling,
+                                   round_up, round_down]) + ".")
+
     if base == 2:
         prefix = "0b"
     elif base == 8:
