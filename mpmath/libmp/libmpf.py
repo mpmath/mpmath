@@ -855,15 +855,18 @@ def mpf_div(s, t, prec, rnd=round_fast):
         return normalize(sign, sman, sexp-texp, sbc, prec, rnd)
     # Same strategy as for addition: if there is a remainder, perturb
     # the result a few bits outside the precision range before rounding
-    extra = prec - sbc + tbc + 5
+    if not prec:
+        extra = max(sbc, tbc) - sbc + tbc + 5
+    else:
+        extra = prec - sbc + tbc + 5
     if extra < 5:
         extra = 5
     quot, rem = divmod(sman<<extra, tman)
     if rem:
         quot = (quot<<1) + 1
         extra += 1
-        return normalize(sign, quot, sexp-texp-extra, quot.bit_length(), prec, rnd)
-    return normalize(sign, quot, sexp-texp-extra, quot.bit_length(), prec, rnd)
+    bc = quot.bit_length()
+    return normalize(sign, quot, sexp-texp-extra, bc, prec or bc, rnd)
 
 def mpf_rdiv_int(n, t, prec, rnd=round_fast):
     """Floating-point division n/t with a Python integer as numerator"""
