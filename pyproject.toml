@@ -30,12 +30,13 @@ Homepage = 'https://mpmath.org/'
 'Bug Tracker' = 'https://github.com/mpmath/mpmath/issues'
 Documentation = 'http://mpmath.org/doc/current/'
 [project.optional-dependencies]
-tests = ['pytest>=6', 'numpy', 'packaging',
+tests = ['pytest>=6', 'numpy', 'packaging', 'pytest-timeout',
          'matplotlib; platform_python_implementation!="PyPy"',
          'pexpect', 'ipython', 'hypothesis']
 develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
            'pytest-cov', 'wheel', 'build']
-gmpy = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
+gmpy2 = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
+gmpy = ['mpmath[gmpy2]']
 docs = ['sphinx',
         'matplotlib; platform_python_implementation!="PyPy"',
         'sphinxcontrib-autoprogram']
@@ -58,6 +59,7 @@ addopts = "--durations=20 --doctest-modules --doctest-glob='*.rst'"
 norecursedirs = ['docs/plots', 'demo', '.eggs', '.git']
 filterwarnings = ['error::DeprecationWarning']
 xfail_strict = true
+timeout = 300
 [tool.coverage.run]
 branch = true
 omit = ['mpmath/tests/*']

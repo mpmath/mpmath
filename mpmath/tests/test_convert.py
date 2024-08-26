@@ -60,6 +60,7 @@ def test_from_str():
     assert mpf(from_str('0x1.4ace478@+33')) == mpf('7.0354608312666732e+39')
     assert mpf(from_str('0b1101.100101')) == mpf('13.578125')
     assert mpf(from_str('0o1101.100101')) == mpf('577.12524795532227')
+    assert mpf(from_str('1.99999999', prec=0)) == mpf('1.9999999901046976')
 
 def test_eps_repr():
     mp.dps = 24
