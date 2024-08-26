@@ -404,7 +404,8 @@ class _mpf(mpnumeric):
             -1.23457
         """
 
-        return format_mpf(s._mpf_, format_spec)
+        _, _, (prec, _) = s._ctxdata
+        return format_mpf(s._mpf_, format_spec, prec)
 
     def sqrt(s):
         return s.context.sqrt(s)
@@ -752,7 +753,7 @@ class PythonMPContext:
         import numpy as np
         if isinstance(x, np.ndarray) and x.ndim == 0: x = x.item()
         if isinstance(x, (np.integer, int)): return ctx.make_mpf(from_int(int(x)))
-        if isinstance(x, (np.floating, float)): return ctx.make_mpf(from_npfloat(x))
+        if isinstance(x, (np.floating, float)): return ctx.mpf(from_npfloat(x))
         if isinstance(x, (np.complexfloating, complex)):
             return ctx.make_mpc((from_npfloat(x.real), from_npfloat(x.imag)))
         raise TypeError("cannot create mpf from " + repr(x))

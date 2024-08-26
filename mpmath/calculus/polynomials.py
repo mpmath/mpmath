@@ -39,10 +39,11 @@ def polyval(ctx, coeffs, x, derivative=False, asc=None):
         return ctx.zero
     if asc is None:
         warnings.warn("Descending (wrt powers) order of polynomial "
-                      "coefficients is deprecated, please adapt you "
+                      "coefficients is deprecated, please adapt your "
                       "code to use ascending order, asc=True.",
                       DeprecationWarning)
         asc = False
+    if not asc:
         coeffs = coeffs[::-1]
     p = ctx.convert(coeffs[-1])
     q = ctx.zero
@@ -178,6 +179,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
                       "code to use ascending order, asc=True.",
                       DeprecationWarning)
         asc = False
+    if not asc:
         coeffs = coeffs[::-1]
 
     orig = ctx.prec

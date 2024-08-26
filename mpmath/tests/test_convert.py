@@ -60,6 +60,7 @@ def test_from_str():
     assert mpf(from_str('0x1.4ace478@+33')) == mpf('7.0354608312666732e+39')
     assert mpf(from_str('0b1101.100101')) == mpf('13.578125')
     assert mpf(from_str('0o1101.100101')) == mpf('577.12524795532227')
+    assert mpf(from_str('1.99999999', prec=0)) == mpf('1.9999999901046976')
 
 def test_eps_repr():
     mp.dps = 24
@@ -75,8 +76,12 @@ def test_to_str():
     assert to_str(from_str('0x1.4ace478p+33'), 7, base=16, binary_exp=True) == '0x1.4ace48p+33'
     assert to_str(from_str('0x1.4ace478p+33'), 5, base=16, binary_exp=True) == '0x1.4acep+33'
     assert to_str(from_str('1', base=16), 6, base=16, binary_exp=True) == '0x1.0'
-    pytest.raises(ValueError, lambda: to_str(from_str('1', base=16),
-                                             6, binary_exp=True))
+    x = mpf('1234.567891')._mpf_
+    pytest.raises(ValueError, lambda: to_str(x, 6, binary_exp=True))
+    pytest.raises(ValueError, lambda: to_str(x, 6, rounding='Y'))
+    assert to_str(x, 5, rounding='n') == '1234.6'
+    assert to_str(x, 5, rounding='d') == '1234.5'
+    assert to_str(x, 5, rounding='u') == '1234.6'
 
 def test_pretty():
     mp.pretty = True
@@ -263,9 +268,9 @@ def test_compatibility():
     assert mpf(np.float64('inf')) == inf
     assert isnan(mp.npconvert(np.float64('nan')))
     if hasattr(np, "float128"):
-        mp.prec = 113
+        mp.prec = 64
         assert (mp.npconvert(np.float128('0.841470984807896506652502321630298954')) ==
-                mpf('0.841470984807896506664590813295845351'))
+                mpf('0.841470984807896506653'))
     mp.prec = 53
     # issues 382 and 539
     assert mp.sqrt(np.int64(1)) == mpf('1.0')

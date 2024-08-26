@@ -63,7 +63,7 @@ def random_fmt():
         fmt_str += '.' + str(random.randint(1, 40))
 
     # Type
-    fmt_str += random.choice('fFgGeE')
+    fmt_str += random.choice('fFgGeE%')
     fmt_str += '}'
 
     return fmt_str
