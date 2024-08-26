@@ -1098,7 +1098,7 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(digits, dps, base, rounding=round_nearest):
+def round_digits(sign, digits, dps, base, rounding=round_nearest):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1107,7 +1107,15 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     '''
 
     assert len(digits) > dps
-    assert rounding in (round_nearest, round_up, round_down)
+    assert rounding in (round_nearest, round_up, round_down, round_ceiling,
+                        round_floor)
+
+    if rounding == round_ceiling:
+        rounding = round_down if sign else round_up
+    elif rounding == round_floor:
+        rounding = round_up if sign else round_down
+    else:
+        rounding = rounding
 
     exponent = 0
 
@@ -1170,9 +1178,9 @@ def round_digits(digits, dps, base, rounding=round_nearest):
     return digits, exponent
 
 
-
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
-           show_zero_exponent=False, base=10, binary_exp=False):
+           show_zero_exponent=False, base=10, binary_exp=False,
+           rounding=round_nearest):
     """
     Convert a raw mpf to a floating-point literal in the given base
     with at most `dps` digits in the mantissa (not counting extra zeros
@@ -1201,6 +1209,13 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         sep = 'p'
         if base not in (2, 16):
             raise ValueError("binary_exp option could be used for base 2 and 16")
+
+
+    if rounding not in (round_nearest, round_floor, round_ceiling, round_up,
+                        round_down):
+        raise ValueError("rounding should be one of " +
+                         ", ".join([round_nearest, round_floor, round_ceiling,
+                                   round_up, round_down]) + ".")
 
     if base == 2:
         prefix = "0b"
@@ -1249,21 +1264,8 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 n = int(digits, 16) >> shift
                 digits = hex(n)[2:]
 
-        # Rounding up kills some instances of "...99999"
-        if len(digits) > dps and digits[dps] in rnd_digs:
-            digits = digits[:dps]
-            i = dps - 1
-            dig = stddigits[base-1]
-            while i >= 0 and digits[i] == dig:
-                i -= 1
-            if i >= 0:
-                digits = digits[:i] + stddigits[int(digits[i], base) + 1] + \
-                    '0' * (dps - i - 1)
-            else:
-                digits = '1' + '0' * (dps - 1)
-                exponent += 1
-        else:
-            digits = digits[:dps]
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+        exponent += exp_add
 
         # Prettify numbers close to unit magnitude
         if not binary_exp and min_fixed < exponent < max_fixed:
@@ -1533,7 +1535,7 @@ def format_fixed(s,
         if no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
     else:
-        digits, exp_add = round_digits(digits, dps, base, rounding)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
         exponent += exp_add
 
         # Here we prepend the corresponding 0s to the digits string, according
@@ -1602,7 +1604,7 @@ def format_scientific(s,
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
-    digits, exp_add = round_digits(digits, dps, base, rounding)
+    digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
     exponent += exp_add
 
     if strip_zeros:
@@ -1645,12 +1647,7 @@ def format_mpf(num, format_spec, prec):
     strip_last_zero = False
     strip_zeros = False
 
-    if format_dict['rounding'] == round_ceiling:
-        rounding = round_down if num[0] else round_up
-    elif format_dict['rounding'] == round_floor:
-        rounding = round_up if num[0] else round_down
-    else:
-        rounding = format_dict['rounding']
+    rounding = format_dict['rounding']
 
     if fmt_type == 'g':
         if not format_dict['alternate']:

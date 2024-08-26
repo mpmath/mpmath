@@ -76,8 +76,12 @@ def test_to_str():
     assert to_str(from_str('0x1.4ace478p+33'), 7, base=16, binary_exp=True) == '0x1.4ace48p+33'
     assert to_str(from_str('0x1.4ace478p+33'), 5, base=16, binary_exp=True) == '0x1.4acep+33'
     assert to_str(from_str('1', base=16), 6, base=16, binary_exp=True) == '0x1.0'
-    pytest.raises(ValueError, lambda: to_str(from_str('1', base=16),
-                                             6, binary_exp=True))
+    x = mpf('1234.567891')._mpf_
+    pytest.raises(ValueError, lambda: to_str(x, 6, binary_exp=True))
+    pytest.raises(ValueError, lambda: to_str(x, 6, rounding='Y'))
+    assert to_str(x, 5, rounding='n') == '1234.6'
+    assert to_str(x, 5, rounding='d') == '1234.5'
+    assert to_str(x, 5, rounding='u') == '1234.6'
 
 def test_pretty():
     mp.pretty = True
