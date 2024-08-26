@@ -367,9 +367,8 @@ class _mpf(mpnumeric):
             3.14159265358979323846e+01
 
         The format specification adopts the same general form as Python's
-        :external:ref:`formatspec`. The only format types supported by ``mpf``
-        as of now are ``"e"``, ``"E"``, ``"f"``, ``"F"``, ``"g"`` ,
-        and ``"G"``.
+        :external:ref:`formatspec`. All of Python's format types are supported,
+        with the exception of ``n``.
 
         The formatter does not track the actual precision of the ``mpf``
         objects. If precision is left as default, the resulting string is
