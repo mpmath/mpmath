@@ -29,7 +29,7 @@ Basic features
    general
    plotting
    cli
-   auto_plots
+   auto_plots/index
 
 Advanced mathematics
 --------------------
