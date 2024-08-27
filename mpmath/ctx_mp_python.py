@@ -374,12 +374,12 @@ class _mpf(mpnumeric):
         same as if printing a regular :external:class:`float`:
 
             >>> mp.dps = fp.dps
-            >>> f'{mp.mpf('1.22'):.25f}'
+            >>> f"{mp.mpf('1.22'):.25f}"
             '1.2199999999999999733546474'
             >>> f'{1.22:.25f}'
             '1.2199999999999999733546474'
             >>> mp.dps = 50
-            >>> f'{mp.mpf('1.22'):.25f}'
+            >>> f"{mp.mpf('1.22'):.25f}"
             '1.2200000000000000000000000'
 
         In addition to the normal Python features, four different kinds of
