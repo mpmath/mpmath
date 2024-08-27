@@ -361,32 +361,29 @@ class _mpf(mpnumeric):
 
             >>> from mpmath import fp, mp, pi
             >>> mp.dps = 50
-            >>> print('{:55.50f}'.format(pi))
-               3.14159265358979323846264338327950288419716939937511
-            >>> print(f"{10*pi:.20e}")
-            3.14159265358979323846e+01
+            >>> format(pi, '*^60.50f')
+            '****3.14159265358979323846264338327950288419716939937511****'
+            >>> f'{10*pi:.20e}'
+            '3.14159265358979323846e+01'
 
         The format specification adopts the same general form as Python's
-        :external:ref:`formatspec`. All of Python's format types are supported,
-        with the exception of ``n``.
+        :external:ref:`formatspec`.  All of Python's format types are
+        supported, with the exception of ``n``.
 
-        The formatter does not track the actual precision of the ``mpf``
-        objects. If precision is left as default, the resulting string is
-        exactly the same as if printing a regular :external:class:`float`.
+        If precision is left as default, the resulting string is exactly the
+        same as if printing a regular :external:class:`float`:
 
             >>> mp.dps = fp.dps
-            >>> print('{:.25f}'.format(mp.mpf('1.22')))
-            1.2199999999999999733546474
-            >>> print('{:.25f}'.format(1.22))
-            1.2199999999999999733546474
+            >>> f'{mp.mpf('1.22'):.25f}'
+            '1.2199999999999999733546474'
+            >>> f'{1.22:.25f}'
+            '1.2199999999999999733546474'
             >>> mp.dps = 50
-            >>> print('{:.25f}'.format(mp.mpf('1.22')))
-            1.2200000000000000000000000
-            >>> print('{:.25f}'.format(1.22))
-            1.2199999999999999733546474
+            >>> f'{mp.mpf('1.22'):.25f}'
+            '1.2200000000000000000000000'
 
-        In addition to the normal Python features, the ``mpf.__format__``
-        method supports four different kinds of rounding:
+        In addition to the normal Python features, four different kinds of
+        rounding are supported:
 
             * 'U': rounding towards plus infinity
             * 'D': rounding towards minus infinity
@@ -394,13 +391,13 @@ class _mpf(mpnumeric):
             * 'Z': rounding towards zero
             * 'N': rounding to nearest (default)
 
-        The rounding option must be set before the presentation type. For
-        example::
+        The rounding option must be set right before the presentation type:
 
-            >>> print('{:.5Uf}'.format(mp.mpf('-1.2345678')))
-            -1.23456
-            >>> print('{:.5Df}'.format(mp.mpf('-1.2345678')))
-            -1.23457
+            >>> x = mp.mpf('-1.2345678')
+            >>> f'{x:.5Uf}'
+            '-1.23456'
+            >>> f'{x:.5Df}'
+            '-1.23457'
         """
 
         _, _, (prec, _) = s._ctxdata

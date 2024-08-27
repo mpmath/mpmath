@@ -19,9 +19,9 @@ Conversion and printing
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.nprint(x, n=6, **kwargs)
 
-:func:`~mpmath.ctx_mp_python._mpf.__format__`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.ctx_mp_python._mpf.__format__(s, format_spec)
+:func:`~mpmath.mpf.__format__`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.mpf.__format__(s, format_spec)
 
 Arithmetic operations
 ---------------------
