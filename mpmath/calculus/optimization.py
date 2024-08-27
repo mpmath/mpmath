@@ -1038,10 +1038,11 @@ def steffensen(f):
     Let's try Steffensen's method:
 
     >>> f = lambda x: x**2
+    >>> from mpmath import mp
     >>> from mpmath.calculus.optimization import steffensen
     >>> F = steffensen(f)
     >>> for x in [0.5, 0.9, 2.0]:
-    ...     fx = Fx = x
+    ...     fx = Fx = mp.mpf(x)
     ...     for i in range(9):
     ...         try:
     ...             fx = f(fx)
@@ -1051,16 +1052,16 @@ def steffensen(f):
     ...             Fx = F(Fx)
     ...         except ZeroDivisionError:
     ...             pass
-    ...         print('%20g  %20g' % (fx, Fx))
+    ...         print(f'{fx:20g}  {Fx:20g}')
                     0.25                  -0.5
                   0.0625                   0.1
               0.00390625            -0.0011236
              1.52588e-05           1.41691e-09
              2.32831e-10          -2.84465e-27
              5.42101e-20           2.30189e-80
-             2.93874e-39          -1.2197e-239
-             8.63617e-78                     0
-            7.45834e-155                     0
+             2.93874e-39         -1.21971e-239
+             8.63617e-78          1.81455e-717
+            7.45834e-155        -5.97459e-2151
                     0.81               1.02676
                   0.6561               1.00134
                 0.430467                     1

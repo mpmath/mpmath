@@ -260,7 +260,7 @@ def mpc_pow_int(z, n, prec, rnd=round_fast):
     de = aexp - bexp
     abs_de = abs(de)
     exact_size = n*(abs_de + max(abc, bbc))
-    if exact_size < 10000:
+    if exact_size < 10000 and min(abc, bbc) >= 0:
         if de > 0:
             aman <<= de
             aexp = bexp

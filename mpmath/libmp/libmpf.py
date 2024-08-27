@@ -3,14 +3,10 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 """
 
 import math
+import random
 import re
 import sys
 import warnings
-
-
-# Importing random is slow
-#from random import getrandbits
-getrandbits = None
 
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy
 from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
@@ -449,11 +445,7 @@ def to_fixed(s, prec):
 def mpf_rand(prec):
     """Return a raw mpf chosen randomly from [0, 1), with prec bits
     in the mantissa."""
-    global getrandbits
-    if not getrandbits:
-        import random
-        getrandbits = random.getrandbits
-    return from_man_exp(getrandbits(prec), -prec, prec, round_floor)
+    return from_man_exp(random.getrandbits(prec), -prec, prec, round_floor)
 
 def mpf_eq(s, t):
     """Test equality of two raw mpfs. This is simply tuple comparison
@@ -869,15 +861,18 @@ def mpf_div(s, t, prec, rnd=round_fast):
         return normalize(sign, sman, sexp-texp, sbc, prec, rnd)
     # Same strategy as for addition: if there is a remainder, perturb
     # the result a few bits outside the precision range before rounding
-    extra = prec - sbc + tbc + 5
+    if not prec:
+        extra = max(sbc, tbc) - sbc + tbc + 5
+    else:
+        extra = prec - sbc + tbc + 5
     if extra < 5:
         extra = 5
     quot, rem = divmod(sman<<extra, tman)
     if rem:
         quot = (quot<<1) + 1
         extra += 1
-        return normalize(sign, quot, sexp-texp-extra, quot.bit_length(), prec, rnd)
-    return normalize(sign, quot, sexp-texp-extra, quot.bit_length(), prec, rnd)
+    bc = quot.bit_length()
+    return normalize(sign, quot, sexp-texp-extra, bc, prec or bc, rnd)
 
 def mpf_rdiv_int(n, t, prec, rnd=round_fast):
     """Floating-point division n/t with a Python integer as numerator"""
@@ -1109,29 +1104,66 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(digits, dps, base):
+def round_digits(sign, digits, dps, base, rounding=round_nearest):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
+
+    Supports three kinds of rounding: up, down, or nearest.
     '''
 
     assert len(digits) > dps
+    assert rounding in (round_nearest, round_up, round_down, round_ceiling,
+                        round_floor)
+
+    if rounding == round_ceiling:
+        rounding = round_down if sign else round_up
+    elif rounding == round_floor:
+        rounding = round_up if sign else round_down
+    else:
+        rounding = rounding
+
     exponent = 0
 
-    rnd_digs = stddigits[(base//2 + base % 2):base]
+    if rounding == round_down:
+        return digits[:dps], 0
+    elif rounding == round_nearest:
+        rnd_digs = stddigits[(base//2 + base % 2):base]
+    else:
+        rnd_digs = stddigits[1:base]
 
-    round_up = False
-    # The first digit after dps is a 5.
-    if digits[dps] == rnd_digs[0]:
-        for i in range(dps+1, len(digits)):
-            if digits[i] != '0':
-                round_up = True
-                break
-        if digits[dps-1] in stddigits[1:base:2]:
-            round_up = True
+    tie_down = False
+    tie_up = False
 
-    if not round_up:
+    if rounding == round_nearest:
+        # The first digit after dps is a 5 and we should determine whether we
+        # round it up or down.
+        if digits[dps] == rnd_digs[0]:
+            tie_down = True
+
+            # If the digit we round to is even, we may round down if all the
+            # following digits are 0.
+            for i in range(dps+1, len(digits)):
+                if digits[i] != '0':
+                    tie_down = False
+                    break
+            # If the digit we round to is odd, we round up no matter what.
+            if digits[dps-1] in stddigits[1:base:2]:
+                tie_down = False
+
+    elif rounding == round_up:
+        # If any digit following a 0 is different from zero, we round up.
+        if digits[dps] == '0':
+            for i in range(dps+1, len(digits)):
+                if digits[i] != '0':
+                    tie_up = True
+                    break
+
+    # Add or subtract a unit to the digit following the one we round to.
+    if tie_down:
         digits = digits[:dps] + stddigits[int(digits[dps], base) - 1]
+    elif tie_up:
+        digits = digits[:dps] + '1'
 
     # Rounding up kills some instances of "...99999"
     if digits[dps] in rnd_digs:
@@ -1152,9 +1184,9 @@ def round_digits(digits, dps, base):
     return digits, exponent
 
 
-
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
-           show_zero_exponent=False, base=10, binary_exp=False):
+           show_zero_exponent=False, base=10, binary_exp=False,
+           rounding=round_nearest):
     """
     Convert a raw mpf to a floating-point literal in the given base
     with at most `dps` digits in the mantissa (not counting extra zeros
@@ -1184,6 +1216,13 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         if base not in (2, 16):
             raise ValueError("binary_exp option could be used for base 2 and 16")
 
+
+    if rounding not in (round_nearest, round_floor, round_ceiling, round_up,
+                        round_down):
+        raise ValueError("rounding should be one of " +
+                         ", ".join([round_nearest, round_floor, round_ceiling,
+                                   round_up, round_down]) + ".")
+
     if base == 2:
         prefix = "0b"
     elif base == 8:
@@ -1207,7 +1246,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if show_zero_exponent:
                 t += sep + '+0'
             return prefix + t
-        if s == finf: return '+inf'
+        if s == finf: return 'inf'
         if s == fninf: return '-inf'
         if s == fnan: return 'nan'
         raise ValueError
@@ -1237,21 +1276,8 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 n = int(digits, 16) >> shift
                 digits = hex(n)[2:]
 
-        # Rounding up kills some instances of "...99999"
-        if len(digits) > dps and digits[dps] in rnd_digs:
-            digits = digits[:dps]
-            i = dps - 1
-            dig = stddigits[base-1]
-            while i >= 0 and digits[i] == dig:
-                i -= 1
-            if i >= 0:
-                digits = digits[:i] + stddigits[int(digits[i], base) + 1] + \
-                    '0' * (dps - i - 1)
-            else:
-                digits = '1' + '0' * (dps - 1)
-                exponent += 1
-        else:
-            digits = digits[:dps]
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+        exponent += exp_add
 
         # Prettify numbers close to unit magnitude
         if not binary_exp and min_fixed < exponent < max_fixed:
@@ -1390,9 +1416,17 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
-    (?P<type>[eEfFgG])
+    (?P<rounding>[UDYZN])?
+    (?P<type>[eEfFgG%])?
 """, re.DOTALL | re.VERBOSE).fullmatch
 
+_GMPY_ROUND_CHAR_DICT = {
+        'U': round_ceiling,
+        'D': round_floor,
+        'Y': round_up,
+        'Z': round_down,
+        'N': round_nearest
+        }
 
 def calc_padding(nchars, width, align):
     '''
@@ -1430,7 +1464,8 @@ def read_format_spec(format_spec):
         'thousands_separators': '',
         'width': -1,
         'precision': 6,
-        'type': 'f'
+        'rounding': round_nearest,
+        'type': 'g'
         }
 
     if match := _FLOAT_FORMAT_SPECIFICATION_MATCHER(format_spec):
@@ -1444,7 +1479,11 @@ def read_format_spec(format_spec):
             or format_dict['thousands_separators']
         format_dict['width'] = int(match['width'] or format_dict['width'])
         format_dict['precision'] = int(match['precision'] or format_dict['precision'])
+        rounding_char = match['rounding']
         format_dict['type'] = match['type'] or format_dict['type']
+
+        if rounding_char is not None:
+            format_dict['rounding'] = _GMPY_ROUND_CHAR_DICT[rounding_char]
 
         if match['zeropad'] and match['fill_char']:
             raise ValueError('Cannot specify both 0-padding and a fill '
@@ -1468,13 +1507,19 @@ def format_fixed(s,
                  sep_range=3,
                  base=10,
                  alternate=False,
-                 no_neg_0=False):
+                 no_neg_0=False,
+                 percent=False,
+                 prec=0,
+                 rounding=round_nearest):
     '''
     Format a number into fixed point.
     Returns the sign character, and the string that represents the number in
     the correct format.
     Does not perform padding or aligning
     '''
+
+    if percent:
+        s = mpf_mul(s, from_int(100), prec=prec, rnd=round_nearest)
 
     # First, get the exponent to know how many digits we will need
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1505,7 +1550,7 @@ def format_fixed(s,
         if no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
     else:
-        digits, exp_add = round_digits(digits, dps, base)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
         exponent += exp_add
 
         # Here we prepend the corresponding 0s to the digits string, according
@@ -1548,6 +1593,9 @@ def format_fixed(s,
     if digits[-1] == "." and strip_last_zero:
         digits = digits[:-1]
 
+    if percent:
+        digits = digits + '%'
+
     return sign, digits
 
 
@@ -1558,7 +1606,8 @@ def format_scientific(s,
                       base=10,
                       capitalize=False,
                       alternate=False,
-                      no_neg_0=False):
+                      rounding=round_nearest):
+
 
     sep = 'E' if capitalize else 'e'
 
@@ -1570,7 +1619,7 @@ def format_scientific(s,
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
-    digits, exp_add = round_digits(digits, dps, base)
+    digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
     exponent += exp_add
 
     if strip_zeros:
@@ -1587,7 +1636,7 @@ def format_scientific(s,
     return sign, digits + sep + f'{exponent:+03d}'
 
 
-def format_mpf(num, format_spec):
+def format_mpf(num, format_spec, prec):
     format_dict = read_format_spec(format_spec)
 
     capitalize = False
@@ -1595,6 +1644,11 @@ def format_mpf(num, format_spec):
         capitalize = True
 
     fmt_type = format_dict['type'].lower()
+    percent = False
+    if fmt_type == '%':
+        percent = True
+        fmt_type = 'f'
+
     precision = format_dict['precision']
 
     digits = ''
@@ -1607,6 +1661,8 @@ def format_mpf(num, format_spec):
     # Now the general case
     strip_last_zero = False
     strip_zeros = False
+
+    rounding = format_dict['rounding']
 
     if fmt_type == 'g':
         if not format_dict['alternate']:
@@ -1635,7 +1691,10 @@ def format_mpf(num, format_spec):
                 sep_range=3,
                 base=10,
                 alternate=format_dict['alternate'],
-                no_neg_0=format_dict['no_neg_0']
+                no_neg_0=format_dict['no_neg_0'],
+                percent=percent,
+                prec=prec,
+                rounding=rounding
                 )
     else:  # The format type is scientific
         sign, digits = format_scientific(
@@ -1646,7 +1705,7 @@ def format_mpf(num, format_spec):
                 base=10,
                 capitalize=capitalize,
                 alternate=format_dict['alternate'],
-                no_neg_0=format_dict['no_neg_0']
+                rounding=rounding
                 )
 
     nchars = len(digits) + len(sign)

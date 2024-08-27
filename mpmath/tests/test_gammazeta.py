@@ -689,3 +689,12 @@ def test_issue_723():
     mp.dps = 16
     assert zeta(-0.01 + 1000j).ae(-8.971459529241107 + 8.732179332810066j)
     mp.dps = 15
+
+def test_issue_471():
+    assert bernpoly(4, inf) == inf
+    assert bernpoly(4, mpc(inf, 0)) == mpc(inf, 0)
+    assert isnan(bernpoly(4, nan))
+
+def test_issue_472():
+    assert bernpoly(4, mpc(inf, 1e-50)) == mpc(inf, 0)
+    assert mpc(inf, 2)**4 == mpc(inf, 0)

@@ -749,9 +749,11 @@ class _matrix:
     def __reduce__(self):
         return _make_matrix, (self.tolist(),)
 
-    def __array__(self):
+    def __array__(self, dtype=None, copy=None):
+        if copy is not None and not copy:
+            raise ValueError("`copy=False` isn't supported.  A copy is always created.")
         from numpy import empty
-        r = empty((self.rows, self.cols), object)
+        r = empty((self.rows, self.cols), dtype=dtype)
         for i in range(self.rows):
             for j in range(self.cols):
                 r[i, j] = self[i, j]
