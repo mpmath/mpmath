@@ -40,9 +40,8 @@ gmpy2 = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
 gmpy = ['mpmath[gmpy2]']
 docs = ['sphinx',
         'matplotlib; platform_python_implementation!="PyPy" and python_version<"3.14"',
-        'sphinxcontrib-autoprogram']
-ci = ['pytest-xdist', 'diff_cover',
-      'sphinxcontrib-autoprogram', 'sphinx-gallery']
+        'sphinxcontrib-autoprogram', 'sphinx-gallery']
+ci = ['pytest-xdist', 'diff_cover']
 [tool.setuptools]
 zip-safe = true
 [tool.setuptools.dynamic]
