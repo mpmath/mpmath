@@ -1516,11 +1516,6 @@ def format_fixed(s,
             s, max(precision+exponent+4, int(s[3]/blog2_10)), base)
     dps = precision + exponent + 1
 
-    if rounding == round_ceiling:
-        rounding = round_down if sign == '-' else round_up
-    elif rounding == round_floor:
-        rounding = round_up if sign == '-' else round_down
-
     # Hack: if the digits are all 9s, then we will lose one dps when rounding
     # up.
     if all(dig == stddigits[base-1] for dig in digits[:dps+1]):
@@ -1605,11 +1600,6 @@ def format_scientific(s,
     dps = precision+1
     sign, digits, exponent = to_digits_exp(
             s, max(dps+10, int(s[3]/blog2_10)+10), base)
-
-    if rounding == round_ceiling:
-        rounding = round_down if sign == '-' else round_up
-    elif rounding == round_floor:
-        rounding = round_up if sign == '-' else round_down
 
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
@@ -1713,7 +1703,7 @@ def format_mpf(num, format_spec, prec):
                 rpad*format_dict['fill_char']
 
     return lpad*format_dict['fill_char'] + sign + digits \
-        + rpad*format_dict['fill_char']
+            + rpad*format_dict['fill_char']
 
 
 #----------------------------------------------------------------------------#
