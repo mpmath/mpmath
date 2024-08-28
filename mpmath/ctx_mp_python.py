@@ -356,6 +356,50 @@ class _mpf(mpnumeric):
         return t ** s
 
     def __format__(s, format_spec):
+        """
+        ``mpf`` objects allow for formatting similar to Python floats:
+
+            >>> from mpmath import fp, mp, pi
+            >>> mp.dps = 50
+            >>> format(pi, '*^60.50f')
+            '****3.14159265358979323846264338327950288419716939937511****'
+            >>> f'{10*pi:.20e}'
+            '3.14159265358979323846e+01'
+
+        The format specification adopts the same general form as Python's
+        :external:ref:`formatspec`.  All of Python's format types are
+        supported, with the exception of ``n``.
+
+        If precision is left as default, the resulting string is exactly the
+        same as if printing a regular :external:class:`float`:
+
+            >>> mp.dps = fp.dps
+            >>> f"{mp.mpf('1.22'):.25f}"
+            '1.2199999999999999733546474'
+            >>> f'{1.22:.25f}'
+            '1.2199999999999999733546474'
+            >>> mp.dps = 50
+            >>> f"{mp.mpf('1.22'):.25f}"
+            '1.2200000000000000000000000'
+
+        In addition to the normal Python features, four different kinds of
+        rounding are supported:
+
+            * 'U': rounding towards plus infinity
+            * 'D': rounding towards minus infinity
+            * 'Y': rounding away from zero
+            * 'Z': rounding towards zero
+            * 'N': rounding to nearest (default)
+
+        The rounding option must be set right before the presentation type:
+
+            >>> x = mp.mpf('-1.2345678')
+            >>> f'{x:.5Uf}'
+            '-1.23456'
+            >>> f'{x:.5Df}'
+            '-1.23457'
+        """
+
         _, _, (prec, _) = s._ctxdata
         return format_mpf(s._mpf_, format_spec, prec)
 
