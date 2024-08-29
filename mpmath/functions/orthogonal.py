@@ -444,12 +444,16 @@ def legenq(ctx, n, m, z, type=2, **kwargs):
 def chebyt(ctx, n, x, **kwargs):
     if (not x) and ctx.isint(n) and int(ctx._re(n)) % 2 == 1:
         return x * 0
+    if kwargs.get('force_series') is None:
+        kwargs['force_series'] = True
     return ctx.hyp2f1(-n,n,(1,2),(1-x)/2, **kwargs)
 
 @defun_wrapped
 def chebyu(ctx, n, x, **kwargs):
     if (not x) and ctx.isint(n) and int(ctx._re(n)) % 2 == 1:
         return x * 0
+    if kwargs.get('force_series') is None:
+        kwargs['force_series'] = True
     return (n+1) * ctx.hyp2f1(-n, n+2, (3,2), (1-x)/2, **kwargs)
 
 @defun
