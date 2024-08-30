@@ -238,7 +238,7 @@ def log1p(ctx, x):
             b2 = ctx.fmul(b, b, prec=2*wp)
             diff = ctx.fsub(b2, a2, prec=3*wp)
             real = a + ctx.ldexp(diff, -1)
-        result = ctx.mpc(real, b)
+        result = real if ctx._is_real_type(x) else ctx.mpc(real, b)
     return result
 
 @defun_wrapped
