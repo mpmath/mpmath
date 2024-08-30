@@ -3,7 +3,7 @@ import sys
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
-                    format_mpf, from_Decimal, from_float, from_int,
+                    format_mpc, format_mpf, from_Decimal, from_float, from_int,
                     from_man_exp, from_npfloat, from_rational, from_str, fzero,
                     int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
                     mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
@@ -668,6 +668,21 @@ class _mpc(mpnumeric):
 
     def ae(s, t, rel_eps=None, abs_eps=None):
         return s.context.almosteq(s, t, rel_eps, abs_eps)
+
+    def __format__(s, format_spec):
+        """
+        ``mpc`` objects allow for formatting similar to Python
+        :external:class:`complex`, specified in :external:ref:`formatspec`.
+        All of Python's format types are supported, with the exception of
+        ``n``.  Additionally, as for :func:`mpmath.mpf.__format__`, four
+        different kinds of rounding are supported and format types 'a'
+        and 'A' (use uppercase digits) allow to represent components as
+        C99-style hexadecimal strings.
+
+        """
+
+        _, _, (prec, _) = s._ctxdata
+        return format_mpc(s._mpc_, format_spec, prec)
 
 
 complex_types = (complex, _mpc)
