@@ -13,7 +13,7 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
                     spherharm, sqrt, struveh, struvel, upper_gamma, whitm,
                     whitw, zeta)
-from mpmath.libmp import BACKEND
+from mpmath.libmp import BACKEND, NoConvergence
 
 
 def test_bessel():
@@ -706,6 +706,9 @@ def test_orthpoly():
     assert chebyt(3,2) == 26
     assert chebyu(5,inf) == inf  # issue 469
     assert chebyt(5,inf) == inf
+    assert chebyt(10**3, 1j, force_series=False) == chebyt(10**3, 1j)
+    pytest.raises(NoConvergence, lambda: chebyt(10**6, 1j))  # issue 852
+    assert chebyu(10**3, 1j, force_series=False) == chebyu(10**3, 1j)
     assert legendre(3.5,-1) == inf
     assert legendre(4.5,-1) == -inf
     assert legendre(3.5+1j,-1) == mpc(inf,inf)
