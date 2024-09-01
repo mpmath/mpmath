@@ -500,6 +500,18 @@ def test_mpf_fmt_cpython():
     assert f'{mp.mpf(234.56):#.5g}' == '234.56'
     assert f'{mp.mpf(234.56):#.6g}' == '234.560'
 
+    # '%' code formatting.
+
+    # nan, infs
+    assert f'{inf:%}' == 'inf%'
+    assert f'{inf:+%}' == '+inf%'
+
+    assert f'{ninf:%}' == '-inf%'
+    assert f'{ninf:+%}' == '-inf%'
+
+    assert f'{nan:%}' == 'nan%'
+    assert f'{nan:+%}' == '+nan%'
+
 
 def test_mpf_float():
     '''

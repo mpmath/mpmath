@@ -1493,8 +1493,6 @@ def format_fixed(s,
                  base=10,
                  alternate=False,
                  no_neg_0=False,
-                 percent=False,
-                 prec=0,
                  rounding=round_nearest):
     '''
     Format a number into fixed point.
@@ -1502,9 +1500,6 @@ def format_fixed(s,
     the correct format.
     Does not perform padding or aligning
     '''
-
-    if percent:
-        s = mpf_mul(s, from_int(100), prec=prec, rnd=round_nearest)
 
     # First, get the exponent to know how many digits we will need
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1585,9 +1580,6 @@ def format_fixed(s,
     if alternate and '.' not in digits:
         digits += '.'
 
-    if percent:
-        digits = digits + '%'
-
     return sign, digits
 
 
@@ -1640,6 +1632,7 @@ def format_mpf(num, format_spec, prec):
     if fmt_type == '%':
         percent = True
         fmt_type = 'f'
+        num = mpf_mul(num, from_int(100), prec=prec, rnd=round_nearest)
 
     precision = format_dict['precision']
 
@@ -1684,10 +1677,10 @@ def format_mpf(num, format_spec, prec):
                 base=10,
                 alternate=format_dict['alternate'],
                 no_neg_0=format_dict['no_neg_0'],
-                percent=percent,
-                prec=prec,
                 rounding=rounding
                 )
+        if percent:
+            digits = digits + '%'
     else:  # The format type is scientific
         sign, digits = format_scientific(
                 num,
