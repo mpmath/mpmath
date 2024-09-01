@@ -1098,7 +1098,7 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rounding=round_nearest):
+def round_digits(sign, digits, dps, base, rounding=round_nearest, fixed=False):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1128,6 +1128,10 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest):
 
     tie_down = False
     tie_up = False
+
+    # When rounding up 0.9999... in fixed format, we lose one dps.
+    hack0 = ( fixed and all(dig == stddigits[base-1] for dig in digits[:dps]) 
+            and digits[dps] in rnd_digs and dps > 0 )
 
     if rounding == round_nearest:
         # The first digit after dps is a 5 and we should determine whether we
@@ -1174,6 +1178,9 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest):
             exponent += 1
     else:
         digits = digits[:dps]
+
+    if hack0:
+        digits += '0'
 
     return digits, exponent
 
@@ -1511,10 +1518,6 @@ def format_fixed(s,
             s, max(precision+exponent+4, int(s[3]/blog2_10)), base)
     dps = precision + exponent + 1
 
-    # Hack: if the digits are all 9s, then we will lose one dps when rounding
-    # up.
-    hack0 = all(dig == stddigits[base-1] for dig in digits[:dps+1])
-
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
@@ -1529,10 +1532,8 @@ def format_fixed(s,
         if no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
     else:
-        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding, fixed=True)
         exponent += exp_add
-        if hack0 and len(digits) != dps + 1:
-            digits += '0'
 
         if all(_ == '0' for _ in digits) and no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
