@@ -821,6 +821,14 @@ def test_mpf_fmt():
             assert f"{mp.mpf('-0.1'):=.4Df}" == "-0.1000"
 
 
+def test_issue_858():
+    for n in range(2, 15):
+        str_num = '0.' + (n)*'9'
+        fmt_str = '.' + str(n-1) + 'f'
+
+        assert format(mp.mpf(str_num), fmt_str) == format(fp.mpf(str_num), fmt_str)
+
+
 def test_errors():
     with pytest.raises(ValueError):
         # wrong format type
