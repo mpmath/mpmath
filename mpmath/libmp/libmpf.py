@@ -1518,8 +1518,7 @@ def format_fixed(s,
 
     # Hack: if the digits are all 9s, then we will lose one dps when rounding
     # up.
-    if all(dig == stddigits[base-1] for dig in digits[:dps+1]):
-        dps += 1
+    hack0 = all(dig == stddigits[base-1] for dig in digits[:dps+1])
 
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
@@ -1537,6 +1536,11 @@ def format_fixed(s,
     else:
         digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
         exponent += exp_add
+        if hack0 and len(digits) != dps + 1:
+            digits += '0'
+
+        if all(_ == '0' for _ in digits) and no_neg_0:
+            sign = '' if sign_spec == '-' else sign_spec
 
         # Here we prepend the corresponding 0s to the digits string, according
         # to the value of exponent
@@ -1577,6 +1581,9 @@ def format_fixed(s,
 
     if digits[-1] == "." and strip_last_zero:
         digits = digits[:-1]
+
+    if alternate and '.' not in digits:
+        digits += '.'
 
     if percent:
         digits = digits + '%'

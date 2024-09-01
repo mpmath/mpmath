@@ -1,7 +1,11 @@
+import math
+import platform
 import random
 import sys
 
+import hypothesis.strategies as st
 import pytest
+from hypothesis import given, settings
 
 from mpmath import fp, inf, mp, nan, ninf, workdps
 
@@ -67,6 +71,60 @@ def random_fmt():
     fmt_str += '}'
 
     return fmt_str
+
+
+@st.composite
+def fmtstr(draw, types=list('fFeE')):
+    res = ''
+
+    # fill_char and align
+    fill_char = draw(st.sampled_from(['']*3 + list('z;clxvjqwer')))
+    if fill_char:
+        skip_0_padding = True
+        align = draw(st.sampled_from(list('<^>=')))
+        res += fill_char + align
+    else:
+        align = draw(st.sampled_from([''] + list('<^>=')))
+        if align:
+            skip_0_padding = True
+            res += align
+        else:
+            skip_0_padding = False
+
+    # sign character
+    res += draw(st.sampled_from([''] + list('-+ ')))
+
+    # no_neg_0 (not used yet.)
+    if sys.version_info[:3] > (3, 11):
+        res += draw(st.sampled_from([''] + ['z']))
+
+    # alternate mode
+    res += draw(st.sampled_from(['', '#']))
+
+    # pad with 0s
+    pad0 = draw(st.sampled_from(['', '0']))
+    skip_thousand_separators = False
+    if pad0 and not skip_0_padding:
+        res += pad0
+        skip_thousand_separators = True
+
+    # Width
+    res += draw(st.sampled_from(['']*7 + list(map(str, range(1, 40)))))
+
+    # grouping character (thousand_separators)
+    gchar = draw(st.sampled_from([''] + list(',_')))
+    if gchar and not skip_thousand_separators:
+        res += gchar
+
+    # Precision
+    prec = draw(st.sampled_from(['']*7 + list(map(str, range(40)))))
+    if prec:
+        res += '.' + prec
+
+    # Type
+    res += draw(st.sampled_from(types))
+
+    return res
 
 
 def test_mpf_fmt_cpython():
@@ -465,17 +523,37 @@ def test_mpf_float():
         fmt_str = random_fmt()
         num = fp.mpf('{:.15f}e{:d}'.format(
                      random.uniform(1, 10), random.randint(-324, -308)))
+        if random.randint(0, 1):
+            num = -num
 
         # We skip the case when num == 0 since mpmath does not have negative
         # zero.
-        if num != 0 and random.randint(0, 1):
-            num = -num
+        if num == 0:
+            continue
+
         assert fmt_str.format(num) == fmt_str.format(mp.mpf(num))
 
+
     # Test the same random formats with special numbers
+    if (',' in fmt_str or '_' in fmt_str) and platform.python_implementation() == 'PyPy':
+        return  # see pypy/pypy#5018
+
     for num in (inf, -inf, nan, 0):
         fmt_str = random_fmt()
         assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
+
+
+@settings(max_examples=10000)
+@given(fmtstr(),
+       st.floats(allow_nan=True,
+                 allow_infinity=True,
+                 allow_subnormal=True))
+def test_mpf_floats2(fmt, x):
+    if not x and math.copysign(1, x) == -1:
+        return  # skip negative zero
+    if (',' in fmt or '_' in fmt) and platform.python_implementation() == 'PyPy':
+        return  # see pypy/pypy#5018
+    assert format(x, fmt) == format(mp.mpf(x), fmt)
 
 
 def test_mpf_fmt():
