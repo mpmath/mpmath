@@ -1055,7 +1055,7 @@ def to_digits_exp(s, dps, base=10):
     _sign, man, exp, bc = s
 
     if not man:
-        return '', '0', 0
+        return '', '0'*int(dps), 0
 
     if base == 10:
         blog2 = blog2_10
@@ -1617,9 +1617,10 @@ def format_scientific(s,
     return sign, digits + sep + f'{exponent:+03d}'
 
 
-def format_mpf(num, format_spec, prec):
-    format_dict = read_format_spec(format_spec)
+_MAP_SPEC_STR = {finf: ('', 'inf'), fninf: ('-', 'inf'), fnan: ('', 'nan')}
 
+
+def format_digits(num, format_dict, prec):
     hack0 = True
     capitalize = False
     if format_dict['type'] in 'FGE':
@@ -1636,10 +1637,6 @@ def format_mpf(num, format_spec, prec):
 
     digits = ''
     sign = ''
-
-    # Special cases:
-    if num in (fnan, finf, fninf, fzero, fnzero):
-        return format(to_float(num), format_spec)
 
     # Now the general case
     strip_last_zero = False
@@ -1664,7 +1661,16 @@ def format_mpf(num, format_spec, prec):
             fmt_type = 'e'
             precision = max(0, precision - 1)
 
-    if fmt_type == 'f':
+    if num in _MAP_SPEC_STR:  # special cases
+        sign, digits = _MAP_SPEC_STR[num]
+        if capitalize:
+            digits = digits.upper()
+        if sign != '-' and format_dict['sign'] != '-':
+            sign = format_dict['sign']
+        if percent:
+            digits += '%'
+
+    elif fmt_type == 'f':
         sign, digits = format_fixed(
                 num,
                 precision=precision,
@@ -1692,6 +1698,14 @@ def format_mpf(num, format_spec, prec):
                 alternate=format_dict['alternate'],
                 rounding=rounding
                 )
+
+    return sign, digits
+
+
+def format_mpf(num, format_spec, prec):
+    format_dict = read_format_spec(format_spec)
+
+    sign, digits = format_digits(num, format_dict, prec)
 
     nchars = len(digits) + len(sign)
 
