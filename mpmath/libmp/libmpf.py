@@ -1130,7 +1130,7 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest, fixed=False):
     tie_up = False
 
     # When rounding up 0.9999... in fixed format, we lose one dps.
-    hack0 = ( fixed and all(dig == stddigits[base-1] for dig in digits[:dps]) 
+    hack0 = ( fixed and all(dig == stddigits[base-1] for dig in digits[:dps])
             and digits[dps] in rnd_digs and dps > 0 )
 
     if rounding == round_nearest:
