@@ -568,6 +568,19 @@ def test_mpf_floats_fFeE(fmt, x):
     assert format(x, fmt) == format(mp.mpf(x), fmt)
 
 
+@settings(max_examples=10000)
+@given(fmtstr('gG'),
+       st.floats(allow_nan=True,
+                 allow_infinity=True,
+                 allow_subnormal=True))
+def test_mpf_floats_gG(fmt, x):
+    if not x and math.copysign(1, x) == -1:
+        return  # skip negative zero
+    if (',' in fmt or '_' in fmt) and platform.python_implementation() == 'PyPy':
+        return  # see pypy/pypy#5018
+    assert format(x, fmt) == format(mp.mpf(x), fmt)
+
+
 def test_mpf_fmt():
     '''
     These tests are either specific tests to mpf, or tests that cover
