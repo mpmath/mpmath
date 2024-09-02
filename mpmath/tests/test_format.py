@@ -8,6 +8,7 @@ import pytest
 from hypothesis import given, settings
 
 from mpmath import fp, inf, mp, nan, ninf, workdps
+from mpmath.libmp.libmpf import read_format_spec
 
 
 def random_fmt():
@@ -512,6 +513,10 @@ def test_mpf_fmt_cpython():
     assert f'{nan:%}' == 'nan%'
     assert f'{nan:+%}' == '+nan%'
 
+    # No formatting code.
+
+    assert f'{mp.mpf(0.0):.0}' == '0e+00'
+
 
 def test_mpf_float():
     '''
@@ -581,6 +586,26 @@ def test_mpf_floats_gG(fmt, x):
     assert format(x, fmt) == format(mp.mpf(x), fmt)
 
 
+@settings(max_examples=10000)
+@given(fmtstr(['']),
+       st.floats(allow_nan=True,
+                 allow_infinity=True,
+                 allow_subnormal=True))
+def test_mpf_floats_None(fmt, x):
+    if not x and math.copysign(1, x) == -1:
+        return  # skip negative zero
+    if (',' in fmt or '_' in fmt) and platform.python_implementation() == 'PyPy':
+        return  # see pypy/pypy#5018
+    spec = read_format_spec(fmt)
+    if spec['precision'] < 0 and math.isfinite(x):
+        # The mpmath could choose a different decimal
+        # representative (wrt CPython) for same binary
+        # floating-point number.
+        assert float(format(x)) == float(format(mp.mpf(x)))
+    else:
+        assert format(x, fmt) == format(mp.mpf(x), fmt)
+
+
 def test_mpf_fmt():
     '''
     These tests are either specific tests to mpf, or tests that cover
@@ -642,7 +667,7 @@ def test_mpf_fmt():
         assert f"{mp.mpf('1e-50'):.50g}" == '1e-50'
         assert f"{mp.mpf('1e-50'):.50G}" == '1E-50'
 
-        assert f"{mp.mpf('1e-50'):}" == '1e-50'
+        assert f"{mp.mpf('1e-51'):}" == '1e-51'
 
         # thousands separator
         assert f"{mp.mpf('1e9'):,.0f}" == '1,000,000,000'
