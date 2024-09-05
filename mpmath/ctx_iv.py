@@ -1,4 +1,5 @@
 import numbers
+import sys
 
 from . import libmp
 from .libmp import (MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan, fninf,
@@ -306,8 +307,8 @@ class MPIntervalContext(StandardBaseContext):
         ctx.mpc = type('ivmpc', (ivmpc,), {})
         ctx._types = (ctx.mpf, ctx.mpc)
         ctx._constant = type('ivmpf_constant', (ivmpf_constant,), {})
-        ctx._prec = [53]
-        ctx._set_prec(53)
+        ctx._prec = [sys.float_info.mant_dig]
+        ctx._set_prec(ctx._prec[0])
         ctx._constant._ctxdata = ctx.mpf._ctxdata = ctx.mpc._ctxdata = [ctx.mpf, new, ctx._prec]
         ctx._constant.ctx = ctx.mpf.ctx = ctx.mpc.ctx = ctx
         ctx.pretty = False

@@ -5,6 +5,7 @@ operating with them.
 
 import functools
 import re
+import sys
 import warnings
 
 from . import function_docs, libmp
@@ -354,8 +355,8 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
     def __str__(ctx):
         lines = ["Mpmath settings:",
-            ("  mp.prec = %s" % ctx.prec).ljust(30) + "[default: 53]",
-            ("  mp.dps = %s" % ctx.dps).ljust(30) + "[default: 15]",
+            ("  mp.prec = %s" % ctx.prec).ljust(30) + f"[default: {sys.float_info.mant_dig}]",
+            ("  mp.dps = %s" % ctx.dps).ljust(30) + f"[default: {sys.float_info.dig}]",
             ("  mp.trap_complex = %s" % ctx.trap_complex).ljust(30) + "[default: False]",
         ]
         return "\n".join(lines)
