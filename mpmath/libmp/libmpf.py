@@ -1055,7 +1055,7 @@ def to_digits_exp(s, dps, base=10):
     _sign, man, exp, bc = s
 
     if not man:
-        return '', '0', 0
+        return '', '0'*int(dps), 0
 
     if base == 10:
         blog2 = blog2_10
@@ -1098,7 +1098,8 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rounding=round_nearest):
+def round_digits(sign, digits, dps, base, rounding=round_nearest,
+                 hack0=False):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1170,7 +1171,8 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest):
             digits = digits[:i] + stddigits[int(digits[i], base) + 1] + \
                 '0' * (dps - i - 1)
         else:
-            digits = '1' + '0' * (dps - 1)
+            # When rounding up 0.9999... in fixed format, we lose one dps.
+            digits = '1' + '0' * (dps - (0 if hack0 else 1))
             exponent += 1
     else:
         digits = digits[:dps]
@@ -1493,8 +1495,7 @@ def format_fixed(s,
                  base=10,
                  alternate=False,
                  no_neg_0=False,
-                 percent=False,
-                 prec=0,
+                 hack0=True,
                  rounding=round_nearest):
     '''
     Format a number into fixed point.
@@ -1502,9 +1503,6 @@ def format_fixed(s,
     the correct format.
     Does not perform padding or aligning
     '''
-
-    if percent:
-        s = mpf_mul(s, from_int(100), prec=prec, rnd=round_nearest)
 
     # First, get the exponent to know how many digits we will need
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1515,11 +1513,6 @@ def format_fixed(s,
     sign, digits, exponent = to_digits_exp(
             s, max(precision+exponent+4, int(s[3]/blog2_10)), base)
     dps = precision + exponent + 1
-
-    # Hack: if the digits are all 9s, then we will lose one dps when rounding
-    # up.
-    if all(dig == stddigits[base-1] for dig in digits[:dps+1]):
-        dps += 1
 
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
@@ -1535,8 +1528,11 @@ def format_fixed(s,
         if no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
     else:
-        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding, hack0)
         exponent += exp_add
+
+        if all(_ == '0' for _ in digits) and no_neg_0:
+            sign = '' if sign_spec == '-' else sign_spec
 
         # Here we prepend the corresponding 0s to the digits string, according
         # to the value of exponent
@@ -1578,8 +1574,8 @@ def format_fixed(s,
     if digits[-1] == "." and strip_last_zero:
         digits = digits[:-1]
 
-    if percent:
-        digits = digits + '%'
+    if alternate and '.' not in digits:
+        digits += '.'
 
     return sign, digits
 
@@ -1621,9 +1617,11 @@ def format_scientific(s,
     return sign, digits + sep + f'{exponent:+03d}'
 
 
-def format_mpf(num, format_spec, prec):
-    format_dict = read_format_spec(format_spec)
+_MAP_SPEC_STR = {finf: ('', 'inf'), fninf: ('-', 'inf'), fnan: ('', 'nan')}
 
+
+def format_digits(num, format_dict, prec):
+    hack0 = True
     capitalize = False
     if format_dict['type'] in 'FGE':
         capitalize = True
@@ -1633,15 +1631,12 @@ def format_mpf(num, format_spec, prec):
     if fmt_type == '%':
         percent = True
         fmt_type = 'f'
+        num = mpf_mul(num, from_int(100), prec=prec, rnd=round_nearest)
 
     precision = format_dict['precision']
 
     digits = ''
     sign = ''
-
-    # Special cases:
-    if num in (fnan, finf, fninf, fzero, fnzero):
-        return format(to_float(num), format_spec)
 
     # Now the general case
     strip_last_zero = False
@@ -1650,6 +1645,7 @@ def format_mpf(num, format_spec, prec):
     rounding = format_dict['rounding']
 
     if fmt_type == 'g':
+        hack0 = False
         if not format_dict['alternate']:
             strip_last_zero = True
             strip_zeros = True
@@ -1665,7 +1661,16 @@ def format_mpf(num, format_spec, prec):
             fmt_type = 'e'
             precision = max(0, precision - 1)
 
-    if fmt_type == 'f':
+    if num in _MAP_SPEC_STR:  # special cases
+        sign, digits = _MAP_SPEC_STR[num]
+        if capitalize:
+            digits = digits.upper()
+        if sign != '-' and format_dict['sign'] != '-':
+            sign = format_dict['sign']
+        if percent:
+            digits += '%'
+
+    elif fmt_type == 'f':
         sign, digits = format_fixed(
                 num,
                 precision=precision,
@@ -1677,10 +1682,11 @@ def format_mpf(num, format_spec, prec):
                 base=10,
                 alternate=format_dict['alternate'],
                 no_neg_0=format_dict['no_neg_0'],
-                percent=percent,
-                prec=prec,
+                hack0=hack0,
                 rounding=rounding
                 )
+        if percent:
+            digits = digits + '%'
     else:  # The format type is scientific
         sign, digits = format_scientific(
                 num,
@@ -1692,6 +1698,14 @@ def format_mpf(num, format_spec, prec):
                 alternate=format_dict['alternate'],
                 rounding=rounding
                 )
+
+    return sign, digits
+
+
+def format_mpf(num, format_spec, prec):
+    format_dict = read_format_spec(format_spec)
+
+    sign, digits = format_digits(num, format_dict, prec)
 
     nchars = len(digits) + len(sign)
 
