@@ -221,15 +221,16 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
     >>> mpf(0.6)
     mpf('0.59999999999999998')
 
-The number of digits with which numbers are printed by default is determined by the working precision. To specify the number of digits to show without changing the working precision, use :func:`mpmath.nstr` and :func:`mpmath.nprint`:
+The number of digits with which numbers are printed by default is determined by
+the working precision.  To specify the number of digits to show without
+changing the working precision, use :func:`format syntax support
+<mpmath.mpf.__format__>` or functions :func:`mpmath.nstr` and
+:func:`mpmath.nprint`:
 
-    >>> from mpmath import nstr
     >>> a = mpf(1) / 6
     >>> a
     mpf('0.16666666666666666')
-    >>> nstr(a, 8)
+    >>> f'{a:.8}'
     '0.16666667'
-    >>> nprint(a, 8)
-    0.16666667
-    >>> nstr(a, 50)
+    >>> f'{a:.50}'
     '0.16666666666666665741480812812369549646973609924316'

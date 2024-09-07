@@ -977,6 +977,16 @@ def test_log1p():
     assert log1p(-1.430796815051627e-72+1.691624553529315e-36j).ae(4.6709293580298264e-91+1.691624553529315e-36j, 0)
     assert log1p(-3.1061140011623543e-21+7.881768838480807e-11j).ae(4.3173401185459216e-38+7.881768838480807e-11j, 0)
     assert log1p(-1.999999873062092e-40+1.999999936531045e-20j).ae(1.9999997461241924e-80+1.999999936531045e-20j)
+    # issue 853
+    mp.dps = 25
+    r = log1p(6e-30)
+    assert type(r) is type(r.real)
+    r = mp.log1p(7e-30)
+    assert type(r) is type(r.real)
+    r = mp.log1p(0.1 + 0j)
+    assert type(r) is not type(r.real)
+    r = mp.log1p(1e-30 + 0j)
+    assert type(r) is not type(r.real)
 
 def test_powm1():
     assert powm1(2,3) == 7

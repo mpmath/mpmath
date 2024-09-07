@@ -79,9 +79,6 @@ class _mpf(mpnumeric):
         if isinstance(x, int_types): return from_int(x)
         if isinstance(x, float): return from_float(x)
         if isinstance(x, cls.context.constant): return x.func(prec, rounding)
-        if isinstance(x, numbers.Rational): return from_rational(x.numerator,
-                                                                 x.denominator,
-                                                                 prec, rounding)
         if hasattr(x, '_mpf_'): return x._mpf_
         if hasattr(x, '_mpmath_'):
             t = cls.context.convert(x._mpmath_(prec, rounding))
@@ -92,6 +89,9 @@ class _mpf(mpnumeric):
             if a == b:
                 return a
             raise ValueError("can only create mpf from zero-width interval")
+        if isinstance(x, numbers.Rational): return from_rational(x.numerator,
+                                                                 x.denominator,
+                                                                 prec, rounding)
         if type(x).__module__ == 'decimal':
             return from_Decimal(x, prec, rounding)
         raise TypeError("cannot create mpf from " + repr(x))
@@ -356,6 +356,50 @@ class _mpf(mpnumeric):
         return t ** s
 
     def __format__(s, format_spec):
+        """
+        ``mpf`` objects allow for formatting similar to Python floats:
+
+            >>> from mpmath import fp, mp, pi
+            >>> mp.dps = 50
+            >>> format(pi, '*^60.50f')
+            '****3.14159265358979323846264338327950288419716939937511****'
+            >>> f'{10*pi:.20e}'
+            '3.14159265358979323846e+01'
+
+        The format specification adopts the same general form as Python's
+        :external:ref:`formatspec`.  All of Python's format types are
+        supported, with the exception of ``n``.
+
+        If precision is left as default, the resulting string is exactly the
+        same as if printing a regular :external:class:`float`:
+
+            >>> mp.dps = fp.dps
+            >>> f"{mp.mpf('1.22'):.25f}"
+            '1.2199999999999999733546474'
+            >>> f'{1.22:.25f}'
+            '1.2199999999999999733546474'
+            >>> mp.dps = 50
+            >>> f"{mp.mpf('1.22'):.25f}"
+            '1.2200000000000000000000000'
+
+        In addition to the normal Python features, four different kinds of
+        rounding are supported:
+
+            * 'U': rounding towards plus infinity
+            * 'D': rounding towards minus infinity
+            * 'Y': rounding away from zero
+            * 'Z': rounding towards zero
+            * 'N': rounding to nearest (default)
+
+        The rounding option must be set right before the presentation type:
+
+            >>> x = mp.mpf('-1.2345678')
+            >>> f'{x:.5Uf}'
+            '-1.23456'
+            >>> f'{x:.5Df}'
+            '-1.23457'
+        """
+
         _, _, (prec, _) = s._ctxdata
         return format_mpf(s._mpf_, format_spec, prec)
 
@@ -691,6 +735,10 @@ class PythonMPContext:
             return ctx.make_mpc((from_float(x.real), from_float(x.imag)))
         if type(x).__module__ == 'numpy': return ctx.npconvert(x)
         prec, rounding = ctx._prec_rounding
+        if hasattr(x, '_mpf_'): return ctx.make_mpf(x._mpf_)
+        if hasattr(x, '_mpc_'): return ctx.make_mpc(x._mpc_)
+        if hasattr(x, '_mpmath_'):
+            return ctx.convert(x._mpmath_(prec, rounding))
         if isinstance(x, numbers.Rational):
             p, q = x.numerator, x.denominator
             return ctx.make_mpf(from_rational(p, q, prec, rounding))
@@ -700,10 +748,6 @@ class PythonMPContext:
                 return ctx.make_mpf(_mpf_)
             except ValueError:
                 pass
-        if hasattr(x, '_mpf_'): return ctx.make_mpf(x._mpf_)
-        if hasattr(x, '_mpc_'): return ctx.make_mpc(x._mpc_)
-        if hasattr(x, '_mpmath_'):
-            return ctx.convert(x._mpmath_(prec, rounding))
         if type(x).__module__ == 'decimal':
             return ctx.make_mpf(from_Decimal(x, prec, rounding))
         return ctx._convert_fallback(x, strings)
