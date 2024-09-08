@@ -398,6 +398,22 @@ class _mpf(mpnumeric):
             '-1.23456'
             >>> f'{x:.5Df}'
             '-1.23457'
+
+        Format types 'a' and 'A' (use uppercase digits) allow to represent
+        floating-point number as a C99-style hexadecimal string
+        ``[±][0x]h[.hhh]p±d``, where there is one hexadecimal digit before the
+        dot and the fractional part either is exact or the number of its
+        hexadecimal digits is equal to the specified precision.  The exponent
+        ``d`` is written in decimal, it always contains at least one digit, and
+        it gives the power of 2 by which to multiply the coefficient.  If no
+        digits follow the decimal point, the decimal point is also removed
+        unless the ``#`` option is specified.
+
+            >>> f'{x:a}'
+            '-0x1.3c0ca2a5b1d5d0818d3359c99ff1a26f2b31063249p+0'
+            >>> f'{x:.10a}'
+            '-0x1.3c0ca2a5b2p+0'
+
         """
 
         _, _, (prec, _) = s._ctxdata
