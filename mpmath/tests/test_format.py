@@ -1,3 +1,4 @@
+import ctypes
 import math
 import platform
 import random
@@ -5,7 +6,7 @@ import sys
 
 import hypothesis.strategies as st
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 
 from mpmath import fp, inf, mp, nan, ninf, workdps
 from mpmath.libmp.libmpf import read_format_spec
@@ -887,3 +888,50 @@ def test_errors():
     with pytest.raises(ValueError, match="Cannot specify both 0-padding "
                        "and a fill character"):
         f"{mp.mpf('4'):q<03f}"
+
+
+
+@settings(max_examples=10000)
+@given(st.floats(allow_nan=True, allow_infinity=True,
+                 allow_subnormal=False))
+@example(float('nan'))
+@example(float('inf'))
+def test_hexadecimal_bulk(x):
+    if math.isnan(x):
+        assert math.isnan(float.fromhex(f"{mp.mpf(x):a}"))
+    else:
+        assert float.fromhex(f"{mp.mpf(x):a}") == x
+
+
+try:
+    libc = ctypes.CDLL("libc.so.6")
+except OSError:
+    libc = None
+
+
+def float_print(d, i):
+    fmt = "%." + str(i) + "a\n"
+    a = ctypes.create_string_buffer(256)
+    libc.sprintf(a, bytes(fmt, 'utf-8'), ctypes.c_double(d))
+    return a.raw.decode('utf-8').split("\n")[0]
+
+
+@pytest.mark.skipif(libc is None, reason='requires libc')
+@settings(max_examples=10000)
+@given(st.floats(allow_nan=False, allow_infinity=False,
+                 allow_subnormal=False),
+       st.integers(min_value=0, max_value=15))
+def test_hexadecimal_with_libc_bulk(x, p):
+    fmt = '.' + str(p) + 'a'
+    x_hex = float_print(x, p)
+    m_hex = format(mp.mpf(x), fmt)
+    assert mp.mpf(m_hex) == mp.mpf(x_hex)
+
+
+def test_hexadecimal():
+    with workdps(1000):
+        x = mp.mpf('1.234567890123456789')
+        assert f'{x:.20a}' == '0x1.3c0ca428c59fb71a4194p+0'
+        assert f'{x:.0a}' == '0x1p+0'
+        assert f'{x:#.0a}' == '0x1.p+0'
+        assert f"{mp.mpf('1.234567890123456789'):+.0a}" == '+0x1p+0'
