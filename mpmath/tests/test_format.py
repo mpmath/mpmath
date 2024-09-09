@@ -12,17 +12,22 @@ from mpmath.libmp.libmpf import read_format_spec
 
 
 @st.composite
-def fmt_str(draw, types='fFeE'):
+def fmt_str(draw, types='fFeE', for_complex=False):
     res = ''
 
     # fill_char and align
     fill_char = draw(st.sampled_from(['']*3 + list('z;clxvjqwer')))
     if fill_char:
         skip_0_padding = True
-        align = draw(st.sampled_from(list('<^>=')))
+        if for_complex:
+            align = draw(st.sampled_from(list('<^>')))
+        else:
+            align = draw(st.sampled_from(list('<^>=')))
         res += fill_char + align
     else:
         align = draw(st.sampled_from([''] + list('<^>=')))
+        if align == '=' and for_complex:
+            align = ''
         if align:
             skip_0_padding = True
             res += align
@@ -41,6 +46,8 @@ def fmt_str(draw, types='fFeE'):
 
     # pad with 0s
     pad0 = draw(st.sampled_from(['', '0']))
+    if pad0 and for_complex:
+        pad0 = ''
     skip_thousand_separators = False
     if pad0 and not skip_0_padding:
         res += pad0
@@ -456,7 +463,7 @@ def test_mpf_fmt_cpython():
 
 
 @settings(max_examples=20000)
-@given(fmt_str(list('fFeEgG%') + ['']),
+@given(fmt_str(types=list('fFeEgG%') + ['']),
        st.floats(allow_nan=True,
                  allow_infinity=True,
                  allow_subnormal=True))
@@ -481,7 +488,7 @@ def test_mpf_floats_bulk(fmt, x):
 
 
 @settings(max_examples=20000)
-@given(fmt_str(list('gGfFeE') + ['']),
+@given(fmt_str(types=list('gGfFeE') + [''], for_complex=True),
        st.complex_numbers(allow_nan=True,
                           allow_infinity=True,
                           allow_subnormal=True))
@@ -490,8 +497,6 @@ def test_mpc_complexes(fmt, z):
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
     spec = read_format_spec(fmt)
-    if spec['align'] == '=' or spec['fill_char'] == '0':
-        return  # not supported for complexes
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
