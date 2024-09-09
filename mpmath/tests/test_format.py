@@ -1,3 +1,4 @@
+import cmath
 import ctypes
 import math
 import platform
@@ -480,6 +481,43 @@ def test_mpf_floats_bulk(fmt, x):
         if spec['type'] == '%' and math.isinf(100*x):
             return  # mpf can't overflow
         assert format(x, fmt) == format(mp.mpf(x), fmt)
+
+
+@settings(max_examples=20000)
+@given(fmt_str(list('gGfFeE') + ['']),
+       st.complex_numbers(allow_nan=True,
+                          allow_infinity=True,
+                          allow_subnormal=True))
+def test_mpc_complexes(fmt, z):
+    if ((not z.real and math.copysign(1, z.real) == -1)
+            or (not z.imag and math.copysign(1, z.imag) == -1)):
+        return  # skip negative zero
+    if (',' in fmt or '_' in fmt) and platform.python_implementation() == 'PyPy':
+        return  # see pypy/pypy#5018
+    spec = read_format_spec(fmt)
+    if spec['align'] == '=' or spec['fill_char'] == '0':
+        return  # not supported for complexes
+    if not spec['type'] and spec['precision'] < 0 and platform.python_implementation() == 'PyPy':
+        return  # see pypy/pypy#5028
+    if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
+        # The mpmath could choose a different decimal
+        # representative (wrt CPython) for same binary
+        # floating-point number.
+        if cmath.isnan(complex(format(z))):
+            assert cmath.isnan(complex(format(mp.mpc(z))))
+        else:
+            assert complex(format(z)) == complex(format(mp.mpc(z)))
+    else:
+        assert format(z, fmt) == format(mp.mpc(z), fmt)
+
+
+def test_mpc_fmt():
+    pytest.raises(ValueError, lambda: f'{mp.mpc(1j):=10f}')
+    pytest.raises(ValueError, lambda: f'{mp.mpc(1j):010f}')
+    pytest.raises(ValueError, lambda: f'{mp.mpc(1j):%}')
+
+    assert f'{1+1j:.0g}' == f'{mp.mpc(1+1j):.0g}'
+    assert f'{1+1.1j:.2g}' == f'{mp.mpc(1+1.1j):.2g}'
 
 
 def test_mpf_fmt():

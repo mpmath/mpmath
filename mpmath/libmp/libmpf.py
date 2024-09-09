@@ -1397,9 +1397,7 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<sign>[-+ ]?)
     (?P<no_neg_0>z)?
     (?P<alternate>\#)?
-    # A '0' that's *not* followed by another digit is parsed as a minimum width
-    # rather than a zeropad flag.
-    (?P<zeropad>0(?=[0-9]))?
+    (?P<zeropad>0)?
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
@@ -1802,6 +1800,47 @@ def format_mpf(num, format_spec, prec):
 
     return lpad*format_dict['fill_char'] + sign + digits \
             + rpad*format_dict['fill_char']
+
+
+def format_mpc(num, format_spec, prec):
+    format_dict = read_format_spec(format_spec)
+
+    if format_dict['fill_char'] == '0':
+        raise ValueError("Zero padding is not allowed in complex format "
+                         "specifier.")
+    if format_dict['align'] == '=':
+        raise ValueError("'=' alignment flag is not allowed in complex format "
+                         "specifier.")
+    if format_dict['type'] == '%':
+        raise ValueError("'%' formatting type is not allowed in complex "
+                         "format specifier.")
+
+    fmt_type = format_dict['type'].lower()
+    if not fmt_type:
+        format_dict['type'] = 'g'
+    sign_re, digits_re = format_digits(num[0], format_dict, prec)
+    fmt_sign = format_dict['sign']
+    format_dict['sign'] = '+'
+    sign_im, digits_im = format_digits(num[1], format_dict, prec)
+    digits_im += 'j'
+
+    if not fmt_type:
+        if num[0] == fzero:
+            sign_re = ''
+            digits_re = ''
+            if sign_im == '+':
+                sign_im = fmt_sign if fmt_sign in [' ', '+'] else ''
+        else:
+            sign_re = '(' + sign_re
+            digits_im += ')'
+
+    nchars = len(sign_re) + len(digits_re) + len(sign_im) + len(digits_im)
+
+    lpad, rpad = calc_padding(nchars, format_dict['width'],
+                              format_dict['align'])
+
+    return (lpad*format_dict['fill_char'] + sign_re + digits_re + sign_im
+            + digits_im + rpad*format_dict['fill_char'])
 
 
 #----------------------------------------------------------------------------#
