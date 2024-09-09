@@ -1,7 +1,6 @@
 import cmath
 import ctypes
 import math
-import platform
 import sys
 
 import hypothesis.strategies as st
@@ -469,8 +468,6 @@ def test_mpf_floats_bulk(fmt, x):
 
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
-    if (',' in fmt or '_' in fmt) and platform.python_implementation() == 'PyPy':
-        return  # see pypy/pypy#5018
     spec = read_format_spec(fmt)
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
@@ -492,13 +489,9 @@ def test_mpc_complexes(fmt, z):
     if ((not z.real and math.copysign(1, z.real) == -1)
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
-    if (',' in fmt or '_' in fmt) and platform.python_implementation() == 'PyPy':
-        return  # see pypy/pypy#5018
     spec = read_format_spec(fmt)
     if spec['align'] == '=' or spec['fill_char'] == '0':
         return  # not supported for complexes
-    if not spec['type'] and spec['precision'] < 0 and platform.python_implementation() == 'PyPy':
-        return  # see pypy/pypy#5028
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
