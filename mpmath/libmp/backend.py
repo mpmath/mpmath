@@ -1,6 +1,5 @@
+import fractions
 import os
-import sys
-from fractions import Fraction
 
 
 #----------------------------------------------------------------------------#
@@ -14,17 +13,14 @@ from fractions import Fraction
 # MPZ must be used for the mantissa component of an mpf and must be used     #
 # for internal fixed-point operations.                                       #
 #                                                                            #
-# Side-effects                                                               #
-# 1) "is" cannot be used to test for special values. Must use "==".          #
-# 2) There are bugs in GMPY prior to v1.02 so we must use v1.03 or later.    #
+# Side-effects:                                                              #
+# * "is" cannot be used to test for special values.  Must use "==".          #
 #----------------------------------------------------------------------------#
 
-# So we can import it from this module
 gmpy = None
 BACKEND = 'python'
 MPZ = int
-MPQ = Fraction
-
+MPQ = fractions.Fraction
 
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
