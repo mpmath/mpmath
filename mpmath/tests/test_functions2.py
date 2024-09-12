@@ -2403,3 +2403,6 @@ def test_issue_505():
     assert mp.isnan(mp.polylog(mp.inf, 2.2))
     assert mp.isnan(mp.polylog(mp.ninf, 2.2))
     assert mp.isnan(mp.polylog(mp.nan, 2.2))
+
+def test_issue_653():
+    pytest.raises(ValueError, lambda: zeta(2, -2))
