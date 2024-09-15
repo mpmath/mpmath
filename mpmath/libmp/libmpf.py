@@ -1618,10 +1618,8 @@ def format_scientific(s,
 
 
 def format_hexadecimal(s,
-                       precision=None,
-                       strip_zeros=False,
+                       precision=-1,
                        sign_spec='-',
-                       base=16,
                        capitalize=False,
                        alternate=False,
                        rounding=round_nearest):
@@ -1633,7 +1631,7 @@ def format_hexadecimal(s,
     # First, get the exponent to know how many digits we will need
     dps = precision+1
     sign, digits, exponent = to_digits_exp(
-            s, max(dps+10, int(s[3]/4)+10), base)
+            s, max(dps+10, int(s[3]/4)+10), 16)
     exponent *= 4
 
     if sign != '-' and sign_spec != '-':
@@ -1647,7 +1645,7 @@ def format_hexadecimal(s,
         digits = hex(n)[2:]
 
     if digits != "0":
-        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+        digits, exp_add = round_digits(s[0], digits, dps, 16, rounding)
         exponent += exp_add*4
 
     # normalization
@@ -1656,7 +1654,7 @@ def format_hexadecimal(s,
         n = int(digits, 16) >> 1
         digits = hex(n)[2:]
 
-    if s[1] and strip_zeros:
+    if s[1]:
         # Clean up trailing zeros
         digits = digits.rstrip('0')
         precision = len(digits)
@@ -1750,9 +1748,7 @@ def format_digits(num, format_dict, prec):
         sign, digits = format_hexadecimal(
                 num,
                 precision=precision,
-                strip_zeros=True,
                 sign_spec=format_dict['sign'],
-                base=16,
                 capitalize=capitalize,
                 alternate=format_dict['alternate'],
                 rounding=rounding
