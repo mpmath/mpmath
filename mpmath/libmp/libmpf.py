@@ -1412,14 +1412,12 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<sign>[-+ ]?)
     (?P<no_neg_0>z)?
     (?P<alternate>\#)?
-    # A '0' that's *not* followed by another digit is parsed as a minimum width
-    # rather than a zeropad flag.
-    (?P<zeropad>0(?=[0-9]))?
+    (?P<zeropad>0)?
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
     (?P<rounding>[UDYZN])?
-    (?P<type>[eEfFgG%])?
+    (?P<type>[aAeEfFgG%])?
 """, re.DOTALL | re.VERBOSE).fullmatch
 
 _GMPY_ROUND_CHAR_DICT = {
@@ -1465,9 +1463,9 @@ def read_format_spec(format_spec):
         'alternate': False,
         'thousands_separators': '',
         'width': -1,
-        'precision': 6,
+        'precision': -1,
         'rounding': round_nearest,
-        'type': 'g'
+        'type': ''
         }
 
     if match := _FLOAT_FORMAT_SPECIFICATION_MATCHER(format_spec):
@@ -1494,6 +1492,9 @@ def read_format_spec(format_spec):
         if match['zeropad']:
             format_dict['align'] = '='
             format_dict['fill_char'] = '0'
+
+        if format_dict['precision'] < 0 and format_dict['type'].lower() not in ['', 'a']:
+            format_dict['precision'] = 6
     else:
         raise ValueError("Invalid format specifier '{}'".format(format_spec))
 
@@ -1632,16 +1633,70 @@ def format_scientific(s,
     return sign, digits + sep + f'{exponent:+03d}'
 
 
+def format_hexadecimal(s,
+                       precision=None,
+                       strip_zeros=False,
+                       sign_spec='-',
+                       base=16,
+                       capitalize=False,
+                       alternate=False,
+                       rounding=round_nearest):
+    sep = 'P' if capitalize else 'p'
+
+    if precision < 0:
+        precision = s[1].bit_length()//4 + 1
+
+    # First, get the exponent to know how many digits we will need
+    dps = precision+1
+    sign, digits, exponent = to_digits_exp(
+            s, max(dps+10, int(s[3]/4)+10), base)
+    exponent *= 4
+
+    if sign != '-' and sign_spec != '-':
+        sign = sign_spec
+
+    # normalization
+    if int(digits[0], 16) > 1:
+        shift = math.floor(math.log2(int(digits[0], 16)))
+        exponent += shift
+        n = int(digits, 16) >> shift
+        digits = hex(n)[2:]
+
+    if digits != "0":
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+        exponent += exp_add*4
+
+    # normalization
+    if digits[0] == "2":
+        exponent += 1
+        n = int(digits, 16) >> 1
+        digits = hex(n)[2:]
+
+    if s[1] and strip_zeros:
+        # Clean up trailing zeros
+        digits = digits.rstrip('0')
+        precision = len(digits)
+
+    if precision >= 1 and len(digits) > 1:
+        return sign, digits[0] + '.' + digits[1:] + sep + f'{exponent:+01d}'
+
+    if alternate:
+        return sign, digits + '.' + sep + f'{exponent:+01d}'
+
+    return sign, digits + sep + f'{exponent:+01d}'
+
+
 _MAP_SPEC_STR = {finf: ('', 'inf'), fninf: ('-', 'inf'), fnan: ('', 'nan')}
 
 
 def format_digits(num, format_dict, prec):
     hack0 = True
     capitalize = False
-    if format_dict['type'] in 'FGE':
+    if format_dict['type'] in list('AFGE'):
         capitalize = True
 
     fmt_type = format_dict['type'].lower()
+
     percent = False
     if fmt_type == '%':
         percent = True
@@ -1659,18 +1714,26 @@ def format_digits(num, format_dict, prec):
 
     rounding = format_dict['rounding']
 
-    if fmt_type == 'g':
-        hack0 = False
+    if not fmt_type or fmt_type == 'g':
+        if fmt_type == 'g':
+            hack0 = False
         if not format_dict['alternate']:
-            strip_last_zero = True
             strip_zeros = True
+            if fmt_type == 'g':
+                strip_last_zero = True
 
-        _, _, exp = to_digits_exp(num, 53/blog2_10, 10)
+        if precision < 0:
+            precision = repr_dps(prec)
         if precision == 0:
             precision = 1
 
-        if -4 <= exp < precision:
-            fmt_type = 'f'
+        _, tdigits, exp = to_digits_exp(num, max(53/blog2_10, precision), 10)
+        if not fmt_type and num[1]:
+            _, exp_add = round_digits(num, tdigits, precision, 10, rounding)
+            exp += exp_add
+
+        fix0 = 0 if fmt_type else 1
+        if -4 <= exp < precision - fix0:
             precision = max(0, precision - exp - 1)
         else:
             fmt_type = 'e'
@@ -1685,7 +1748,34 @@ def format_digits(num, format_dict, prec):
         if percent:
             digits += '%'
 
-    elif fmt_type == 'f':
+    elif fmt_type == 'e':
+        sign, digits = format_scientific(
+                num,
+                precision=precision,
+                strip_zeros=strip_zeros,
+                sign_spec=format_dict['sign'],
+                base=10,
+                capitalize=capitalize,
+                alternate=format_dict['alternate'],
+                rounding=rounding
+                )
+        if digits[0] in 'eE':
+            digits = '0' + digits
+
+    elif fmt_type == 'a':
+        sign, digits = format_hexadecimal(
+                num,
+                precision=precision,
+                strip_zeros=True,
+                sign_spec=format_dict['sign'],
+                base=16,
+                capitalize=capitalize,
+                alternate=format_dict['alternate'],
+                rounding=rounding
+                )
+        digits = ('0X' if capitalize else '0x') + digits
+
+    else:  # fixed-point format
         sign, digits = format_fixed(
                 num,
                 precision=precision,
@@ -1700,19 +1790,11 @@ def format_digits(num, format_dict, prec):
                 hack0=hack0,
                 rounding=rounding
                 )
+        if not fmt_type:
+            if digits[-1] == '.':
+                digits += '0'
         if percent:
             digits = digits + '%'
-    else:  # The format type is scientific
-        sign, digits = format_scientific(
-                num,
-                precision=precision,
-                strip_zeros=strip_zeros,
-                sign_spec=format_dict['sign'],
-                base=10,
-                capitalize=capitalize,
-                alternate=format_dict['alternate'],
-                rounding=rounding
-                )
 
     return sign, digits
 
@@ -1733,6 +1815,47 @@ def format_mpf(num, format_spec, prec):
 
     return lpad*format_dict['fill_char'] + sign + digits \
             + rpad*format_dict['fill_char']
+
+
+def format_mpc(num, format_spec, prec):
+    format_dict = read_format_spec(format_spec)
+
+    if format_dict['fill_char'] == '0':
+        raise ValueError("Zero padding is not allowed in complex format "
+                         "specifier.")
+    if format_dict['align'] == '=':
+        raise ValueError("'=' alignment flag is not allowed in complex format "
+                         "specifier.")
+    if format_dict['type'] == '%':
+        raise ValueError("'%' formatting type is not allowed in complex "
+                         "format specifier.")
+
+    fmt_type = format_dict['type'].lower()
+    if not fmt_type:
+        format_dict['type'] = 'g'
+    sign_re, digits_re = format_digits(num[0], format_dict, prec)
+    fmt_sign = format_dict['sign']
+    format_dict['sign'] = '+'
+    sign_im, digits_im = format_digits(num[1], format_dict, prec)
+    digits_im += 'j'
+
+    if not fmt_type:
+        if num[0] == fzero:
+            sign_re = ''
+            digits_re = ''
+            if sign_im == '+':
+                sign_im = fmt_sign if fmt_sign in [' ', '+'] else ''
+        else:
+            sign_re = '(' + sign_re
+            digits_im += ')'
+
+    nchars = len(sign_re) + len(digits_re) + len(sign_im) + len(digits_im)
+
+    lpad, rpad = calc_padding(nchars, format_dict['width'],
+                              format_dict['align'])
+
+    return (lpad*format_dict['fill_char'] + sign_re + digits_re + sign_im
+            + digits_im + rpad*format_dict['fill_char'])
 
 
 #----------------------------------------------------------------------------#

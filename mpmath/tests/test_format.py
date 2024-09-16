@@ -1,90 +1,33 @@
+import cmath
+import ctypes
 import math
-import platform
-import random
 import sys
 
 import hypothesis.strategies as st
 import pytest
-from hypothesis import given, settings
+from hypothesis import example, given, settings
 
 from mpmath import fp, inf, mp, nan, ninf, workdps
-
-
-def random_fmt():
-    '''
-    This helper generates valid random format strings.
-    '''
-
-    fmt_str = '{:'
-
-    # fill_char and align
-    n = random.randint(0, 2)
-    if n == 0:
-        fmt_str += random.choice('z;clxvjqwer') + random.choice('<^>=')
-        skip_0_padding = True
-    elif n == 1:
-        fmt_str += random.choice('<^>=')
-        skip_0_padding = True
-    else:
-        skip_0_padding = False
-
-    # sign character
-    n = random.randint(0, 1)
-    if n == 1:
-        fmt_str += random.choice('-+ ')
-
-    # no_neg_0 (not used yet.)
-    if sys.version_info[:3] > (3, 11):
-        n = random.randint(0, 1)
-        if n == 1:
-            fmt_str += 'z'
-
-    # alternate mode
-    n = random.randint(0, 1)
-    if n == 1:
-        fmt_str += '#'
-
-    # pad with 0s
-    n = random.randint(0, 1)
-    skip_thousand_separators = False
-    if n == 1 and not skip_0_padding:
-        fmt_str += '0'
-        skip_thousand_separators = True
-
-    # Width
-    n = random.randint(0, 2)
-    if n > 0:
-        fmt_str += str(random.randint(1, 40))
-
-    # grouping character (thousand_separators)
-    n = random.randint(0, 1)
-    if n == 1 and not skip_thousand_separators:
-        fmt_str += random.choice(',_')
-
-    # Precision
-    n = random.randint(0, 2)
-    if n > 0:
-        fmt_str += '.' + str(random.randint(1, 40))
-
-    # Type
-    fmt_str += random.choice('fFgGeE%')
-    fmt_str += '}'
-
-    return fmt_str
+from mpmath.libmp.libmpf import read_format_spec
 
 
 @st.composite
-def fmtstr(draw, types='fFeE'):
+def fmt_str(draw, types='fFeE', for_complex=False):
     res = ''
 
     # fill_char and align
     fill_char = draw(st.sampled_from(['']*3 + list('z;clxvjqwer')))
     if fill_char:
         skip_0_padding = True
-        align = draw(st.sampled_from(list('<^>=')))
+        if for_complex:
+            align = draw(st.sampled_from(list('<^>')))
+        else:
+            align = draw(st.sampled_from(list('<^>=')))
         res += fill_char + align
     else:
         align = draw(st.sampled_from([''] + list('<^>=')))
+        if align == '=' and for_complex:
+            align = ''
         if align:
             skip_0_padding = True
             res += align
@@ -103,6 +46,8 @@ def fmtstr(draw, types='fFeE'):
 
     # pad with 0s
     pad0 = draw(st.sampled_from(['', '0']))
+    if pad0 and for_complex:
+        pad0 = ''
     skip_thousand_separators = False
     if pad0 and not skip_0_padding:
         res += pad0
@@ -512,73 +457,65 @@ def test_mpf_fmt_cpython():
     assert f'{nan:%}' == 'nan%'
     assert f'{nan:+%}' == '+nan%'
 
+    # No formatting code.
 
-def test_mpf_float():
+    assert f'{mp.mpf(0.0):.0}' == '0e+00'
+
+
+@settings(max_examples=20000)
+@given(fmt_str(types=list('fFeEgG%') + ['']),
+       st.floats(allow_nan=True,
+                 allow_infinity=True,
+                 allow_subnormal=True))
+def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
     the same results for default precision.
     '''
 
-    for _ in range(10000):
-        fmt_str = random_fmt()
-        num = random.choice(
-                (
-                    random.uniform(-1e300, 1e300),
-                    random.uniform(-1e-300, 1e-300)
-                    )
-                )
-
-        assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
-
-    # These additional tests test for mpf initialized form subnormal floats
-    for _ in range(10000):
-        fmt_str = random_fmt()
-        num = fp.mpf('{:.15f}e{:d}'.format(
-                     random.uniform(1, 10), random.randint(-324, -308)))
-        if random.randint(0, 1):
-            num = -num
-
-        # We skip the case when num == 0 since mpmath does not have negative
-        # zero.
-        if num == 0:
-            continue
-
-        assert fmt_str.format(num) == fmt_str.format(mp.mpf(num))
-
-
-    # Test the same random formats with special numbers
-    if (',' in fmt_str or '_' in fmt_str) and platform.python_implementation() == 'PyPy':
-        return  # see pypy/pypy#5018
-
-    for num in (inf, -inf, nan, 0):
-        fmt_str = random_fmt()
-        assert fmt_str.format(fp.mpf(num)) == fmt_str.format(mp.mpf(num))
-
-
-@settings(max_examples=10000)
-@given(fmtstr(),
-       st.floats(allow_nan=True,
-                 allow_infinity=True,
-                 allow_subnormal=True))
-def test_mpf_floats_fFeE(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
-    if (',' in fmt or '_' in fmt) and platform.python_implementation() == 'PyPy':
-        return  # see pypy/pypy#5018
-    assert format(x, fmt) == format(mp.mpf(x), fmt)
+    spec = read_format_spec(fmt)
+    if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
+        # The mpmath could choose a different decimal
+        # representative (wrt CPython) for same binary
+        # floating-point number.
+        assert float(format(x)) == float(format(mp.mpf(x)))
+    else:
+        if spec['type'] == '%' and math.isinf(100*x):
+            return  # mpf can't overflow
+        assert format(x, fmt) == format(mp.mpf(x), fmt)
 
 
-@settings(max_examples=10000)
-@given(fmtstr('gG'),
-       st.floats(allow_nan=True,
-                 allow_infinity=True,
-                 allow_subnormal=True))
-def test_mpf_floats_gG(fmt, x):
-    if not x and math.copysign(1, x) == -1:
+@settings(max_examples=20000)
+@given(fmt_str(types=list('gGfFeE') + [''], for_complex=True),
+       st.complex_numbers(allow_nan=True,
+                          allow_infinity=True,
+                          allow_subnormal=True))
+def test_mpc_complexes(fmt, z):
+    if ((not z.real and math.copysign(1, z.real) == -1)
+            or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
-    if (',' in fmt or '_' in fmt) and platform.python_implementation() == 'PyPy':
-        return  # see pypy/pypy#5018
-    assert format(x, fmt) == format(mp.mpf(x), fmt)
+    spec = read_format_spec(fmt)
+    if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
+        # The mpmath could choose a different decimal
+        # representative (wrt CPython) for same binary
+        # floating-point number.
+        if cmath.isnan(complex(format(z))):
+            assert cmath.isnan(complex(format(mp.mpc(z))))
+        else:
+            assert complex(format(z)) == complex(format(mp.mpc(z)))
+    else:
+        assert format(z, fmt) == format(mp.mpc(z), fmt)
+
+
+def test_mpc_fmt():
+    pytest.raises(ValueError, lambda: f'{mp.mpc(1j):=10f}')
+    pytest.raises(ValueError, lambda: f'{mp.mpc(1j):010f}')
+    pytest.raises(ValueError, lambda: f'{mp.mpc(1j):%}')
+
+    assert f'{1+1j:.0g}' == f'{mp.mpc(1+1j):.0g}'
+    assert f'{1+1.1j:.2g}' == f'{mp.mpc(1+1.1j):.2g}'
 
 
 def test_mpf_fmt():
@@ -642,7 +579,7 @@ def test_mpf_fmt():
         assert f"{mp.mpf('1e-50'):.50g}" == '1e-50'
         assert f"{mp.mpf('1e-50'):.50G}" == '1E-50'
 
-        assert f"{mp.mpf('1e-50'):}" == '1e-50'
+        assert f"{mp.mpf('1e-51'):}" == '1e-51'
 
         # thousands separator
         assert f"{mp.mpf('1e9'):,.0f}" == '1,000,000,000'
@@ -862,3 +799,50 @@ def test_errors():
     with pytest.raises(ValueError, match="Cannot specify both 0-padding "
                        "and a fill character"):
         f"{mp.mpf('4'):q<03f}"
+
+
+
+@settings(max_examples=10000)
+@given(st.floats(allow_nan=True, allow_infinity=True,
+                 allow_subnormal=False))
+@example(float('nan'))
+@example(float('inf'))
+def test_hexadecimal_bulk(x):
+    if math.isnan(x):
+        assert math.isnan(float.fromhex(f"{mp.mpf(x):a}"))
+    else:
+        assert float.fromhex(f"{mp.mpf(x):a}") == x
+
+
+try:
+    libc = ctypes.CDLL("libc.so.6")
+except OSError:
+    libc = None
+
+
+def float_print(d, i):
+    fmt = "%." + str(i) + "a\n"
+    a = ctypes.create_string_buffer(256)
+    libc.sprintf(a, bytes(fmt, 'utf-8'), ctypes.c_double(d))
+    return a.raw.decode('utf-8').split("\n")[0]
+
+
+@pytest.mark.skipif(libc is None, reason='requires libc')
+@settings(max_examples=10000)
+@given(st.floats(allow_nan=False, allow_infinity=False,
+                 allow_subnormal=False),
+       st.integers(min_value=0, max_value=15))
+def test_hexadecimal_with_libc_bulk(x, p):
+    fmt = '.' + str(p) + 'a'
+    x_hex = float_print(x, p)
+    m_hex = format(mp.mpf(x), fmt)
+    assert mp.mpf(m_hex) == mp.mpf(x_hex)
+
+
+def test_hexadecimal():
+    with workdps(1000):
+        x = mp.mpf('1.234567890123456789')
+        assert f'{x:.20a}' == '0x1.3c0ca428c59fb71a4194p+0'
+        assert f'{x:.0a}' == '0x1p+0'
+        assert f'{x:#.0a}' == '0x1.p+0'
+        assert f"{mp.mpf('1.234567890123456789'):+.0a}" == '+0x1p+0'

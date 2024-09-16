@@ -3,19 +3,19 @@ import sys
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
-                    fnzero, format_mpf, from_Decimal, from_float, from_int,
-                    from_man_exp, from_npfloat, from_rational, from_str, fzero,
-                    int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
-                    mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
-                    mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
-                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
-                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_cmp, mpf_div, mpf_eq,
-                    mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_mul_int, mpf_neg, mpf_pos, mpf_pow, mpf_pow_int,
-                    mpf_rdiv_int, mpf_sub, mpf_sum, normalize, prec_to_dps,
-                    round_nearest, to_fixed, to_float, to_int, to_man_exp,
-                    to_rational, to_str)
+                    fnzero, format_mpc, format_mpf, from_Decimal, from_float,
+                    from_int, from_man_exp, from_npfloat, from_rational,
+                    from_str, fzero, int_types, mpc_abs, mpc_add, mpc_add_mpf,
+                    mpc_conjugate, mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf,
+                    mpc_is_nonzero, mpc_mpf_div, mpc_mpf_sub, mpc_mul,
+                    mpc_mul_int, mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow,
+                    mpc_pow_int, mpc_pow_mpf, mpc_sub, mpc_sub_mpf,
+                    mpc_to_complex, mpc_to_str, mpf_abs, mpf_add, mpf_cmp,
+                    mpf_div, mpf_eq, mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt,
+                    mpf_mod, mpf_mul, mpf_mul_int, mpf_neg, mpf_pos, mpf_pow,
+                    mpf_pow_int, mpf_rdiv_int, mpf_sub, mpf_sum, normalize,
+                    prec_to_dps, round_nearest, to_fixed, to_float, to_int,
+                    to_man_exp, to_rational, to_str)
 
 
 new = object.__new__
@@ -398,6 +398,22 @@ class _mpf(mpnumeric):
             '-1.23456'
             >>> f'{x:.5Df}'
             '-1.23457'
+
+        Format types 'a' and 'A' (use uppercase digits) allow to represent
+        floating-point number as a C99-style hexadecimal string
+        ``[±][0x]h[.hhh]p±d``, where there is one hexadecimal digit before the
+        dot and the fractional part either is exact or the number of its
+        hexadecimal digits is equal to the specified precision.  The exponent
+        ``d`` is written in decimal, it always contains at least one digit, and
+        it gives the power of 2 by which to multiply the coefficient.  If no
+        digits follow the decimal point, the decimal point is also removed
+        unless the ``#`` option is specified.
+
+            >>> f'{x:a}'
+            '-0x1.3c0ca2a5b1d5d0818d3359c99ff1a26f2b31063249p+0'
+            >>> f'{x:.10a}'
+            '-0x1.3c0ca2a5b2p+0'
+
         """
 
         _, _, (prec, _) = s._ctxdata
@@ -412,8 +428,13 @@ class _mpf(mpnumeric):
     def to_fixed(self, prec):
         return to_fixed(self._mpf_, prec)
 
-    def __round__(self, *args):
-        return round(float(self), *args)
+    def __round__(self, ndigits=0):
+        ctx = self.context
+        if ctx.isfinite(self):
+            frac = MPQ(*self.as_integer_ratio())
+            res = round(frac, ndigits)
+            return ctx.convert(res)
+        return self
 
 
 class _constant(_mpf):
@@ -663,6 +684,21 @@ class _mpc(mpnumeric):
 
     def ae(s, t, rel_eps=None, abs_eps=None):
         return s.context.almosteq(s, t, rel_eps, abs_eps)
+
+    def __format__(s, format_spec):
+        """
+        ``mpc`` objects allow for formatting similar to Python
+        :external:class:`complex`, specified in :external:ref:`formatspec`.
+        All of Python's format types are supported, with the exception of
+        ``n``.  Additionally, as for :func:`mpmath.mpf.__format__`, four
+        different kinds of rounding are supported and format types 'a'
+        and 'A' (use uppercase digits) allow to represent components as
+        C99-style hexadecimal strings.
+
+        """
+
+        _, _, (prec, _) = s._ctxdata
+        return format_mpc(s._mpc_, format_spec, prec)
 
 
 complex_types = (complex, _mpc)
