@@ -43,7 +43,7 @@ from .libmpc import (complex_int_pow, mpc_abs, mpc_acos, mpc_acosh, mpc_add,
                      mpc_tanh, mpc_to_complex, mpc_to_str, mpc_two, mpc_zero,
                      mpf_expj, mpf_expjpi)
 from .libmpf import (ComplexResult, dps_to_prec, fhalf, finf, fnan, fninf,
-                     fnone, fnzero, fone, format_mpc, format_mpf, from_Decimal,
+                     fnone, fone, format_mpc, format_mpf, from_Decimal,
                      from_float, from_int, from_man_exp, from_npfloat,
                      from_pickable, from_rational, from_str, ften, ftwo, fzero,
                      mpf_abs, mpf_add, mpf_ceil, mpf_cmp, mpf_div, mpf_eq,

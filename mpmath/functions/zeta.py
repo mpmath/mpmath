@@ -588,6 +588,10 @@ def _hurwitz(ctx, s, a=1, d=0, **kwargs):
         ctx.prec += extraprec
         # We strongly want to special-case rational a
         a, atype = ctx._convert_param(a)
+
+        if ctx.re(a) < 0 and ctx.isnpint(a):
+            raise ValueError("Hurwitz zeta complex infinity")
+
         if ctx.re(s) < 0:
             if verbose:
                 print("zeta: Attempting reflection formula")
