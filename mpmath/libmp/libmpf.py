@@ -62,6 +62,7 @@ def repr_dps(n):
 # Regular number format:
 # (-1)**sign * mantissa * 2**exponent, plus mantissa.bit_length()
 fzero = (0, MPZ_ZERO, 0, 0)
+fnzero = (1, MPZ_ZERO, 0, 0)
 fone = (0, MPZ_ONE, 0, 1)
 fnone = (1, MPZ_ONE, 0, 1)
 ftwo = (0, MPZ_ONE, 1, 1)
