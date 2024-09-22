@@ -1672,31 +1672,21 @@ def format_binary(s,
                   precision=-1,
                   sign_spec='-',
                   rounding=round_nearest):
-    base = 2
-    alternate = precision < 0
-
-    if alternate:
-        precision = s[1].bit_length() - 1
-
-    # First, get the exponent to know how many digits we will need
-    dps = precision+1
-    sign, digits, exponent = to_digits_exp(
-            s, max(dps+10, int(s[3]/4)+10), base)
-
+    sign = '-' if s[0] else ''
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
-    if digits != "0":
-        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
-        exponent += exp_add
+    prec = precision + 1 if precision >= 0 else s[1].bit_length()
+    s = normalize(*s, prec, rounding)
 
-    if alternate:
-        digits = digits.rstrip('0')
-        if not digits:
-            digits = '0'
+    digits = bin(s[1])[2:]
+    digits = digits + '0'*(precision + 1 - len(digits))
+    if len(digits) > 1:
+        digits = digits[0] + '.' + digits[1:]
 
-    if precision and len(digits) > 1:
-        return sign, digits[0] + '.' + digits[1:] + f'p{exponent:+01d}'
+    exponent = s[2]
+    if s[1]:
+        exponent += s[1].bit_length() - 1
 
     return sign, digits + f'p{exponent:+01d}'
 
