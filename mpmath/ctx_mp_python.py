@@ -414,6 +414,13 @@ class _mpf(mpnumeric):
             >>> f'{x:.10a}'
             '-0x1.3c0ca2a5b2p+0'
 
+        Format type 'b' allows format number in binary:
+
+            >>> f'{x:.15b}'
+            '-1.001111000000110p+0'
+
+        Alternate form (``#`` option) adds ``0b`` prefix.
+
         """
 
         _, _, (prec, _) = s._ctxdata
@@ -679,10 +686,8 @@ class _mpc(mpnumeric):
         ``mpc`` objects allow for formatting similar to Python
         :external:class:`complex`, specified in :external:ref:`formatspec`.
         All of Python's format types are supported, with the exception of
-        ``n``.  Additionally, as for :func:`mpmath.mpf.__format__`, four
-        different kinds of rounding are supported and format types 'a'
-        and 'A' (use uppercase digits) allow to represent components as
-        C99-style hexadecimal strings.
+        ``n``.  Also available additional options and formating types,
+        accepted by :func:`mpmath.mpf.__format__`.
 
         """
 

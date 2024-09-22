@@ -839,6 +839,35 @@ def test_hexadecimal_with_libc_bulk(x, p):
     assert mp.mpf(m_hex) == mp.mpf(x_hex)
 
 
+@settings(max_examples=10000)
+@given(st.floats(allow_nan=False, allow_infinity=False,
+                 allow_subnormal=False),
+       st.integers(min_value=-3, max_value=15))
+def test_binary_with_gmpy2_bulk(x, p):
+    gmpy2 = pytest.importorskip('gmpy2')
+    if not x and math.copysign(1, x) == -1:
+        return  # skip negative zero
+    if p >= 0:
+        fmt = '.' + str(p) + 'b'
+    else:
+        fmt = 'b'
+    g_bin = format(gmpy2.mpfr(x), fmt)
+    m_bin = format(mp.mpf(x), fmt)
+    assert m_bin == g_bin
+
+
+def test_binary_fmt():
+    x = mp.mpf(3)
+    assert f'{x:b}' == '1.1p+1'
+    assert f'{x:.2b}' == '1.10p+1'
+    assert f'{x:+.2b}' == '+1.10p+1'
+    assert f'{x:#.2b}' == '0b1.10p+1'
+
+    x = mp.mpf(0)
+    assert f'{x:.2b}' == '0.00p+0'
+    assert f'{x:b}' == '0p+0'
+
+
 def test_hexadecimal():
     with workdps(1000):
         x = mp.mpf('1.234567890123456789')
