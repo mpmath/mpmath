@@ -1401,7 +1401,7 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>0|[1-9][0-9]*))?
     (?P<rounding>[UDYZN])?
-    (?P<type>[aAeEfFgG%])?
+    (?P<type>[aAbeEfFgG%])?
 """, re.DOTALL | re.VERBOSE).fullmatch
 
 _GMPY_ROUND_CHAR_DICT = {
@@ -1477,7 +1477,7 @@ def read_format_spec(format_spec):
             format_dict['align'] = '='
             format_dict['fill_char'] = '0'
 
-        if format_dict['precision'] < 0 and format_dict['type'].lower() not in ['', 'a']:
+        if format_dict['precision'] < 0 and format_dict['type'].lower() not in ['', 'a', 'b']:
             format_dict['precision'] = 6
     else:
         raise ValueError("Invalid format specifier '{}'".format(format_spec))
@@ -1668,6 +1668,29 @@ def format_hexadecimal(s,
     return sign, digits + sep + f'{exponent:+01d}'
 
 
+def format_binary(s,
+                  precision=-1,
+                  sign_spec='-',
+                  rounding=round_nearest):
+    sign = '-' if s[0] else ''
+    if sign != '-' and sign_spec != '-':
+        sign = sign_spec
+
+    prec = precision + 1 if precision >= 0 else s[1].bit_length()
+    s = normalize(*s, prec, rounding)
+
+    digits = bin(s[1])[2:]
+    digits = digits + '0'*(precision + 1 - len(digits))
+    if len(digits) > 1:
+        digits = digits[0] + '.' + digits[1:]
+
+    exponent = s[2]
+    if s[1]:
+        exponent += s[1].bit_length() - 1
+
+    return sign, digits + f'p{exponent:+01d}'
+
+
 _MAP_SPEC_STR = {finf: ('', 'inf'), fninf: ('-', 'inf'), fnan: ('', 'nan')}
 
 
@@ -1754,6 +1777,16 @@ def format_digits(num, format_dict, prec):
                 rounding=rounding
                 )
         digits = ('0X' if capitalize else '0x') + digits
+
+    elif fmt_type == 'b':
+        sign, digits = format_binary(
+                num,
+                precision=precision,
+                sign_spec=format_dict['sign'],
+                rounding=rounding
+                )
+        if format_dict['alternate']:
+            digits = '0b' + digits
 
     else:  # fixed-point format
         sign, digits = format_fixed(
