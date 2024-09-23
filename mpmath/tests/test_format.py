@@ -868,7 +868,7 @@ def test_binary_fmt():
     assert f'{x:b}' == '0p+0'
 
 
-def test_hexadecimal():
+def test_hexadecimal_fmt():
     with workdps(1000):
         x = mp.mpf('1.234567890123456789')
         assert f'{x:.20a}' == '0x1.3c0ca428c59fb71a4194p+0'

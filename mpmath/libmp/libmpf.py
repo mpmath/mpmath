@@ -1623,52 +1623,40 @@ def format_hexadecimal(s,
                        capitalize=False,
                        alternate=False,
                        rounding=round_nearest):
-    sep = 'P' if capitalize else 'p'
-
-    if precision < 0:
-        precision = s[1].bit_length()//4 + 1
-
-    # First, get the exponent to know how many digits we will need
-    dps = precision+1
-    sign, digits, exponent = to_digits_exp(
-            s, max(dps+10, int(s[3]/4)+10), 16)
-    exponent *= 4
-
+    sign = '-' if s[0] else ''
     if sign != '-' and sign_spec != '-':
         sign = sign_spec
 
-    # normalization
-    if int(digits[0], 16) > 1:
-        shift = math.floor(math.log2(int(digits[0], 16)))
-        exponent += shift
-        n = int(digits, 16) >> shift
-        digits = hex(n)[2:]
-
-    if digits != "0":
-        digits, exp_add = round_digits(s[0], digits, dps, 16, rounding)
-        exponent += exp_add*4
-
-    # normalization
-    if digits[0] == "2":
-        exponent += 1
-        n = int(digits, 16) >> 1
-        digits = hex(n)[2:]
+    prec = 4*precision + 1 if precision >= 0 else s[1].bit_length()
 
     if s[1]:
+        s = normalize(*s, prec, rounding)
+
+        exponent = s[2] + s[3] - 1
+        man = s[1] | (1 << s[3] + 2)  # set leading digit (ignored) to 0x9
+        man <<= 1 + 4*((s[3] + 3)//4) - s[3]
+
+        frac_digits = hex(man)[3:]
+        digits = "1"
+    else:
+        exponent = 0
+        frac_digits = ""
+        digits = "0"
+
+    if precision >= 0:
+        frac_digits = frac_digits[:precision]
+        frac_digits += "0"*(precision - len(frac_digits))
+    else:
         # Clean up trailing zeros
-        digits = digits.rstrip('0')
-        precision = len(digits)
+        frac_digits = frac_digits.rstrip('0')
 
-    if capitalize:
-        digits = digits.upper()
+    if frac_digits:
+        digits += "." + frac_digits
+    elif alternate:
+        digits += "."
+    digits += f'p{exponent:+01d}'
 
-    if precision >= 1 and len(digits) > 1:
-        return sign, digits[0] + '.' + digits[1:] + sep + f'{exponent:+01d}'
-
-    if alternate:
-        return sign, digits + '.' + sep + f'{exponent:+01d}'
-
-    return sign, digits + sep + f'{exponent:+01d}'
+    return sign, digits.upper() if capitalize else digits
 
 
 def format_binary(s,
