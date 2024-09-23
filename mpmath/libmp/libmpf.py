@@ -1630,7 +1630,7 @@ def format_hexadecimal(s,
     prec = 4*precision + 1 if precision >= 0 else s[1].bit_length()
 
     if s[1]:
-        s = normalize(*s, prec, rounding)
+        s = mpf_pos(s, prec, rounding)
 
         exponent = s[2] + s[3] - 1
         man = s[1] | (1 << s[3] + 2)  # set leading digit (ignored) to 0x9
@@ -1668,7 +1668,7 @@ def format_binary(s,
         sign = sign_spec
 
     prec = precision + 1 if precision >= 0 else s[1].bit_length()
-    s = normalize(*s, prec, rounding)
+    s = mpf_pos(s, prec, rounding)
 
     digits = bin(s[1])[2:]
     digits = digits + '0'*(precision + 1 - len(digits))
