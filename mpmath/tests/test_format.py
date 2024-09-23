@@ -872,6 +872,7 @@ def test_hexadecimal():
     with workdps(1000):
         x = mp.mpf('1.234567890123456789')
         assert f'{x:.20a}' == '0x1.3c0ca428c59fb71a4194p+0'
+        assert f'{x:.20A}' == '0X1.3C0CA428C59FB71A4194P+0'
         assert f'{x:.0a}' == '0x1p+0'
         assert f'{x:#.0a}' == '0x1.p+0'
         assert f"{mp.mpf('1.234567890123456789'):+.0a}" == '+0x1p+0'

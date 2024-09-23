@@ -1659,6 +1659,9 @@ def format_hexadecimal(s,
         digits = digits.rstrip('0')
         precision = len(digits)
 
+    if capitalize:
+        digits = digits.upper()
+
     if precision >= 1 and len(digits) > 1:
         return sign, digits[0] + '.' + digits[1:] + sep + f'{exponent:+01d}'
 
