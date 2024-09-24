@@ -900,6 +900,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
 
     """
     prec = ctx.prec
+    trap_complex = getattr(ctx, 'trap_complex', None)
     try:
         ctx.prec += 20
 
@@ -948,6 +949,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
                 kwargs['norm'] = norm
             else:
                 norm = kwargs['norm']
+            ctx.trap_complex = True  # MDNewton assume real input
         else:
             norm = abs
 
@@ -985,6 +987,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         return x
     finally:
         ctx.prec = prec
+        if trap_complex is not None:
+            ctx.trap_complex = trap_complex
 
 
 def multiplicity(ctx, f, root, tol=None, maxsteps=10, **kwargs):
