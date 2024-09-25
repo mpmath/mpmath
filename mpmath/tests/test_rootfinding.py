@@ -99,3 +99,7 @@ def test_trivial():
     assert findroot(lambda x: 0, 1) == 1
     assert findroot(lambda x: x, 0) == 0
     #assert findroot(lambda x, y: x + y, (1, -1)) == (1, -1)
+
+def test_issue_869():
+    f = [lambda x: sqrt(x) + 1]
+    pytest.raises(mp.ComplexResult, lambda: findroot(f, [-1]))

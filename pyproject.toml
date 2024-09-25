@@ -65,6 +65,8 @@ timeout = 300
 [tool.coverage.run]
 branch = true
 omit = ['mpmath/tests/*']
+[tool.coverage.html]
+directory = 'build/coverage/html'
 [tool.coverage.report]
 exclude_lines = ['pragma: no cover',
                  'raise NotImplementedError',
