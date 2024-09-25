@@ -65,3 +65,7 @@ htmlcov/
 
 # Ignore files cached by Hypothesis (including examples directory so far)
 .hypothesis/
+
+# per-project directories for virtual environments
+venv/
+.venv/
