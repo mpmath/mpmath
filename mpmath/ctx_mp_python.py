@@ -1,5 +1,7 @@
+import functools
 import numbers
 import sys
+import warnings
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
@@ -7,14 +9,13 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     from_man_exp, from_npfloat, from_rational, from_str, fzero,
                     int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
                     mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
-                    mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
-                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
-                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
-                    mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_neg, mpf_pos, mpf_pow, mpf_sub, mpf_sum, prec_to_dps,
-                    round_nearest, to_fixed, to_float, to_int, to_man_exp,
-                    to_rational, to_str)
+                    mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_mpf, mpc_neg,
+                    mpc_pos, mpc_pow, mpc_pow_int, mpc_pow_mpf, mpc_sub,
+                    mpc_sub_mpf, mpc_to_complex, mpc_to_str, mpf_abs, mpf_add,
+                    mpf_div, mpf_eq, mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt,
+                    mpf_mod, mpf_mul, mpf_neg, mpf_pos, mpf_pow, mpf_sub,
+                    mpf_sum, prec_to_dps, round_nearest, to_fixed, to_float,
+                    to_int, to_man_exp, to_rational, to_str)
 
 
 new = object.__new__
@@ -33,6 +34,18 @@ def _make_mpf(x):
 def _make_mpc(x, y):
     from mpmath import mp
     return mp.mpc(x, y)
+
+
+def _convert_rhs(func):
+    @functools.wraps(func)
+    def wrapper(a, b, *args):
+        cls, *_ = a._ctxdata
+        try:
+            b = cls.context.convert(b, strings=False)
+        except (ValueError, TypeError):
+            return NotImplemented
+        return func(a, b, *args)
+    return wrapper
 
 
 class _mpf(mpnumeric):
@@ -97,6 +110,7 @@ class _mpf(mpnumeric):
 
     @classmethod
     def mpf_convert_rhs(cls, x):
+        warnings.warn(f"mpf.mpf_convert_rhs() is deprecated", DeprecationWarning)
         try:
             r = cls.context.convert(x, strings=False)
             if hasattr(r, '_mpf_'):
@@ -156,36 +170,29 @@ class _mpf(mpnumeric):
         v._mpf_ = mpf_neg(s._mpf_, prec, rounding)
         return v
 
+    @_convert_rhs
     def _cmp(s, t, func):
-        if hasattr(t, '_mpf_'):
-            t = t._mpf_
-        else:
-            t = s.mpf_convert_rhs(t)
-            if t is NotImplemented:
-                return t
-        return func(s._mpf_, t)
+        if not hasattr(t, '_mpf_'):
+            return NotImplemented
+        return func(s._mpf_, t._mpf_)
 
     def __lt__(s, t): return s._cmp(t, mpf_lt)
     def __gt__(s, t): return s._cmp(t, mpf_gt)
     def __le__(s, t): return s._cmp(t, mpf_le)
     def __ge__(s, t): return s._cmp(t, mpf_ge)
 
+    @_convert_rhs
     def __eq__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
         if hasattr(other, '_mpf_'):
             tval = other._mpf_
             return mpf_eq(sval, tval)
-        if hasattr(other, '_mpc_'):
-            tval = other._mpc_
-            mpc = type(other)
-            return (tval[1] == fzero) and mpf_eq(tval[0], sval)
-        try:
-            other = mpf.context.convert(other, strings=False)
-        except TypeError:
-            return NotImplemented
-        return self.__eq__(other)
+        tval = other._mpc_
+        mpc = type(other)
+        return (tval[1] == fzero) and mpf_eq(tval[0], sval)
 
+    @_convert_rhs
     def __add__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
@@ -195,20 +202,10 @@ class _mpf(mpnumeric):
             obj = new(mpf)
             obj._mpf_ = val
             return obj
-        if hasattr(other, '_mpc_'):
-            tval = other._mpc_
-            mpc = type(other)
-            val = mpc_add_mpf(tval, sval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
-        try:
-            other = mpf.context.convert(other, strings=False)
-        except TypeError:
-            return NotImplemented
-        return self.__add__(other)
+        return other.__add__(self)
     __radd__ = __add__
 
+    @_convert_rhs
     def __sub__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
@@ -218,25 +215,18 @@ class _mpf(mpnumeric):
             obj = new(mpf)
             obj._mpf_ = val
             return obj
-        if hasattr(other, '_mpc_'):
-            tval = other._mpc_
-            mpc = type(other)
-            val = mpc_mpf_sub(sval, tval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
-        try:
-            other = mpf.context.convert(other, strings=False)
-        except TypeError:
-            return NotImplemented
-        return self.__sub__(other)
+        tval = other._mpc_
+        mpc = type(other)
+        val = mpc_mpf_sub(sval, tval, prec, rounding)
+        obj = new(mpc)
+        obj._mpc_ = val
+        return obj
 
+    @_convert_rhs
     def __rsub__(s, t):
-        t = s.mpf_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         return t - s
 
+    @_convert_rhs
     def __mul__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
@@ -246,20 +236,10 @@ class _mpf(mpnumeric):
             obj = new(mpf)
             obj._mpf_ = val
             return obj
-        if hasattr(other, '_mpc_'):
-            tval = other._mpc_
-            mpc = type(other)
-            val = mpc_mul_mpf(tval, sval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
-        try:
-            other = mpf.context.convert(other, strings=False)
-        except TypeError:
-            return NotImplemented
-        return self.__mul__(other)
+        return other.__mul__(self)
     __rmul__ = __mul__
 
+    @_convert_rhs
     def __truediv__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
@@ -269,25 +249,18 @@ class _mpf(mpnumeric):
             obj = new(mpf)
             obj._mpf_ = val
             return obj
-        if hasattr(other, '_mpc_'):
-            tval = other._mpc_
-            mpc = type(other)
-            val = mpc_mpf_div(sval, tval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
-        try:
-            other = mpf.context.convert(other, strings=False)
-        except TypeError:
-            return NotImplemented
-        return self.__truediv__(other)
+        tval = other._mpc_
+        mpc = type(other)
+        val = mpc_mpf_div(sval, tval, prec, rounding)
+        obj = new(mpc)
+        obj._mpc_ = val
+        return obj
 
+    @_convert_rhs
     def __rtruediv__(s, t):
-        t = s.mpf_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         return t / s
 
+    @_convert_rhs
     def __mod__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
@@ -305,10 +278,8 @@ class _mpf(mpnumeric):
             return NotImplemented
         return self.__mod__(other)
 
+    @_convert_rhs
     def __rmod__(s, t):
-        t = s.mpf_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         return t % s
 
     def __floordiv__(self, other):
@@ -318,6 +289,7 @@ class _mpf(mpnumeric):
         mod = self % other
         return (self - mod) / other, mod
 
+    @_convert_rhs
     def __pow__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
@@ -336,23 +308,15 @@ class _mpf(mpnumeric):
                 obj = new(mpc)
                 obj._mpc_ = val
                 return obj
-        if hasattr(other, '_mpc_'):
-            tval = other._mpc_
-            mpc = type(other)
-            val = mpc_pow((sval, fzero), tval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
-        try:
-            other = mpf.context.convert(other, strings=False)
-        except TypeError:
-            return NotImplemented
-        return self.__pow__(other)
+        tval = other._mpc_
+        mpc = type(other)
+        val = mpc_pow((sval, fzero), tval, prec, rounding)
+        obj = new(mpc)
+        obj._mpc_ = val
+        return obj
 
+    @_convert_rhs
     def __rpow__(s, t):
-        t = s.mpf_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         return t ** s
 
     def __format__(s, format_spec):
@@ -561,108 +525,66 @@ class _mpc(mpnumeric):
         except (TypeError, ValueError):
             return NotImplemented
 
+    @_convert_rhs
     def __eq__(s, t):
-        if not hasattr(t, '_mpc_'):
-            if isinstance(t, str):
-                return False
-            t = s.mpc_convert_lhs(t)
-            if t is NotImplemented:
-                return t
         return s.real == t.real and s.imag == t.imag
 
+    @_convert_rhs
     def __add__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
-        if not hasattr(t, '_mpc_'):
-            t = s.mpc_convert_lhs(t)
-            if t is NotImplemented:
-                return t
-            if hasattr(t, '_mpf_'):
-                v = new(cls)
-                v._mpc_ = mpc_add_mpf(s._mpc_, t._mpf_, prec, rounding)
-                return v
         v = new(cls)
-        v._mpc_ = mpc_add(s._mpc_, t._mpc_, prec, rounding)
+        if hasattr(t, '_mpf_'):
+            v._mpc_ = mpc_add_mpf(s._mpc_, t._mpf_, prec, rounding)
+        else:
+            v._mpc_ = mpc_add(s._mpc_, t._mpc_, prec, rounding)
         return v
     __radd__ = __add__
 
+    @_convert_rhs
     def __sub__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
-        if not hasattr(t, '_mpc_'):
-            t = s.mpc_convert_lhs(t)
-            if t is NotImplemented:
-                return t
-            if hasattr(t, '_mpf_'):
-                v = new(cls)
-                v._mpc_ = mpc_sub_mpf(s._mpc_, t._mpf_, prec, rounding)
-                return v
         v = new(cls)
-        v._mpc_ = mpc_sub(s._mpc_, t._mpc_, prec, rounding)
+        if hasattr(t, '_mpf_'):
+            v._mpc_ = mpc_sub_mpf(s._mpc_, t._mpf_, prec, rounding)
+        else:
+            v._mpc_ = mpc_sub(s._mpc_, t._mpc_, prec, rounding)
         return v
 
+    @_convert_rhs
     def __rsub__(s, t):
-        t = s.mpc_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         return t - s
 
+    @_convert_rhs
     def __mul__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
-        if not hasattr(t, '_mpc_'):
-            if isinstance(t, int_types):
-                v = new(cls)
-                v._mpc_ = mpc_mul_int(s._mpc_, t, prec, rounding)
-                return v
-            t = s.mpc_convert_lhs(t)
-            if t is NotImplemented:
-                return t
-            if hasattr(t, '_mpf_'):
-                v = new(cls)
-                v._mpc_ = mpc_mul_mpf(s._mpc_, t._mpf_, prec, rounding)
-                return v
         v = new(cls)
-        v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
+        if hasattr(t, '_mpf_'):
+            v._mpc_ = mpc_mul_mpf(s._mpc_, t._mpf_, prec, rounding)
+        else:
+            v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
         return v
 
+    @_convert_rhs
     def __rmul__(s, t):
-        cls, new, (prec, rounding) = s._ctxdata
-        if isinstance(t, int_types):
-            v = new(cls)
-            v._mpc_ = mpc_mul_int(s._mpc_, t, prec, rounding)
-            return v
-        t = s.mpc_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         return t * s
 
+    @_convert_rhs
     def __truediv__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
-        if not hasattr(t, '_mpc_'):
-            t = s.mpc_convert_lhs(t)
-            if t is NotImplemented:
-                return t
-            if hasattr(t, '_mpf_'):
-                v = new(cls)
-                v._mpc_ = mpc_div_mpf(s._mpc_, t._mpf_, prec, rounding)
-                return v
         v = new(cls)
-        v._mpc_ = mpc_div(s._mpc_, t._mpc_, prec, rounding)
+        if hasattr(t, '_mpf_'):
+            v._mpc_ = mpc_div_mpf(s._mpc_, t._mpf_, prec, rounding)
+        else:
+            v._mpc_ = mpc_div(s._mpc_, t._mpc_, prec, rounding)
         return v
 
+    @_convert_rhs
     def __rtruediv__(s, t):
-        t = s.mpc_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         return t / s
 
+    @_convert_rhs
     def __pow__(s, t):
         cls, new, (prec, rounding) = s._ctxdata
-        if isinstance(t, int_types):
-            v = new(cls)
-            v._mpc_ = mpc_pow_int(s._mpc_, t, prec, rounding)
-            return v
-        t = s.mpc_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         v = new(cls)
         if hasattr(t, '_mpf_'):
             v._mpc_ = mpc_pow_mpf(s._mpc_, t._mpf_, prec, rounding)
@@ -670,10 +592,8 @@ class _mpc(mpnumeric):
             v._mpc_ = mpc_pow(s._mpc_, t._mpc_, prec, rounding)
         return v
 
+    @_convert_rhs
     def __rpow__(s, t):
-        t = s.mpc_convert_lhs(t)
-        if t is NotImplemented:
-            return t
         return t ** s
 
     def ae(s, t, rel_eps=None, abs_eps=None):
