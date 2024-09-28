@@ -173,6 +173,8 @@ def mpc_mul_int(z, n, prec, rnd=round_fast):
     return re, im
 
 def mpc_div(z, w, prec, rnd=round_fast):
+    if mpc_is_inf(w) and not mpc_is_infnan(z):
+        return fzero, fzero
     a, b = z
     c, d = w
     wp = prec + 10
@@ -192,6 +194,8 @@ def mpc_div_mpf(z, p, prec, rnd=round_fast):
 
 def mpc_reciprocal(z, prec, rnd=round_fast):
     """Calculate 1/z efficiently"""
+    if mpc_is_inf(z):
+        return fzero, fzero
     a, b = z
     m = mpf_add(mpf_mul(a,a),mpf_mul(b,b),prec+10)
     re = mpf_div(a, m, prec, rnd)
@@ -200,6 +204,8 @@ def mpc_reciprocal(z, prec, rnd=round_fast):
 
 def mpc_mpf_div(p, z, prec, rnd=round_fast):
     """Calculate p/z where p is real efficiently"""
+    if mpc_is_inf(z) and p not in (finf, fninf, fnan):
+        return fzero, fzero
     a, b = z
     m = mpf_add(mpf_mul(a,a),mpf_mul(b,b), prec+10)
     re = mpf_div(mpf_mul(a,p), m, prec, rnd)
