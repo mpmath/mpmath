@@ -92,6 +92,12 @@ def test_mod():
     assert mpf(2.53) % inf == mpf(2.53)
     assert mpf(2.53) % ninf == mpf(2.53)
 
+def test_floordiv():
+    assert mpf(30.21) // mpf(2.53) == mpf(11)
+
+def test_divmod():
+    assert divmod(mpf(30.21), mpf(2.53)) == (mpf(11), mpf(2.380000000000003))
+
 def test_pow():
     assert mpf(6) ** mpf(3) == 216.0
     assert mpf(6) ** 3 == 216.0

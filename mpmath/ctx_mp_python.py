@@ -318,6 +318,13 @@ class _mpf(mpnumeric):
             return t
         return t % s
 
+    def __floordiv__(self, other):
+        return (self - (self % other)) / other
+
+    def __divmod__(self, other):
+        mod = self % other
+        return (self - mod) / other, mod
+
     def __pow__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
