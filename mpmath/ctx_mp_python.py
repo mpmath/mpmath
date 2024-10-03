@@ -97,19 +97,13 @@ class _mpf(mpnumeric):
 
     @classmethod
     def mpf_convert_rhs(cls, x):
-        if isinstance(x, int_types): return from_int(x)
-        if isinstance(x, float): return from_float(x)
-        if isinstance(x, complex_types): return cls.context.mpc(x)
-        if isinstance(x, MPQ):
-            p, q = x.numerator, x.denominator
-            return from_rational(p, q, cls.context.prec)
-        if hasattr(x, '_mpf_'): return x._mpf_
-        if hasattr(x, '_mpmath_'):
-            t = cls.context.convert(x._mpmath_(*cls.context._prec_rounding))
-            if hasattr(t, '_mpf_'):
-                return t._mpf_
-            return t
-        return NotImplemented
+        try:
+            r = cls.context.convert(x, strings=False)
+            if hasattr(r, '_mpf_'):
+                r = r._mpf_
+            return r
+        except (ValueError, TypeError):
+            return NotImplemented
 
     @classmethod
     def mpf_convert_lhs(cls, x):
