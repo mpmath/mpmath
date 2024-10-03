@@ -10,10 +10,9 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
                     mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
                     mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_cmp, mpf_div, mpf_eq,
-                    mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_mul_int, mpf_neg, mpf_pos, mpf_pow, mpf_pow_int,
-                    mpf_rdiv_int, mpf_sub, mpf_sum, normalize, prec_to_dps,
+                    mpc_to_str, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
+                    mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
+                    mpf_neg, mpf_pos, mpf_pow, mpf_sub, mpf_sum, prec_to_dps,
                     round_nearest, to_fixed, to_float, to_int, to_man_exp,
                     to_rational, to_str)
 
@@ -339,7 +338,7 @@ class _mpf(mpnumeric):
                 if mpf.context.trap_complex:
                     raise
                 mpc = mpf.context.mpc
-                val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding)
+                val = mpc_pow_mpf((sval, fzero), tval, prec, rounding)
                 obj = new(mpc)
                 obj._mpc_ = val
                 return obj
@@ -627,7 +626,6 @@ class _mpc(mpnumeric):
                 v = new(cls)
                 v._mpc_ = mpc_mul_mpf(s._mpc_, t._mpf_, prec, rounding)
                 return v
-            t = s.mpc_convert_lhs(t)
         v = new(cls)
         v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
         return v
