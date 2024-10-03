@@ -557,9 +557,8 @@ class _mpc(mpnumeric):
     @classmethod
     def mpc_convert_lhs(cls, x):
         try:
-            y = cls.context.convert(x)
-            return y
-        except TypeError:
+            return cls.context.convert(x, strings=False)
+        except (TypeError, ValueError):
             return NotImplemented
 
     def __eq__(s, t):
