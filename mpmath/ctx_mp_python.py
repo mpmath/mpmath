@@ -10,10 +10,9 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
                     mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
                     mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_cmp, mpf_div, mpf_eq,
-                    mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_mul_int, mpf_neg, mpf_pos, mpf_pow, mpf_pow_int,
-                    mpf_rdiv_int, mpf_sub, mpf_sum, normalize, prec_to_dps,
+                    mpc_to_str, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
+                    mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
+                    mpf_neg, mpf_pos, mpf_pow, mpf_sub, mpf_sum, prec_to_dps,
                     round_nearest, to_fixed, to_float, to_int, to_man_exp,
                     to_rational, to_str)
 
@@ -98,19 +97,13 @@ class _mpf(mpnumeric):
 
     @classmethod
     def mpf_convert_rhs(cls, x):
-        if isinstance(x, int_types): return from_int(x)
-        if isinstance(x, float): return from_float(x)
-        if isinstance(x, complex_types): return cls.context.mpc(x)
-        if isinstance(x, MPQ):
-            p, q = x.numerator, x.denominator
-            return from_rational(p, q, cls.context.prec)
-        if hasattr(x, '_mpf_'): return x._mpf_
-        if hasattr(x, '_mpmath_'):
-            t = cls.context.convert(x._mpmath_(*cls.context._prec_rounding))
-            if hasattr(t, '_mpf_'):
-                return t._mpf_
-            return t
-        return NotImplemented
+        try:
+            r = cls.context.convert(x, strings=False)
+            if hasattr(r, '_mpf_'):
+                r = r._mpf_
+            return r
+        except (ValueError, TypeError):
+            return NotImplemented
 
     @classmethod
     def mpf_convert_lhs(cls, x):
@@ -318,6 +311,13 @@ class _mpf(mpnumeric):
             return t
         return t % s
 
+    def __floordiv__(self, other):
+        return (self - (self % other)) / other
+
+    def __divmod__(self, other):
+        mod = self % other
+        return (self - mod) / other, mod
+
     def __pow__(self, other):
         mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
@@ -332,7 +332,7 @@ class _mpf(mpnumeric):
                 if mpf.context.trap_complex:
                     raise
                 mpc = mpf.context.mpc
-                val = mpc_pow((sval, fzero), (tval, fzero), prec, rounding)
+                val = mpc_pow_mpf((sval, fzero), tval, prec, rounding)
                 obj = new(mpc)
                 obj._mpc_ = val
                 return obj
@@ -557,9 +557,8 @@ class _mpc(mpnumeric):
     @classmethod
     def mpc_convert_lhs(cls, x):
         try:
-            y = cls.context.convert(x)
-            return y
-        except TypeError:
+            return cls.context.convert(x, strings=False)
+        except (TypeError, ValueError):
             return NotImplemented
 
     def __eq__(s, t):
@@ -620,7 +619,6 @@ class _mpc(mpnumeric):
                 v = new(cls)
                 v._mpc_ = mpc_mul_mpf(s._mpc_, t._mpf_, prec, rounding)
                 return v
-            t = s.mpc_convert_lhs(t)
         v = new(cls)
         v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
         return v

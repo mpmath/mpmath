@@ -86,11 +86,20 @@ def test_div():
     assert 6 / mpc(3) == 2.0
     assert 6.0 / mpc(3) == 2.0
     assert (6+0j) / mpc(3) == 2.0
+    assert 1/mpc(inf, 1) == 0.0
+    assert (1+1j)/mpc(2, inf) == 0.0
+    assert mpc(inf, 1)**-1 == 0.0
 
 def test_mod():
     assert mpf(3.1) % decimal.Decimal(5.3) == mpf('3.1000000000000001')
     assert mpf(2.53) % inf == mpf(2.53)
     assert mpf(2.53) % ninf == mpf(2.53)
+
+def test_floordiv():
+    assert mpf(30.21) // mpf(2.53) == mpf(11)
+
+def test_divmod():
+    assert divmod(mpf(30.21), mpf(2.53)) == (mpf(11), mpf(2.380000000000003))
 
 def test_pow():
     assert mpf(6) ** mpf(3) == 216.0

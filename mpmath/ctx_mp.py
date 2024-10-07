@@ -12,12 +12,13 @@ from . import function_docs, libmp
 from .ctx_base import StandardBaseContext
 from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     fninf, fone, from_rational, fzero, int_types, mpc_add,
-                    mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mul, mpc_mul_mpf,
-                    mpc_neg, mpc_sub, mpc_sub_mpf, mpc_to_str, mpf_add,
-                    mpf_apery, mpf_catalan, mpf_degree, mpf_div, mpf_e,
-                    mpf_euler, mpf_glaisher, mpf_khinchin, mpf_ln2, mpf_ln10,
-                    mpf_mertens, mpf_mul, mpf_neg, mpf_phi, mpf_pi, mpf_rand,
-                    mpf_sub, mpf_twinprime, repr_dps, to_man_exp, to_str)
+                    mpc_add_mpf, mpc_div, mpc_div_mpf, mpc_mpf_div,
+                    mpc_mpf_sub, mpc_mul, mpc_mul_mpf, mpc_neg, mpc_sub,
+                    mpc_sub_mpf, mpc_to_str, mpf_add, mpf_apery, mpf_catalan,
+                    mpf_degree, mpf_div, mpf_e, mpf_euler, mpf_glaisher,
+                    mpf_khinchin, mpf_ln2, mpf_ln10, mpf_mertens, mpf_mul,
+                    mpf_neg, mpf_phi, mpf_pi, mpf_rand, mpf_sub, mpf_twinprime,
+                    repr_dps, to_man_exp, to_str)
 
 
 get_complex = re.compile(r"""
@@ -922,7 +923,7 @@ maxterms, or set zeroprec."""
                 if hasattr(y, '_mpf_'):
                     return ctx.make_mpf(mpf_sub(x._mpf_, y._mpf_, prec, rounding))
                 if hasattr(y, '_mpc_'):
-                    return ctx.make_mpc(mpc_sub((x._mpf_, fzero), y._mpc_, prec, rounding))
+                    return ctx.make_mpc(mpc_mpf_sub(x._mpf_, y._mpc_, prec, rounding))
             if hasattr(x, '_mpc_'):
                 if hasattr(y, '_mpf_'):
                     return ctx.make_mpc(mpc_sub_mpf(x._mpc_, y._mpf_, prec, rounding))
@@ -1057,7 +1058,7 @@ maxterms, or set zeroprec."""
             if hasattr(y, '_mpf_'):
                 return ctx.make_mpf(mpf_div(x._mpf_, y._mpf_, prec, rounding))
             if hasattr(y, '_mpc_'):
-                return ctx.make_mpc(mpc_div((x._mpf_, fzero), y._mpc_, prec, rounding))
+                return ctx.make_mpc(mpc_mpf_div(x._mpf_, y._mpc_, prec, rounding))
         if hasattr(x, '_mpc_'):
             if hasattr(y, '_mpf_'):
                 return ctx.make_mpc(mpc_div_mpf(x._mpc_, y._mpf_, prec, rounding))
