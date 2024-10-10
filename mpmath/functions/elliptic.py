@@ -1370,19 +1370,6 @@ def ellippi(ctx, *args):
         >>> ellippi(0.5, 5+6j-2*pi, -7-8j)
         (-0.3612856620076747660410167 + 0.5217735339984807829755815j)
 
-    Some degenerate cases::
-
-        >>> ellippi(1,1)
-        inf
-        >>> ellippi(1,0)
-        inf
-        >>> ellippi(1,2,0)
-        inf
-        >>> ellippi(1,2,1)
-        inf
-        >>> ellippi(1,0,1)
-        0.0
-
     """
     if len(args) == 2:
         n, m = args
@@ -1396,10 +1383,7 @@ def ellippi(ctx, *args):
         if ctx.isnan(n) or ctx.isnan(z) or ctx.isnan(m):
             raise ValueError
         if complete:
-            if m == 0:
-                if n == 1:
-                    return ctx.inf
-                return ctx.pi/(2*ctx.sqrt(1-n))
+            if m == 0: return ctx.pi/(2*ctx.sqrt(1-n))
             if n == 0: return ctx.ellipk(m)
             if ctx.isinf(n) or ctx.isinf(m): return ctx.zero
         else:
@@ -1409,10 +1393,7 @@ def ellippi(ctx, *args):
         if ctx.isinf(n) or ctx.isinf(z) or ctx.isinf(m):
             raise ValueError
     if complete:
-        if m == 1:
-            if n == 1:
-                return ctx.inf
-            return -ctx.inf/ctx.sign(n-1)
+        if m == 1: return -ctx.inf/ctx.sign(n-1)
         away = False
     else:
         x = z.real
@@ -1423,8 +1404,6 @@ def ellippi(ctx, *args):
         d = ctx.nint(x/pi)
         z = z-pi*d
         P = 2*d*ctx.ellippi(n,m)
-        if ctx.isinf(P):
-            return ctx.inf
     else:
         P = 0
     def terms():
