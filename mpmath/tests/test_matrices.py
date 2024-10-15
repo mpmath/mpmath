@@ -203,7 +203,8 @@ def test_matrix_numpy():
 
     if sys.version_info < (3, 9):
         pytest.skip("latest numpy dropped support for CPython 3.8")
-    pytest.raises(ValueError, lambda: numpy.array(matrix(l), copy=False))
+    if numpy.__version__ >= '2':
+        pytest.raises(ValueError, lambda: numpy.array(matrix(l), copy=False))
 
 def test_interval_matrix_scalar_mult():
     """Multiplication of iv.matrix and any scalar type"""
