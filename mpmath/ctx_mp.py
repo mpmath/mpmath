@@ -44,12 +44,13 @@ class MPContext(BaseMPContext, StandardBaseContext):
     Context for multiprecision arithmetic with a global precision.
     """
 
-    def __init__(ctx):
+    def __init__(ctx, prec=sys.float_info.mant_dig, trap_complex=False):
         BaseMPContext.__init__(ctx)
-        ctx.trap_complex = False
         ctx.pretty = False
         ctx.types = [ctx.mpf, ctx.mpc, ctx.constant]
         ctx.default()
+        ctx._set_prec(prec)
+        ctx.trap_complex = trap_complex
         StandardBaseContext.__init__(ctx)
 
         ctx.init_builtins()
