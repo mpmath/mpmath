@@ -467,6 +467,7 @@ def test_mpf_fmt_cpython():
        st.floats(allow_nan=True,
                  allow_infinity=True,
                  allow_subnormal=True))
+@example(fmt='.0g', x=9.995074823339339e-05)  # issue 880
 def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
