@@ -1098,7 +1098,7 @@ def to_digits_exp(s, dps, base=10):
     return sign, digits, exponent
 
 def round_digits(sign, digits, dps, base, rounding=round_nearest,
-                 hack0=False):
+                 fixed=False):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1171,7 +1171,7 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest,
                 '0' * (dps - i - 1)
         else:
             # When rounding up 0.9999... in fixed format, we lose one dps.
-            digits = '1' + '0' * (dps - (0 if hack0 else 1))
+            digits = '1' + '0' * (dps - (0 if fixed else 1))
             exponent += 1
     else:
         digits = digits[:dps]
@@ -1495,7 +1495,6 @@ def format_fixed(s,
                  base=10,
                  alternate=False,
                  no_neg_0=False,
-                 hack0=True,
                  rounding=round_nearest):
     '''
     Format a number into fixed point.
@@ -1528,7 +1527,7 @@ def format_fixed(s,
         if no_neg_0:
             sign = '' if sign_spec == '-' else sign_spec
     else:
-        digits, exp_add = round_digits(s[0], digits, dps, base, rounding, hack0)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rounding, True)
         exponent += exp_add
 
         if all(_ == '0' for _ in digits) and no_neg_0:
@@ -1686,7 +1685,6 @@ _MAP_SPEC_STR = {finf: ('', 'inf'), fninf: ('-', 'inf'), fnan: ('', 'nan')}
 
 
 def format_digits(num, format_dict, prec):
-    hack0 = True
     capitalize = False
     if format_dict['type'] in list('AFGE'):
         capitalize = True
@@ -1711,8 +1709,6 @@ def format_digits(num, format_dict, prec):
     rounding = format_dict['rounding']
 
     if not fmt_type or fmt_type == 'g':
-        if fmt_type == 'g':
-            hack0 = False
         if not format_dict['alternate']:
             strip_zeros = True
             if fmt_type == 'g':
@@ -1724,7 +1720,7 @@ def format_digits(num, format_dict, prec):
             precision = 1
 
         _, tdigits, exp = to_digits_exp(num, max(53/blog2_10, precision), 10)
-        if not fmt_type and num[1]:
+        if num[1]:
             _, exp_add = round_digits(num, tdigits, precision, 10, rounding)
             exp += exp_add
 
@@ -1791,7 +1787,6 @@ def format_digits(num, format_dict, prec):
                 base=10,
                 alternate=format_dict['alternate'],
                 no_neg_0=format_dict['no_neg_0'],
-                hack0=hack0,
                 rounding=rounding
                 )
         if not fmt_type:

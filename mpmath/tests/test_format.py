@@ -467,6 +467,7 @@ def test_mpf_fmt_cpython():
        st.floats(allow_nan=True,
                  allow_infinity=True,
                  allow_subnormal=True))
+@example(fmt='.0g', x=9.995074823339339e-05)  # issue 880
 def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
@@ -476,6 +477,8 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if sys.version_info < (3, 9) and spec['type'] in ('g', 'G'):
+        pytest.skip("CPython has incompatible g/G formatting in 3.8 and 3.9+")
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
@@ -497,6 +500,8 @@ def test_mpc_complexes(fmt, z):
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if sys.version_info < (3, 9) and spec['type'] in ('g', 'G'):
+        pytest.skip("CPython has incompatible g/G formatting in 3.8 and 3.9+")
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
