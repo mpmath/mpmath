@@ -79,6 +79,7 @@ def test_to_str():
     x = mpf('1234.567891')._mpf_
     pytest.raises(ValueError, lambda: to_str(x, 6, binary_exp=True))
     pytest.raises(ValueError, lambda: to_str(x, 6, rounding='Y'))
+    pytest.raises(ValueError, lambda: to_str('1e400e2', 6))
     assert to_str(x, 5, rounding='n') == '1234.6'
     assert to_str(x, 5, rounding='d') == '1234.5'
     assert to_str(x, 5, rounding='u') == '1234.6'

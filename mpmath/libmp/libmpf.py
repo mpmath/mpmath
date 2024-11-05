@@ -1307,9 +1307,11 @@ def str_to_man_exp(x, base=10):
     parts = x.split(sep)
     if len(parts) == 1:
         exp = 0
-    else: # == 2
+    elif len(parts) == 2:
         x = parts[0]
         exp = int(parts[1])
+    else:
+        raise ValueError("couldn't convert a str to mpf")
     # Look for radix point in mantissa
     parts = x.split('.')
     if len(parts) == 2:
