@@ -82,6 +82,8 @@ def besselj(ctx, n, z, derivative=0, **kwargs):
 def besseli(ctx, n, z, derivative=0, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
+    if ctx.nint(n) and n < 0:
+        return ctx.besseli(-n, z, derivative, **kwargs)
     if not z:
         if derivative:
             raise ValueError
