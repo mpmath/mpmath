@@ -17,7 +17,7 @@ def besselj(ctx, n, z, derivative=0, **kwargs):
         n_isint = True
     else:
         n = ctx.convert(n)
-        n_isint = ctx.isint(n)
+        n_isint = ctx._is_real_type(n) and ctx.isint(n)
         if n_isint:
             n = int(ctx._re(n))
     if n_isint and n < 0:
@@ -82,7 +82,7 @@ def besselj(ctx, n, z, derivative=0, **kwargs):
 def besseli(ctx, n, z, derivative=0, **kwargs):
     n = ctx.convert(n)
     z = ctx.convert(z)
-    if ctx.nint(n) and n < 0:
+    if ctx._is_real_type(n) and ctx.isint(n) and n < 0:
         return ctx.besseli(-n, z, derivative, **kwargs)
     if not z:
         if derivative:
