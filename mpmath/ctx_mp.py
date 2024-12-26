@@ -600,13 +600,24 @@ class MPContext(BaseMPContext, StandardBaseContext):
     def mpmathify(ctx, *args, **kwargs):
         return ctx.convert(*args, **kwargs)
 
+    _MPFR_rounding_map = {'N': 'n',
+                          'D': 'f',
+                          'U': 'c',
+                          'Y': 'u',
+                          'Z': 'd',
+                          'n': 'n',
+                          'f': 'f',
+                          'c': 'c',
+                          'u': 'u',
+                          'd': 'd'}
+
     def _parse_prec(ctx, kwargs):
         if kwargs:
             if kwargs.get('exact'):
                 return 0, 'f'
             prec, rounding = ctx._prec_rounding
             if 'rounding' in kwargs:
-                rounding = kwargs['rounding']
+                rounding = ctx._MPFR_rounding_map[kwargs['rounding']]
             if 'prec' in kwargs:
                 prec = kwargs['prec']
                 if prec == ctx.inf:
@@ -808,9 +819,13 @@ maxterms, or set zeroprec."""
         *exact=True* is passed, an exact addition with no rounding is performed.
 
         When the precision is finite, the optional *rounding* keyword argument
-        specifies the direction of rounding. Valid options are ``'n'`` for
-        nearest (default), ``'f'`` for floor, ``'c'`` for ceiling, ``'d'``
-        for down, ``'u'`` for up.
+        specifies the direction of rounding.  Valid options are:
+
+            * ``'f'`` (alias ``'D'``) for floor, towards minus infinity
+            * ``'c'`` (alias ``'U'``) )for ceiling, towards plus infinity
+            * ``'d'`` (alias ``'Z'``) for down, towards zero
+            * ``'u'`` (alias ``'Y'``) for up, away from zero
+            * ``'n'`` (alias ``'N'``) for rounding to nearest (default)
 
         **Examples**
 

@@ -368,7 +368,7 @@ class _mpf(mpnumeric):
 
         The format specification adopts the same general form as Python's
         :external:ref:`formatspec`.  All of Python's format types are
-        supported, with the exception of ``n``.
+        supported, with the exception of ``'n'``.
 
         If precision is left as default, the resulting string is exactly the
         same as if printing a regular :external:class:`float`:
@@ -385,11 +385,11 @@ class _mpf(mpnumeric):
         In addition to the normal Python features, four different kinds of
         rounding are supported:
 
-            * 'U': rounding towards plus infinity
-            * 'D': rounding towards minus infinity
-            * 'Y': rounding away from zero
-            * 'Z': rounding towards zero
-            * 'N': rounding to nearest (default)
+            * ``'U'``: rounding towards plus infinity
+            * ``'D'``: rounding towards minus infinity
+            * ``'Y'``: rounding away from zero
+            * ``'Z'``: rounding towards zero
+            * ``'N'``: rounding to nearest (default)
 
         The rounding option must be set right before the presentation type:
 
@@ -399,27 +399,27 @@ class _mpf(mpnumeric):
             >>> f'{x:.5Df}'
             '-1.23457'
 
-        Format types 'a' and 'A' (use uppercase digits) allow to represent
-        floating-point number as a C99-style hexadecimal string
+        Format types ``'a'`` and ``'A'`` (use uppercase digits) allow to
+        represent floating-point number as a C99-style hexadecimal string
         ``[±][0x]h[.hhh]p±d``, where there is one hexadecimal digit before the
         dot and the fractional part either is exact or the number of its
         hexadecimal digits is equal to the specified precision.  The exponent
-        ``d`` is written in decimal, it always contains at least one digit, and
-        it gives the power of 2 by which to multiply the coefficient.  If no
-        digits follow the decimal point, the decimal point is also removed
-        unless the ``#`` option is specified.
+        ``d`` is written in decimal, it always contains at least one digit,
+        and it gives the power of 2 by which to multiply the coefficient.  If
+        no digits follow the decimal point, the decimal point is also removed
+        unless the ``'#'`` option is specified.
 
             >>> f'{x:a}'
             '-0x1.3c0ca2a5b1d5d0818d3359c99ff1a26f2b31063249p+0'
             >>> f'{x:.10a}'
             '-0x1.3c0ca2a5b2p+0'
 
-        Format type 'b' allows format number in binary:
+        Format type ``'b'`` allows format number in binary:
 
             >>> f'{x:.15b}'
             '-1.001111000000110p+0'
 
-        Alternate form (``#`` option) adds ``0b`` prefix.
+        Alternate form (``'#'`` option) adds ``0b`` prefix.
 
         """
 
@@ -684,7 +684,7 @@ class _mpc(mpnumeric):
         ``mpc`` objects allow for formatting similar to Python
         :external:class:`complex`, specified in :external:ref:`formatspec`.
         All of Python's format types are supported, with the exception of
-        ``n``.  Also available additional options and formating types,
+        ``'n'``.  Also available additional options and formating types,
         accepted by :func:`mpmath.mpf.__format__`.
 
         """
