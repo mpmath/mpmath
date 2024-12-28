@@ -88,7 +88,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         \frac{\pi}{4} = \operatorname{acot} 1
 
         \frac{\pi}{4} = 12 \operatorname{acot} 49 + 32 \operatorname{acot} 57
-            + 5 \operatorname{acot} 239 + 12 \operatorname{acot} 110443
+            - 5 \operatorname{acot} 239 + 12 \operatorname{acot} 110443
 
     We can easily verify the formulas using the PSLQ algorithm::
 
