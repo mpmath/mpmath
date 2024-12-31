@@ -1,5 +1,4 @@
 import sys
-
 import pytest
 
 from mpmath import (convert, diag, extend, eye, fp, hilbert, inf, inverse, iv,
@@ -12,7 +11,7 @@ def test_matrix_indexes():
     assert A1[-1, -1] == 6
     assert A1[1, -2] == 3
     assert A1[-3, -2] == 1
-  
+
 def test_matrix_basic():
     A1 = matrix(3)
     for i in range(3):
