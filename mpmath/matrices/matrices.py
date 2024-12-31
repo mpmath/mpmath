@@ -496,6 +496,23 @@ class _matrix:
             return m
 
         else:
+            """
+            Just as conventional numpy arrays, it is possible to select an element out of the matrix via negative index:
+            A = matrix([[1,2,3],[4,5,6],[7,8,9]])
+            print(A[0, -1]) # 3
+            print(A[-1, -2]) # 8
+            """
+            if(key[0] < 0):
+                if(-key[0] <= self._rows):
+                    key[0] = -key[0] - 1
+                else:
+                    raise IndexError('matrix index out of range')
+            if(key[1] < 0):
+                if(-key[1] <= self._cols):
+                    key[1] = -key[1] - 1
+                else:
+                    raise IndexError('matrix index out of range')
+
             # single element extraction
             if key[0] >= self._rows or key[1] >= self._cols:
                 raise IndexError('matrix index out of range')
