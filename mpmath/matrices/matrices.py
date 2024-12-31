@@ -512,7 +512,7 @@ class _matrix:
 
             if col < 0:
                 if -col <= self._cols:
-                    col = self._cols + col 
+                    col = self._cols + col
                 else:
                     raise IndexError('matrix index out of range')
 
