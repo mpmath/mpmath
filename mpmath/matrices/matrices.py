@@ -502,16 +502,21 @@ class _matrix:
             print(A[0, -1]) # 3
             print(A[-1, -2]) # 8
             """
-            if(key[0] < 0):
-                if(-key[0] <= self._rows):
-                    key[0] = -key[0] - 1
+            row, col = key  # Unpack the tuple
+
+            if row < 0:
+                if -row <= self._rows:
+                    row = self._rows + row
                 else:
                     raise IndexError('matrix index out of range')
-            if(key[1] < 0):
-                if(-key[1] <= self._cols):
-                    key[1] = -key[1] - 1
+
+            if col < 0:
+                if -col <= self._cols:
+                    col = self._cols + col 
                 else:
                     raise IndexError('matrix index out of range')
+
+            key = (row, col)  # Repack into a new tuple
 
             # single element extraction
             if key[0] >= self._rows or key[1] >= self._cols:
