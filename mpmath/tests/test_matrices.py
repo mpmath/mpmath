@@ -6,7 +6,13 @@ from mpmath import (convert, diag, extend, eye, fp, hilbert, inf, inverse, iv,
                     j, matrix, mnorm, mp, mpc, mpf, mpi, norm, nstr, ones,
                     randmatrix, sqrt, swap_row, zeros)
 
-
+def test_matrix_indexes():
+    A1 = matrix([[1,2], [3,4], [5,6]])
+    assert A1[0, -1] == 2
+    assert A1[-1, -1] == 6
+    assert A1[1, -2] == 3
+    assert A1[-3, -2] == 1
+  
 def test_matrix_basic():
     A1 = matrix(3)
     for i in range(3):
