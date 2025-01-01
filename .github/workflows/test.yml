@@ -13,14 +13,19 @@ jobs:
         python-version: [3.8, 3.9, '3.10', 3.11, 3.12, 3.13, 3.14, pypy3.10-nightly]
         coverage: [false]
         nogmpy: [false]
+        nogmp: [false]
         default: [false]
         include:
           - python-version: 3.11
             coverage: true
             nogmpy: true
+            nogmp: true
           - python-version: 3.12
             coverage: true
             default: true
+          - python-version: 3.13
+            coverage: true
+            nogmpy: true
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
@@ -42,10 +47,13 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade setuptools pip
-        pip install --upgrade .[develop,gmpy2,docs,ci]
+        pip install --upgrade .[develop,gmpy2,gmp,docs,ci]
     - name: Remove gmpy (for coverage tests)
       if: matrix.nogmpy
       run: pip uninstall -y gmpy2
+    - name: Remove gmp (for coverage tests)
+      if: matrix.nogmp
+      run: pip uninstall -y python-gmp
     - name: Install ~/.python_history
       run: touch ~/.python_history
     - name: Linting with flake8, etc

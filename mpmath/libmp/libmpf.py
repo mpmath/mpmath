@@ -805,7 +805,7 @@ def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     return normalize(sign, man, exp, bc, prec, rnd)
 
 
-if BACKEND == 'gmpy':
+if BACKEND in ['gmpy', 'gmp']:
     mpf_mul_int = gmpy_mpf_mul_int
 else:
     mpf_mul_int = python_mpf_mul_int
