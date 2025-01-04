@@ -29,7 +29,13 @@ if 'MPMATH_NOGMPY' not in os.environ:
         MPZ = gmpy.mpz
         MPQ = gmpy.mpq
     except ImportError:
-        pass
+        try:
+            import gmp as gmpy
+            BACKEND = 'gmp'
+            MPZ = gmpy.mpz
+            MPQ = gmpy.mpq
+        except ImportError:
+            pass
 
 MPZ_ZERO = MPZ(0)
 MPZ_ONE = MPZ(1)

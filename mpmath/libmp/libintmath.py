@@ -138,7 +138,7 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
     # extremely large values to a string. The size limit may need to be
     # adjusted on some platforms, but 1500000 works on Windows and Linux.
     if size < 1500000:
-        return gmpy.digits(n, base)
+        return MPZ(n).digits(base)
     # Divide in half
     half = (size // 2) + (size & 1)
     A, B = divmod(n, MPZ(base)**half)
@@ -146,7 +146,7 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
     bd = numeral(B, base, half, digits).rjust(half, "0")
     return ad + bd
 
-if BACKEND == "gmpy":
+if BACKEND in ["gmpy", "gmp"]:
     numeral = numeral_gmpy
 else:
     numeral = numeral_python
@@ -260,6 +260,9 @@ sqrt_fixed2 = sqrt_fixed
 if BACKEND == 'gmpy':
     isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
     sqrtrem = gmpy.isqrt_rem
+elif BACKEND == 'gmp':
+    isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
+    sqrtrem = sqrtrem_python
 else:
     if sys.version_info >= (3, 12):
         isqrt_small = isqrt_fast = isqrt = math.isqrt
@@ -273,7 +276,7 @@ else:
 
 if sys.version_info >= (3, 9) and BACKEND == 'python':
     gcd = math.gcd
-elif BACKEND == 'gmpy':
+elif BACKEND in ['gmpy', 'gmp']:
     gcd = gmpy.gcd
 else:
     def gcd(*args):
@@ -329,6 +332,8 @@ if BACKEND == 'gmpy':
     ifac = gmpy.fac
     ifac2 = gmpy.double_fac
     ifib = gmpy.fib
+elif BACKEND == 'gmp':
+    ifac = gmpy.factorial
 else:
     ifac = math.factorial
 
