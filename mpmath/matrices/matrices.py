@@ -107,6 +107,14 @@ class _matrix:
         mpf('2.0')
         >>> x[1,0]
         mpf('2.0')
+    
+    It is also possible to access matrices and vectors via negative index:
+        >>> x = matrix([[1, 2], [3, 4]])
+        >>> y = matrix([6, 7])
+        >>> x[-1, -2]
+        mpf('3.0')
+        >>> y[-2]
+        mpf('6.0')
 
     Other
     .....
@@ -467,7 +475,11 @@ class _matrix:
                 # Single row
                 if key[0] >= self._rows:
                     raise IndexError('Row index out of bounds')
+                
                 rows = [key[0]]
+                
+                if(key[0] < 0 and key[0] > - self._rows + 1):
+                    rows[0] += self._rows
 
             # Columns
             if isinstance(key[1],slice):
@@ -483,7 +495,11 @@ class _matrix:
                 # Single column
                 if key[1] >= self._cols:
                     raise IndexError('Column index out of bounds')
+                
                 columns = [key[1]]
+
+                if(key[1] < 0 and key[1] > - self._cols + 1):
+                    columns[0] += self._cols
 
             # Create matrix slice
             m = self.ctx.matrix(len(rows),len(columns))
@@ -496,13 +512,7 @@ class _matrix:
             return m
 
         else:
-            """
-            Just as conventional numpy arrays, it is possible to select an element out of the matrix via negative index:
-            A = matrix([[1,2,3],[4,5,6],[7,8,9]])
-            print(A[0, -1]) # 3
-            print(A[-1, -2]) # 8
-            """
-            row, col = key  # Unpack the tuple
+            row, col = key 
 
             if row < 0:
                 if -row <= self._rows:
@@ -516,7 +526,7 @@ class _matrix:
                 else:
                     raise IndexError('matrix index out of range')
 
-            key = (row, col)  # Repack into a new tuple
+            key = (row, col)  
 
             # single element extraction
             if key[0] >= self._rows or key[1] >= self._cols:
@@ -556,6 +566,9 @@ class _matrix:
             else:
                 # Single row
                 rows = [key[0]]
+
+                if(key[0] < 0 and key[0] > - self._rows + 1):
+                    rows[0] += self._rows
             # Columns
             if isinstance(key[1],slice):
                 # Check bounds
@@ -568,6 +581,9 @@ class _matrix:
             else:
                 # Single column
                 columns = [key[1]]
+
+                if(key[1] < 0 and key[1] > - self._cols + 1):
+                    columns[0] += self._cols
             # Assign slice with a scalar
             if isinstance(value,self.ctx.matrix):
                 # Assign elements to matrix if input and output dimensions match
@@ -586,6 +602,22 @@ class _matrix:
         else:
             # Single element assingment
             # Check bounds
+            row, col = key 
+
+            if row < 0:
+                if -row <= self._rows:
+                    row = self._rows + row
+                else:
+                    raise IndexError('matrix index out of range')
+
+            if col < 0:
+                if -col <= self._cols:
+                    col = self._cols + col
+                else:
+                    raise IndexError('matrix index out of range')
+
+            key = (row, col) 
+
             if key[0] >= self._rows or key[1] >= self._cols:
                 raise IndexError('matrix index out of range')
             # Convert and store value
