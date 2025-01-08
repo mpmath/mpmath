@@ -5,13 +5,6 @@ from mpmath import (convert, diag, extend, eye, fp, hilbert, inf, inverse, iv,
                     j, matrix, mnorm, mp, mpc, mpf, mpi, norm, nstr, ones,
                     randmatrix, sqrt, swap_row, zeros)
 
-def test_matrix_indexes():
-    A1 = matrix([[1,2], [3,4], [5,6]])
-    assert A1[0, -1] == 2
-    assert A1[-1, -1] == 6
-    assert A1[1, -2] == 3
-    assert A1[-3, -2] == 1
-
 def test_matrix_basic():
     A1 = matrix(3)
     for i in range(3):
@@ -61,6 +54,11 @@ def test_matrix_basic():
     assert A9 != None  # issue 283
     pytest.raises(IndexError, lambda: zeros(1,1)[:, 1])  # issue 318
     pytest.raises(IndexError, lambda: zeros(1,1)[1, :])
+    A10 = matrix([[1,2], [3,4], [5,6]])
+    assert A10[0, -1] == 2
+    assert A10[-1, -1] == 6
+    assert A10[1, -2] == 3
+    assert A10[-3, -2] == 1
 
 def test_matmul():
     """
@@ -84,6 +82,7 @@ def test_matrix_slices():
     assert A[0:2,0:2] == matrix([[1,2],[4,5]])  # issue 267
     assert A[:2,:2] == matrix([[1,2],[4,5]])
     assert V[2:4] == matrix([3,4])
+    assert A[-1, :] == A[2, :]
     pytest.raises(IndexError, lambda: A[:,1:6])
 
     # Assign slice with matrix
