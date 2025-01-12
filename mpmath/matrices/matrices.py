@@ -107,7 +107,7 @@ class _matrix:
         mpf('2.0')
         >>> x[1,0]
         mpf('2.0')
-    
+
     It is also possible to access matrices and vectors via negative index:
         >>> x = matrix([[1, 2], [3, 4]])
         >>> y = matrix([6, 7])
@@ -475,10 +475,10 @@ class _matrix:
                 # Single row
                 if key[0] >= self._rows:
                     raise IndexError('Row index out of bounds')
-                
+               
                 rows = [key[0]]
-                
-                if(key[0] < 0 and key[0] > - self._rows + 1):
+
+                if(key[0] < 0 and key[0] >= - self._rows):
                     rows[0] += self._rows
 
             # Columns
@@ -498,7 +498,7 @@ class _matrix:
                 
                 columns = [key[1]]
 
-                if(key[1] < 0 and key[1] > - self._cols + 1):
+                if(key[1] < 0 and key[1] >= - self._cols):
                     columns[0] += self._cols
 
             # Create matrix slice
@@ -512,7 +512,7 @@ class _matrix:
             return m
 
         else:
-            row, col = key 
+            row, col = key
 
             if row < 0:
                 if -row <= self._rows:
@@ -526,7 +526,7 @@ class _matrix:
                 else:
                     raise IndexError('matrix index out of range')
 
-            key = (row, col)  
+            key = (row, col)
 
             # single element extraction
             if key[0] >= self._rows or key[1] >= self._cols:
@@ -567,7 +567,7 @@ class _matrix:
                 # Single row
                 rows = [key[0]]
 
-                if(key[0] < 0 and key[0] > - self._rows + 1):
+                if(key[0] < 0 and key[0] >= - self._rows):
                     rows[0] += self._rows
             # Columns
             if isinstance(key[1],slice):
@@ -582,7 +582,7 @@ class _matrix:
                 # Single column
                 columns = [key[1]]
 
-                if(key[1] < 0 and key[1] > - self._cols + 1):
+                if(key[1] < 0 and key[1] >= - self._cols):
                     columns[0] += self._cols
             # Assign slice with a scalar
             if isinstance(value,self.ctx.matrix):
@@ -602,7 +602,7 @@ class _matrix:
         else:
             # Single element assingment
             # Check bounds
-            row, col = key 
+            row, col = key
 
             if row < 0:
                 if -row <= self._rows:
@@ -616,7 +616,7 @@ class _matrix:
                 else:
                     raise IndexError('matrix index out of range')
 
-            key = (row, col) 
+            key = (row, col)
 
             if key[0] >= self._rows or key[1] >= self._cols:
                 raise IndexError('matrix index out of range')
