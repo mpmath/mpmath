@@ -58,7 +58,7 @@ max_line_length = 200
 testpaths = ['mpmath', 'docs']
 doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL', 'ELLIPSIS']
 addopts = "--durations=20 --doctest-modules --doctest-glob='*.rst'"
-norecursedirs = ['docs/plots', 'demo', '.eggs', '.git']
+norecursedirs = ['docs/plots', 'demo', '.eggs', '.git', '.hypothesis']
 filterwarnings = ['error::DeprecationWarning']
 xfail_strict = true
 timeout = 600
