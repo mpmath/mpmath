@@ -2412,3 +2412,10 @@ def test_issue_505():
 
 def test_issue_653():
     pytest.raises(ValueError, lambda: zeta(2, -2))
+
+def test_issue_473():
+    assert mp.polylog(1, -mp.inf) == -mp.inf
+    assert mp.polylog(2, -mp.inf) == -mp.inf
+    assert mp.polylog(3, -mp.inf) == -mp.inf
+    assert mp.polylog(4, -mp.inf) == -mp.inf
+    assert mp.polylog(5, -mp.inf) == -mp.inf

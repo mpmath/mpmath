@@ -6,15 +6,15 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     format_mpc, format_mpf, from_Decimal, from_float, from_int,
                     from_man_exp, from_npfloat, from_rational, from_str, fzero,
                     int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
-                    mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
-                    mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
-                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
-                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
-                    mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_neg, mpf_pos, mpf_pow, mpf_sub, mpf_sum, prec_to_dps,
-                    round_nearest, to_fixed, to_float, to_int, to_man_exp,
-                    to_rational, to_str)
+                    mpc_div, mpc_div_imag_mpf, mpc_div_mpf, mpc_hash,
+                    mpc_is_inf, mpc_is_nonzero, mpc_mpf_div, mpc_mpf_sub,
+                    mpc_mul, mpc_mul_imag_mpf, mpc_mul_int, mpc_mul_mpf,
+                    mpc_neg, mpc_pos, mpc_pow, mpc_pow_int, mpc_pow_mpf,
+                    mpc_sub, mpc_sub_mpf, mpc_to_complex, mpc_to_str, mpf_abs,
+                    mpf_add, mpf_div, mpf_eq, mpf_ge, mpf_gt, mpf_hash, mpf_le,
+                    mpf_lt, mpf_mod, mpf_mul, mpf_neg, mpf_pos, mpf_pow,
+                    mpf_sub, mpf_sum, prec_to_dps, round_nearest, to_fixed,
+                    to_float, to_int, to_man_exp, to_rational, to_str)
 
 
 new = object.__new__
@@ -620,7 +620,16 @@ class _mpc(mpnumeric):
                 v._mpc_ = mpc_mul_mpf(s._mpc_, t._mpf_, prec, rounding)
                 return v
         v = new(cls)
-        v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
+        if t._mpc_[0] == fzero:
+            v._mpc_ = mpc_mul_imag_mpf(s._mpc_, t._mpc_[1], prec, rounding)
+        elif s._mpc_[0] == fzero:
+            v._mpc_ = mpc_mul_imag_mpf(t._mpc_, s._mpc_[1], prec, rounding)
+        elif t._mpc_[1] == fzero:
+            v._mpc_ = mpc_mul_mpf(s._mpc_, t._mpc_[0], prec, rounding)
+        elif s._mpc_[1] == fzero:
+            v._mpc_ = mpc_mul_mpf(t._mpc_, s._mpc_[0], prec, rounding)
+        else:
+            v._mpc_ = mpc_mul(s._mpc_, t._mpc_, prec, rounding)
         return v
 
     def __rmul__(s, t):
@@ -645,7 +654,10 @@ class _mpc(mpnumeric):
                 v._mpc_ = mpc_div_mpf(s._mpc_, t._mpf_, prec, rounding)
                 return v
         v = new(cls)
-        v._mpc_ = mpc_div(s._mpc_, t._mpc_, prec, rounding)
+        if t._mpc_[0] == fzero:
+            v._mpc_ = mpc_div_imag_mpf(s._mpc_, t._mpc_[1], prec, rounding)
+        else:
+            v._mpc_ = mpc_div(s._mpc_, t._mpc_, prec, rounding)
         return v
 
     def __rtruediv__(s, t):

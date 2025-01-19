@@ -166,6 +166,15 @@ def mpc_mul_mpf(z, p, prec, rnd=round_fast):
     im = mpf_mul(b, p, prec, rnd)
     return re, im
 
+def mpc_mul_imag_mpf(z, x, prec, rnd=round_fast):
+    """
+    Multiply the mpc value z by I*x where x is an mpf value.
+    """
+    a, b = z
+    re = mpf_neg(mpf_mul(b, x, prec, rnd))
+    im = mpf_mul(a, x, prec, rnd)
+    return re, im
+
 def mpc_mul_int(z, n, prec, rnd=round_fast):
     a, b = z
     re = mpf_mul_int(a, n, prec, rnd)
@@ -190,6 +199,13 @@ def mpc_div_mpf(z, p, prec, rnd=round_fast):
     a, b = z
     re = mpf_div(a, p, prec, rnd)
     im = mpf_div(b, p, prec, rnd)
+    return re, im
+
+def mpc_div_imag_mpf(z, x, prec, rnd=round_fast):
+    """Divide z by I*x where x is an mpf value."""
+    a, b = z
+    re = mpf_div(b, x, prec, rnd)
+    im = mpf_neg(mpf_div(a, x, prec, rnd))
     return re, im
 
 def mpc_reciprocal(z, prec, rnd=round_fast):
