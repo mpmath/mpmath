@@ -1,5 +1,6 @@
 import cmath
 import functools
+import inspect
 import math
 import sys
 
@@ -59,6 +60,11 @@ class FPContext(StandardBaseContext):
         else:
             f_wrapped = f
         f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
+        try:
+            f_wrapped.__signature__ = inspect.signature(f)
+        except ValueError:  # pragma: no cover
+            pass
+        f_wrapped.__name__ = f.__name__
         setattr(cls, name, f_wrapped)
 
     @functools.lru_cache
