@@ -144,7 +144,11 @@ Intervals may be infinite or half-infinite::
     >>> print(1 / iv.mpf([2, 'inf']))
     [0.0, 0.5]
 
-The equality testing operators ``==`` and ``!=`` check whether their operands are identical as intervals; that is, have the same endpoints. The ordering operators ``< <= > >=`` permit inequality testing using triple-valued logic: a guaranteed inequality returns ``True`` or ``False`` while an indeterminate inequality returns ``None``::
+The equality testing operators ``==`` and ``!=`` check whether their operands
+are identical as intervals; that is, have the same endpoints. The ordering
+operators ``< <= > >=`` permit inequality testing using triple-valued logic: a
+guaranteed inequality returns ``True`` or ``False`` while an indeterminate
+inequality raises :exc:`ValueError`::
 
     >>> iv.mpf([1,2]) == iv.mpf([1,2])
     True
@@ -156,12 +160,18 @@ The equality testing operators ``==`` and ``!=`` check whether their operands ar
     True
     >>> iv.mpf([1,2]) < 1
     False
-    >>> iv.mpf([1,2]) < 2    # returns None
+    >>> iv.mpf([1,2]) < 2
+    Traceback (most recent call last):
+      ...
+    ValueError
     >>> iv.mpf([2,2]) < 2
     False
     >>> iv.mpf([1,2]) <= iv.mpf([2,3])
     True
-    >>> iv.mpf([1,2]) < iv.mpf([2,3])  # returns None
+    >>> iv.mpf([1,2]) < iv.mpf([2,3])
+    Traceback (most recent call last):
+      ...
+    ValueError
     >>> iv.mpf([1,2]) < iv.mpf([-1,0])
     False
 
@@ -236,13 +246,19 @@ seen by increasing the precision::
     >>> print(mp.exp(mp.pi*mp.sqrt(163)))
     262537412640768743.99999999999925007259719818568888
 
-With interval arithmetic, the comparison returns ``None`` until the precision
-is large enough for `x-y` to have a definite sign::
+With interval arithmetic, the comparison raises :exc:`ValueError` until the
+precision is large enough for `x-y` to have a definite sign::
 
     >>> iv.dps = 15
     >>> iv.exp(iv.pi*iv.sqrt(163)) > (640320**3+744)
+    Traceback (most recent call last):
+      ...
+    ValueError
     >>> iv.dps = 30
     >>> iv.exp(iv.pi*iv.sqrt(163)) > (640320**3+744)
+    Traceback (most recent call last):
+      ...
+    ValueError
     >>> iv.dps = 60
     >>> iv.exp(iv.pi*iv.sqrt(163)) > (640320**3+744)
     False

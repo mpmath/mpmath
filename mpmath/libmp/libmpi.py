@@ -37,14 +37,14 @@ def mpi_lt(s, t):
     ta, tb = t
     if mpf_lt(sb, ta): return True
     if mpf_ge(sa, tb): return False
-    return None
+    raise ValueError
 
 def mpi_le(s, t):
     sa, sb = s
     ta, tb = t
     if mpf_le(sb, ta): return True
     if mpf_gt(sa, tb): return False
-    return None
+    raise ValueError
 
 def mpi_gt(s, t): return mpi_lt(t, s)
 def mpi_ge(s, t): return mpi_le(t, s)
