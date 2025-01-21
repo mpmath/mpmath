@@ -447,6 +447,9 @@ def polylog_unitcircle(ctx, n, z):
     return l
 
 def polylog_general(ctx, s, z):
+    if(ctx.isinf(s) or ctx.isnan(s)):
+        return ctx.nan
+
     v = ctx.zero
     u = ctx.ln(z)
     if not abs(u) < 5: # theoretically |u| < 2*pi
@@ -456,6 +459,9 @@ def polylog_general(ctx, s, z):
         return ctx.gamma(v)*(j**v*ctx.zeta(v,0.5+y) + j**-v*ctx.zeta(v,0.5-y))/(2*ctx.pi)**v
     t = 1
     k = 0
+    prec = ctx.prec
+    ctx.prec += max(0, -ctx.nint_distance(s)[1])
+
     while 1:
         term = ctx.zeta(s-k) * t
         if not abs(term) >= ctx.eps:
@@ -464,7 +470,10 @@ def polylog_general(ctx, s, z):
         k += 1
         t *= u
         t /= k
-    return ctx.gamma(1-s)*(-u)**(s-1) + v
+    
+    r = ctx.gamma(1-s)*(-u)**(s-1) + v
+    ctx.prec = prec
+    return r
 
 @defun_wrapped
 def polylog(ctx, s, z):
@@ -482,7 +491,7 @@ def polylog(ctx, s, z):
         return z/(1-z)**2
     if abs(z) <= 0.75 or (not ctx.isint(s) and abs(z) < 0.9):
         return polylog_series(ctx, s, z)
-    if abs(z) >= 1.4 and ctx.isint(s) or abs(s - int(s)) < 10e-6:
+    if abs(z) >= 1.4 and ctx.isint(s):
         return (-1)**(s+1)*polylog_series(ctx, s, 1/z) + polylog_continuation(ctx, int(ctx.re(s)), z)
     if ctx.isint(s):
         return polylog_unitcircle(ctx, int(ctx.re(s)), z)
