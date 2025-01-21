@@ -165,6 +165,8 @@ def test_hyper_misc():
     mp.dps = 25
     v = mpc('1.2282306665029814734863026', '-0.1225033830118305184672133')
     assert hyper([(3,4),2+j,1],[1,5,j/3],mpf(1)/5+j/8).ae(v)
+    pytest.raises(ZeroDivisionError, lambda: mp.hyper([1, 2, -2], [-1, 3], 1.1))
+    pytest.raises(ZeroDivisionError, lambda: fp.hyper([1, 2, -2], [-1, 3], 1.1))
 
 def test_elliptic_integrals():
     assert ellipk(0).ae(pi/2)
@@ -528,6 +530,7 @@ def test_hyper_2f1():
 def test_hyper_2f1_hard():
     # Singular cases
     assert hyp2f1(2,-1,-1,3).ae(7)
+    pytest.raises(NotImplementedError, lambda: fp.hyp2f1(2,-1,-1,3))
     assert hyp2f1(2,-1,-1,3,eliminate_all=True).ae(0.25)
     assert hyp2f1(2,-2,-2,3).ae(34)
     assert hyp2f1(2,-2,-2,3,eliminate_all=True).ae(0.25)
@@ -2412,3 +2415,8 @@ def test_issue_505():
 
 def test_issue_653():
     pytest.raises(ValueError, lambda: zeta(2, -2))
+
+def test_issue_511():
+    assert mp.laguerre(1, 2, mp.inf) == -mp.inf
+    assert mp.laguerre(1, 7.2, mp.inf) == -mp.inf
+    assert fp.laguerre(1, 7.2, fp.inf) == -fp.inf
