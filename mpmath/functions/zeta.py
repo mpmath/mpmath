@@ -402,6 +402,8 @@ def polylog_series(ctx, s, z):
 def polylog_continuation(ctx, n, z):
     if n < 0:
         return z*0
+    if ctx._is_real_type(z) and ctx.isinf(z) and n > 0:
+        return ctx.ninf
     twopij = 2j * ctx.pi
     a = -twopij**n/ctx.fac(n) * ctx.bernpoly(n, ctx.ln(z)/twopij)
     if ctx._is_real_type(z) and z < 0:
