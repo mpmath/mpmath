@@ -470,7 +470,7 @@ def polylog_general(ctx, s, z):
         k += 1
         t *= u
         t /= k
-    
+
     r = ctx.gamma(1-s)*(-u)**(s-1) + v
     ctx.prec = prec
     return r
