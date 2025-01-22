@@ -1,0 +1,32 @@
+name: Build & test docs
+on: workflow_call
+jobs:
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install libs
+        run: |
+          sudo apt update
+          sudo apt install latexmk texlive-xetex
+      - name: Install dependencies
+        run: |
+          pip install --upgrade setuptools pip
+          pip install --upgrade .[docs]
+      - name: Building docs
+        run: |
+          alias sphinx-build='sphinx-build --color -W --keep-going'
+          sphinx-build -b html docs build/sphinx/html
+          sphinx-build -b latex docs build/sphinx/latex
+          make -C build/sphinx/latex all-pdf
+      - uses: actions/upload-artifact@v4
+        with:
+          name: docs
+          path: |
+            build/sphinx/html/
+            build/sphinx/latex/mpmath.pdf
