@@ -2427,3 +2427,6 @@ def test_issue_473():
     assert mp.polylog(3, -mp.inf) == -mp.inf
     assert mp.polylog(4, -mp.inf) == -mp.inf
     assert mp.polylog(5, -mp.inf) == -mp.inf
+
+def test_issue_634():
+    assert mp.polylog(1+1e-15, -2).ae(mp.mpf('-1.09861228866811'))

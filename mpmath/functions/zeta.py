@@ -458,6 +458,10 @@ def polylog_general(ctx, s, z):
         return ctx.gamma(v)*(j**v*ctx.zeta(v,0.5+y) + j**-v*ctx.zeta(v,0.5-y))/(2*ctx.pi)**v
     t = 1
     k = 0
+    prec = ctx.prec
+    if ctx.isfinite(s):
+        ctx.prec += max(0, -ctx.nint_distance(s)[1])
+
     while 1:
         term = ctx.zeta(s-k) * t
         if not abs(term) >= ctx.eps:
@@ -466,7 +470,10 @@ def polylog_general(ctx, s, z):
         k += 1
         t *= u
         t /= k
-    return ctx.gamma(1-s)*(-u)**(s-1) + v
+
+    r = ctx.gamma(1-s)*(-u)**(s-1) + v
+    ctx.prec = prec
+    return r
 
 @defun_wrapped
 def polylog(ctx, s, z):
