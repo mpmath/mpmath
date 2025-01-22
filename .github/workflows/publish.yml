@@ -29,8 +29,6 @@ jobs:
           pattern: sdist
           path: dist/
           merge-multiple: true
-      - run: ls -l
-      - run: ls -l dist/
       - uses: pypa/gh-action-pypi-publish@release/v1
         with:
           user: __token__
