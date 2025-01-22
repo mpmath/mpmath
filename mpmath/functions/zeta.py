@@ -449,9 +449,6 @@ def polylog_unitcircle(ctx, n, z):
     return l
 
 def polylog_general(ctx, s, z):
-    if(ctx.isinf(s) or ctx.isnan(s)):
-        return ctx.nan
-
     v = ctx.zero
     u = ctx.ln(z)
     if not abs(u) < 5: # theoretically |u| < 2*pi
@@ -462,7 +459,8 @@ def polylog_general(ctx, s, z):
     t = 1
     k = 0
     prec = ctx.prec
-    ctx.prec += max(0, -ctx.nint_distance(s)[1])
+    if ctx.isfinite(s):
+        ctx.prec += max(0, -ctx.nint_distance(s)[1])
 
     while 1:
         term = ctx.zeta(s-k) * t
