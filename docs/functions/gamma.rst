@@ -1,9 +1,16 @@
 Factorials and gamma functions
 ------------------------------
 
-Factorials and factorial-like sums and products are basic tools of combinatorics and number theory. Much like the exponential function is fundamental to differential equations and analysis in general, the factorial function (and its extension to complex numbers, the gamma function) is fundamental to difference equations and functional equations.
+Factorials and factorial-like sums and products are basic tools of
+combinatorics and number theory.  Much like the exponential function is
+fundamental to differential equations and analysis in general, the factorial
+function (and its extension to complex numbers, the gamma function) is
+fundamental to difference equations and functional equations.
 
-A large selection of factorial-like functions is implemented in mpmath. All functions support complex arguments, and arguments may be arbitrarily large. Results are numerical approximations, so to compute *exact* values a high enough precision must be set manually::
+A large selection of factorial-like functions is implemented in mpmath.  All
+functions support complex arguments, and arguments may be arbitrarily large.
+Results are numerical approximations, so to compute *exact* values a high
+enough precision must be set manually::
 
     >>> from mpmath import mp, fac
     >>> mp.dps = 15; mp.pretty = True
@@ -15,97 +22,57 @@ A large selection of factorial-like functions is implemented in mpmath. All func
     >>> fac(100)
     93326215443944152681699238856266700490715968264381621468592963895217599993229915608941463976156518286253697920827223758251185210916864000000000000000000000000.0
 
-The gamma and polygamma functions are closely related to :doc:`zeta`. See also :doc:`qfunctions` for q-analogs of factorial-like functions.
+The gamma and polygamma functions are closely related to :doc:`zeta`.  See also
+:doc:`qfunctions` for q-analogs of factorial-like functions.
 
 
 Factorials
 ..........
 
-:func:`~mpmath.factorial`/``fac()``
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.factorial
+.. autofunction:: mpmath.fac2
 
-.. autofunction:: mpmath.factorial(x, **kwargs)
-
-:func:`~mpmath.fac2`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.fac2(x)
 
 Binomial coefficients
-....................................................
+.....................
 
-:func:`~mpmath.binomial`
-^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.binomial(n,k)
+.. autofunction:: mpmath.binomial
 
 
 Gamma function
 ..............
 
-:func:`~mpmath.gamma`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.gamma(x, **kwargs)
-
-:func:`~mpmath.rgamma`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.rgamma(x, **kwargs)
-
-:func:`~mpmath.gammaprod`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.gammaprod(a, b)
-
-:func:`~mpmath.loggamma`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.loggamma(x)
+.. autofunction:: mpmath.gamma
+.. autofunction:: mpmath.rgamma
+.. autofunction:: mpmath.gammaprod
+.. autofunction:: mpmath.loggamma
 
 
 Rising and falling factorials
 .............................
 
-:func:`~mpmath.rf`
-^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.rf(x,n)
+.. autofunction:: mpmath.rf
+.. autofunction:: mpmath.ff
 
-:func:`~mpmath.ff`
-^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.ff(x,n)
 
 Beta function
 .............
 
-:func:`~mpmath.beta`
-^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.beta(x,y)
-
-:func:`~mpmath.betainc`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.betainc(a,b,x1=0,x2=1,regularized=False)
+.. autofunction:: mpmath.beta
+.. autofunction:: mpmath.betainc
 
 
 Super- and hyperfactorials
 ..........................
 
-:func:`~mpmath.superfac`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.superfac(z)
-
-:func:`~mpmath.hyperfac`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.hyperfac(z)
-
-:func:`~mpmath.barnesg`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.barnesg(z)
+.. autofunction:: mpmath.superfac
+.. autofunction:: mpmath.hyperfac
+.. autofunction:: mpmath.barnesg
 
 
 Polygamma functions and harmonic numbers
 ........................................
 
-:func:`~mpmath.psi`/:func:`~mpmath.digamma`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.psi(m, z)
-
-.. autofunction:: mpmath.digamma(z)
-
-:func:`~mpmath.harmonic`
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.harmonic(z)
+.. autofunction:: mpmath.psi
+.. autofunction:: mpmath.digamma
+.. autofunction:: mpmath.harmonic
