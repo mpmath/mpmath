@@ -1,5 +1,6 @@
 import cmath
 import functools
+import inspect
 import math
 import sys
 
@@ -59,6 +60,11 @@ class FPContext(StandardBaseContext):
         else:
             f_wrapped = f
         f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
+        try:
+            f_wrapped.__signature__ = inspect.signature(f)
+        except ValueError:  # pragma: no cover
+            pass
+        f_wrapped.__name__ = f.__name__
         setattr(cls, name, f_wrapped)
 
     @functools.lru_cache
@@ -196,16 +202,40 @@ class FPContext(StandardBaseContext):
     def _is_complex_type(ctx, z):
         return isinstance(z, complex)
 
-    def hypsum(ctx, p, q, types, coeffs, z, maxterms=6000, **kwargs):
-        coeffs = list(coeffs)
+    def hypsum(ctx, p, q, flags, coeffs, z, maxterms=6000, **kwargs):
+        for i, c in enumerate(coeffs[p:], start=p):
+            if flags[i] == 'Z':
+                if c <= 0:
+                    ok = False
+                    for ii, cc in enumerate(coeffs[:p]):
+                        # Note: c <= cc or c < cc, depending on convention
+                        if flags[ii] == 'Z' and cc <= 0 and c <= cc:
+                            ok = True
+                    if not ok:
+                        raise ZeroDivisionError("pole in hypergeometric series")
         num = range(p)
         den = range(p,p+q)
+        if ctx.isinf(z):
+            n = max(((n, c) for n, c in enumerate(coeffs[:p])
+                     if flags[n] == 'Z' and c < 0), default=(-1, 0),
+                    key=lambda x: x[1])[0]
+            if n >= 0:
+                n = -coeffs[n]
+                t = z**n
+                for k in range(n):
+                    for i in num: t *= (coeffs[i]+k)
+                    for i in den: t /= (coeffs[i]+k)
+                    t /= (k+1)
+                return t
         tol = ctx.eps
         s = t = 1.0
         k = 0
         while 1:
             for i in num: t *= (coeffs[i]+k)
-            for i in den: t /= (coeffs[i]+k)
+            try:
+                for i in den: t /= (coeffs[i]+k)
+            except ZeroDivisionError:
+                raise NotImplementedError
             k += 1; t /= k; t *= z; s += t
             if abs(t) < tol:
                 return s

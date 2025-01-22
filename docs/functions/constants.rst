@@ -1,7 +1,13 @@
 Mathematical constants
 ----------------------
 
-Mpmath supports arbitrary-precision computation of various common (and less common) mathematical constants. These constants are implemented as lazy objects that can evaluate to any precision. Whenever the objects are used as function arguments or as operands in arithmetic operations, they automagically evaluate to the current working precision. A lazy number can be converted to a regular ``mpf`` using the unary ``+`` operator, or by calling it as a function::
+Mpmath supports arbitrary-precision computation of various common (and less
+common) mathematical constants.  These constants are implemented as lazy
+objects that can evaluate to any precision.  Whenever the objects are used as
+function arguments or as operands in arithmetic operations, they automagically
+evaluate to the current working precision.  A lazy number can be converted to a
+regular ``mpf`` using the unary ``+`` operator, or by calling it as a
+function::
 
     >>> from mpmath import pi, mp
     >>> pi
@@ -22,63 +28,18 @@ Mpmath supports arbitrary-precision computation of various common (and less comm
     >>> pi()
     mpf('3.141592653589793238462643383279502884197169')
 
-Exact constants
-...............
-
-The predefined objects ``j`` (imaginary unit), ``inf`` (positive infinity) and ``nan`` (not-a-number) are shortcuts to ``mpc`` and ``mpf`` instances with these fixed values.
-
-Pi (``pi``)
-....................................
+The predefined objects ``j`` (imaginary unit), ``inf`` (positive infinity) and
+``nan`` (not-a-number) are shortcuts to ``mpc`` and ``mpf`` instances with
+these fixed values.
 
 .. autofunction:: mpmath.mp.pi
-
-Degree (``degree``)
-....................................
-
 .. autoattribute:: mpmath.mp.degree
-
-Base of the natural logarithm (``e``)
-.....................................
-
 .. autoattribute:: mpmath.mp.e
-
-Golden ratio (``phi``)
-......................
-
 .. autoattribute:: mpmath.mp.phi
-
-
-Euler's constant (``euler``)
-............................
-
 .. autofunction:: mpmath.mp.euler
-
-Catalan's constant (``catalan``)
-................................
-
 .. autoattribute:: mpmath.mp.catalan
-
-Apery's constant (``apery``)
-............................
-
 .. autoattribute:: mpmath.mp.apery
-
-Khinchin's constant (``khinchin``)
-..................................
-
 .. autoattribute:: mpmath.mp.khinchin
-
-Glaisher's constant (``glaisher``)
-..................................
-
 .. autoattribute:: mpmath.mp.glaisher
-
-Mertens constant (``mertens``)
-..................................
-
 .. autoattribute:: mpmath.mp.mertens
-
-Twin prime constant (``twinprime``)
-...................................
-
 .. autoattribute:: mpmath.mp.twinprime

@@ -1,3 +1,4 @@
+import inspect
 import numbers
 import sys
 
@@ -1108,6 +1109,8 @@ class PythonMPContext:
         else:
             f_wrapped = f
         f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
+        f_wrapped.__signature__ = inspect.signature(f)
+        f_wrapped.__name__ = f.__name__
         setattr(cls, name, f_wrapped)
 
     def _convert_param(ctx, x):
