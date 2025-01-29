@@ -271,18 +271,10 @@ else:
     _gcd2 = math.gcd
 
 
-if sys.version_info >= (3, 9) and BACKEND == 'python':
+if BACKEND == 'python':
     gcd = math.gcd
 elif BACKEND == 'gmpy':
     gcd = gmpy.gcd
-else:
-    def gcd(*args):
-        res = MPZ_ZERO
-        for a in args:
-            a = MPZ(a)
-            if res != MPZ_ONE:
-                res = _gcd2(res, a)
-        return res
 
 
 @lru_cache(maxsize=250)
