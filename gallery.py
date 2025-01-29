@@ -21,7 +21,7 @@ and <a href="http://matplotlib.org">matplotlib</a> by
 
 def plotgroup(name, fs, descs, xlim=[-5, 5], ylim=None, repoints=500,
     relim=[-5,5], imlim=[-5, 5], singularities=[], complex_only=False):
-    print name, "..."
+    print(name, "...")
     fp.write('<h2>%s</h2>' % name)
     f1name = '%s.png' % name
     fnname = name + ' C%i.png'
