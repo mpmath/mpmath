@@ -11,10 +11,10 @@ import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, nstr, pi, workprec)
-from mpmath.libmp import (MPQ, finf, fnan, fninf, fnone, fone, from_float,
-                          from_int, from_pickable, from_str, mpf_add, mpf_mul,
-                          mpf_sub, round_down, round_nearest, round_up, to_int,
-                          to_man_exp, to_pickable)
+from mpmath.libmp import (MPQ, MPZ, finf, fnan, fninf, fnone, fone, from_float,
+                          from_int, from_pickable, from_str, isprime, mpf_add,
+                          mpf_mul, mpf_sub, round_down, round_nearest,
+                          round_up, to_int, to_man_exp, to_pickable)
 
 
 def test_type_compare():
@@ -537,6 +537,11 @@ def test_isnan_etc():
     assert mp.isnpint(-1 + 0.1j) is False
     assert mp.isnpint(0 + 0.1j) is False
     assert mp.isnpint(inf) is False
+
+
+def test_isprime():
+    assert isprime(MPZ(2))
+    assert not isprime(MPZ(4))
 
 
 def test_issue_438():
