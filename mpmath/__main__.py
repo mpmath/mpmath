@@ -105,7 +105,10 @@ def main():
                 readline.parse_and_bind('tab: complete')
 
                 history = os.path.expanduser('~/.python_history')
-                readline.read_history_file(history)
+                try:
+                    readline.read_history_file(history)
+                except OSError:
+                    pass
                 atexit.register(readline.write_history_file, history)
                 self.ast_transformers = ast_transformers
                 self.source_transformers = source_transformers
