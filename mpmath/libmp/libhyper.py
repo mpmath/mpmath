@@ -7,7 +7,7 @@ cases are also provided.
 
 import math
 
-from .backend import MPZ_ONE, MPZ_ZERO
+from .backend import MPZ, MPZ_ONE, MPZ_ZERO
 from .gammazeta import euler_fixed, mpf_euler, mpf_gamma_int
 from .libelefun import (agm_fixed, mpf_cos_sin, mpf_exp, mpf_log, mpf_pi,
                         mpf_sin, mpf_sqrt, pi_fixed)
@@ -653,7 +653,7 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
             for k in range(1,n-1):
                 facs[k] = facs[k-1] * k
             facs = facs[::-1]
-            s = facs[0] << wp
+            s = MPZ(facs[0]) << wp
             for k in range(1, n-1):
                 if k & 1:
                     s -= facs[k] * t

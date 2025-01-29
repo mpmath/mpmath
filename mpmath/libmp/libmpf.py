@@ -243,7 +243,7 @@ def from_int(n, prec=0, rnd=round_fast):
     if not prec:
         if n in int_cache:
             return int_cache[n]
-    return from_man_exp(n, 0, prec, rnd)
+    return from_man_exp(MPZ(n), 0, prec, rnd)
 
 def to_man_exp(s, signed=None):
     """Return (man, exp) of a raw mpf. Raise an error if inf/nan."""
@@ -347,7 +347,7 @@ def from_npfloat(x, prec=113, rnd=round_fast):
     import numpy as np
     if np.isfinite(x):
         m, e = np.frexp(x)
-        return from_man_exp(int(np.ldexp(m, 113)), int(e)-113, prec, rnd)
+        return from_man_exp(MPZ(np.ldexp(m, 113)), int(e)-113, prec, rnd)
     return fnan
 
 def from_Decimal(x, prec=0, rnd=round_fast):
@@ -439,7 +439,7 @@ def to_fixed(s, prec):
 def mpf_rand(prec):
     """Return a raw mpf chosen randomly from [0, 1), with prec bits
     in the mantissa."""
-    return from_man_exp(random.getrandbits(prec), -prec, prec, round_floor)
+    return from_man_exp(MPZ(random.getrandbits(prec)), -prec, prec, round_floor)
 
 def mpf_eq(s, t):
     """Test equality of two raw mpfs. This is simply tuple comparison
@@ -714,7 +714,7 @@ def mpf_sum(xs, prec=0, rnd=round_fast, absolute=False):
 
     With absolute=True, sums the absolute values.
     """
-    man = 0
+    man = MPZ(0)
     exp = 0
     max_extra_prec = prec*2 or 1000000  # XXX
     special = None
