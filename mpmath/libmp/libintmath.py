@@ -138,7 +138,7 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
     # extremely large values to a string. The size limit may need to be
     # adjusted on some platforms, but 1500000 works on Windows and Linux.
     if size < 1500000:
-        return gmpy.digits(n, base)
+        return MPZ(n).digits(base)
     # Divide in half
     half = (size // 2) + (size & 1)
     A, B = divmod(n, MPZ(base)**half)
