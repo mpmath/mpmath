@@ -18,7 +18,6 @@ jobs:
         run: |
           pip install --upgrade setuptools pip
           pip install --upgrade .[develop,gmpy2,ci]
-      - run: touch ~/.python_history
       - name: Run coverage tests
         run: |
           pytest
