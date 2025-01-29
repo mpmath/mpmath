@@ -2430,3 +2430,6 @@ def test_issue_473():
 
 def test_issue_634():
     assert mp.polylog(1+1e-15, -2).ae(mp.mpf('-1.09861228866811'))
+
+def test_issue_908():
+    assert mp.besselj(-10+0j, 0+0j) == 0
