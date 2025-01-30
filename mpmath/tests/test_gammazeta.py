@@ -6,7 +6,7 @@ from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     fraction, gamma, gammaprod, harmonic, hyperfac, inf, isnan,
                     j, log, loggamma, mp, mpc, mpf, mpmathify, nan, pi,
                     polyexp, polylog, primezeta, psi, rf, rgamma, sech,
-                    siegelz, sinc, sqrt, stieltjes, superfac, zeta)
+                    secondzeta, siegelz, sinc, sqrt, stieltjes, superfac, zeta)
 from mpmath.libmp import from_float, mpf_zeta_int, round_up
 
 
@@ -630,6 +630,9 @@ def test_primezeta():
     assert primezeta(1) == inf
     assert primezeta(inf) == 0
     assert isnan(primezeta(nan))
+
+def test_secondzeta():
+    assert secondzeta(2, 0.6).ae(0.022849870007492626)
 
 def test_rs_zeta():
     assert zeta(0.5+100000j).ae(1.0730320148577531321 + 5.7808485443635039843j)
