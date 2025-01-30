@@ -146,7 +146,7 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
     bd = numeral(B, base, half, digits).rjust(half, "0")
     return ad + bd
 
-if BACKEND == "gmpy":
+if BACKEND in ["gmpy", "gmp"]:
     numeral = numeral_gmpy
 else:
     numeral = numeral_python
@@ -257,7 +257,7 @@ def sqrt_fixed(x, prec):
 
 sqrt_fixed2 = sqrt_fixed
 
-if BACKEND == 'gmpy':
+if BACKEND in ['gmpy', 'gmp']:
     isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
     sqrtrem = gmpy.isqrt_rem
 else:
@@ -273,7 +273,7 @@ else:
 
 if BACKEND == 'python':
     gcd = math.gcd
-elif BACKEND == 'gmpy':
+elif BACKEND in ['gmpy', 'gmp']:
     gcd = gmpy.gcd
 
 
@@ -321,9 +321,12 @@ ifac2_python = ifac2
 
 if BACKEND == 'gmpy':
     ifac = gmpy.fac
+if BACKEND in ['gmpy', 'gmp']:
     ifac2 = gmpy.double_fac
     ifib = gmpy.fib
-else:
+if BACKEND == 'gmp':
+    ifac = gmpy.factorial
+elif BACKEND == 'python':
     ifac = math.factorial
 
 ifac = lru_cache(maxsize=1024)(ifac)

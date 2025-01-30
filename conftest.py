@@ -15,6 +15,9 @@ def pytest_report_header(config):
     print("mpmath mp class: %s" % repr(mpmath.mp))
     print("mpmath version: %s" % mpmath.__version__)
     print("Python version: %s" % sys.version)
+    if mpmath.libmp.backend.BACKEND == 'gmp':
+        import gmp
+        print(gmp.gmp_info)
 
 
 def pytest_configure(config):
