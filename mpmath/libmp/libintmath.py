@@ -298,6 +298,7 @@ def ifib(n):
             p, q = p*p+qq, qq+2*p*q
             n >>= 1
     return b
+ifib_python = ifib
 
 MAX_FACTORIAL_CACHE = 1000
 
@@ -316,6 +317,7 @@ def ifac2(n, memo_pair=[{0:1}, {1:1}]):
         if k <= MAX:
             memo[k] = p
     return p
+ifac2_python = ifac2
 
 if BACKEND == 'gmpy':
     ifac = gmpy.fac
@@ -382,6 +384,7 @@ def isprime(n):
         if not test(a):
             return False
     return True
+isprime_python = isprime
 
 if BACKEND == 'gmpy':
     isprime = gmpy.is_prime
