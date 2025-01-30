@@ -244,9 +244,6 @@ def test_matrix_numpy():
     assert matrix(l) == matrix(a)
     assert (numpy.array(matrix(l)) == numpy.array(matrix(l).tolist(),
                                                   dtype=object)).all()
-
-    if sys.version_info < (3, 9):
-        pytest.skip("latest numpy dropped support for CPython 3.8")
     if numpy.__version__ >= '2':
         pytest.raises(ValueError, lambda: numpy.array(matrix(l), copy=False))
 
