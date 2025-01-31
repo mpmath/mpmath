@@ -186,7 +186,7 @@ def _normalize(sign, man, exp, bc, prec, rnd):
 
 _exp_types = (int,)
 
-if BACKEND == 'gmpy':
+if BACKEND in ['gmpy', 'gmp']:
     _normalize = gmpy._mpmath_normalize
 
 def normalize(sign, man, exp, bc, prec, rnd):
@@ -234,7 +234,7 @@ def from_man_exp(man, exp, prec=0, rnd=round_fast):
 
 int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 
-if BACKEND == 'gmpy':
+if BACKEND in ['gmpy', 'gmp']:
     from_man_exp = gmpy._mpmath_create
 
 def from_int(n, prec=0, rnd=round_fast):
@@ -805,7 +805,7 @@ def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     return normalize(sign, man, exp, bc, prec, rnd)
 
 
-if BACKEND == 'gmpy':
+if BACKEND in ['gmpy', 'gmp']:
     mpf_mul_int = gmpy_mpf_mul_int
 else:
     mpf_mul_int = python_mpf_mul_int

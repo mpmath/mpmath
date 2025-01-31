@@ -16,6 +16,10 @@ jobs:
       fail-fast: false
       matrix:
         python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14, pypy3.10-nightly]
+        nogmpy: [false]
+        include:
+          - python-version: 3.13
+            nogmpy: true
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
@@ -33,5 +37,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade setuptools pip
-        pip install --upgrade .[develop,gmpy2,ci]
+        pip install --upgrade .[develop,gmpy2,gmp,ci]
+    - run: pip uninstall -y gmpy2
+      if: matrix.nogmpy
     - run: pytest
