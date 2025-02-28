@@ -1397,8 +1397,8 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<sign>[-+ ]?)
     (?P<no_neg_0>z)?
     (?P<alternate>\#)?
-    (?P<zeropad>0)?
-    (?P<width>0|[1-9][0-9]*)?
+    (?P<zeropad>0(?=0*[1-9]))?
+    (?P<width>[0-9]+)?
     (?P<thousands_separators>[,_])?
     (?:\.(?P<precision>[0-9]+))?
     (?P<rounding>[UDYZN])?
@@ -1470,13 +1470,11 @@ def read_format_spec(format_spec):
         if rounding_char is not None:
             format_dict['rounding'] = _GMPY_ROUND_CHAR_DICT[rounding_char]
 
-        if match['zeropad'] and match['fill_char']:
-            raise ValueError('Cannot specify both 0-padding and a fill '
-                             'character')
-
         if match['zeropad']:
-            format_dict['align'] = '='
-            format_dict['fill_char'] = '0'
+            if not match['align']:
+                format_dict['align'] = '='
+            if not match['fill_char']:
+                format_dict['fill_char'] = '0'
 
         if format_dict['precision'] < 0 and format_dict['type'].lower() not in ['', 'a', 'b']:
             format_dict['precision'] = 6
