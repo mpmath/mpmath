@@ -62,7 +62,8 @@ def fmt_str(draw, types='fFeE', for_complex=False):
         res += gchar
 
     # Precision
-    prec = draw(st.sampled_from(['']*7 + list(map(str, range(40)))))
+    prec = draw(st.sampled_from(['']*7 + list(map(str, range(40)))
+                + ['0' + str(_) for _ in range(40)]))
     if prec:
         res += '.' + prec
 
@@ -468,6 +469,7 @@ def test_mpf_fmt_cpython():
                  allow_infinity=True,
                  allow_subnormal=True))
 @example(fmt='.0g', x=9.995074823339339e-05)  # issue 880
+@example(fmt='.016f', x=0.1)  # issue 915
 def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
