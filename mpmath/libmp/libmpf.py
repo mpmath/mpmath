@@ -186,7 +186,7 @@ def _normalize(sign, man, exp, bc, prec, rnd):
 
 _exp_types = (int,)
 
-if BACKEND == 'gmpy':
+if gmpy:
     _normalize = gmpy._mpmath_normalize
 
 def normalize(sign, man, exp, bc, prec, rnd):
@@ -234,7 +234,7 @@ def from_man_exp(man, exp, prec=0, rnd=round_fast):
 
 int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 
-if BACKEND == 'gmpy':
+if gmpy:
     from_man_exp = gmpy._mpmath_create
 
 def from_int(n, prec=0, rnd=round_fast):
@@ -804,11 +804,10 @@ def python_mpf_mul_int(s, n, prec, rnd=round_fast):
     bc += man>>bc
     return normalize(sign, man, exp, bc, prec, rnd)
 
+mpf_mul_int = python_mpf_mul_int
 
-if BACKEND == 'gmpy':
+if gmpy:
     mpf_mul_int = gmpy_mpf_mul_int
-else:
-    mpf_mul_int = python_mpf_mul_int
 
 def mpf_shift(s, n):
     """Quickly multiply the raw mpf s by 2**n without rounding."""

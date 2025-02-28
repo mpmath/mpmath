@@ -10,7 +10,7 @@ import math
 import sys
 from functools import lru_cache
 
-from .backend import BACKEND, MPZ, MPZ_ONE, MPZ_ZERO, gmpy
+from .backend import MPZ, MPZ_ONE, MPZ_ZERO, gmpy
 
 
 small_trailing = [0] * 256
@@ -73,8 +73,7 @@ def bitcount(n):
     """Calculate bit size of abs(n)."""
     return MPZ(n).bit_length()
 
-if BACKEND == 'gmpy':
-    bitcount = gmpy.bit_length
+if gmpy and hasattr(MPZ, 'bit_scan1'):
     def trailing(n):
         return MPZ(n).bit_scan1() if n else MPZ(0)
 
@@ -146,10 +145,10 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
     bd = numeral(B, base, half, digits).rjust(half, "0")
     return ad + bd
 
-if BACKEND == "gmpy":
+numeral = numeral_python
+
+if gmpy:
     numeral = numeral_gmpy
-else:
-    numeral = numeral_python
 
 _1_800 = 1<<800
 _1_600 = 1<<600
@@ -257,7 +256,7 @@ def sqrt_fixed(x, prec):
 
 sqrt_fixed2 = sqrt_fixed
 
-if BACKEND == 'gmpy':
+if gmpy:
     isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
     sqrtrem = gmpy.isqrt_rem
 else:
@@ -270,10 +269,8 @@ else:
     sqrtrem = sqrtrem_python
     _gcd2 = math.gcd
 
-
-if BACKEND == 'python':
-    gcd = math.gcd
-elif BACKEND == 'gmpy':
+gcd = math.gcd
+if gmpy:
     gcd = gmpy.gcd
 
 
@@ -318,13 +315,12 @@ def ifac2(n, memo_pair=[{0:1}, {1:1}]):
             memo[k] = p
     return p
 ifac2_python = ifac2
+ifac = math.factorial
 
-if BACKEND == 'gmpy':
+if gmpy:
     ifac = gmpy.fac
     ifac2 = gmpy.double_fac
     ifib = gmpy.fib
-else:
-    ifac = math.factorial
 
 ifac = lru_cache(maxsize=1024)(ifac)
 
@@ -386,7 +382,7 @@ def isprime(n):
     return True
 isprime_python = isprime
 
-if BACKEND == 'gmpy':
+if gmpy and hasattr(gmpy, 'is_prime'):
     isprime = gmpy.is_prime
 
 def moebius(n):
