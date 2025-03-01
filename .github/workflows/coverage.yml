@@ -17,17 +17,13 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade setuptools pip
-          pip install --upgrade .[develop,gmpy2,gmp,ci]
+          pip install --upgrade .[develop,gmpy2,ci]
       - name: Run coverage tests
         run: |
           pytest
           pip uninstall -y ipython
           pytest mpmath/tests/test_cli.py
           pip uninstall -y gmpy2
-          pytest mpmath/tests/test_basic_ops.py mpmath/tests/test_convert.py \
-            mpmath/tests/test_functions.py mpmath/tests/test_gammazeta.py \
-            mpmath/tests/test_bitwise.py
-          pip uninstall -y python-gmp
           pytest mpmath/tests/test_basic_ops.py mpmath/tests/test_convert.py \
             mpmath/tests/test_functions.py mpmath/tests/test_gammazeta.py \
             mpmath/tests/test_bitwise.py
