@@ -54,7 +54,9 @@ def fmt_str(draw, types='fFeE', for_complex=False):
         skip_thousand_separators = True
 
     # Width
-    res += draw(st.sampled_from(['']*7 + list(map(str, range(1, 40)))))
+    res += draw(st.sampled_from(['']*7 + list(map(str, range(1, 40)))
+                                + ([] if for_complex else ['0' + str(_)
+                                                           for _ in range(40)])))
 
     # grouping character (thousand_separators)
     gchar = draw(st.sampled_from([''] + list(',_')))
@@ -62,7 +64,8 @@ def fmt_str(draw, types='fFeE', for_complex=False):
         res += gchar
 
     # Precision
-    prec = draw(st.sampled_from(['']*7 + list(map(str, range(40)))))
+    prec = draw(st.sampled_from(['']*7 + list(map(str, range(40)))
+                + ['0' + str(_) for _ in range(40)]))
     if prec:
         res += '.' + prec
 
@@ -468,6 +471,8 @@ def test_mpf_fmt_cpython():
                  allow_infinity=True,
                  allow_subnormal=True))
 @example(fmt='.0g', x=9.995074823339339e-05)  # issue 880
+@example(fmt='.016f', x=0.1)  # issue 915
+@example(fmt='0030f', x=0.3)
 def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
@@ -477,6 +482,9 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if (spec['width'] > 0 and spec['fill_char'] == '0'
+            and spec['thousands_separators']):
+        return  # issue 917
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
@@ -796,11 +804,6 @@ def test_errors():
 
     with pytest.raises(ValueError, match="Invalid format specifier '12.3 E '"):
         f"{mp.mpf('4'):12.3 E }"
-
-    with pytest.raises(ValueError, match="Cannot specify both 0-padding "
-                       "and a fill character"):
-        f"{mp.mpf('4'):q<03f}"
-
 
 
 @settings(max_examples=10000)
