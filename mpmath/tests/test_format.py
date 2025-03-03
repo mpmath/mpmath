@@ -473,6 +473,9 @@ def test_mpf_fmt_cpython():
 @example(fmt='.0g', x=9.995074823339339e-05)  # issue 880
 @example(fmt='.016f', x=0.1)  # issue 915
 @example(fmt='0030f', x=0.3)
+@example(fmt='0=13,f', x=1.1)  # issue 917
+@example(fmt='013,f', x=1.1)
+@example(fmt='013,.0%', x=1.1)
 def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
@@ -482,9 +485,6 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
-    if (spec['width'] > 0 and spec['fill_char'] == '0'
-            and spec['thousands_separators']):
-        return  # issue 917
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary

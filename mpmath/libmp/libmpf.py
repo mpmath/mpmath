@@ -1578,6 +1578,10 @@ def format_fixed(s,
     return sign, digits
 
 
+_MAP_FMT_EXP = {'E': 'E', 'e': 'e', 'G': 'E', 'g': 'e',
+                'A': 'P', 'a': 'p', 'B': 'p', 'b': 'p', '': 'e'}
+
+
 def format_scientific(s,
                       precision=6,
                       strip_zeros=False,
@@ -1586,7 +1590,6 @@ def format_scientific(s,
                       capitalize=False,
                       alternate=False,
                       rounding=round_nearest):
-
 
     sep = 'E' if capitalize else 'e'
 
@@ -1792,18 +1795,44 @@ def format_digits(num, format_dict, prec):
             if digits[-1] == '.':
                 digits += '0'
         if percent:
-            digits = digits + '%'
+            digits += '%'
 
     return sign, digits
 
 
 def format_mpf(num, format_spec, prec):
     format_dict = read_format_spec(format_spec)
-
     sign, digits = format_digits(num, format_dict, prec)
+    nchars = len(digits) + len(sign)
+    sep_range = 3
+    width = format_dict['width']
+    sep = format_dict['thousands_separators']
+
+    if (num not in _MAP_SPEC_STR and format_dict['fill_char'] == '0'
+            and format_dict['align'] == '=' and sep and width > nchars):
+        e = _MAP_FMT_EXP.get(format_dict['type'])
+        if '.' in digits:
+            i, digits = digits.split('.')
+            digits = '.' + digits
+        elif e and e in digits:
+            i, digits = digits.split(e)
+            digits = e + digits
+        elif '%' in digits:
+            i = digits[:-1]
+            digits = '%'
+        else:
+            i = digits
+            digits = ''
+        i = i.replace(sep, '')
+        min_leading = format_dict['width'] - len(digits) - len(sign)
+        i = i.zfill(sep_range * min_leading // (sep_range + 1) + 1
+                    if sep else min_leading)
+        first_pos = 1 + (len(i) - 1) % sep_range
+        i = i[:first_pos] + "".join(sep + i[pos : pos + sep_range]
+                                    for pos in range(first_pos, len(i), sep_range))
+        digits = i + digits
 
     nchars = len(digits) + len(sign)
-
     lpad, rpad = calc_padding(
             nchars, format_dict['width'], format_dict['align'])
 
