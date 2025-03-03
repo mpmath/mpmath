@@ -38,7 +38,7 @@ parser.add_argument('-V', '--version',
                     action='store_true')
 parser.add_argument('--prec', type=int,
                     help='Set default mpmath precision')
-parser.add_argument('--pretty', help='Enable pretty-printing',
+parser.add_argument('--no-pretty', help='Disable pretty-printing',
                     action='store_true')
 
 
@@ -54,7 +54,7 @@ def main():
 
     if args.prec:
         lines.append(f'mp.prec = {args.prec}')
-    if args.pretty:
+    if not args.no_pretty:
         lines.append('mp.pretty = True')
 
     try:
