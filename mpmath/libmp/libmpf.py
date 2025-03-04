@@ -1490,7 +1490,6 @@ def format_fixed(s,
                  strip_last_zero=False,
                  thousands_separators='',
                  sep_range=3,
-                 base=10,
                  alternate=False,
                  rounding=round_nearest):
     '''
@@ -1501,6 +1500,7 @@ def format_fixed(s,
     '''
 
     # First, get the exponent to know how many digits we will need
+    base = 10
     _, _, exponent = to_digits_exp(s, 1, base)
 
     # Now that we have an estimate, compute the correct digits
@@ -1575,18 +1575,18 @@ _MAP_FMT_EXP = {'E': 'E', 'e': 'e', 'G': 'E', 'g': 'e',
 def format_scientific(s,
                       precision=6,
                       strip_zeros=False,
-                      base=10,
                       capitalize=False,
                       alternate=False,
                       rounding=round_nearest):
 
     sep = 'E' if capitalize else 'e'
+    base = 10
 
     # First, get the exponent to know how many digits we will need
-    dps = precision+1
-    _, digits, exponent = to_digits_exp(
-            s, max(dps+10, int(s[3]/blog2_10)+10), base)
-
+    dps = precision + 1
+    _, digits, exponent = to_digits_exp(s, max(dps + 10,
+                                               int(s[3]/blog2_10) + 10),
+                                        base)
     digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
     exponent += exp_add
 
@@ -1719,7 +1719,7 @@ def format_digits(num, format_dict, prec):
     elif fmt_type == 'e':
         digits = format_scientific(num, precision=precision,
                                    strip_zeros=strip_zeros,
-                                   base=10, capitalize=capitalize,
+                                   capitalize=capitalize,
                                    alternate=format_dict['alternate'],
                                    rounding=rounding)
         if digits[0] in 'eE':
@@ -1742,8 +1742,7 @@ def format_digits(num, format_dict, prec):
                               strip_zeros=strip_zeros,
                               strip_last_zero=strip_last_zero,
                               thousands_separators=format_dict['thousands_separators'],
-                              sep_range=3, base=10,
-                              alternate=format_dict['alternate'],
+                              sep_range=3, alternate=format_dict['alternate'],
                               rounding=rounding)
         if not fmt_type:
             if digits[-1] == '.':
