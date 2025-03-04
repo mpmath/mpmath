@@ -1528,14 +1528,7 @@ _MAP_FMT_EXP = {'E': 'E', 'e': 'e', 'G': 'E', 'g': 'e',
                 'A': 'P', 'a': 'p', 'B': 'p', 'b': 'p', '': 'e'}
 
 
-def format_scientific(s,
-                      precision=6,
-                      strip_zeros=False,
-                      capitalize=False,
-                      alternate=False,
-                      rounding=round_nearest):
-
-    sep = 'E' if capitalize else 'e'
+def format_scientific(s, precision=6, rounding=round_nearest):
     base = 10
 
     # First, get the exponent to know how many digits we will need
@@ -1546,25 +1539,10 @@ def format_scientific(s,
     digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
     exponent += exp_add
 
-    if strip_zeros:
-        # Clean up trailing zeros
-        digits = digits.rstrip('0')
-        precision = len(digits)
-
-    if precision >= 1 and len(digits) > 1:
-        return digits[0] + '.' + digits[1:] + sep + f'{exponent:+03d}'
-
-    if alternate:
-        return digits + '.' + sep + f'{exponent:+03d}'
-
-    return digits + sep + f'{exponent:+03d}'
+    return digits[0], digits[1:], f'e{exponent:+03d}'
 
 
-def format_hexadecimal(s,
-                       precision=-1,
-                       capitalize=False,
-                       alternate=False,
-                       rounding=round_nearest):
+def format_hexadecimal(s, precision=-1, rounding=round_nearest):
     prec = 4*precision + 1 if precision >= 0 else s[1].bit_length()
 
     if s[1]:
@@ -1588,31 +1566,19 @@ def format_hexadecimal(s,
         # Clean up trailing zeros
         frac_digits = frac_digits.rstrip('0')
 
-    if frac_digits:
-        digits += "." + frac_digits
-    elif alternate:
-        digits += "."
-    digits += f'p{exponent:+01d}'
-
-    return digits.upper() if capitalize else digits
+    return digits, frac_digits, f'p{exponent:+01d}'
 
 
-def format_binary(s,
-                  precision=-1,
-                  rounding=round_nearest):
+def format_binary(s, precision=-1, rounding=round_nearest):
     prec = precision + 1 if precision >= 0 else s[1].bit_length()
     s = mpf_pos(s, prec, rounding)
 
     digits = bin(s[1])[2:]
     digits = digits + '0'*(precision + 1 - len(digits))
-    if len(digits) > 1:
-        digits = digits[0] + '.' + digits[1:]
-
     exponent = s[2]
     if s[1]:
         exponent += s[1].bit_length() - 1
-
-    return digits + f'p{exponent:+01d}'
+    return digits[0], digits[1:], f'p{exponent:+01d}'
 
 
 _MAP_SPEC_STR = {finf: 'inf', fninf: 'inf', fnan: 'nan'}
@@ -1673,23 +1639,40 @@ def format_digits(num, format_dict, prec):
             digits += '%'
 
     elif fmt_type == 'e':
-        digits = format_scientific(num, precision=precision,
-                                   strip_zeros=strip_zeros,
-                                   capitalize=capitalize,
-                                   alternate=format_dict['alternate'],
-                                   rounding=rounding)
-        if digits[0] in 'eE':
-            digits = '0' + digits
+        int_part, frac_part, exponent = format_scientific(num,
+                                                          precision=precision,
+                                                          rounding=rounding)
+        if strip_zeros:
+            frac_part = frac_part.rstrip('0')
+        digits = int_part
+        if frac_part or format_dict['alternate']:
+            digits += '.' + frac_part
+        if capitalize:
+            exponent = exponent.replace('e', 'E')
+        digits += exponent
 
     elif fmt_type == 'a':
-        digits = format_hexadecimal(num, precision=precision,
-                                    capitalize=capitalize,
-                                    alternate=format_dict['alternate'],
-                                    rounding=rounding)
-        digits = ('0X' if capitalize else '0x') + digits
+        int_part, frac_part, exponent = format_hexadecimal(num,
+                                                           precision=precision,
+                                                           rounding=rounding)
+        if capitalize:
+            int_part = '0X' + int_part
+            frac_part = frac_part.upper()
+            exponent = exponent.replace('p', 'P')
+        else:
+            int_part = '0x' + int_part
+        digits = int_part
+        if frac_part or format_dict['alternate']:
+            digits += '.' + frac_part
+        digits += exponent
 
     elif fmt_type == 'b':
-        digits = format_binary(num, precision=precision, rounding=rounding)
+        int_part, frac_part, exponent = format_binary(num, precision=precision,
+                                                      rounding=rounding)
+        digits = int_part
+        if frac_part:
+            digits += '.' + frac_part
+        digits += exponent
         if format_dict['alternate']:
             digits = '0b' + digits
 
