@@ -1599,7 +1599,8 @@ def format_digits(num, format_dict, prec):
 
     precision = format_dict['precision']
 
-    digits = ''
+    int_part = ''
+    exponent = ''
     sign = ''
 
     # Now the general case
@@ -1632,11 +1633,9 @@ def format_digits(num, format_dict, prec):
             precision = max(0, precision - 1)
 
     if num in _MAP_SPEC_STR:  # special cases
-        digits = _MAP_SPEC_STR[num]
+        frac_part = _MAP_SPEC_STR[num]
         if capitalize:
-            digits = digits.upper()
-        if percent:
-            digits += '%'
+            frac_part = frac_part.upper()
 
     elif fmt_type == 'e':
         int_part, frac_part, exponent = format_scientific(num,
@@ -1644,12 +1643,10 @@ def format_digits(num, format_dict, prec):
                                                           rounding=rounding)
         if strip_zeros:
             frac_part = frac_part.rstrip('0')
-        digits = int_part
         if frac_part or format_dict['alternate']:
-            digits += '.' + frac_part
+            frac_part = '.' + frac_part
         if capitalize:
             exponent = exponent.replace('e', 'E')
-        digits += exponent
 
     elif fmt_type == 'a':
         int_part, frac_part, exponent = format_hexadecimal(num,
@@ -1661,98 +1658,77 @@ def format_digits(num, format_dict, prec):
             exponent = exponent.replace('p', 'P')
         else:
             int_part = '0x' + int_part
-        digits = int_part
         if frac_part or format_dict['alternate']:
-            digits += '.' + frac_part
-        digits += exponent
+            frac_part = '.' + frac_part
 
     elif fmt_type == 'b':
         int_part, frac_part, exponent = format_binary(num, precision=precision,
                                                       rounding=rounding)
-        digits = int_part
         if frac_part:
-            digits += '.' + frac_part
-        digits += exponent
+            frac_part = '.' + frac_part
         if format_dict['alternate']:
-            digits = '0b' + digits
+            int_part = '0b' + int_part
 
     else:  # fixed-point formats
         int_part, frac_part = format_fixed(num, precision=precision,
                                            rounding=rounding)
 
-        # Add the thousands separator every 3 characters.
-        sep = format_dict['thousands_separators']
-        sep_range = 3
-        split = len(int_part)
-        if sep and split > sep_range:
-            # the first thousand separator may be located before 3 characters
-            nmod = split % sep_range
-            digs_b = int_part[nmod:]
-
-            if nmod != 0:
-                prev = int_part[:nmod] + sep
-            else:
-                prev = ''
-
-            int_part = prev + sep.join(digs_b[i:i + sep_range]
-                                       for i in range(0, split - nmod, sep_range))
-
         if strip_zeros:
             frac_part = frac_part.rstrip('0')
         if not frac_part and not fmt_type:
             frac_part = '0'
-        digits = int_part
         if (frac_part or format_dict['alternate']
                 or (precision and not strip_last_zero)):
-            digits += '.' + frac_part
-        if percent:
-            digits += '%'
+            frac_part = '.' + frac_part
+
+    digits = frac_part + exponent
 
     sign = '-' if num[0] else ''
     if sign != '-' and format_dict['sign'] != '-':
         sign = format_dict['sign']
-    if fmt_type in ['f', '%'] and format_dict['no_neg_0']:
-        if all(_ in ['0', '.', '%'] for _ in digits):
+    if fmt_type == 'f' and format_dict['no_neg_0']:
+        if int_part == "0" and all(_ in ['0', '.'] for _ in digits):
             if format_dict['sign'] == '-':
                 sign = ''
             else:
                 sign = format_dict['sign']
 
-    return sign, digits
+    if percent:
+        digits += '%'
+
+    sep = format_dict['thousands_separators']
+    sep_range = 3
+    width = format_dict['width']
+    if (int_part and fmt_type in ['%', 'f', 'e', 'g', '']
+            and format_dict['fill_char'] == '0' and format_dict['align'] == '='
+            and sep and width > len(int_part) + len(digits) + len(sign)):
+        min_leading = format_dict['width'] - len(digits) - len(sign)
+        int_part = int_part.zfill(sep_range*min_leading//(sep_range + 1) + 1
+                                  if sep else min_leading)
+
+    # Add the thousands separator every 3 characters.
+    sep = format_dict['thousands_separators']
+    sep_range = 3
+    split = len(int_part)
+    if sep and split > sep_range:
+        # the first thousand separator may be located before 3 characters
+        nmod = split % sep_range
+        digs_b = int_part[nmod:]
+
+        if nmod != 0:
+            prev = int_part[:nmod] + sep
+        else:
+            prev = ''
+
+        int_part = prev + sep.join(digs_b[i:i + sep_range]
+                                   for i in range(0, split - nmod, sep_range))
+
+    return sign, int_part + digits
 
 
 def format_mpf(num, format_spec, prec):
     format_dict = read_format_spec(format_spec)
     sign, digits = format_digits(num, format_dict, prec)
-    nchars = len(digits) + len(sign)
-    sep_range = 3
-    width = format_dict['width']
-    sep = format_dict['thousands_separators']
-
-    if (num not in _MAP_SPEC_STR and format_dict['fill_char'] == '0'
-            and format_dict['align'] == '=' and sep and width > nchars):
-        e = _MAP_FMT_EXP.get(format_dict['type'])
-        if '.' in digits:
-            i, digits = digits.split('.')
-            digits = '.' + digits
-        elif e and e in digits:
-            i, digits = digits.split(e)
-            digits = e + digits
-        elif '%' in digits:
-            i = digits[:-1]
-            digits = '%'
-        else:
-            i = digits
-            digits = ''
-        i = i.replace(sep, '')
-        min_leading = format_dict['width'] - len(digits) - len(sign)
-        i = i.zfill(sep_range * min_leading // (sep_range + 1) + 1
-                    if sep else min_leading)
-        first_pos = 1 + (len(i) - 1) % sep_range
-        i = i[:first_pos] + "".join(sep + i[pos : pos + sep_range]
-                                    for pos in range(first_pos, len(i), sep_range))
-        digits = i + digits
-
     nchars = len(digits) + len(sign)
     lpad, rpad = calc_padding(
             nchars, format_dict['width'], format_dict['align'])
