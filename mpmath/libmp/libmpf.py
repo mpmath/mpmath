@@ -1484,21 +1484,7 @@ def read_format_spec(format_spec):
     return format_dict
 
 
-def format_fixed(s,
-                 precision=6,
-                 strip_zeros=False,
-                 strip_last_zero=False,
-                 thousands_separators='',
-                 sep_range=3,
-                 alternate=False,
-                 rounding=round_nearest):
-    '''
-    Format a number into fixed point.
-    Returns the sign character, and the string that represents the number in
-    the correct format.
-    Does not perform padding or aligning
-    '''
-
+def format_fixed(s, precision=6, rounding=round_nearest):
     # First, get the exponent to know how many digits we will need
     base = 10
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1513,10 +1499,8 @@ def format_fixed(s,
     # The number we want to print is lower in magnitude that the requested
     # precision. We should only print 0s.
     if exponent + precision < -1:
-        if precision > 0:
-            digits = '0.' + precision*'0'
-        else:
-            digits = '0'
+        int_part = '0'
+        frac_part = precision*'0'
 
     else:
         digits, exp_add = round_digits(s[0], digits, dps, base, rounding, True)
@@ -1529,43 +1513,15 @@ def format_fixed(s,
             split = 1
         else:
             split = exponent + 1
-        exponent = 0
-
-        # Add the thousands separator every 3 characters.
-        if thousands_separators != '' and split > sep_range:
-            # the first thousand separator may be located before 3 characters
-            nmod = split % sep_range
-            digs_b = digits[nmod:split]
-
-            if nmod != 0:
-                prev = digits[:nmod] + thousands_separators
-            else:
-                prev = ''
-
-            dec_part = prev + thousands_separators.join(
-                    digs_b[i:i+sep_range]
-                    for i in range(0, split-nmod, sep_range)
-                    )
-        else:
-            dec_part = digits[:split]
+        int_part = digits[:split]
 
         # Finally, assemble the digits including the decimal point
         if precision == 0:
-            return dec_part + ('.' if alternate else '')
+            return int_part, ''
 
-        digits = dec_part + "." + digits[split:]
+        frac_part = digits[split:]
 
-    if strip_zeros:
-        # Clean up trailing zeros
-        digits = digits.rstrip('0')
-
-    if digits[-1] == "." and strip_last_zero:
-        digits = digits[:-1]
-
-    if alternate and '.' not in digits:
-        digits += '.'
-
-    return digits
+    return int_part, frac_part
 
 
 _MAP_FMT_EXP = {'E': 'E', 'e': 'e', 'G': 'E', 'g': 'e',
@@ -1737,16 +1693,35 @@ def format_digits(num, format_dict, prec):
         if format_dict['alternate']:
             digits = '0b' + digits
 
-    else:  # fixed-point format
-        digits = format_fixed(num, precision=precision,
-                              strip_zeros=strip_zeros,
-                              strip_last_zero=strip_last_zero,
-                              thousands_separators=format_dict['thousands_separators'],
-                              sep_range=3, alternate=format_dict['alternate'],
-                              rounding=rounding)
-        if not fmt_type:
-            if digits[-1] == '.':
-                digits += '0'
+    else:  # fixed-point formats
+        int_part, frac_part = format_fixed(num, precision=precision,
+                                           rounding=rounding)
+
+        # Add the thousands separator every 3 characters.
+        sep = format_dict['thousands_separators']
+        sep_range = 3
+        split = len(int_part)
+        if sep and split > sep_range:
+            # the first thousand separator may be located before 3 characters
+            nmod = split % sep_range
+            digs_b = int_part[nmod:]
+
+            if nmod != 0:
+                prev = int_part[:nmod] + sep
+            else:
+                prev = ''
+
+            int_part = prev + sep.join(digs_b[i:i + sep_range]
+                                       for i in range(0, split - nmod, sep_range))
+
+        if strip_zeros:
+            frac_part = frac_part.rstrip('0')
+        if not frac_part and not fmt_type:
+            frac_part = '0'
+        digits = int_part
+        if (frac_part or format_dict['alternate']
+                or (precision and not strip_last_zero)):
+            digits += '.' + frac_part
         if percent:
             digits += '%'
 
