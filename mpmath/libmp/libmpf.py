@@ -1489,11 +1489,9 @@ def format_fixed(s,
                  strip_zeros=False,
                  strip_last_zero=False,
                  thousands_separators='',
-                 sign_spec='-',
                  sep_range=3,
                  base=10,
                  alternate=False,
-                 no_neg_0=False,
                  rounding=round_nearest):
     '''
     Format a number into fixed point.
@@ -1508,12 +1506,9 @@ def format_fixed(s,
     # Now that we have an estimate, compute the correct digits
     # (we do this because the previous computation could yield the wrong
     # exponent by +- 1)
-    sign, digits, exponent = to_digits_exp(
+    _, digits, exponent = to_digits_exp(
             s, max(precision+exponent+4, int(s[3]/blog2_10)), base)
     dps = precision + exponent + 1
-
-    if sign != '-' and sign_spec != '-':
-        sign = sign_spec
 
     # The number we want to print is lower in magnitude that the requested
     # precision. We should only print 0s.
@@ -1523,14 +1518,9 @@ def format_fixed(s,
         else:
             digits = '0'
 
-        if no_neg_0:
-            sign = '' if sign_spec == '-' else sign_spec
     else:
         digits, exp_add = round_digits(s[0], digits, dps, base, rounding, True)
         exponent += exp_add
-
-        if all(_ == '0' for _ in digits) and no_neg_0:
-            sign = '' if sign_spec == '-' else sign_spec
 
         # Here we prepend the corresponding 0s to the digits string, according
         # to the value of exponent
@@ -1561,7 +1551,7 @@ def format_fixed(s,
 
         # Finally, assemble the digits including the decimal point
         if precision == 0:
-            return sign, dec_part + ('.' if alternate else '')
+            return dec_part + ('.' if alternate else '')
 
         digits = dec_part + "." + digits[split:]
 
@@ -1575,7 +1565,7 @@ def format_fixed(s,
     if alternate and '.' not in digits:
         digits += '.'
 
-    return sign, digits
+    return digits
 
 
 _MAP_FMT_EXP = {'E': 'E', 'e': 'e', 'G': 'E', 'g': 'e',
@@ -1585,7 +1575,6 @@ _MAP_FMT_EXP = {'E': 'E', 'e': 'e', 'G': 'E', 'g': 'e',
 def format_scientific(s,
                       precision=6,
                       strip_zeros=False,
-                      sign_spec='-',
                       base=10,
                       capitalize=False,
                       alternate=False,
@@ -1595,11 +1584,8 @@ def format_scientific(s,
 
     # First, get the exponent to know how many digits we will need
     dps = precision+1
-    sign, digits, exponent = to_digits_exp(
+    _, digits, exponent = to_digits_exp(
             s, max(dps+10, int(s[3]/blog2_10)+10), base)
-
-    if sign != '-' and sign_spec != '-':
-        sign = sign_spec
 
     digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
     exponent += exp_add
@@ -1610,24 +1596,19 @@ def format_scientific(s,
         precision = len(digits)
 
     if precision >= 1 and len(digits) > 1:
-        return sign, digits[0] + '.' + digits[1:] + sep + f'{exponent:+03d}'
+        return digits[0] + '.' + digits[1:] + sep + f'{exponent:+03d}'
 
     if alternate:
-        return sign, digits + '.' + sep + f'{exponent:+03d}'
+        return digits + '.' + sep + f'{exponent:+03d}'
 
-    return sign, digits + sep + f'{exponent:+03d}'
+    return digits + sep + f'{exponent:+03d}'
 
 
 def format_hexadecimal(s,
                        precision=-1,
-                       sign_spec='-',
                        capitalize=False,
                        alternate=False,
                        rounding=round_nearest):
-    sign = '-' if s[0] else ''
-    if sign != '-' and sign_spec != '-':
-        sign = sign_spec
-
     prec = 4*precision + 1 if precision >= 0 else s[1].bit_length()
 
     if s[1]:
@@ -1657,17 +1638,12 @@ def format_hexadecimal(s,
         digits += "."
     digits += f'p{exponent:+01d}'
 
-    return sign, digits.upper() if capitalize else digits
+    return digits.upper() if capitalize else digits
 
 
 def format_binary(s,
                   precision=-1,
-                  sign_spec='-',
                   rounding=round_nearest):
-    sign = '-' if s[0] else ''
-    if sign != '-' and sign_spec != '-':
-        sign = sign_spec
-
     prec = precision + 1 if precision >= 0 else s[1].bit_length()
     s = mpf_pos(s, prec, rounding)
 
@@ -1680,10 +1656,10 @@ def format_binary(s,
     if s[1]:
         exponent += s[1].bit_length() - 1
 
-    return sign, digits + f'p{exponent:+01d}'
+    return digits + f'p{exponent:+01d}'
 
 
-_MAP_SPEC_STR = {finf: ('', 'inf'), fninf: ('-', 'inf'), fnan: ('', 'nan')}
+_MAP_SPEC_STR = {finf: 'inf', fninf: 'inf', fnan: 'nan'}
 
 
 def format_digits(num, format_dict, prec):
@@ -1734,68 +1710,56 @@ def format_digits(num, format_dict, prec):
             precision = max(0, precision - 1)
 
     if num in _MAP_SPEC_STR:  # special cases
-        sign, digits = _MAP_SPEC_STR[num]
+        digits = _MAP_SPEC_STR[num]
         if capitalize:
             digits = digits.upper()
-        if sign != '-' and format_dict['sign'] != '-':
-            sign = format_dict['sign']
         if percent:
             digits += '%'
 
     elif fmt_type == 'e':
-        sign, digits = format_scientific(
-                num,
-                precision=precision,
-                strip_zeros=strip_zeros,
-                sign_spec=format_dict['sign'],
-                base=10,
-                capitalize=capitalize,
-                alternate=format_dict['alternate'],
-                rounding=rounding
-                )
+        digits = format_scientific(num, precision=precision,
+                                   strip_zeros=strip_zeros,
+                                   base=10, capitalize=capitalize,
+                                   alternate=format_dict['alternate'],
+                                   rounding=rounding)
         if digits[0] in 'eE':
             digits = '0' + digits
 
     elif fmt_type == 'a':
-        sign, digits = format_hexadecimal(
-                num,
-                precision=precision,
-                sign_spec=format_dict['sign'],
-                capitalize=capitalize,
-                alternate=format_dict['alternate'],
-                rounding=rounding
-                )
+        digits = format_hexadecimal(num, precision=precision,
+                                    capitalize=capitalize,
+                                    alternate=format_dict['alternate'],
+                                    rounding=rounding)
         digits = ('0X' if capitalize else '0x') + digits
 
     elif fmt_type == 'b':
-        sign, digits = format_binary(
-                num,
-                precision=precision,
-                sign_spec=format_dict['sign'],
-                rounding=rounding
-                )
+        digits = format_binary(num, precision=precision, rounding=rounding)
         if format_dict['alternate']:
             digits = '0b' + digits
 
     else:  # fixed-point format
-        sign, digits = format_fixed(
-                num,
-                precision=precision,
-                strip_zeros=strip_zeros,
-                strip_last_zero=strip_last_zero,
-                thousands_separators=format_dict['thousands_separators'],
-                sign_spec=format_dict['sign'],
-                sep_range=3,
-                base=10,
-                alternate=format_dict['alternate'],
-                no_neg_0=format_dict['no_neg_0'],
-                rounding=rounding
-                )
+        digits = format_fixed(num, precision=precision,
+                              strip_zeros=strip_zeros,
+                              strip_last_zero=strip_last_zero,
+                              thousands_separators=format_dict['thousands_separators'],
+                              sep_range=3, base=10,
+                              alternate=format_dict['alternate'],
+                              rounding=rounding)
         if not fmt_type:
             if digits[-1] == '.':
                 digits += '0'
         if percent:
             digits += '%'
+
+    sign = '-' if num[0] else ''
+    if sign != '-' and format_dict['sign'] != '-':
+        sign = format_dict['sign']
+    if fmt_type in ['f', '%'] and format_dict['no_neg_0']:
+        if all(_ in ['0', '.', '%'] for _ in digits):
+            if format_dict['sign'] == '-':
+                sign = ''
+            else:
+                sign = format_dict['sign']
 
     return sign, digits
 
