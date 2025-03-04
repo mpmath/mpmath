@@ -85,7 +85,7 @@ def test_ipython_console_wrap_floats():
     pytest.importorskip('IPython')
 
     c = Console(f'{sys.executable} -m mpmath --simple-prompt --prec 100 '
-                "--colors 'NoColor'")
+                "--colors 'NoColor' --no-pretty")
 
     assert c.expect_exact('\r\nIn [1]: ') == 0
     assert c.send('10.9\r\n') == 6
@@ -94,7 +94,7 @@ def test_ipython_console_wrap_floats():
 
 def test_bare_console_wrap_floats():
     c = Console(f'{sys.executable} -m mpmath --simple-prompt --no-ipython --prec 100 '
-                "--colors 'NoColor'")
+                "--colors 'NoColor' --no-pretty")
 
     assert c.expect_exact('>>> ') == 0
     assert c.send("10.9\r\n") == 6
@@ -107,7 +107,7 @@ def test_bare_console_wrap_floats():
 
 def test_bare_console_pretty():
     c = Console(f'{sys.executable} -m mpmath --simple-prompt --no-ipython --prec 100 '
-                "--colors 'NoColor' --pretty")
+                "--colors 'NoColor'")
 
     assert c.expect_exact('>>> ') == 0
     assert c.send("10.9\r\n") == 6
