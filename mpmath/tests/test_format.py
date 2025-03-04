@@ -68,6 +68,9 @@ def fmt_str(draw, types='fFeE', for_complex=False):
                 + ['0' + str(_) for _ in range(40)]))
     if prec:
         res += '.' + prec
+        if sys.version_info >= (3, 14):
+            gchar = draw(st.sampled_from([''] + list(',_')))
+            res += gchar
 
     # Type
     res += draw(st.sampled_from(types))
@@ -485,6 +488,8 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if spec['frac_separators'] and spec['fill_char'] == '0':
+        return  # XXX: CPython bug
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary

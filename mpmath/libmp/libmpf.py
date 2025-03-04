@@ -1400,7 +1400,7 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<zeropad>0(?=0*[1-9]))?
     (?P<width>[0-9]+)?
     (?P<thousands_separators>[,_])?
-    (?:\.(?P<precision>[0-9]+))?
+    (?:\.(?P<precision>[0-9]+)(?P<frac_separators>[,_])?)?
     (?P<rounding>[UDYZN])?
     (?P<type>[aAbeEfFgG%])?
 """, re.DOTALL | re.VERBOSE).fullmatch
@@ -1447,6 +1447,7 @@ def read_format_spec(format_spec):
         'no_neg_0': False,
         'alternate': False,
         'thousands_separators': '',
+        'frac_separators': '',
         'width': -1,
         'precision': -1,
         'rounding': round_nearest,
@@ -1464,6 +1465,8 @@ def read_format_spec(format_spec):
             or format_dict['thousands_separators']
         format_dict['width'] = int(match['width'] or format_dict['width'])
         format_dict['precision'] = int(match['precision'] or format_dict['precision'])
+        format_dict['frac_separators'] = match['frac_separators'] \
+            or format_dict['frac_separators']
         rounding_char = match['rounding']
         format_dict['type'] = match['type'] or format_dict['type']
 
@@ -1681,13 +1684,21 @@ def format_digits(num, format_dict, prec):
                 or (precision and not strip_last_zero)):
             frac_part = '.' + frac_part
 
+    sep_range = 3
+    frac_sep = format_dict['frac_separators']
+    if frac_sep and frac_part:
+        frac_part = frac_part[:sep_range + 1] + "".join(frac_sep + frac_part[pos:pos + sep_range]
+                                                        for pos in range(sep_range + 1,
+                                                                         len(frac_part),
+                                                                         sep_range))
     digits = frac_part + exponent
 
     sign = '-' if num[0] else ''
     if sign != '-' and format_dict['sign'] != '-':
         sign = format_dict['sign']
     if fmt_type == 'f' and format_dict['no_neg_0']:
-        if int_part == "0" and all(_ in ['0', '.'] for _ in digits):
+        if int_part == "0" and all(_ in ['0', '.', '_', ',']
+                                   for _ in digits):
             if format_dict['sign'] == '-':
                 sign = ''
             else:
@@ -1697,7 +1708,6 @@ def format_digits(num, format_dict, prec):
         digits += '%'
 
     sep = format_dict['thousands_separators']
-    sep_range = 3
     width = format_dict['width']
     if (int_part and fmt_type in ['%', 'f', 'e', 'g', '']
             and format_dict['fill_char'] == '0' and format_dict['align'] == '='
