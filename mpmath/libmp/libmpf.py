@@ -1587,6 +1587,11 @@ def format_binary(s, precision=-1, rounding=round_nearest):
 _MAP_SPEC_STR = {finf: 'inf', fninf: 'inf', fnan: 'nan'}
 
 
+def fill_sep(digits, sep, prev, nmod, sep_range):
+    return prev + sep.join(digits[pos:pos + sep_range]
+                           for pos in range(nmod, len(digits), sep_range))
+
+
 def format_digits(num, format_dict, prec):
     capitalize = False
     if format_dict['type'] in list('AFGE'):
@@ -1685,12 +1690,9 @@ def format_digits(num, format_dict, prec):
             frac_part = '.' + frac_part
 
     sep_range = 3
-    frac_sep = format_dict['frac_separators']
-    if frac_sep and frac_part:
-        frac_part = frac_part[:sep_range + 1] + "".join(frac_sep + frac_part[pos:pos + sep_range]
-                                                        for pos in range(sep_range + 1,
-                                                                         len(frac_part),
-                                                                         sep_range))
+    sep = format_dict['frac_separators']
+    if sep and frac_part:
+        frac_part = fill_sep(frac_part, sep, frac_part[0], 1, sep_range)
     digits = frac_part + exponent
 
     sign = '-' if num[0] else ''
@@ -1709,29 +1711,23 @@ def format_digits(num, format_dict, prec):
 
     sep = format_dict['thousands_separators']
     width = format_dict['width']
-    if (int_part and fmt_type in ['%', 'f', 'e', 'g', '']
+    min_leading = width - len(digits) - len(sign)
+    if (int_part and fmt_type not in ['a', 'b']
             and format_dict['fill_char'] == '0' and format_dict['align'] == '='
-            and sep and width > len(int_part) + len(digits) + len(sign)):
-        min_leading = format_dict['width'] - len(digits) - len(sign)
+            and min_leading > len(int_part)):
         int_part = int_part.zfill(sep_range*min_leading//(sep_range + 1) + 1
                                   if sep else min_leading)
 
     # Add the thousands separator every 3 characters.
-    sep = format_dict['thousands_separators']
-    sep_range = 3
     split = len(int_part)
     if sep and split > sep_range:
         # the first thousand separator may be located before 3 characters
         nmod = split % sep_range
-        digs_b = int_part[nmod:]
-
         if nmod != 0:
             prev = int_part[:nmod] + sep
         else:
             prev = ''
-
-        int_part = prev + sep.join(digs_b[i:i + sep_range]
-                                   for i in range(0, split - nmod, sep_range))
+        int_part = fill_sep(int_part, sep, prev, nmod, sep_range)
 
     return sign, int_part + digits
 
