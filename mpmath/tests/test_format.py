@@ -68,6 +68,9 @@ def fmt_str(draw, types='fFeE', for_complex=False):
                 + ['0' + str(_) for _ in range(40)]))
     if prec:
         res += '.' + prec
+        # if sys.version_info >= (3, 14):
+        #     gchar = draw(st.sampled_from([''] + list(',_')))
+        #     res += gchar
 
     # Type
     res += draw(st.sampled_from(types))
@@ -177,6 +180,9 @@ def test_mpf_fmt_cpython():
     assert f'{mp.mpf(0.000001):f}' == '0.000001'
     assert f'{mp.mpf(0.0000005001):f}' == '0.000001'
     assert f'{mp.mpf(0.0000004999):f}' == '0.000000'
+
+    # grouping in fractional part
+    assert f'{mp.mpf(0.0000004999):.9_f}' == '0.000_000_500'
 
     # 'e' code formatting with explicit precision (>= 0). Output should
     # always have exactly the number of places after the point that were
@@ -485,6 +491,8 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if spec['frac_separators'] and spec['fill_char'] == '0':
+        return  # XXX: python/cpython#130860
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
