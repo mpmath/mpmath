@@ -180,11 +180,17 @@ def besselk(ctx, n, z, derivative=0, **kwargs):
 
 @defun_wrapped
 def hankel1(ctx,n,x,**kwargs):
-    return ctx.besselj(n,x,**kwargs) + ctx.j*ctx.bessely(n,x,**kwargs)
+    def terms():
+        return [ctx.besselj(n,x,**kwargs),
+                ctx.j*ctx.bessely(n,x,**kwargs)]
+    return ctx.sum_accurately(terms)
 
 @defun_wrapped
 def hankel2(ctx,n,x,**kwargs):
-    return ctx.besselj(n,x,**kwargs) - ctx.j*ctx.bessely(n,x,**kwargs)
+    def terms():
+        return [ctx.besselj(n,x,**kwargs),
+                -ctx.j*ctx.bessely(n,x,**kwargs)]
+    return ctx.sum_accurately(terms)
 
 @defun_wrapped
 def whitm(ctx,k,m,z,**kwargs):

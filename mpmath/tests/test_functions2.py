@@ -2433,3 +2433,7 @@ def test_issue_634():
 
 def test_issue_908():
     assert mp.besselj(-10+0j, 0+0j) == 0
+
+def test_issue_637():
+    assert hankel1(1, 1 + 30j).ae(-7.25495e-15 - 1.17346e-14j)
+    assert hankel2(1, 1 - 30j).ae(-7.25495e-15 + 1.17346e-14j)
