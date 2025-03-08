@@ -111,7 +111,7 @@ def test_bare_console_pretty():
 
     assert c.expect_exact('>>> ') == 0
     assert c.send("10.9\r\n") == 6
-    assert c.expect_exact("10.9\r\n>>> ") == 0
+    assert c.expect_exact("10.899999999999999999999999999995\r\n>>> ") == 0
 
 
 def test_mpmath_version():
