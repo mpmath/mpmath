@@ -14,6 +14,7 @@ import os
 import readline
 import rlcompleter
 import sys
+import tokenize
 
 from mpmath import __version__
 from mpmath._interactive import (IntegerDivisionWrapper,
@@ -114,26 +115,29 @@ def main():
                 self.source_transformers = source_transformers
 
             def runsource(self, source, filename='<input>', symbol='single'):
-                if not source:
+                try:
+                    code = self.compile(source, filename, symbol)
+                except (OverflowError, SyntaxError, ValueError):
+                    if sys.version_info >= (3, 13):
+                        self.showsyntaxerror(filename, source=source)
+                    else:  # pragma: no cover
+                        self.showsyntaxerror(filename)
+                    return False
+
+                if code is None:
                     return True
 
                 for t in self.source_transformers:
                     source = '\n'.join(t(source.splitlines()))
 
-                if self.ast_transformers:
-                    tree = ast.parse(source, mode=symbol)
+                tree = ast.parse(source)
+                for t in self.ast_transformers:
+                    tree = t.visit(tree)
+                ast.fix_missing_locations(tree)
+                source = ast.unparse(tree)
 
-                    for t in self.ast_transformers:
-                        tree = t.visit(tree)
-                    ast.fix_missing_locations(tree)
-
-                    code_obj = compile(tree, filename, mode=symbol)
-                    try:
-                        self.runcode(code_obj)
-                    except SystemExit:
-                        os.exit(0)
-                    return False
-
+                source = source.split('\n')
+                source = ';'.join(source)
                 return super().runsource(source, filename=filename, symbol=symbol)
 
         c = MpmathConsole(ast_transformers=ast_transformers,
