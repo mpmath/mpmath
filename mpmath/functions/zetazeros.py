@@ -352,11 +352,11 @@ def zetazero(ctx, n, info=False, round=True):
         >>> from mpmath import mp, zetazero, chop, zeta, siegelz
         >>> mp.dps = 25; mp.pretty = True
         >>> zetazero(1)
-        (0.5 + 14.13472514173469379045725j)
+        (0.5 + 14.13472514173469379045725205j)
         >>> zetazero(2)
-        (0.5 + 21.02203963877155499262848j)
+        (0.5 + 21.0220396387715549926284794j)
         >>> zetazero(20)
-        (0.5 + 77.14484006887480537268266j)
+        (0.5 + 77.14484006887480537268266473j)
 
     Verifying that the values are zeros::
 
@@ -372,16 +372,16 @@ def zetazero(ctx, n, info=False, round=True):
     Negative indices give the conjugate zeros (`n = 0` is undefined)::
 
         >>> zetazero(-1)
-        (0.5 - 14.13472514173469379045725j)
+        (0.5 - 14.13472514173469379045725205j)
 
     :func:`~mpmath.zetazero` supports arbitrarily large `n` and arbitrary precision::
 
         >>> mp.dps = 15
         >>> zetazero(1234567)
-        (0.5 + 727690.906948208j)
+        (0.5 + 727690.90694820753j)
         >>> mp.dps = 50
         >>> zetazero(1234567)
-        (0.5 + 727690.9069482075392389420041147142092708393819935j)
+        (0.5 + 727690.90694820753923894200411471420927083938199349555j)
         >>> chop(zeta(_)/_)
         0.0
 
@@ -389,13 +389,14 @@ def zetazero(ctx, n, info=False, round=True):
 
         >>> mp.dps = 15
         >>> zetazero(542964976,info=True)
-        ((0.5 + 209039046.578535j), [542964969, 542964978], 6, '(013111110)')
+        ((0.5 + 209039046.57853526j), [542964969, 542964978], 6, '(013111110)')
 
     This means that the zero is between Gram points 542964969 and 542964978;
     it is the 6-th zero between them. Finally (01311110) is the pattern
     of zeros in this interval. The numbers indicate the number of zeros
     in each Gram interval (Rosser blocks between parenthesis). In this case
     there is only one Rosser block of length nine.
+
     """
     n = int(n)
     if n < 0:
@@ -487,25 +488,26 @@ def nzeros(ctx, t):
         >>> nzeros(15)
         1
         >>> zetazero(1)
-        (0.5 + 14.1347251417347j)
+        (0.5 + 14.134725141734695j)
 
     Some closely spaced zeros::
 
         >>> nzeros(10**7)
         21136125
         >>> zetazero(21136125)
-        (0.5 + 9999999.32718175j)
+        (0.5 + 9999999.327181749j)
         >>> zetazero(21136126)
-        (0.5 + 10000000.2400236j)
+        (0.5 + 10000000.240023555j)
         >>> nzeros(545439823.215)
         1500000001
         >>> zetazero(1500000001)
-        (0.5 + 545439823.201985j)
+        (0.5 + 545439823.20198464j)
         >>> zetazero(1500000002)
-        (0.5 + 545439823.325697j)
+        (0.5 + 545439823.32569659j)
 
     This confirms the data given by J. van de Lune,
     H. J. J. te Riele and D. T. Winter in 1986.
+
     """
     if t < 14.1347251417347:
         return 0
@@ -556,7 +558,7 @@ def backlunds(ctx, t):
         ...                     nzeros, siegeltheta, pi)
         >>> mp.pretty = True
         >>> backlunds(217.3)
-        0.16302205431184
+        0.16302205431184022
 
     Generally, the value is a small number. At Gram points it is an integer,
     frequently equal to 0::

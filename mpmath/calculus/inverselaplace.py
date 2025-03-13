@@ -706,15 +706,15 @@ class LaplaceTransformInversionMethods:
         >>> fp = lambda p: 1/(p+1)**2
         >>> ft = lambda t: t*exp(-t)
         >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='talbot')
-        (0.000999000499833375, 8.57923043561212e-20)
+        (0.0009990004998333751, 8.5792304356121216e-20)
         >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='talbot')
-        (0.00990049833749168, 3.27007646698047e-19)
+        (0.0099004983374916811, 3.2700764669804695e-19)
         >>> ft(tt[2]),ft(tt[2])-invertlaplace(fp,tt[2],method='talbot')
-        (0.090483741803596, -1.75215800052168e-18)
+        (0.09048374180359596, -1.7521580005216785e-18)
         >>> ft(tt[3]),ft(tt[3])-invertlaplace(fp,tt[3],method='talbot')
-        (0.367879441171442, 1.2428864009344e-17)
+        (0.36787944117144233, 1.2428864009344032e-17)
         >>> ft(tt[4]),ft(tt[4])-invertlaplace(fp,tt[4],method='talbot')
-        (0.000453999297624849, 4.04513489306658e-20)
+        (0.00045399929762484856, 4.0451348930665763e-20)
 
         The methods also work for higher precision:
 
@@ -736,9 +736,9 @@ class LaplaceTransformInversionMethods:
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
         >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='dehoog')
-        (0.999999750000016, -6.09717765032273e-18)
+        (0.99999975000001562, -6.0971776503227268e-18)
         >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='dehoog')
-        (0.99997500015625, -5.61756281076169e-17)
+        (0.99997500015624957, -5.6175628107616914e-17)
 
         .. math ::
 
@@ -752,9 +752,9 @@ class LaplaceTransformInversionMethods:
         >>> fp = lambda p: log(p)/p
         >>> ft = lambda t: -euler-log(t)
         >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='stehfest')
-        (6.3305396140806, -1.92126634837863e-16)
+        (6.3305396140806041, -1.9212663483786344e-16)
         >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='stehfest')
-        (4.02795452108656, -4.81486093200704e-16)
+        (4.0279545210865582, -4.814860932007035e-16)
 
         **Options**
 
@@ -886,13 +886,13 @@ class LaplaceTransformInversionMethods:
         >>> ft = lambda t: sinh(3*t)/3
         >>> tt = [0.01,0.1,1.0,10.0]
         >>> ft(tt[0]),invertlaplace(fp,tt[0],method='talbot')
-        (0.0100015000675014, 0.0100015000675014)
+        (0.010001500067501447, 0.010001500067501447)
         >>> ft(tt[1]),invertlaplace(fp,tt[1],method='talbot')
-        (0.101506764482381, 0.101506764482381)
+        (0.10150676448238088, 0.10150676448238088)
         >>> ft(tt[2]),invertlaplace(fp,tt[2],method='talbot')
-        (3.33929164246997, 3.33929164246997)
+        (3.3392916424699677, 3.3392916424699673)
         >>> ft(tt[3]),invertlaplace(fp,tt[3],method='talbot')
-        (1781079096920.74, -1.61331069624091e-14)
+        (1781079096920.7439, -1.6133106962409078e-14)
 
         **References**
 

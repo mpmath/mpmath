@@ -41,9 +41,9 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         >>> pslq([-1, pi], tol=0.001)
         [355, 113]
         >>> mpf(22)/7; mpf(355)/113; +pi
-        3.14285714285714
-        3.14159292035398
-        3.14159265358979
+        3.1428571428571428
+        3.1415929203539825
+        3.1415926535897931
 
     Pi is not a rational number with denominator less than 1000::
 
@@ -58,7 +58,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         238410049439
         75888275702
         >>> mpf(p)/q
-        3.14159265358979
+        3.1415926535897931
 
     The PSLQ algorithm can be applied to long vectors. For example,
     we can investigate the rational (in)dependence of integer square
@@ -117,9 +117,9 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     In other words, we found the following formula::
 
         >>> 8*acot(2) - 4*acot(7)
-        3.14159265358979323846264338328
+        3.14159265358979323846264338327933
         >>> +pi
-        3.14159265358979323846264338328
+        3.14159265358979323846264338327933
 
     **Algorithm**
 
@@ -359,7 +359,7 @@ def findpoly(ctx, x, n=1, asc=None, **kwargs):
         >>> findpoly(1+sqrt(2), 2, asc=True)
         [-1, -2, 1]
         >>> findroot(lambda x: x**2 - 2*x - 1, 1, asc=True)
-        2.4142135623731
+        2.414213562373095
 
     Despite only containing square roots, the following number results
     in a polynomial of degree 4::
@@ -685,13 +685,13 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     specified tolerance:
 
         >>> e/log(6-4*e/3)
-        3.14157719846001
+        3.1415771984600069
         >>> 135*e*catalan**2/98
-        3.14166950419369
+        3.141669504193692
         >>> sqrt(e-13+22*catalan)
-        3.14158000062992
+        3.1415800006299159
         >>> log(24*e-6+4*catalan)-1
-        3.14158791577159
+        3.1415879157715851
 
     **Symbolic processing**
 

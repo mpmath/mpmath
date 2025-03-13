@@ -416,14 +416,14 @@ class StandardBaseContext(Context,
             >>> from mpmath import mp, power
             >>> mp.dps = 30; mp.pretty = True
             >>> power(2, 0.5)
-            1.41421356237309504880168872421
+            1.41421356237309504880168872420977
 
         This shows the leading few digits of a large Mersenne prime
         (performing the exact calculation ``2**43112609-1`` and
         displaying the result in Python would be very slow)::
 
             >>> power(2, 43112609)-1
-            3.16470269330255923143453723949e+12978188
+            3.16470269330255923143453723949338e+12978188
 
         **See Also**
 
@@ -487,9 +487,9 @@ class StandardBaseContext(Context,
             >>> mp.pretty = True
             >>> f = memoize(maxcalls(sin, 1))
             >>> f(2)
-            0.909297426825682
+            0.90929742682568171
             >>> f(2)
-            0.909297426825682
+            0.90929742682568171
             >>> mp.dps = 25
             >>> f(2)
             Traceback (most recent call last):
