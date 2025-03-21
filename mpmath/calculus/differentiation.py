@@ -164,9 +164,9 @@ def diff(ctx, f, x, n=1, **options):
         >>> diff(cos, 1e-30)
         0.0
         >>> diff(cos, 1e-30, h=0.0001)
-        -9.99999998328279e-31
+        -9.9999999832827904e-31
         >>> diff(cos, 1e-30, addprec=100)
-        -1.0e-30
+        -1.0000000000000001e-30
 
     """
     partial = False
@@ -325,17 +325,17 @@ def diffs_prod(ctx, factors):
         >>> u = diffs(f, 1)
         >>> v = mp.diffs_prod([diffs(exp,1), diffs(cos,1), diffs(sin,1)])
         >>> next(u); next(v)
-        1.23586333600241
-        1.23586333600241
+        1.2358633360024094
+        1.2358633360024096
         >>> next(u); next(v)
-        0.104658952245596
-        0.104658952245596
+        0.10465895224559582
+        0.10465895224559629
         >>> next(u); next(v)
-        -5.96999877552086
-        -5.96999877552086
+        -5.9699987755208559
+        -5.969998775520855
         >>> next(u); next(v)
-        -12.4632923122697
-        -12.4632923122697
+        -12.46329231226969
+        -12.463292312269694
 
     """
     N = len(factors)
@@ -423,14 +423,14 @@ def diffs_exp(ctx, fdiffs):
         2.0
         2.0
         >>> next(u); next(v)
-        1.84556867019693
-        1.84556867019693
+        1.8455686701969343
+        1.8455686701969343
         >>> next(u); next(v)
-        2.49292999190269
-        2.49292999190269
+        2.492929991902693
+        2.492929991902693
         >>> next(u); next(v)
-        3.44996501352367
-        3.44996501352367
+        3.4499650135236735
+        3.4499650135236735
 
     """
     fn = iterable_to_function(fdiffs)
@@ -480,9 +480,9 @@ def differint(ctx, f, x, n=1, x0=0):
         >>> mp.pretty = True
         >>> x = mpf(3); p = 2; n = 0.5
         >>> differint(lambda t: t**p, x, n)
-        7.81764019044672
+        7.8176401904467179
         >>> gamma(p+1)/gamma(p-n+1) * x**(p-n)
-        7.81764019044672
+        7.8176401904467197
 
     Another useful test function is the exponential function, whose
     integration / differentiation formula easy generalizes
@@ -491,13 +491,13 @@ def differint(ctx, f, x, n=1, x0=0):
     is set to `-\infty` to avoid nonzero endpoint terms.)::
 
         >>> differint(lambda x: exp(pi*x), -1.5, 3)
-        0.278538406900792
+        0.27853840690079212
         >>> exp(pi*-1.5) * pi**3
-        0.278538406900792
+        0.27853840690079212
         >>> differint(lambda x: exp(pi*x), 3.5, -3, -inf)
-        1922.50563031149
+        1922.5056303114868
         >>> exp(pi*3.5) / pi**3
-        1922.50563031149
+        1922.5056303114861
 
     However, for noninteger `n`, the differentiation formula for the
     exponential function must be modified to give the same result as the
@@ -507,10 +507,9 @@ def differint(ctx, f, x, n=1, x0=0):
         >>> c = pi
         >>> n = 1+2*j
         >>> differint(lambda x: exp(c*x), x, n)
-        (-123295.005390743 + 140955.117867654j)
+        (-123295.00539074332 + 140955.11786765381j)
         >>> x**(-n) * exp(c)**x * (x*c)**n * lower_gamma(-n, x*c) / gamma(-n)
-        (-123295.005390743 + 140955.117867654j)
-
+        (-123295.00539074326 + 140955.11786765378j)
 
     """
     m = max(int(ctx.ceil(ctx.re(n)))+1, 1)
@@ -529,9 +528,9 @@ def diffun(ctx, f, n=1, **options):
         >>> cos2 = diffun(sin)
         >>> sin2 = diffun(sin, 4)
         >>> cos(1.3), cos2(1.3)
-        (0.267498828624587, 0.267498828624587)
+        (0.26749882862458735, 0.26749882862458735)
         >>> sin(1.3), sin2(1.3)
-        (0.963558185417193, 0.963558185417193)
+        (0.96355818541719296, 0.96355818541719296)
 
     The function `f` must support arbitrary precision evaluation.
     See :func:`~mpmath.diff` for additional details and supported
@@ -565,9 +564,9 @@ def taylor(ctx, f, x, n, **options):
 
         >>> p = taylor(exp, 2.0, 10)
         >>> polyval(p, 2.5 - 2.0, asc=True)
-        12.1824939606092
+        12.182493960609172
         >>> exp(2.5)
-        12.1824939607035
+        12.182493960703473
 
     """
     gen = enumerate(ctx.diffs(f, x, n, **options))
@@ -609,9 +608,9 @@ def pade(ctx, a, L, M):
         >>> p, q = pade(a, 3, 3)
         >>> x = 10
         >>> polyval(p, x, asc=True)/polyval(q, x, asc=True)
-        1.38169105566806
+        1.3816910556680551
         >>> f(x)
-        1.38169855941551
+        1.3816985594155149
 
     """
     # To determine L+1 coefficients of P and M coefficients of Q

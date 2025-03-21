@@ -443,11 +443,11 @@ class MPContext(BaseMPContext, StandardBaseContext):
             >>> from mpmath import mp, besselj, autoprec, sin, pi, exp, expm1
             >>> mp.pretty = True
             >>> besselj(5, 125 * 10**28)    # Exact input
-            -8.03284785591801e-17
+            -8.0328478559180124e-17
             >>> besselj(5, '1.25e30')   # Bad
-            7.12954868316652e-16
+            7.1295486831665168e-16
             >>> autoprec(besselj)(5, '1.25e30')   # Good
-            -8.03284785591801e-17
+            -8.0328478559180124e-17
 
         The following fails to converge because `\sin(\pi) = 0` whereas all
         finite-precision approximations of `\pi` give nonzero values::
@@ -462,7 +462,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
             >>> x = 1e-10
             >>> exp(x)-1; expm1(x); autoprec(lambda t: exp(t)-1)(x)
-            1.00000008274037e-10
+            1.000000082740371e-10
             1.00000000005e-10
             1.00000000005e-10
             >>> x = 1e-50
@@ -483,8 +483,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
               ...
             ZeroDivisionError
             >>> autoprec(f, catch=ZeroDivisionError)(1e-30)
-            1.0e+30
-
+            9.9999999999999988e+29
 
         """
         def f_autoprec_wrapped(*args, **kwargs):

@@ -38,7 +38,7 @@ def qp(ctx, a, q=None, n=None, **kwargs):
     Complex arguments are allowed::
 
         >>> qp(2-1j, 0.75j)
-        (0.4628842231660149089976379 + 4.481821753552703090628793j)
+        (0.4628842231660149089976378573 + 4.48182175355270309062879292j)
 
     The regular Pochhammer symbol `(a)_n` is obtained in the
     following limit as `q \to 1`::
@@ -61,18 +61,18 @@ def qp(ctx, a, q=None, n=None, **kwargs):
         >>> qp(0)
         1.0
         >>> findroot(diffun(qp), -0.4)   # location of maximum
-        -0.4112484791779547734440257
+        -0.4112484791779547734440256624
         >>> qp(_)
-        1.228348867038575112586878
+        1.22834886703857511258687839
 
     The q-Pochhammer symbol is related to the Jacobi theta functions.
     For example, the following identity holds::
 
         >>> q = mpf(0.5)    # arbitrary
         >>> qp(q)
-        0.2887880950866024212788997
+        0.2887880950866024212788997219
         >>> root(3,-2)*root(q,-24)*jtheta(2,pi/6,root(q,6))
-        0.2887880950866024212788997
+        0.2887880950866024212788997023
 
     """
     a = ctx.convert(a)
@@ -150,7 +150,7 @@ def qgamma(ctx, z, q, **kwargs):
         >>> qgamma(6,6)
         121226245.0
         >>> qgamma(3+4j, 0.5j)
-        (0.1663082382255199834630088 + 0.01952474576025952984418217j)
+        (0.1663082382255199834630087602 + 0.0195247457602595298441821714j)
 
     The q-gamma function satisfies a functional equation similar
     to that of the ordinary gamma function::
@@ -158,9 +158,9 @@ def qgamma(ctx, z, q, **kwargs):
         >>> q = mpf(0.25)
         >>> z = mpf(2.5)
         >>> qgamma(z+1,q)
-        1.428277424823760954685912
+        1.428277424823760954685911829
         >>> (1-q**z)/(1-q)*qgamma(z,q)
-        1.428277424823760954685912
+        1.428277424823760954685911803
 
     """
     if abs(q) > 1:
@@ -194,7 +194,7 @@ def qfac(ctx, z, q, **kwargs):
         >>> qfac(5,6)
         121226245.0
         >>> qfac(1+1j, 2+1j)
-        (0.4370556551322672478613695 + 0.2609739839216039203708921j)
+        (0.4370556551322672478613694825 + 0.2609739839216039203708920896j)
 
     """
     if ctx.isint(z) and ctx._re(z) > 0:
@@ -228,20 +228,20 @@ def qhyper(ctx, a_s, b_s, q, z, **kwargs):
         >>> from mpmath import qhyper, mp, nsum, qp, inf, j
         >>> mp.dps = 25; mp.pretty = True
         >>> qhyper([0.5], [2.25], 0.25, 4)
-        -0.1975849091263356009534385
+        -0.1975849091263356009534385447
         >>> qhyper([0.5], [2.25], 0.25-0.25j, 4)
-        (2.806330244925716649839237 + 3.568997623337943121769938j)
+        (2.806330244925716649839237066 + 3.568997623337943121769937805j)
         >>> qhyper([1+j], [2,3+0.5j], 0.25, 3+4j)
-        (9.112885171773400017270226 - 1.272756997166375050700388j)
+        (9.11288517177340001727022597 - 1.272756997166375050700387687j)
 
     Comparing with a summation of the defining series, using
     :func:`~mpmath.nsum`::
 
         >>> b, q, z = 3, 0.25, 0.5
         >>> qhyper([], [b], q, z)
-        0.6221136748254495583228324
+        0.6221136748254495583228323869
         >>> nsum(lambda n: z**n / qp(q,q,n)/qp(b,q,n) * q**(n*(n-1)), [0,inf])
-        0.6221136748254495583228324
+        0.622113674825449558322832387
 
     """
     #a_s = [ctx._convert_param(a)[0] for a in a_s]

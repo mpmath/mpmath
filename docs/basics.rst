@@ -216,7 +216,7 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
 
     >>> mp.pretty = True
     >>> mpf(0.6)
-    0.6
+    0.59999999999999998
     >>> mp.pretty = False
     >>> mpf(0.6)
     mpf('0.59999999999999998')

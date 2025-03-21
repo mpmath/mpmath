@@ -52,13 +52,13 @@ def richardson(ctx, seq):
         ...     for m in range(1,30)]
         >>> v, c = richardson(S[:10])
         >>> v
-        3.2126984126984126984126984127
+        3.21269841269841269841269841269888
         >>> nprint([v-pi, c])
         [0.0711058, 2.0]
 
         >>> v, c = richardson(S[:30])
         >>> v
-        3.14159265468624052829954206226
+        3.14159265468624052829954206225905
         >>> nprint([v-pi, c])
         [1.09645e-9, 20833.3]
 
@@ -909,13 +909,13 @@ def sumap(ctx, f, interval, integral=None, error=False):
         ...                     polylog)
         >>> mp.dps = 25; mp.pretty = True
         >>> sumap(lambda k: 1/k**2.5, [1,inf])
-        1.34148725725091717975677
+        1.341487257250917179756769702
         >>> zeta(2.5)
-        1.34148725725091717975677
+        1.341487257250917179756769702
         >>> sumap(lambda k: 1/(k+1j)**(2.5+2.5j), [1,inf])
-        (-3.385361068546473342286084 - 0.7432082105196321803869551j)
+        (-3.385361068546473342286084239 - 0.7432082105196321803869550651j)
         >>> zeta(2.5+2.5j, 1+1j)
-        (-3.385361068546473342286084 - 0.7432082105196321803869551j)
+        (-3.385361068546473342286084239 - 0.7432082105196321803869550651j)
 
     If the series is alternating, numerical quadrature along the real
     line is likely to give poor results, so it is better to evaluate
@@ -924,9 +924,9 @@ def sumap(ctx, f, interval, integral=None, error=False):
         >>> n=3; z=-0.75
         >>> I = expint(n,-log(z))
         >>> chop(sumap(lambda k: z**k / k**n, [1,inf], integral=I))
-        -0.6917036036904594510141448
+        -0.69170360369045945101414484
         >>> polylog(n,z)
-        -0.6917036036904594510141448
+        -0.69170360369045945101414484
 
     """
     prec = ctx.prec
@@ -1008,11 +1008,11 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
         >>> from mpmath import mp, sumem, inf, fac, mpf
         >>> mp.dps = 50; mp.pretty = True
         >>> sumem(lambda n: 1/n**2, [32, inf])
-        0.03174336652030209012658168043874142714132886413417
+        0.031743366520302090126581680438741427141328864134169744
         >>> I = mpf(1)/32
         >>> D = adiffs=((-1)**n*fac(n+1)*32**(-2-n) for n in range(999))
         >>> sumem(lambda n: 1/n**2, [32, inf], integral=I, adiffs=D)
-        0.03174336652030209012658168043874142714132886413417
+        0.031743366520302090126581680438741427141328864134169744
 
     An exact evaluation of a finite polynomial sum::
 
@@ -1258,9 +1258,9 @@ def nsum(ctx, f, *intervals, **options):
         ...                     log, sqrt, diff, ln2, altzeta, sech)
         >>> mp.pretty = True
         >>> nsum(lambda n: 1/fac(n), [0, inf])
-        2.71828182845905
+        2.7182818284590451
         >>> nsum(lambda n: 1/n**2, [1, inf])
-        1.64493406684823
+        1.6449340668482264
 
     When appropriate, :func:`~mpmath.nsum` applies convergence acceleration to
     accurately estimate the sums of slowly convergent series. If the series is
@@ -1364,20 +1364,20 @@ def nsum(ctx, f, *intervals, **options):
     A finite sum::
 
         >>> nsum(lambda k: 1/k, [1, 6])
-        2.45
+        2.4499999999999997
 
     Summation of a series going to negative infinity and a doubly
     infinite series::
 
         >>> nsum(lambda k: 1/k**2, [-inf, -1])
-        1.64493406684823
+        1.6449340668482264
         >>> nsum(lambda k: 1/(1+k**2), [-inf, inf])
-        3.15334809493716
+        3.1533480949371624
 
     :func:`~mpmath.nsum` handles sums of complex numbers::
 
         >>> nsum(lambda k: (0.5+0.25j)**k, [0, inf])
-        (1.6 + 0.8j)
+        (1.6000000000000001 + 0.80000000000000004j)
 
     The following sum converges very rapidly, so it is most
     efficient to sum it by disabling convergence acceleration::
@@ -1403,15 +1403,15 @@ def nsum(ctx, f, *intervals, **options):
 
         >>> nsum(lambda n: (n + 3)/(n**3 + n**2), [1, inf],
         ...     method='richardson')
-        2.9348022005446793094172454999380755676568497036204
+        2.9348022005446793094172454999380755676568497036203939
         >>> pi**2/2-2
-        2.9348022005446793094172454999380755676568497036204
+        2.9348022005446793094172454999380755676568497036203993
 
         >>> nsum(lambda k: (-1)**k / k**3, [1, inf],
         ...     method='richardson')
-        -0.90154267736969571404980362113358749307373971925537
+        -0.90154267736969571404980362113358749307373971925537434
         >>> -3*zeta(3)/4
-        -0.90154267736969571404980362113358749307373971925538
+        -0.90154267736969571404980362113358749307373971925537568
 
     **Examples with Shanks transformation**
 
@@ -1423,9 +1423,9 @@ def nsum(ctx, f, *intervals, **options):
 
         >>> nsum(lambda k: -(-1)**k/k, [1, inf],
         ...     method='shanks')
-        0.69314718055994530941723212145817656807550013436025
+        0.693147180559945309417232121458176568075500134360255
         >>> log(2)
-        0.69314718055994530941723212145817656807550013436025
+        0.693147180559945309417232121458176568075500134360255
 
     Here we apply it to a slowly convergent geometric series::
 
@@ -1440,9 +1440,9 @@ def nsum(ctx, f, *intervals, **options):
         >>> mp.dps = 15
         >>> nsum(lambda k: (-1)**(k+1) / k**1.5, [1, inf],
         ...     method='shanks')
-        0.765147024625408
+        0.76514702462540796
         >>> (2-sqrt(2))*zeta(1.5)/2
-        0.765147024625408
+        0.76514702462540773
 
     The following slowly convergent alternating series has no known
     closed-form value. Evaluating the sum a second time at higher
@@ -1450,11 +1450,11 @@ def nsum(ctx, f, *intervals, **options):
 
         >>> nsum(lambda k: (-1)**k / log(k), [2, inf],
         ...     method='shanks')
-        0.924299897222939
+        0.92429989722293882
         >>> mp.dps = 30
         >>> nsum(lambda k: (-1)**k / log(k), [2, inf],
         ...     method='shanks')
-        0.92429989722293885595957018136
+        0.92429989722293885595957018135962
 
     **Examples with Levin transformation**
 
@@ -1536,17 +1536,17 @@ def nsum(ctx, f, *intervals, **options):
         >>> f = lambda k: log(k)/k**2.5
         >>> mp.dps = 15
         >>> nsum(f, [1, inf], method='euler-maclaurin')
-        0.38734195032621
+        0.38734195032620999
         >>> -diff(zeta, 2.5)
-        0.38734195032621
+        0.38734195032620999
 
     Increasing ``steps`` improves speed at higher precision::
 
         >>> mp.dps = 50
         >>> nsum(f, [1, inf], method='euler-maclaurin', steps=[250])
-        0.38734195032620997271199237593105101319948228874688
+        0.38734195032620997271199237593105101319948228874688289
         >>> -diff(zeta, 2.5)
-        0.38734195032620997271199237593105101319948228874688
+        0.38734195032620997271199237593105101319948228874688289
 
     **Divergent series**
 
@@ -1564,9 +1564,9 @@ def nsum(ctx, f, *intervals, **options):
         >>> mp.dps = 50
         >>> nsum(lambda k: -(-9)**k/k, [1, inf],
         ...     method='shanks')
-        2.3025850929940456840179914546843642076011014886288
+        2.3025850929940456840179914546843642076011014886287744
         >>> log(10)
-        2.3025850929940456840179914546843642076011014886288
+        2.3025850929940456840179914546843642076011014886287744
 
     A particular type of divergent series that can be summed
     using the Shanks transformation is geometric series.
@@ -1619,24 +1619,24 @@ def nsum(ctx, f, *intervals, **options):
     reductions to single-dimensional series (see [1])::
 
         >>> nsum(lambda m, n: 1/2**(m*n), [1,inf], [1,inf])
-        1.60669515241529
+        1.6066951524152917
         >>> nsum(lambda n: 1/(2**n-1), [1,inf])
-        1.60669515241529
+        1.6066951524152917
 
         >>> nsum(lambda i,j: (-1)**(i+j)/(i**2+j**2), [1,inf], [1,inf])
-        0.278070510848213
+        0.27807051084821266
         >>> pi*(pi-3*ln2)/12
-        0.278070510848213
+        0.27807051084821272
 
         >>> nsum(lambda i,j: (-1)**(i+j)/(i+j)**2, [1,inf], [1,inf])
-        0.129319852864168
+        0.12931985286416792
         >>> altzeta(2) - altzeta(1)
-        0.129319852864168
+        0.12931985286416792
 
         >>> nsum(lambda i,j: (-1)**(i+j)/(i+j)**3, [1,inf], [1,inf])
-        0.0790756439455825
+        0.079075643945582502
         >>> altzeta(3) - altzeta(2)
-        0.0790756439455825
+        0.07907564394558253
 
         >>> nsum(lambda m,n: m**2*n/(3**m*(n*3**m+m*3**n)),
         ...     [1,inf], [1,inf])
@@ -1646,9 +1646,9 @@ def nsum(ctx, f, *intervals, **options):
 
         >>> nsum(lambda i,j: fac(i-1)*fac(j-1)/fac(i+j),
         ...     [1,inf], [1,inf], workprec=400)
-        1.64493406684823
+        1.6449340668482264
         >>> zeta(2)
-        1.64493406684823
+        1.6449340668482264
 
     A hard example of a multidimensional sum is the Madelung constant
     in three dimensions (see [2]). The defining sum converges very
@@ -1659,24 +1659,24 @@ def nsum(ctx, f, *intervals, **options):
 
         >>> nsum(lambda x,y,z: (-1)**(x+y+z)/(x*x+y*y+z*z)**0.5,
         ...     [-inf,inf], [-inf,inf], [-inf,inf], ignore=True)
-        -1.74756459463318
+        -1.7475645946331821
         >>> nsum(lambda x,y: -12*pi*sech(0.5*pi * \
         ...     sqrt((2*x+1)**2+(2*y+1)**2))**2, [0,inf], [0,inf])
-        -1.74756459463318
+        -1.7475645946331821
 
     Another example of a lattice sum in 2D::
 
         >>> nsum(lambda x,y: (-1)**(x+y) / (x**2+y**2), [-inf,inf],
         ...     [-inf,inf], ignore=True)
-        -2.1775860903036
+        -2.1775860903036022
         >>> -pi*ln2
-        -2.1775860903036
+        -2.1775860903036022
 
     An example of an Eisenstein series::
 
         >>> nsum(lambda m,n: (m+n*1j)**(-4), [-inf,inf], [-inf,inf],
         ...     ignore=True)
-        (3.1512120021539 + 0.0j)
+        (3.1512120021538976 + 0.0j)
 
     **References**
 
@@ -1867,11 +1867,11 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
     A few infinite products with simple values are::
 
         >>> 2*nprod(lambda k: (4*k**2)/(4*k**2-1), [1, inf])
-        3.141592653589793238462643
+        3.141592653589793238462643402
         >>> nprod(lambda k: (1+1/k)**2/(1+2/k), [1, inf])
         2.0
         >>> nprod(lambda k: (k**3-1)/(k**3+1), [2, inf])
-        0.6666666666666666666666667
+        0.666666666666666666666666671
         >>> nprod(lambda k: (1-1/k**2), [2, inf])
         0.5
 
@@ -1879,76 +1879,76 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
     values::
 
         >>> nprod(lambda k: exp(1/k**2), [1, inf]); exp(pi**2/6)
-        5.180668317897115748416626
-        5.180668317897115748416626
+        5.180668317897115748416626236
+        5.180668317897115748416626339
 
         >>> nprod(lambda k: (k**2-1)/(k**2+1), [2, inf]); pi*csch(pi)
-        0.2720290549821331629502366
-        0.2720290549821331629502366
+        0.2720290549821331629502365808
+        0.2720290549821331629502365808
 
         >>> nprod(lambda k: (k**4-1)/(k**4+1), [2, inf])
-        0.8480540493529003921296502
+        0.8480540493529003921296501893
         >>> pi*sinh(pi)/(cosh(sqrt(2)*pi)-cos(sqrt(2)*pi))
-        0.8480540493529003921296502
+        0.8480540493529003921296502151
 
         >>> nprod(lambda k: (1+1/k+1/k**2)**2/(1+2/k+3/k**2), [1, inf])
-        1.848936182858244485224927
+        1.848936182858244485224926852
         >>> 3*sqrt(2)*cosh(pi*sqrt(3)/2)**2*csch(pi*sqrt(2))/pi
-        1.848936182858244485224927
+        1.84893618285824448522492693
 
         >>> nprod(lambda k: (1-1/k**4), [2, inf]); sinh(pi)/(4*pi)
-        0.9190194775937444301739244
-        0.9190194775937444301739244
+        0.9190194775937444301739243763
+        0.9190194775937444301739243763
 
         >>> nprod(lambda k: (1-1/k**6), [2, inf])
-        0.9826842777421925183244759
+        0.98268427774219251832447592
         >>> (1+cosh(pi*sqrt(3)))/(12*pi**2)
-        0.9826842777421925183244759
+        0.9826842777421925183244759459
 
         >>> nprod(lambda k: (1+1/k**2), [2, inf]); sinh(pi)/(2*pi)
-        1.838038955187488860347849
-        1.838038955187488860347849
+        1.838038955187488860347848753
+        1.838038955187488860347848753
 
         >>> nprod(lambda n: (1+1/n)**n * exp(1/(2*n)-1), [1, inf])
-        1.447255926890365298959138
+        1.447255926890365298959137623
         >>> exp(1+euler/2)/sqrt(2*pi)
-        1.447255926890365298959138
+        1.447255926890365298959137597
 
     The following two products are equivalent and can be evaluated in
     terms of a Jacobi theta function. Pi can be replaced by any value
     (as long as convergence is preserved)::
 
         >>> nprod(lambda k: (1-pi**-k)/(1+pi**-k), [1, inf])
-        0.3838451207481672404778686
+        0.3838451207481672404778685841
         >>> nprod(lambda k: tanh(k*log(pi)/2), [1, inf])
-        0.3838451207481672404778686
+        0.3838451207481672404778685841
         >>> jtheta(4,0,1/pi)
-        0.3838451207481672404778686
+        0.3838451207481672404778685816
 
     This product does not have a known closed form value::
 
         >>> nprod(lambda k: (1-1/2**k), [1, inf])
-        0.2887880950866024212788997
+        0.2887880950866024212788997217
 
     A product taken from `-\infty`::
 
         >>> nprod(lambda k: 1-k**(-3), [-inf,-2])
-        0.8093965973662901095786805
+        0.8093965973662901095786804733
         >>> cosh(pi*sqrt(3)/2)/(3*pi)
-        0.8093965973662901095786805
+        0.8093965973662901095786804862
 
     A doubly infinite product::
 
         >>> nprod(lambda k: exp(1/(1+k**2)), [-inf, inf])
-        23.41432688231864337420035
+        23.41432688231864337420035101
         >>> exp(pi/tanh(pi))
-        23.41432688231864337420035
+        23.41432688231864337420035101
 
     A product requiring the use of Euler-Maclaurin summation to compute
     an accurate value::
 
         >>> nprod(lambda k: (1-1/k**2.5), [2, inf], method='e')
-        0.696155111336231052898125
+        0.6961551113362310528981249953
 
     **References**
 
@@ -2038,27 +2038,27 @@ def limit(ctx, f, x, direction=1, exp=False, **kwargs):
         ...                     mpf, log, euler)
         >>> mp.dps = 30; mp.pretty = True
         >>> limit(lambda x: (x-sin(x))/x**3, 0)
-        0.166666666666666666666666666667
+        0.166666666666666666666666666666658
 
     Computing the exponential function using its limit definition::
 
         >>> limit(lambda n: (1+3/n)**n, inf)
-        20.0855369231876677409285296546
+        20.0855369231876677409285296545811
         >>> exp(3)
-        20.0855369231876677409285296546
+        20.0855369231876677409285296545811
 
     A limit for `\pi`::
 
         >>> f = lambda n: 2**(4*n+1)*fac(n)**4/(2*n+1)/fac(2*n)**2
         >>> limit(f, inf)
-        3.14159265358979323846264338328
+        3.14159265358979323846264338327933
 
     Calculating the coefficient in Stirling's formula::
 
         >>> limit(lambda n: fac(n) / (sqrt(n)*(n/e)**n), inf)
-        2.50662827463100050241576528481
+        2.50662827463100050241576528481123
         >>> sqrt(2*pi)
-        2.50662827463100050241576528481
+        2.50662827463100050241576528481083
 
     Evaluating Euler's constant `\gamma` using the limit representation
 
@@ -2071,9 +2071,9 @@ def limit(ctx, f, x, direction=1, exp=False, **kwargs):
 
         >>> f = lambda n: sum([mpf(1)/k for k in range(1,int(n)+1)]) - log(n)
         >>> limit(f, inf)
-        0.577215664901532860606512090082
+        0.577215664901532860606512090082436
         >>> +euler
-        0.577215664901532860606512090082
+        0.577215664901532860606512090082436
 
     With default settings, the following limit converges too slowly
     to be evaluated accurately. Changing to exponential sampling
@@ -2081,7 +2081,7 @@ def limit(ctx, f, x, direction=1, exp=False, **kwargs):
 
         >>> f = lambda x: sqrt(x**3+x**2)/(sqrt(x**3)+x)
         >>> limit(f, inf)
-        0.992831158558330281129249686491
+        0.992831158558330281129249686490697
         >>> limit(f, inf, exp=True)
         1.0
 

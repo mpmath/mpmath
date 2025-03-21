@@ -130,7 +130,7 @@ class _mpf(mpnumeric):
 
     def __repr__(s):
         if s.context.pretty:
-            return str(s)
+            return to_str(s._mpf_, s.context._repr_digits)
         return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits)
 
     def __str__(s): return to_str(s._mpf_, s.context._str_digits)
@@ -514,7 +514,7 @@ class _mpc(mpnumeric):
 
     def __repr__(s):
         if s.context.pretty:
-            return str(s)
+            return "(%s)" % mpc_to_str(s._mpc_, s.context._repr_digits)
         r = repr(s.real)[4:-1]
         i = repr(s.imag)[4:-1]
         return "%s(real=%s, imag=%s)" % (type(s).__name__, r, i)

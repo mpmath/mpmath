@@ -130,17 +130,17 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
         ...     print((f(x), exp(x)))
         ...
         (1.0, 1.0)
-        (2.71828182845905, 2.71828182845905)
-        (12.1824939607035, 12.1824939607035)
+        (2.7182818284590451, 2.7182818284590451)
+        (12.182493960703473, 12.182493960703473)
 
     The solution with high precision::
 
         >>> mp.dps = 50
         >>> f = odefun(lambda x, y: y, 0, 1)
         >>> f(1)
-        2.7182818284590452353602874713526624977572470937
+        2.7182818284590452353602874713526624977572470936999577
         >>> exp(1)
-        2.7182818284590452353602874713526624977572470937
+        2.7182818284590452353602874713526624977572470936999577
 
     Using the more general vectorized form, the test problem
     can be input as (note that *f* returns a 1-element vector)::
@@ -148,7 +148,7 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
         >>> mp.dps = 15
         >>> f = odefun(lambda x, y: [y[0]], 0, [1])
         >>> f(1)
-        [2.71828182845905]
+        [2.7182818284590451]
 
     :func:`~mpmath.odefun` can solve nonlinear ODEs, which are generally
     impossible (and at best difficult) to solve analytically. As
@@ -161,9 +161,9 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
         >>> for x in [2, 5, 10]:
         ...     print((f(x), 2*atan(exp(mpf(x)**2/2))))
         ...
-        (2.87255666284091, 2.87255666284091)
-        (3.14158520028345, 3.14158520028345)
-        (3.14159265358979, 3.14159265358979)
+        (2.8725566628409118, 2.8725566628409118)
+        (3.141585200283449, 3.141585200283449)
+        (3.1415926535897931, 3.1415926535897931)
 
     If `F` is independent of `y`, an ODE can be solved using direct
     integration. We can therefore obtain a reference solution with
@@ -172,9 +172,9 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
         >>> f = lambda x: (1+x**2)/(1+x**3)
         >>> g = odefun(lambda x, y: f(x), pi, 0)
         >>> g(2*pi)
-        0.72128263801696
+        0.72128263801696035
         >>> quad(f, [pi, 2*pi])
-        0.72128263801696
+        0.72128263801696035
 
     **Examples of second-order ODEs**
 
