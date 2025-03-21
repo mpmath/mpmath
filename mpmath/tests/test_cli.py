@@ -112,6 +112,8 @@ def test_bare_console_pretty():
     assert c.expect_exact('>>> ') == 0
     assert c.send("10.9\r\n") == 6
     assert c.expect_exact("10.899999999999999999999999999995\r\n>>> ") == 0
+    assert c.send("def f():\r\n  x = ?\r\n\r\n") == 21
+    assert c.expect('SyntaxError:') == 0
 
 
 def test_mpmath_version():
