@@ -130,7 +130,9 @@ class _mpf(mpnumeric):
 
     def __repr__(s):
         if s.context.pretty:
-            return str(s)
+            ndigits = (s.context._repr_digits
+                       if s.context._pretty_repr_dps else s.context._str_digits)
+            return to_str(s._mpf_, ndigits)
         return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits)
 
     def __str__(s): return to_str(s._mpf_, s.context._str_digits)
@@ -514,7 +516,9 @@ class _mpc(mpnumeric):
 
     def __repr__(s):
         if s.context.pretty:
-            return str(s)
+            ndigits = (s.context._repr_digits
+                       if s.context._pretty_repr_dps else s.context._str_digits)
+            return "(%s)" % mpc_to_str(s._mpc_, ndigits)
         r = repr(s.real)[4:-1]
         i = repr(s.imag)[4:-1]
         return "%s(real=%s, imag=%s)" % (type(s).__name__, r, i)
@@ -709,6 +713,7 @@ class PythonMPContext:
         ctx.constant = type('constant', (_constant,), {})
         ctx.constant._ctxdata = [ctx.mpf, new, ctx._prec_rounding]
         ctx.constant.context = ctx
+        ctx._pretty_repr_dps = False
 
     def make_mpf(ctx, v):
         a = new(ctx.mpf)
@@ -735,6 +740,14 @@ class PythonMPContext:
 
     prec = property(lambda ctx: ctx._prec, _set_prec)
     dps = property(lambda ctx: ctx._dps, _set_dps)
+
+    def _set_pretty_dps(ctx, v):
+        ctx._pretty_repr_dps = True if v == 'repr' else False
+
+    def _get_pretty_dps(ctx):
+        return 'repr' if ctx._pretty_repr_dps else 'str'
+
+    pretty_dps = property(_get_pretty_dps, _set_pretty_dps)
 
     def convert(ctx, x, strings=True):
         """
