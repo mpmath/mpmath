@@ -48,11 +48,12 @@ intersphinx_mapping = {
 }
 
 plot_include_source = True
-plot_formats = [('png', 96), 'pdf']
+plot_formats = [('png', 45), 'pdf']
 plot_html_show_formats = False
 plot_html_show_source_link = False
 
 sphinx_gallery_conf = {
     'examples_dirs': 'plots',
     'gallery_dirs': 'auto_plots',
+    'compress_images': ('images', 'thumbnails'),
 }

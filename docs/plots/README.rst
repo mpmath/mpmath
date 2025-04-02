@@ -1,3 +1,5 @@
+:orphan:
+
 This is my gallery
 ==================
 
