@@ -192,6 +192,55 @@ def hankel2(ctx,n,x,**kwargs):
                 -ctx.j*ctx.bessely(n,x,**kwargs)]
     return ctx.sum_accurately(terms)
 
+@defun
+def spherical_jn(ctx, n, z):
+    r"""
+    Spherical Bessel function of the first kind.
+
+    This function is a solution to the spherical Bessel equation
+
+    .. math ::
+        z^2 \frac{\mathrm{d}^2 w}{\mathrm{d}z^2}
+          + 2z \frac{\mathrm{d}w}{\mathrm{d}z} + (z^2 - \nu(\nu + 1)) w = 0.
+
+    It can be defined as
+
+    .. math ::
+        j_\nu(z) = \sqrt{\frac{\pi}{2z}} J_{\nu + \frac{1}{2}}(z),
+
+    where `J_\nu(z)` is the Bessel function of the first kind.
+
+    **Examples**
+
+    >>> from mpmath import spherical_jn
+    >>> spherical_jn(0, 1)
+    mpf('0.84147098480789639')
+
+    """
+    return ctx.besselj(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/2*z)
+
+@defun
+def spherical_yn(ctx, n, z):
+    r"""
+    Spherical Bessel function of the second kind.
+
+    This function is another solution to the spherical Bessel equation, and
+    linearly independent from `j_n`. It can be defined as
+
+    .. math ::
+        j_\nu(z) = \sqrt{\frac{\pi}{2z}} Y_{\nu + \frac{1}{2}}(z),
+
+    where `Y_\nu(z)` is the Bessel function of the second kind.
+
+    **Examples**
+
+    >>> from mpmath import spherical_yn
+    >>> spherical_yn(0, 1)
+    mpf('-0.54030230586813965')
+
+    """
+    return ctx.bessely(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/2*z)
+
 @defun_wrapped
 def whitm(ctx,k,m,z,**kwargs):
     if z == 0:

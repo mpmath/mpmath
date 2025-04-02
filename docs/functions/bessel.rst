@@ -33,6 +33,13 @@ Hankel functions
 .. autofunction:: mpmath.hankel2
 
 
+Spherical Bessel functions
+..........................
+
+.. autofunction:: mpmath.spherical_jn
+.. autofunction:: mpmath.spherical_yn
+
+
 Kelvin functions
 ................
 
