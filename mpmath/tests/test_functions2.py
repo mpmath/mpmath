@@ -11,8 +11,8 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
                     legenq, lerchphi, li, log, lower_gamma, meijerg, mp, mpc,
                     mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
-                    spherharm, sqrt, struveh, struvel, upper_gamma, whitm,
-                    whitw, zeta)
+                    spherharm, spherical_jn, spherical_yn, sqrt, struveh,
+                    struvel, upper_gamma, whitm, whitw, zeta)
 from mpmath.libmp import BACKEND, NoConvergence
 
 
@@ -86,6 +86,8 @@ def test_bessel():
     assert besselk(0,j).ae(-0.13863371520405399968-1.20196971531720649914j)
     assert (besselk(3, 10**10) * mpf(10)**4342944824).ae(1.1628981033356187851)
     assert besselk(1,inf) == 0
+    assert spherical_jn(0, 1).ae(0.841470984807896)
+    assert spherical_yn(0, 1).ae(-0.54030230586814)
     # test for issue 331, bug reported by Michael Hartmann
     for n in range(10,100,10):
         mp.dps = n
