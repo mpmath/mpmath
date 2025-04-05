@@ -221,6 +221,8 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
     >>> mpf(0.6)
     mpf('0.59999999999999998')
 
+To use enough digits to be able recreate value exactly, set ``mp.pretty_dps`` to ``"repr"``.
+
 The number of digits with which numbers are printed by default is determined by
 the working precision.  To specify the number of digits to show without
 changing the working precision, use :func:`format syntax support

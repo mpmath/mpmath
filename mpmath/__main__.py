@@ -57,6 +57,7 @@ def main():
         lines.append(f'mp.prec = {args.prec}')
     if not args.no_pretty:
         lines.append('mp.pretty = True')
+        lines.append('mp.pretty_dps = "repr"')
 
     try:
         import IPython
