@@ -116,6 +116,10 @@ def test_bare_console_wrap_floats():
     assert c.expect_exact("mpc(real='1.0', imag='10.899999999999999999999999999995')\r\n>>> ") == 0
     assert c.send('mpf(10.9)\r\n') == 11
     assert c.expect_exact("mpf('10.899999999999999999999999999995')\r\n>>> ") == 0
+    assert c.send('0x1p-1\r\n') == 8
+    assert c.expect_exact("mpf('0.5')\r\n>>> ") == 0
+    assert c.send('0b1p+1\r\n') == 8
+    assert c.expect_exact("mpf('2.0')\r\n>>> ") == 0
 
 
 def test_bare_console_pretty():
