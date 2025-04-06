@@ -1474,17 +1474,22 @@ def read_format_spec(format_spec):
             format_dict['rounding'] = _GMPY_ROUND_CHAR_DICT[rounding_char]
 
         if match['zeropad']:
-            if not match['align']:
-                format_dict['align'] = '='
-            if not match['fill_char']:
-                format_dict['fill_char'] = '0'
+            if match['fill_char']:
+                raise ValueError("Fill character conflicts with '0'"
+                                 f" in format specifier: '{format_spec}'")
+            if match['align']:
+                raise ValueError("Alignment conflicts with '0'"
+                                 f" in format specifier: '{format_spec}'")
+            format_dict['align'] = '='
+            format_dict['fill_char'] = '0'
 
-        if format_dict['precision'] < 0 and format_dict['type'].lower() not in ['', 'a', 'b']:
+        if format_dict['precision'] < 0 and (format_dict['type'].lower()
+                                             not in ['', 'a', 'b']):
             format_dict['precision'] = 6
-    else:
-        raise ValueError("Invalid format specifier '{}'".format(format_spec))
 
-    return format_dict
+        return format_dict
+
+    raise ValueError(f"Invalid format specifier '{format_spec}'")
 
 
 def format_fixed(s, precision=6, rounding=round_nearest):

@@ -618,8 +618,8 @@ def test_mpf_fmt():
 
         # Tests for = alignment
         assert f"{mp.mpf('0.24'):=+20.2f}" == '+               0.24'
-        assert f"{mp.mpf('0.24'):=+020.2e}" == '+000000000002.40e-01'
-        assert f"{mp.mpf('0.24'):=+020.2g}" == '+0000000000000000.24'
+        assert f"{mp.mpf('0.24'):0=+20.2e}" == '+000000000002.40e-01'
+        assert f"{mp.mpf('0.24'):0=+20.2g}" == '+0000000000000000.24'
 
         # Tests for different kinds of rounding
         num = mp.mpf('-1.23456789999901234567')
@@ -815,6 +815,13 @@ def test_errors():
 
     with pytest.raises(ValueError, match="Invalid format specifier '12.3 E '"):
         f"{mp.mpf('4'):12.3 E }"
+
+    with pytest.raises(ValueError, match="Fill character conflicts"):
+        f"{mp.mpf('4'):q<03f}"
+    with pytest.raises(ValueError, match="Alignment conflicts"):
+        f"{mp.mpf('4'):=03f}"
+    with pytest.raises(ValueError, match="Fill character conflicts"):
+        f"{mp.mpf('4'): =03f}"
 
 
 @settings(max_examples=10000)
