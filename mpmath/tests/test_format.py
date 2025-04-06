@@ -11,6 +11,9 @@ from mpmath import fp, inf, mp, nan, ninf, workdps
 from mpmath.libmp.libmpf import read_format_spec
 
 
+vinfo = sys.version_info
+
+
 @st.composite
 def fmt_str(draw, types='fFeE', for_complex=False):
     res = ''
@@ -38,7 +41,7 @@ def fmt_str(draw, types='fFeE', for_complex=False):
     res += draw(st.sampled_from([''] + list('-+ ')))
 
     # no_neg_0 (not used yet.)
-    if sys.version_info[:3] > (3, 11):
+    if vinfo >= (3, 11):
         res += draw(st.sampled_from([''] + ['z']))
 
     # alternate mode
@@ -65,9 +68,9 @@ def fmt_str(draw, types='fFeE', for_complex=False):
     prec = draw(st.sampled_from(['']*7 + list(map(str, range(40)))))
     if prec:
         res += '.' + prec
-        # if sys.version_info >= (3, 14):
-        #     gchar = draw(st.sampled_from([''] + list(',_')))
-        #     res += gchar
+        if vinfo >= (3, 14):
+            gchar = draw(st.sampled_from([''] + list(',_')))
+            res += gchar
 
     # Type
     res += draw(st.sampled_from(types))
@@ -477,6 +480,9 @@ def test_mpf_fmt_cpython():
 @example(fmt='0=13,f', x=1.1)  # issue 917
 @example(fmt='013,f', x=1.1)
 @example(fmt='013,.0%', x=1.1)
+@example(fmt='010.6,f', x=0.1234567891)
+@example(fmt='010.7,f', x=0.1234567891)
+@example(fmt='010._f', x=0.1234567891)
 def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
@@ -486,8 +492,8 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
-    if spec['frac_separators'] and spec['fill_char'] == '0':
-        return  # XXX: python/cpython#130860
+    if spec['frac_separators'] and vinfo < (3, 14):
+        return  # see also python/cpython#130860
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
@@ -509,6 +515,8 @@ def test_mpc_complexes(fmt, z):
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if spec['frac_separators'] and vinfo < (3, 14):
+        return  # see also python/cpython#130860
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
