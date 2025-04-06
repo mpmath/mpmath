@@ -1397,10 +1397,10 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<sign>[-+ ]?)
     (?P<no_neg_0>z)?
     (?P<alternate>\#)?
-    (?P<zeropad>0(?=0*[1-9]))?
-    (?P<width>[0-9]+)?
+    (?P<zeropad>0(?=[0-9]))?
+    (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
-    (?:\.(?P<precision>[0-9]+)(?P<frac_separators>[,_])?)?
+    (?:\.(?P<precision>0|[1-9][0-9]*)(?P<frac_separators>[,_])?)?
     (?P<rounding>[UDYZN])?
     (?P<type>[aAbeEfFgG%])?
 """, re.DOTALL | re.VERBOSE).fullmatch
