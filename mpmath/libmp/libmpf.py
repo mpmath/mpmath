@@ -1400,7 +1400,11 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<zeropad>0(?=[0-9]))?
     (?P<width>0|[1-9][0-9]*)?
     (?P<thousands_separators>[,_])?
-    (?:\.(?P<precision>0|[1-9][0-9]*)(?P<frac_separators>[,_])?)?
+    (?:\.
+        (?=[,_0-9])  # lookahead for digit or separator
+        (?P<precision>0|[1-9][0-9]*)?
+        (?P<frac_separators>[,_])?
+    )?
     (?P<rounding>[UDYZN])?
     (?P<type>[aAbeEfFgG%])?
 """, re.DOTALL | re.VERBOSE).fullmatch

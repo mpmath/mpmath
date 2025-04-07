@@ -823,6 +823,11 @@ def test_errors():
     with pytest.raises(ValueError, match="Fill character conflicts"):
         f"{mp.mpf('4'): =03f}"
 
+    with pytest.raises(ValueError):
+        f"{mp.mpf(1):.f}"
+    with pytest.raises(ValueError):
+        f"{mp.mpf(1):._6f}"
+
 
 @settings(max_examples=10000)
 @given(st.floats(allow_nan=True, allow_infinity=True,
