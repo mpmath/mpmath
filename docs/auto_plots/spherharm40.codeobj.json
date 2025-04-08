@@ -1,0 +1,963 @@
+{
+ "Y": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  }
+ ],
+ "fp.cos": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  }
+ ],
+ "fp.pi": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "float"
+  }
+ ],
+ "fp.re": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_fp",
+   "module_short": "mpmath",
+   "name": "FPContext.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "FPContext.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_base",
+   "module_short": "mpmath.ctx_base",
+   "name": "StandardBaseContext.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "StandardBaseContext.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_base",
+   "module_short": "mpmath.ctx_base",
+   "name": "Context.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "Context.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions.functions",
+   "module_short": "mpmath.functions.functions",
+   "name": "SpecialFunctions.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions",
+   "module_short": "mpmath.functions",
+   "name": "SpecialFunctions.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "SpecialFunctions.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions.rszeta",
+   "module_short": "mpmath.functions.rszeta",
+   "name": "RSCache.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions",
+   "module_short": "mpmath.functions",
+   "name": "RSCache.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "RSCache.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.quadrature",
+   "module_short": "mpmath.calculus.quadrature",
+   "name": "QuadratureMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "QuadratureMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "QuadratureMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.inverselaplace",
+   "module_short": "mpmath.calculus.inverselaplace",
+   "name": "LaplaceTransformInversionMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "LaplaceTransformInversionMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "LaplaceTransformInversionMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.calculus",
+   "module_short": "mpmath.calculus.calculus",
+   "name": "CalculusMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "CalculusMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "CalculusMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.matrices",
+   "module_short": "mpmath.matrices.matrices",
+   "name": "MatrixMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "MatrixMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "MatrixMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.calculus",
+   "module_short": "mpmath.matrices.calculus",
+   "name": "MatrixCalculusMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "MatrixCalculusMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "MatrixCalculusMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.linalg",
+   "module_short": "mpmath.matrices.linalg",
+   "name": "LinearAlgebraMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "LinearAlgebraMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "LinearAlgebraMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.eigen",
+   "module_short": "mpmath.matrices.eigen",
+   "name": "Eigen.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "Eigen.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "Eigen.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.identification",
+   "module_short": "mpmath.identification",
+   "name": "IdentificationMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "IdentificationMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.optimization",
+   "module_short": "mpmath.calculus.optimization",
+   "name": "OptimizationMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "OptimizationMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "OptimizationMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.odes",
+   "module_short": "mpmath.calculus.odes",
+   "name": "ODEMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "ODEMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "ODEMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.visualization",
+   "module_short": "mpmath.visualization",
+   "name": "VisualizationMethods.re"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "VisualizationMethods.re"
+  }
+ ],
+ "fp.sin": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "builtins",
+   "module_short": "builtins",
+   "name": "function"
+  }
+ ],
+ "fp.spherharm": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_fp",
+   "module_short": "mpmath",
+   "name": "FPContext.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "FPContext.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_base",
+   "module_short": "mpmath.ctx_base",
+   "name": "StandardBaseContext.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "StandardBaseContext.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_base",
+   "module_short": "mpmath.ctx_base",
+   "name": "Context.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "Context.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions.functions",
+   "module_short": "mpmath.functions.functions",
+   "name": "SpecialFunctions.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions",
+   "module_short": "mpmath.functions",
+   "name": "SpecialFunctions.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "SpecialFunctions.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions.rszeta",
+   "module_short": "mpmath.functions.rszeta",
+   "name": "RSCache.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions",
+   "module_short": "mpmath.functions",
+   "name": "RSCache.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "RSCache.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.quadrature",
+   "module_short": "mpmath.calculus.quadrature",
+   "name": "QuadratureMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "QuadratureMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "QuadratureMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.inverselaplace",
+   "module_short": "mpmath.calculus.inverselaplace",
+   "name": "LaplaceTransformInversionMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "LaplaceTransformInversionMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "LaplaceTransformInversionMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.calculus",
+   "module_short": "mpmath.calculus.calculus",
+   "name": "CalculusMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "CalculusMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "CalculusMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.matrices",
+   "module_short": "mpmath.matrices.matrices",
+   "name": "MatrixMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "MatrixMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "MatrixMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.calculus",
+   "module_short": "mpmath.matrices.calculus",
+   "name": "MatrixCalculusMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "MatrixCalculusMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "MatrixCalculusMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.linalg",
+   "module_short": "mpmath.matrices.linalg",
+   "name": "LinearAlgebraMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "LinearAlgebraMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "LinearAlgebraMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.eigen",
+   "module_short": "mpmath.matrices.eigen",
+   "name": "Eigen.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "Eigen.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "Eigen.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.identification",
+   "module_short": "mpmath.identification",
+   "name": "IdentificationMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "IdentificationMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.optimization",
+   "module_short": "mpmath.calculus.optimization",
+   "name": "OptimizationMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "OptimizationMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "OptimizationMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.odes",
+   "module_short": "mpmath.calculus.odes",
+   "name": "ODEMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "ODEMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "ODEMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.visualization",
+   "module_short": "mpmath.visualization",
+   "name": "VisualizationMethods.spherharm"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "VisualizationMethods.spherharm"
+  }
+ ],
+ "fp.splot": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_fp",
+   "module_short": "mpmath",
+   "name": "FPContext.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "FPContext.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_base",
+   "module_short": "mpmath.ctx_base",
+   "name": "StandardBaseContext.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "StandardBaseContext.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_base",
+   "module_short": "mpmath.ctx_base",
+   "name": "Context.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "Context.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions.functions",
+   "module_short": "mpmath.functions.functions",
+   "name": "SpecialFunctions.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions",
+   "module_short": "mpmath.functions",
+   "name": "SpecialFunctions.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "SpecialFunctions.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions.rszeta",
+   "module_short": "mpmath.functions.rszeta",
+   "name": "RSCache.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.functions",
+   "module_short": "mpmath.functions",
+   "name": "RSCache.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "RSCache.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.quadrature",
+   "module_short": "mpmath.calculus.quadrature",
+   "name": "QuadratureMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "QuadratureMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "QuadratureMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.inverselaplace",
+   "module_short": "mpmath.calculus.inverselaplace",
+   "name": "LaplaceTransformInversionMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "LaplaceTransformInversionMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "LaplaceTransformInversionMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.calculus",
+   "module_short": "mpmath.calculus.calculus",
+   "name": "CalculusMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "CalculusMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "CalculusMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.matrices",
+   "module_short": "mpmath.matrices.matrices",
+   "name": "MatrixMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "MatrixMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "MatrixMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.calculus",
+   "module_short": "mpmath.matrices.calculus",
+   "name": "MatrixCalculusMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "MatrixCalculusMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "MatrixCalculusMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.linalg",
+   "module_short": "mpmath.matrices.linalg",
+   "name": "LinearAlgebraMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "LinearAlgebraMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "LinearAlgebraMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices.eigen",
+   "module_short": "mpmath.matrices.eigen",
+   "name": "Eigen.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.matrices",
+   "module_short": "mpmath.matrices",
+   "name": "Eigen.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "Eigen.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.identification",
+   "module_short": "mpmath.identification",
+   "name": "IdentificationMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "IdentificationMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.optimization",
+   "module_short": "mpmath.calculus.optimization",
+   "name": "OptimizationMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "OptimizationMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "OptimizationMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus.odes",
+   "module_short": "mpmath.calculus.odes",
+   "name": "ODEMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.calculus",
+   "module_short": "mpmath.calculus",
+   "name": "ODEMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "ODEMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.visualization",
+   "module_short": "mpmath.visualization",
+   "name": "VisualizationMethods.splot"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "VisualizationMethods.splot"
+  }
+ ],
+ "phi": [
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath.ctx_mp_python",
+   "module_short": "mpmath.ctx_mp_python",
+   "name": "constant"
+  },
+  {
+   "is_class": false,
+   "is_explicit": false,
+   "module": "mpmath",
+   "module_short": "mpmath",
+   "name": "constant"
+  }
+ ]
+}
