@@ -34,9 +34,9 @@ def wrap_float_literals(lines):
     g = tokenize.tokenize(io.BytesIO(source.encode()).readline)
     for toknum, tokval, *_ in g:
         if toknum == tokenize.NUMBER:
-            if 'j' in tokval:
-                tokval = f"mpc(0, mpf('{tokval[:-1]}'))"
-            elif '.' in tokval:
+            if any(_ in tokval for _ in ['j', 'J']):
+                tokval = f"mpc(imag=mpf('{tokval[:-1]}'))"
+            elif any(_ in tokval for _ in ['.', 'e', 'E']):
                 tokval = f"mpf('{tokval}')"
         result.append((toknum, tokval, *_))
     return tokenize.untokenize(result).decode().splitlines()
