@@ -116,6 +116,9 @@ def main():
                 self.source_transformers = source_transformers
 
             def runsource(self, source, filename='<input>', symbol='single'):
+                for t in self.source_transformers:
+                    source = '\n'.join(t(source.splitlines()))
+
                 try:
                     code = self.compile(source, filename, symbol)
                 except (OverflowError, SyntaxError, ValueError):
@@ -128,17 +131,14 @@ def main():
                 if code is None:
                     return True
 
-                for t in self.source_transformers:
-                    source = '\n'.join(t(source.splitlines()))
+                if self.ast_transformers:
+                    tree = ast.parse(source)
+                    for t in self.ast_transformers:
+                        tree = t.visit(tree)
+                    ast.fix_missing_locations(tree)
+                    source = ast.unparse(tree)
 
-                tree = ast.parse(source)
-                for t in self.ast_transformers:
-                    tree = t.visit(tree)
-                ast.fix_missing_locations(tree)
-                source = ast.unparse(tree)
-
-                source = source.split('\n')
-                source = ';'.join(source)
+                source += "\n"
                 return super().runsource(source, filename=filename, symbol=symbol)
 
         c = MpmathConsole(ast_transformers=ast_transformers,

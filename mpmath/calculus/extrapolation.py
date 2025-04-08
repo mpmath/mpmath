@@ -1,3 +1,5 @@
+import itertools
+
 from .calculus import defun
 
 
@@ -1744,15 +1746,6 @@ def standardize(ctx, f, intervals, options):
             return f(*args)
         return True, g
 
-# backwards compatible itertools.product
-def cartesian_product(args):
-    pools = map(tuple, args)
-    result = [[]]
-    for pool in pools:
-        result = [x+[y] for x in result for y in pool]
-    for prod in result:
-        yield tuple(prod)
-
 def fold_finite(ctx, f, intervals):
     if not intervals:
         return f
@@ -1762,7 +1755,7 @@ def fold_finite(ctx, f, intervals):
     def g(*args):
         args = list(args)
         s = ctx.zero
-        for xs in cartesian_product(ranges):
+        for xs in itertools.product(*ranges):
             for dim, x in zip(indices, xs):
                 args[dim] = ctx.mpf(x)
             s += f(*args)

@@ -99,7 +99,13 @@ def test_bare_console_wrap_floats():
     assert c.expect_exact('>>> ') == 0
     assert c.send("10.9\r\n") == 6
     assert c.expect_exact("mpf('10.899999999999999999999999999995')\r\n>>> ") == 0
+    assert c.send("1e100\r\n") == 7
+    assert c.expect_exact("mpf('9.9999999999999999999999999999997e+99')\r\n>>> ") == 0
+    assert c.send("1E100\r\n") == 7
+    assert c.expect_exact("mpf('9.9999999999999999999999999999997e+99')\r\n>>> ") == 0
     assert c.send("1+10.9j\r\n") == 9
+    assert c.expect_exact("mpc(real='1.0', imag='10.899999999999999999999999999995')\r\n>>> ") == 0
+    assert c.send("1+10.9J\r\n") == 9
     assert c.expect_exact("mpc(real='1.0', imag='10.899999999999999999999999999995')\r\n>>> ") == 0
     assert c.send('mpf(10.9)\r\n') == 11
     assert c.expect_exact("mpf('10.899999999999999999999999999995')\r\n>>> ") == 0
