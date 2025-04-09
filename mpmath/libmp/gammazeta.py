@@ -448,7 +448,7 @@ def mpf_bernoulli(n, prec, rnd=round_fast, plus=False):
         if m > 6:
             bin1 = bin1 * ((2+m)*(3+m)) // ((m-7)*(m-6))
         state[:] = [m, bin, bin1]
-    return numbers[n]
+    return mpf_pos(numbers[n], prec, rnd)
 
 def mpf_bernoulli_huge(n, prec, rnd=round_fast):
     wp = prec + 10
