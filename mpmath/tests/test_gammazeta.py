@@ -41,6 +41,7 @@ def test_bernoulli(plus):
     assert bernoulli(5, plus) == 0
     assert bernoulli(6, plus).ae(1./42)
     assert str(bernoulli(10, plus)) == '0.0757575757575758'
+    assert repr(bernoulli(10, plus)) == "mpf('0.07575757575757576')"
     assert str(bernoulli(234, plus)) == '7.62772793964344e+267'
     assert str(bernoulli(10**5, plus)) == '-5.82229431461335e+376755'
     assert str(bernoulli(10**8+2, plus)) == '1.19570355039953e+676752584'
