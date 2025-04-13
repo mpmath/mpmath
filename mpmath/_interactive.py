@@ -27,16 +27,34 @@ class IntegerDivisionWrapper(ast.NodeTransformer):
         return self.generic_visit(node)
 
 
+class _WrapFloats(ast.NodeTransformer):
+    """Wrap float literals by calls to specified type."""
+    def __init__(self, lines, type):
+        super().__init__()
+        self.lines = lines
+        self.type = type
+
+    def visit_Constant(self, node):
+        if isinstance(node.value, (float, complex)):
+            line = self.lines[node.lineno - 1]
+            value = line[node.col_offset:node.end_col_offset]
+            is_complex = value.endswith(('j', 'J'))
+            if is_complex:
+                value = value[:-1]
+            value = ast.Constant(value)
+            value = ast.Call(ast.Name(self.type, ast.Load()), [value], [])
+            if is_complex:
+                value = ast.BinOp(left=value, op=ast.Mult(),
+                                  right=ast.Constant(1j))
+            return value
+        return node
+
+
 def wrap_float_literals(lines):
     """Wraps all float/complex literals with mpmath classes."""
-    result = []
     source = ''.join(lines)
-    g = tokenize.tokenize(io.BytesIO(source.encode()).readline)
-    for toknum, tokval, *_ in g:
-        if toknum == tokenize.NUMBER:
-            if any(_ in tokval for _ in ['j', 'J']):
-                tokval = f"mpc(imag=mpf('{tokval[:-1]}'))"
-            elif any(_ in tokval for _ in ['.', 'e', 'E']):
-                tokval = f"mpf('{tokval}')"
-        result.append((toknum, tokval, *_))
-    return tokenize.untokenize(result).decode().splitlines(keepends=True)
+    tree = ast.parse(source)
+    tree = _WrapFloats(lines, 'mpf').visit(tree)
+    ast.fix_missing_locations(tree)
+    source = ast.unparse(tree)
+    return source.splitlines(keepends=True)
