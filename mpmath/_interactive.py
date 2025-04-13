@@ -30,7 +30,7 @@ class IntegerDivisionWrapper(ast.NodeTransformer):
 def wrap_float_literals(lines):
     """Wraps all float/complex literals with mpmath classes."""
     result = []
-    source = "\n".join(lines)
+    source = ''.join(lines)
     g = tokenize.tokenize(io.BytesIO(source.encode()).readline)
     for toknum, tokval, *_ in g:
         if toknum == tokenize.NUMBER:
@@ -39,4 +39,4 @@ def wrap_float_literals(lines):
             elif any(_ in tokval for _ in ['.', 'e', 'E']):
                 tokval = f"mpf('{tokval}')"
         result.append((toknum, tokval, *_))
-    return tokenize.untokenize(result).decode().splitlines()
+    return tokenize.untokenize(result).decode().splitlines(keepends=True)
