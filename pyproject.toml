@@ -44,8 +44,6 @@ docs = ['sphinx',
 ci = ['pytest-xdist', 'diff_cover']
 [tool.setuptools]
 zip-safe = true
-[tool.setuptools.dynamic]
-version = {attr = 'setuptools_scm.get_version'}
 [tool.setuptools.packages]
 find = {namespaces = false}
 [tool.flake8]
@@ -53,6 +51,7 @@ select = ['E101', 'E111', 'E112', 'E113', 'E501', 'E703', 'E712', 'E713',
           'W191', 'W291', 'W292', 'W293', 'W391']
 exclude = ['.eggs', '.git']
 max_line_length = 200
+[tool.setuptools_scm]
 [tool.pytest.ini_options]
 testpaths = ['mpmath', 'docs']
 doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL', 'ELLIPSIS']
