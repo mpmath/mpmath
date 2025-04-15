@@ -81,10 +81,13 @@ def main():
         for l in lines:
             shell.run_cell(l, silent=True)
         if not args.no_wrap_floats:
-            shell.run_cell('from mpmath._interactive import wrap_float_literals')
-            shell.run_cell('ip = get_ipython()')
-            shell.run_cell('ip.input_transformers_post.append(wrap_float_literals)')
-            shell.run_cell('del ip')
+            source = """
+from mpmath._interactive import wrap_float_literals
+ip = get_ipython()
+ip.input_transformers_post.append(wrap_float_literals)
+del ip
+"""
+            shell.run_cell(source)
         app.start()
     else:
         ast_transformers = []
@@ -116,8 +119,15 @@ def main():
                 self.source_transformers = source_transformers
 
             def runsource(self, source, filename='<input>', symbol='single'):
-                for t in self.source_transformers:
-                    source = '\n'.join(t(source.splitlines()))
+                if self.source_transformers:
+                    last_line = source.endswith("\n")  # signals the end of a block
+                    try:
+                        for t in self.source_transformers:
+                            source = ''.join(t(source.splitlines(keepends=True)))
+                    except SyntaxError:
+                        pass  # XXX: emit warning?
+                    if last_line:
+                        source += "\n"
 
                 try:
                     code = self.compile(source, filename, symbol)
@@ -137,8 +147,8 @@ def main():
                         tree = t.visit(tree)
                     ast.fix_missing_locations(tree)
                     source = ast.unparse(tree)
+                    source += "\n"
 
-                source += "\n"
                 return super().runsource(source, filename=filename, symbol=symbol)
 
         c = MpmathConsole(ast_transformers=ast_transformers,
