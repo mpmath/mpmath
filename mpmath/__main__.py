@@ -9,7 +9,6 @@ some initialization code.
 import argparse
 import ast
 import atexit
-import code
 import os
 import readline
 import rlcompleter
@@ -17,8 +16,7 @@ import sys
 import tokenize
 
 from mpmath import __version__
-from mpmath._interactive import (IntegerDivisionWrapper,
-                                 wrap_float_literals)
+from mpmath._interactive import IntegerDivisionWrapper, wrap_float_literals
 
 
 __all__ = ()
@@ -99,22 +97,18 @@ del ip
         if not args.no_wrap_floats:
             source_transformers.append(wrap_float_literals)
 
-        class MpmathConsole(code.InteractiveConsole):
+        try:
+            from _pyrepl.console import \
+                InteractiveColoredConsole as InteractiveConsole
+        except ImportError:  # pragma: no cover
+            from code import InteractiveConsole
+
+        class MpmathConsole(InteractiveConsole):
             """An interactive console with readline support."""
 
             def __init__(self, ast_transformers=[],
                          source_transformers=[], **kwargs):
                 super().__init__(**kwargs)
-
-                readline.set_completer(rlcompleter.Completer(ns).complete)
-                readline.parse_and_bind('tab: complete')
-
-                history = os.path.expanduser('~/.python_history')
-                try:
-                    readline.read_history_file(history)
-                except OSError:
-                    pass
-                atexit.register(readline.write_history_file, history)
                 self.ast_transformers = ast_transformers
                 self.source_transformers = source_transformers
 
@@ -154,9 +148,20 @@ del ip
         c = MpmathConsole(ast_transformers=ast_transformers,
                           source_transformers=source_transformers, locals=ns)
 
+        interactive_hook = getattr(sys, "__interactivehook__", None)
+        if interactive_hook is not None:  # pragma: no branch
+            sys.audit("cpython.run_interactivehook", interactive_hook)
+            interactive_hook()
+
         for l in lines:
             c.push(l)
-        c.interact('', '')
+
+        try:
+            from _pyrepl.simple_interact import \
+                run_multiline_interactive_console
+            run_multiline_interactive_console(c)
+        except Exception:  # pragma: no cover
+            c.interact('', '')
 
 
 if __name__ == '__main__':

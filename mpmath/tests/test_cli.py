@@ -1,5 +1,6 @@
 """Tests for the Command-Line Interface."""
 
+import os
 import platform
 import sys
 import time
@@ -17,7 +18,9 @@ class Console(pexpect.spawn):
     """Spawned console for testing."""
 
     def __init__(self, command, timeout=60):
-        super().__init__(command, timeout=timeout, encoding='utf-8')
+        env = os.environ.copy()
+        env['TERM'] = 'dumb'
+        super().__init__(command, timeout=timeout, encoding='utf-8', env=env)
 
     def __del__(self):
         self.send('exit()\r\n')
