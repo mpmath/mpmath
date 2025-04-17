@@ -40,7 +40,7 @@ gmpy2 = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
 gmpy = ['mpmath[gmpy2]']
 docs = ['sphinx',
         'matplotlib; platform_python_implementation!="PyPy" and python_version<"3.14"',
-        'sphinxcontrib-autoprogram']
+        'sphinxcontrib-autoprogram', 'sphinx-gallery']
 ci = ['pytest-xdist', 'diff_cover']
 [tool.setuptools]
 zip-safe = true
@@ -56,7 +56,8 @@ max_line_length = 200
 testpaths = ['mpmath', 'docs']
 doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL', 'ELLIPSIS']
 addopts = "--durations=20 --doctest-modules --doctest-glob='*.rst'"
-norecursedirs = ['docs/plots', 'demo', '.eggs', '.git', '.hypothesis']
+norecursedirs = ['docs/plots', 'docs/auto_plots', 'demo',
+                 '.eggs', '.git', '.hypothesis']
 filterwarnings = ['error::DeprecationWarning']
 xfail_strict = true
 timeout = 600
