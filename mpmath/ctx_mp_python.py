@@ -427,7 +427,8 @@ class _mpf(mpnumeric):
         """
 
         _, _, (prec, _) = s._ctxdata
-        return format_mpf(s._mpf_, format_spec, prec)
+        ctx = s.context
+        return format_mpf(s._mpf_, format_spec, prec, ctx._pretty_repr_dps)
 
     def sqrt(s):
         return s.context.sqrt(s)
@@ -695,7 +696,8 @@ class _mpc(mpnumeric):
         """
 
         _, _, (prec, _) = s._ctxdata
-        return format_mpc(s._mpc_, format_spec, prec)
+        ctx = s.context
+        return format_mpc(s._mpc_, format_spec, prec, ctx._pretty_repr_dps)
 
 
 complex_types = (complex, _mpc)
