@@ -23,7 +23,7 @@ for test in cases.splitlines():
 
 import pytest
 
-from mpmath import fp
+from mpmath import fp, mp
 
 
 def ae(x, y, tol=1e-12):
@@ -1811,3 +1811,6 @@ def test_issue_491():
 def test_issue_521():
     assert fp.ff(1, -fp.inf) == 0.0
     assert fp.isnan(fp.ff(1, fp.inf))
+
+def test_issue_942():
+    assert float(mp.exp(-744.0)) == 1e-323

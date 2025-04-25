@@ -363,7 +363,7 @@ def from_Decimal(x, prec=0, rnd=round_fast):
 
 def ldexp(x, exp):
     # Handle special cases
-    if x == 0.0 or not math.isfinite(x):
+    if x == 0.0 or not math.isfinite(x):  # pragma: no cover
         return x
 
     # Get the 64-bit IEEE 754 representation
@@ -374,10 +374,7 @@ def ldexp(x, exp):
     exponent = (bits >> 52) & 0x7FF
     mantissa = bits & 0xFFFFFFFFFFFFF
 
-    if exponent == 0:
-        # Denormal number
-        if mantissa == 0:
-            return x  # Zero
+    if exponent == 0:  # pragma: no cover
         # Normalize it
         while mantissa < (1 << 52):
             mantissa <<= 1
