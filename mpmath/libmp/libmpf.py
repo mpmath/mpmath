@@ -5,6 +5,7 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 import math
 import random
 import re
+import struct
 import sys
 import warnings
 
@@ -360,6 +361,59 @@ def from_Decimal(x, prec=0, rnd=round_fast):
         prec = int(len(x.as_tuple()[1])*blog2_10)
     return from_str(str(x), prec, rnd)
 
+def ldexp(x, exp):
+    # Handle special cases
+    if x == 0.0 or not math.isfinite(x):
+        return x
+
+    # Get the 64-bit IEEE 754 representation
+    bits = struct.unpack('Q', struct.pack('d', x))[0]
+
+    # Extract components
+    sign = bits >> 63
+    exponent = (bits >> 52) & 0x7FF
+    mantissa = bits & 0xFFFFFFFFFFFFF
+
+    if exponent == 0:
+        # Denormal number
+        if mantissa == 0:
+            return x  # Zero
+        # Normalize it
+        while mantissa < (1 << 52):
+            mantissa <<= 1
+            exponent -= 1
+        exponent += 1
+    else:
+        # Normal number, add implicit leading 1
+        mantissa |= (1 << 52)
+
+    # Adjust exponent with exp
+    new_exponent = exponent + exp
+
+    if new_exponent > 2046:
+        # Overflow to infinity
+        raise OverflowError("math range error")
+    elif new_exponent <= 0:
+        # Denormal or underflow
+        if new_exponent < -52:
+            # Underflow to zero
+            return 0.0
+
+        # Calculate how much we need to shift the mantissa
+        mantissa_shift = 1 - new_exponent
+
+        # Get the highest bit, zhat would be shifted off
+        round_bit = (mantissa >> (mantissa_shift - 1)) & 1
+
+        # Adjust mantissa for denormal
+        mantissa >>= mantissa_shift
+        mantissa += round_bit
+        new_exponent = 0
+
+    # Reconstruct the float
+    bits = (sign << 63) | (new_exponent << 52) | (mantissa & 0xFFFFFFFFFFFFF)
+    return float(struct.unpack('d', struct.pack('Q', bits))[0])
+
 def to_float(s, strict=False, rnd=round_fast):
     """
     Convert a raw mpf to a Python float. The result is exact if
@@ -384,7 +438,7 @@ def to_float(s, strict=False, rnd=round_fast):
     if sign:
         man = -man
     try:
-        return math.ldexp(man, exp)
+        return ldexp(man, exp)
     except OverflowError:
         if strict:
             raise
