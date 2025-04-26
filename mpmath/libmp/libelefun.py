@@ -723,6 +723,16 @@ def mpf_log(x, prec, rnd=round_fast):
         m -= n*ln2_fixed(wp)
     return from_man_exp(m, -wp, prec, rnd)
 
+def mpf_log1p(x, prec, rnd=round_fast):
+    """
+    Computes log(1+x) accurately.
+    """
+    wp = prec + 10
+    u = mpf_add(fone, x, wp*2)
+    return mpf_mul(mpf_log(u, wp),
+                   mpf_div(x, mpf_sub(u, fone, wp),
+                           wp), prec, rnd)
+
 def mpf_log_hypot(a, b, prec, rnd):
     """
     Computes log(sqrt(a^2+b^2)) accurately.

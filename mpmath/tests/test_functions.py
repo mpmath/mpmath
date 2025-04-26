@@ -326,6 +326,12 @@ def test_asin():
     assert asin(mpc(+2, 0)).ae(mpc(+pi2, -log(2 + sqrt(3))))
     assert asin(mpc(0.5, 0)).ae(pi/6)
 
+    # issue 787
+    assert asin(mpc(0, 1e-22)).ae(1e-22j)
+    mp.prec = 700
+    assert asin(mpc(0, 1e-220)).ae(1e-220j)
+    mp.prec = 53
+
 def test_acos():
     pi4 = pi/4
     assert acos(mpc(+inf, +inf)) == mpc(+pi4, -inf)
