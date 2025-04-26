@@ -1,13 +1,12 @@
 [build-system]
-requires = ['setuptools>=61', 'setuptools_scm[toml]>=6.0']
+requires = ['setuptools>=77', 'setuptools_scm[toml]>=6.0']
 build-backend = 'setuptools.build_meta'
 [project]
 name = 'mpmath'
 description = 'Python library for arbitrary-precision floating-point arithmetic'
 authors = [{name = 'Fredrik Johansson', email = 'fredrik.johansson@gmail.com'}]
-license = {text = 'BSD'}
-classifiers = ['License :: OSI Approved :: BSD License',
-               'Topic :: Scientific/Engineering :: Mathematics',
+license = 'BSD-3-Clause'
+classifiers = ['Topic :: Scientific/Engineering :: Mathematics',
                'Topic :: Software Development :: Libraries :: Python Modules',
                'Programming Language :: Python',
                'Programming Language :: Python :: 3',
