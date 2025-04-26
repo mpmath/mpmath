@@ -361,55 +361,35 @@ def from_Decimal(x, prec=0, rnd=round_fast):
         prec = int(len(x.as_tuple()[1])*blog2_10)
     return from_str(str(x), prec, rnd)
 
-def ldexp(x, exp):
-    # Handle special cases
-    if x == 0.0 or not math.isfinite(x):  # pragma: no cover
+BITS = sys.float_info.mant_dig
+SMALLEST_NORM_EXP = sys.float_info.min_exp
+
+def ldexp(x, i):
+    if not math.isfinite(x) or not x:  # pragma: no cover
+        # NsNs, infs, and zeros are unchanged.
         return x
-
-    # Get the 64-bit IEEE 754 representation
-    bits = struct.unpack('Q', struct.pack('d', x))[0]
-
-    # Extract components
-    sign = bits >> 63
-    exponent = (bits >> 52) & 0x7FF
-    mantissa = bits & 0xFFFFFFFFFFFFF
-
-    if exponent == 0:  # pragma: no cover
-        # Normalize it
-        while mantissa < (1 << 52):
-            mantissa <<= 1
-            exponent -= 1
-        exponent += 1
-    else:
-        # Normal number, add implicit leading 1
-        mantissa |= (1 << 52)
-
-    # Adjust exponent with exp
-    new_exponent = exponent + exp
-
-    if new_exponent > 2046:
-        # Overflow to infinity
-        raise OverflowError("math range error")
-    elif new_exponent <= 0:
-        # Denormal or underflow
-        if new_exponent < -52:
-            # Underflow to zero
-            return 0.0
-
-        # Calculate how much we need to shift the mantissa
-        mantissa_shift = 1 - new_exponent
-
-        # Get the highest bit, zhat would be shifted off
-        round_bit = (mantissa >> (mantissa_shift - 1)) & 1
-
-        # Adjust mantissa for denormal
-        mantissa >>= mantissa_shift
-        mantissa += round_bit
-        new_exponent = 0
-
-    # Reconstruct the float
-    bits = (sign << 63) | (new_exponent << 52) | (mantissa & 0xFFFFFFFFFFFFF)
-    return float(struct.unpack('d', struct.pack('Q', bits))[0])
+    # Non-zero finite.
+    if i >= 0:
+        # Left shifts may overflow, but don't round.
+        return math.ldexp(x, i)
+    # Right shift of non-zero finite.
+    original_exp = math.frexp(x)[1]
+    target_exp = original_exp + i
+    if target_exp >= SMALLEST_NORM_EXP:
+       # No bits are shifted off - no rounding involved.
+       return math.ldexp(x, i)
+    # Shifting into denorm-land - trailing bits may be lost.
+    if original_exp > SMALLEST_NORM_EXP:
+        # Shift down to the smallest normal binade. No bits lost.
+        x = math.ldexp(x, SMALLEST_NORM_EXP - original_exp)
+        assert math.frexp(x)[1] == SMALLEST_NORM_EXP
+        i += original_exp - SMALLEST_NORM_EXP
+    # Multiplying by 2**i finishes the job, and the HW will round as
+    # appropriate.  Note: if i < -BITS, all of x is shifted to
+    # be < 1/2 ULP of nextafter(0, 1), so should be thrown away.  If i
+    # is so very negative that ldexp underflows to 0, that's fine; no
+    # need to check in advance.
+    return x * math.ldexp(1.0, i)
 
 def to_float(s, strict=False, rnd=round_fast):
     """
