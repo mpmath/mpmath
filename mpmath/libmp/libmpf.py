@@ -365,9 +365,7 @@ BITS = sys.float_info.mant_dig
 SMALLEST_NORM_EXP = sys.float_info.min_exp
 
 def ldexp(x, i):
-    if not math.isfinite(x) or not x:  # pragma: no cover
-        return x
-    if i >= 0:
+    if i >= 0 or not (math.isfinite(x) and x):
         # Left shifts may overflow, but don't round.
         return math.ldexp(x, i)
     # Right shift of non-zero finite.
