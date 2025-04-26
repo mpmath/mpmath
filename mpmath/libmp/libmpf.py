@@ -366,9 +366,7 @@ SMALLEST_NORM_EXP = sys.float_info.min_exp
 
 def ldexp(x, i):
     if not math.isfinite(x) or not x:  # pragma: no cover
-        # NsNs, infs, and zeros are unchanged.
         return x
-    # Non-zero finite.
     if i >= 0:
         # Left shifts may overflow, but don't round.
         return math.ldexp(x, i)
@@ -376,8 +374,8 @@ def ldexp(x, i):
     original_exp = math.frexp(x)[1]
     target_exp = original_exp + i
     if target_exp >= SMALLEST_NORM_EXP:
-       # No bits are shifted off - no rounding involved.
-       return math.ldexp(x, i)
+        # No bits are shifted off - no rounding involved.
+        return math.ldexp(x, i)
     # Shifting into denorm-land - trailing bits may be lost.
     if original_exp > SMALLEST_NORM_EXP:
         # Shift down to the smallest normal binade. No bits lost.
