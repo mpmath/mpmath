@@ -15,6 +15,7 @@ Exponentiation
 ..............
 
 .. autofunction:: mpmath.exp
+.. autofunction:: mpmath.exp2
 .. autofunction:: mpmath.power
 .. autofunction:: mpmath.expj
 .. autofunction:: mpmath.expjpi
@@ -27,6 +28,7 @@ Logarithms
 
 .. autofunction:: mpmath.log
 .. autofunction:: mpmath.ln
+.. autofunction:: mpmath.log2
 .. autofunction:: mpmath.log10
 .. autofunction:: mpmath.log1p(x)
 

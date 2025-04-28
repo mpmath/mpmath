@@ -360,6 +360,14 @@ def log10(ctx, x):
     return ctx.log(x, 10)
 
 @defun
+def log2(ctx, x):
+    return ctx.log(x, 2)
+
+@defun
+def exp2(ctx, x):
+    return ctx.power(2, x)
+
+@defun
 def fmod(ctx, x, y):
     return ctx.convert(x) % ctx.convert(y)
 

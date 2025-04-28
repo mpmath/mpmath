@@ -1661,6 +1661,15 @@ Computes the base-10 logarithm of `x`, `\log_{10}(x)`. ``log10(x)``
 is equivalent to ``log(x, 10)``.
 """
 
+log2 = r"""
+Computes the base-2 logarithm of `x`, `\log_{2}(x)`. ``log2(x)``
+is equivalent to ``log(x, 2)``.
+"""
+
+exp2 = """
+Computes 2 raised to the power `x`.
+"""
+
 fmod = r"""
 Converts `x` and `y` to mpmath numbers and returns `x \mod y`.
 For mpmath numbers, this is equivalent to ``x % y``.
