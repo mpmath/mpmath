@@ -3,6 +3,7 @@ import functools
 import inspect
 import math
 import sys
+import warnings
 
 from . import function_docs, libfp, libmp
 from .ctx_base import StandardBaseContext
@@ -87,8 +88,8 @@ class FPContext(StandardBaseContext):
 
     absmin = absmax = abs
 
-    def is_special(ctx, x):
-        return x - x != 0.0
+    def isspecial(ctx, x):
+        return not x or x - x != 0.0
 
     def isnan(ctx, x):
         return x != x
@@ -102,6 +103,8 @@ class FPContext(StandardBaseContext):
         return math.isfinite(x)
 
     def isnormal(ctx, x):
+        warnings.warn("the isnormal() method is deprecated",
+                      DeprecationWarning)
         if x:
             return x - x == 0.0
         return False
