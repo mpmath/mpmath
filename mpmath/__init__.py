@@ -75,6 +75,7 @@ multiplicity = mp.multiplicity
 isinf = mp.isinf
 isnan = mp.isnan
 isnormal = mp.isnormal
+isspecial = mp.isspecial
 isint = mp.isint
 isfinite = mp.isfinite
 almosteq = mp.almosteq

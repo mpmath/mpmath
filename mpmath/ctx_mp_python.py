@@ -1,6 +1,7 @@
 import inspect
 import numbers
 import sys
+import warnings
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
@@ -839,29 +840,8 @@ class PythonMPContext:
         return ctx.isinf(x)
 
     def isnormal(ctx, x):
-        """
-        Determine whether *x* is "normal" in the sense of floating-point
-        representation; that is, return *False* if *x* is zero, an
-        infinity or NaN; otherwise return *True*. By extension, a
-        complex number *x* is considered "normal" if its magnitude is
-        normal::
-
-            >>> from mpmath import isnormal, inf, nan, mpc
-            >>> isnormal(3)
-            True
-            >>> isnormal(0)
-            False
-            >>> isnormal(inf); isnormal(-inf); isnormal(nan)
-            False
-            False
-            False
-            >>> isnormal(0+0j)
-            False
-            >>> isnormal(0+3j)
-            True
-            >>> isnormal(mpc(2,nan))
-            False
-        """
+        warnings.warn("the isnormal() method is deprecated",
+                      DeprecationWarning)
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
                 return bool(to_man_exp(x._mpf_, signed=True)[0])
@@ -877,6 +857,46 @@ class PythonMPContext:
             return bool(x)
         x = ctx.convert(x)
         return ctx.isnormal(x)
+
+    def isspecial(ctx, x):
+        """
+        Determine whether *x* is a "special" in the sense of floating-point
+        representation; that is, return *True* if *x* is zero, an
+        infinity or NaN; otherwise return *False*.  By extension, a
+        complex number *x* is considered "special" if its magnitude is
+        special::
+
+            >>> from mpmath import isspecial, inf, nan, mpc
+            >>> isspecial(3)
+            False
+            >>> isspecial(0)
+            True
+            >>> isspecial(inf); isspecial(-inf); isspecial(nan)
+            True
+            True
+            True
+            >>> isspecial(0+0j)
+            True
+            >>> isspecial(0+3j)
+            False
+            >>> isspecial(mpc(2,nan))
+            True
+        """
+        if hasattr(x, "_mpf_"):
+            if ctx.isfinite(x):
+                return not bool(to_man_exp(x._mpf_, signed=True)[0])
+            return True
+        if hasattr(x, "_mpc_"):
+            re, im = x._mpc_
+            re_special = not bool(re[1])
+            im_special = not bool(im[1])
+            if re == fzero: return im_special
+            if im == fzero: return re_special
+            return re_special or im_special
+        if isinstance(x, int_types) or isinstance(x, MPQ):
+            return not bool(x)
+        x = ctx.convert(x)
+        return ctx.isspecial(x)
 
     def isint(ctx, x, gaussian=False):
         """

@@ -64,6 +64,7 @@ between the various parameters (:func:`~mpmath.qfrom`, :func:`~mpmath.mfrom`,
 
 from .functions import defun, defun_wrapped
 
+
 @defun_wrapped
 def eta(ctx, tau):
     r"""
@@ -469,7 +470,7 @@ def RF_calc(ctx, x, y, z, r):
     if y == z: return RC_calc(ctx, x, y, r)
     if x == z: return RC_calc(ctx, y, x, r)
     if x == y: return RC_calc(ctx, z, x, r)
-    if not (ctx.isnormal(x) and ctx.isnormal(y) and ctx.isnormal(z)):
+    if ctx.isspecial(x) or ctx.isspecial(y) and ctx.isspecial(z):
         if ctx.isnan(x) or ctx.isnan(y) or ctx.isnan(z):
             return x*y*z
         if ctx.isinf(x) or ctx.isinf(y) or ctx.isinf(z):
@@ -499,7 +500,7 @@ def RF_calc(ctx, x, y, z, r):
     return ctx.power(Am,-0.5) * (9240-924*E2+385*E2**2+660*E3-630*E2*E3)/9240
 
 def RC_calc(ctx, x, y, r, pv=True):
-    if not (ctx.isnormal(x) and ctx.isnormal(y)):
+    if ctx.isspecial(x) or ctx.isspecial(y):
         if ctx.isinf(x) or ctx.isinf(y):
             return 1/(x*y)
         if y == 0:
@@ -539,8 +540,8 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
     Carlson's algorithm is correct.
     With integration == 2, uses only integration.
     """
-    if not (ctx.isnormal(x) and ctx.isnormal(y) and \
-        ctx.isnormal(z) and ctx.isnormal(p)):
+    if (ctx.isspecial(x) or ctx.isspecial(y)
+            or ctx.isspecial(z) or ctx.isspecial(p)):
         if ctx.isnan(x) or ctx.isnan(y) or ctx.isnan(z) or ctx.isnan(p):
             return x*y*z
         if ctx.isinf(x) or ctx.isinf(y) or ctx.isinf(z) or ctx.isinf(p):
@@ -1087,7 +1088,7 @@ def ellipf(ctx, phi, m):
 
     """
     z = phi
-    if not (ctx.isnormal(z) and ctx.isnormal(m)):
+    if ctx.isspecial(z) or ctx.isspecial(m):
         if m == 0:
             return z + m
         if z == 0:
@@ -1252,7 +1253,7 @@ def ellipe(ctx, *args):
     else:
         phi, m = args
     z = phi
-    if not (ctx.isnormal(z) and ctx.isnormal(m)):
+    if ctx.isspecial(z) or ctx.isspecial(m):
         if m == 0:
             return z + m
         if z == 0:
@@ -1379,7 +1380,7 @@ def ellippi(ctx, *args):
         n, phi, m = args
         complete = False
         z = phi
-    if not (ctx.isnormal(n) and ctx.isnormal(z) and ctx.isnormal(m)):
+    if ctx.isspecial(n) or ctx.isspecial(z) or ctx.isspecial(m):
         if ctx.isnan(n) or ctx.isnan(z) or ctx.isnan(m):
             raise ValueError
         if complete:
