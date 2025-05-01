@@ -718,7 +718,8 @@ class LaplaceTransformInversionMethods:
 
         The methods also work for higher precision:
 
-        >>> mp.dps = 100; mp.pretty = True
+        >>> mp.dps = 100
+        >>> mp.pretty = True
         >>> nstr(ft(tt[0]),15),nstr(ft(tt[0])-invertlaplace(fp,tt[0],method='talbot'),15)
         ('0.000999000499833375', '-4.96868310693356e-105')
         >>> nstr(ft(tt[1]),15),nstr(ft(tt[1])-invertlaplace(fp,tt[1],method='talbot'),15)
@@ -732,7 +733,8 @@ class LaplaceTransformInversionMethods:
 
             f(t) = \mathrm{J}_0(t)
 
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.dps = 15
+        >>> mp.pretty = True
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
         >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='dehoog')
@@ -748,7 +750,8 @@ class LaplaceTransformInversionMethods:
 
             f(t) = -\gamma -\log t
 
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.dps = 15
+        >>> mp.pretty = True
         >>> fp = lambda p: log(p)/p
         >>> ft = lambda t: -euler-log(t)
         >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='stehfest')
@@ -881,7 +884,8 @@ class LaplaceTransformInversionMethods:
 
             f(t)=\frac{1}{3}\sinh 3t
 
-        >>> mp.dps = 15; mp.pretty = True
+        >>> mp.dps = 15
+        >>> mp.pretty = True
         >>> fp = lambda p: 1/(p*p-9)
         >>> ft = lambda t: sinh(3*t)/3
         >>> tt = [0.01,0.1,1.0,10.0]

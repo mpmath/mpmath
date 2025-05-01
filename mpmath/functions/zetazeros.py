@@ -350,7 +350,8 @@ def zetazero(ctx, n, info=False, round=True):
     The first few zeros::
 
         >>> from mpmath import mp, zetazero, chop, zeta, siegelz
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> zetazero(1)
         (0.5 + 14.13472514173469379045725j)
         >>> zetazero(2)

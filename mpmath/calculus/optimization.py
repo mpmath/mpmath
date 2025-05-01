@@ -751,7 +751,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
 
         >>> from mpmath import (diff, gamma, findroot, sin, zeta, exp, log,
         ...                     lambertw, mp, j)
-        >>> mp.dps = 30; mp.pretty = True
+        >>> mp.dps = 30
+        >>> mp.pretty = True
         >>> findroot(sin, 3)
         3.14159265358979323846264338328
 
@@ -788,11 +789,13 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         ...     return findroot(lambda w: w*exp(w) - x, log(1+x))
         ...
         >>> mp.dps = 15
-        >>> lambert(1); lambertw(1)
+        >>> lambert(1)
         0.567143290409784
+        >>> lambertw(1)
         0.567143290409784
-        >>> lambert(1000); lambert(1000)
+        >>> lambert(1000)
         5.2496028524016
+        >>> lambertw(1000)
         5.2496028524016
 
     Multidimensional functions are also supported::

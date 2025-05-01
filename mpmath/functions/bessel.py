@@ -993,18 +993,25 @@ def besseljzero(ctx, v, m, derivative=0):
     Initial zeros of the Bessel functions `J_0(z), J_1(z), J_2(z)`::
 
         >>> from mpmath import mp, besseljzero, mpf, gamma, nprod, inf, besselj
-        >>> mp.dps = 25; mp.pretty = True
-        >>> besseljzero(0,1); besseljzero(0,2); besseljzero(0,3)
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> besseljzero(0,1)
         2.404825557695772768621632
+        >>> besseljzero(0,2)
         5.520078110286310649596604
+        >>> besseljzero(0,3)
         8.653727912911012216954199
-        >>> besseljzero(1,1); besseljzero(1,2); besseljzero(1,3)
+        >>> besseljzero(1,1)
         3.831705970207512315614436
+        >>> besseljzero(1,2)
         7.01558666981561875353705
+        >>> besseljzero(1,3)
         10.17346813506272207718571
-        >>> besseljzero(2,1); besseljzero(2,2); besseljzero(2,3)
+        >>> besseljzero(2,1)
         5.135622301840682556301402
+        >>> besseljzero(2,2)
         8.417244140399864857783614
+        >>> besseljzero(2,3)
         11.61984117214905942709415
 
     Initial zeros of `J'_0(z), J'_1(z), J'_2(z)`::
@@ -1012,28 +1019,38 @@ def besseljzero(ctx, v, m, derivative=0):
         0.0
         3.831705970207512315614436
         7.01558666981561875353705
-        >>> besseljzero(1,1,1); besseljzero(1,2,1); besseljzero(1,3,1)
+        >>> besseljzero(1,1,1)
         1.84118378134065930264363
+        >>> besseljzero(1,2,1)
         5.331442773525032636884016
+        >>> besseljzero(1,3,1)
         8.536316366346285834358961
-        >>> besseljzero(2,1,1); besseljzero(2,2,1); besseljzero(2,3,1)
+        >>> besseljzero(2,1,1)
         3.054236928227140322755932
+        >>> besseljzero(2,2,1)
         6.706133194158459146634394
+        >>> besseljzero(2,3,1)
         9.969467823087595793179143
 
     Zeros with large index::
 
-        >>> besseljzero(0,100); besseljzero(0,1000); besseljzero(0,10000)
+        >>> besseljzero(0,100)
         313.3742660775278447196902
+        >>> besseljzero(0,1000)
         3140.807295225078628895545
+        >>> besseljzero(0,10000)
         31415.14114171350798533666
-        >>> besseljzero(5,100); besseljzero(5,1000); besseljzero(5,10000)
+        >>> besseljzero(5,100)
         321.1893195676003157339222
+        >>> besseljzero(5,1000)
         3148.657306813047523500494
+        >>> besseljzero(5,10000)
         31422.9947255486291798943
-        >>> besseljzero(0,100,1); besseljzero(0,1000,1); besseljzero(0,10000,1)
+        >>> besseljzero(0,100,1)
         311.8018681873704508125112
+        >>> besseljzero(0,1000,1)
         3139.236339643802482833973
+        >>> besseljzero(0,10000,1)
         31413.57032947022399485808
 
     Zeros of functions with large order::
@@ -1053,9 +1070,11 @@ def besseljzero(ctx, v, m, derivative=0):
 
     Zeros of functions with fractional order::
 
-        >>> besseljzero(0.5,1); besseljzero(1.5,1); besseljzero(2.25,4)
+        >>> besseljzero(0.5,1)
         3.141592653589793238462643
+        >>> besseljzero(1.5,1)
         4.493409457909064175307881
+        >>> besseljzero(2.25,4)
         15.15657692957458622921634
 
     Both `J_{\nu}(z)` and `J'_{\nu}(z)` can be expressed as infinite
@@ -1100,48 +1119,67 @@ def besselyzero(ctx, v, m, derivative=0):
     Initial zeros of the Bessel functions `Y_0(z), Y_1(z), Y_2(z)`::
 
         >>> from mpmath import mp, besselyzero
-        >>> mp.dps = 25; mp.pretty = True
-        >>> besselyzero(0,1); besselyzero(0,2); besselyzero(0,3)
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> besselyzero(0,1)
         0.8935769662791675215848871
+        >>> besselyzero(0,2)
         3.957678419314857868375677
+        >>> besselyzero(0,3)
         7.086051060301772697623625
-        >>> besselyzero(1,1); besselyzero(1,2); besselyzero(1,3)
+        >>> besselyzero(1,1)
         2.197141326031017035149034
+        >>> besselyzero(1,2)
         5.429681040794135132772005
+        >>> besselyzero(1,3)
         8.596005868331168926429606
-        >>> besselyzero(2,1); besselyzero(2,2); besselyzero(2,3)
+        >>> besselyzero(2,1)
         3.384241767149593472701426
+        >>> besselyzero(2,2)
         6.793807513268267538291167
+        >>> besselyzero(2,3)
         10.02347797936003797850539
 
     Initial zeros of `Y'_0(z), Y'_1(z), Y'_2(z)`::
 
-        >>> besselyzero(0,1,1); besselyzero(0,2,1); besselyzero(0,3,1)
+        >>> besselyzero(0,1,1)
         2.197141326031017035149034
+        >>> besselyzero(0,2,1)
         5.429681040794135132772005
+        >>> besselyzero(0,3,1)
         8.596005868331168926429606
-        >>> besselyzero(1,1,1); besselyzero(1,2,1); besselyzero(1,3,1)
+        >>> besselyzero(1,1,1)
         3.683022856585177699898967
+        >>> besselyzero(1,2,1)
         6.941499953654175655751944
+        >>> besselyzero(1,3,1)
         10.12340465543661307978775
-        >>> besselyzero(2,1,1); besselyzero(2,2,1); besselyzero(2,3,1)
+        >>> besselyzero(2,1,1)
         5.002582931446063945200176
+        >>> besselyzero(2,2,1)
         8.350724701413079526349714
+        >>> besselyzero(2,3,1)
         11.57419546521764654624265
 
     Zeros with large index::
 
-        >>> besselyzero(0,100); besselyzero(0,1000); besselyzero(0,10000)
+        >>> besselyzero(0,100)
         311.8034717601871549333419
+        >>> besselyzero(0,1000)
         3139.236498918198006794026
+        >>> besselyzero(0,10000)
         31413.57034538691205229188
-        >>> besselyzero(5,100); besselyzero(5,1000); besselyzero(5,10000)
+        >>> besselyzero(5,100)
         319.6183338562782156235062
+        >>> besselyzero(5,1000)
         3147.086508524556404473186
+        >>> besselyzero(5,10000)
         31421.42392920214673402828
-        >>> besselyzero(0,100,1); besselyzero(0,1000,1); besselyzero(0,10000,1)
+        >>> besselyzero(0,100,1)
         313.3726705426359345050449
+        >>> besselyzero(0,1000,1)
         3140.807136030340213610065
+        >>> besselyzero(0,10000,1)
         31415.14112579761578220175
 
     Zeros of functions with large order::
@@ -1161,9 +1199,11 @@ def besselyzero(ctx, v, m, derivative=0):
 
     Zeros of functions with fractional order::
 
-        >>> besselyzero(0.5,1); besselyzero(1.5,1); besselyzero(2.25,4)
+        >>> besselyzero(0.5,1)
         1.570796326794896619231322
+        >>> besselyzero(1.5,1)
         2.798386045783887136720249
+        >>> besselyzero(2.25,4)
         13.56721208770735123376018
 
     """

@@ -1087,18 +1087,23 @@ def lerchphi(ctx, z, s, a):
 
         >>> from mpmath import (mp, lerchphi, catalan, diff, zeta, pi, log,
         ...                     atanh, sqrt, j, polylog)
-        >>> mp.dps = 25; mp.pretty = True
-        >>> lerchphi(-1,2,0.5); 4*catalan
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> lerchphi(-1,2,0.5)
         3.663862376708876060218414
+        >>> 4*catalan
         3.663862376708876060218414
-        >>> diff(lerchphi, (-1,-2,1), (0,1,0)); 7*zeta(3)/(4*pi**2)
+        >>> diff(lerchphi, (-1,-2,1), (0,1,0))
         0.2131391994087528954617607
+        >>> 7*zeta(3)/(4*pi**2)
         0.2131391994087528954617607
-        >>> lerchphi(-4,1,1); log(5)/4
+        >>> lerchphi(-4,1,1)
         0.4023594781085250936501898
+        >>> log(5)/4
         0.4023594781085250936501898
-        >>> lerchphi(-3+2j,1,0.5); 2*atanh(sqrt(-3+2j))/sqrt(-3+2j)
+        >>> lerchphi(-3+2j,1,0.5)
         (1.142423447120257137774002 + 0.2118232380980201350495795j)
+        >>> 2*atanh(sqrt(-3+2j))/sqrt(-3+2j)
         (1.142423447120257137774002 + 0.2118232380980201350495795j)
 
     Evaluation works for complex arguments and `|z| \ge 1`::

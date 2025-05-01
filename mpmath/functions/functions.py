@@ -628,7 +628,8 @@ def mangoldt(ctx, n):
     **Examples**
 
         >>> from mpmath import mp, mangoldt, fsum
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> [mangoldt(n) for n in range(-2,3)]
         [0.0, 0.0, 0.0, 0.0, 0.6931471805599453094172321]
         >>> mangoldt(6)
