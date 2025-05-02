@@ -30,11 +30,13 @@ def monitor(f, input='print', output='print'):
         mpf('3.1415926535897932')
         >>> len(input)  # Count number of evaluations
         9
-        >>> print(input[3]); print(output[3])
+        >>> print(input[3])
         ((mpf('3.1415076583334066'),), {})
+        >>> print(output[3])
         8.49952562843408e-5
-        >>> print(input[4]); print(output[4])
+        >>> print(input[4])
         ((mpf('3.1415928201669122'),), {})
+        >>> print(output[4])
         -1.66577118985331e-7
 
     """

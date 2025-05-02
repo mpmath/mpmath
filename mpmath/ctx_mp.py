@@ -461,14 +461,18 @@ class MPContext(BaseMPContext, StandardBaseContext):
         cancellation, but is fooled by too severe cancellation::
 
             >>> x = 1e-10
-            >>> exp(x)-1; expm1(x); autoprec(lambda t: exp(t)-1)(x)
+            >>> exp(x)-1
             1.00000008274037e-10
+            >>> expm1(x)
             1.00000000005e-10
+            >>> autoprec(lambda t: exp(t)-1)(x)
             1.00000000005e-10
             >>> x = 1e-50
-            >>> exp(x)-1; expm1(x); autoprec(lambda t: exp(t)-1)(x)
+            >>> exp(x)-1
             0.0
+            >>> expm1(x)
             1.0e-50
+            >>> autoprec(lambda t: exp(t)-1)(x)
             0.0
 
         With *catch*, an exception or list of exceptions to intercept
@@ -1106,28 +1110,34 @@ maxterms, or set zeroprec."""
 
             >>> from mpmath import nint_distance, mpf, mpc
             >>> n, d = nint_distance(5)
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -inf
             >>> n, d = nint_distance(mpf(5))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -inf
             >>> n, d = nint_distance(mpf(5.00000001))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -26
             >>> n, d = nint_distance(mpf(4.99999999))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -26
             >>> n, d = nint_distance(mpc(5,10))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             4
             >>> n, d = nint_distance(mpc(5,0.000001))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -19
 
         """
@@ -1230,12 +1240,14 @@ maxterms, or set zeroprec."""
             >>> from mpmath import fraction, mpf, mp
             >>> a = fraction(1,100)
             >>> b = mpf(1)/100
-            >>> print(a); print(b)
+            >>> print(a)
             0.01
+            >>> print(b)
             0.01
             >>> mp.dps = 30
-            >>> print(a); print(b)      # a will be accurate
+            >>> print(a)      # a will be accurate
             0.01
+            >>> print(b)
             0.0100000000000000002081668171172
         """
         return ctx.constant(lambda prec, rnd: from_rational(p, q, prec, rnd),

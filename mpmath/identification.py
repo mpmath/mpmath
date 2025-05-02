@@ -40,9 +40,11 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         [22, 7]
         >>> pslq([-1, pi], tol=0.001)
         [355, 113]
-        >>> mpf(22)/7; mpf(355)/113; +pi
+        >>> mpf(22)/7
         3.14285714285714
+        >>> mpf(355)/113
         3.14159292035398
+        >>> +pi
         3.14159265358979
 
     Pi is not a rational number with denominator less than 1000::
@@ -54,8 +56,9 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     by at least one rational number with denominator less than `10^{12}`::
 
         >>> p, q = pslq([-1, pi], maxcoeff=10**12)
-        >>> print(p); print(q)
+        >>> print(p)
         238410049439
+        >>> print(q)
         75888275702
         >>> mpf(p)/q
         3.14159265358979

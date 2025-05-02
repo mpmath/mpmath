@@ -871,9 +871,11 @@ class PythonMPContext:
             False
             >>> isspecial(0)
             True
-            >>> isspecial(inf); isspecial(-inf); isspecial(nan)
+            >>> isspecial(inf)
             True
+            >>> isspecial(-inf)
             True
+            >>> isspecial(nan)
             True
             >>> isspecial(0+0j)
             True

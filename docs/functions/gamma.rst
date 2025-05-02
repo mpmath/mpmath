@@ -13,7 +13,8 @@ Results are numerical approximations, so to compute *exact* values a high
 enough precision must be set manually::
 
     >>> from mpmath import mp, fac
-    >>> mp.dps = 15; mp.pretty = True
+    >>> mp.dps = 15
+    >>> mp.pretty = True
     >>> fac(100)
     9.33262154439442e+157
     >>> print(int(_))    # most digits are wrong

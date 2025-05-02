@@ -414,7 +414,8 @@ class StandardBaseContext(Context,
         the principal value of `\exp(y \log(x))`::
 
             >>> from mpmath import mp, power
-            >>> mp.dps = 30; mp.pretty = True
+            >>> mp.dps = 30
+            >>> mp.pretty = True
             >>> power(2, 0.5)
             1.41421356237309504880168872421
 

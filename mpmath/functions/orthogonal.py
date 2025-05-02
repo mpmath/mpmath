@@ -88,14 +88,19 @@ def pcfd(ctx, n, z, **kwargs):
     **Examples**
 
         >>> from mpmath import mp, pcfd, mpf, chop, diff, taylor
-        >>> mp.dps = 25; mp.pretty = True
-        >>> pcfd(0,0); pcfd(1,0); pcfd(2,0); pcfd(3,0)
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> pcfd(0,0)
         1.0
+        >>> pcfd(1,0)
         0.0
+        >>> pcfd(2,0)
         -1.0
+        >>> pcfd(3,0)
         0.0
-        >>> pcfd(4,0); pcfd(-3,0)
+        >>> pcfd(4,0)
         3.0
+        >>> pcfd(-3,0)
         0.6266570686577501256039413
         >>> pcfd('1/2', 2+3j)
         (-5.363331161232920734849056 - 3.858877821790010714163487j)
@@ -146,7 +151,8 @@ def pcfu(ctx, a, z, **kwargs):
     Connection to other functions::
 
         >>> from mpmath import mp, mpf, pcfu, sqrt, pi, exp, erfc
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> z = mpf(3)
         >>> pcfu(0.5,z)
         0.03210358129311151450551963
@@ -180,7 +186,8 @@ def pcfv(ctx, a, z, **kwargs):
     Wronskian relation between `U` and `V`::
 
         >>> from mpmath import mp, pcfu, diff, pcfv, sqrt, pi, chop
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> a, z = 2, 3
         >>> pcfu(a,z)*diff(pcfv,(a,z),(0,1))-diff(pcfu,(a,z),(0,1))*pcfv(a,z)
         0.7978845608028653558798921
@@ -248,7 +255,8 @@ def pcfw(ctx, a, z, **kwargs):
     Value at the origin::
 
         >>> from mpmath import mp, mpf, pcfw, power, gamma, sqrt, diff
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> a = mpf(0.25)
         >>> pcfw(a,0)
         0.9722833245718180765617104
