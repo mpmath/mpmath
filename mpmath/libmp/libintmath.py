@@ -8,6 +8,7 @@ here from settings.py
 
 import math
 import sys
+import warnings
 from functools import lru_cache
 
 from .backend import MPZ, MPZ_ONE, MPZ_ZERO, gmpy
@@ -71,6 +72,8 @@ def trailing(n):
 
 def bitcount(n):
     """Calculate bit size of abs(n)."""
+    warnings.warn("bitcount function is deprecated",
+                  DeprecationWarning)
     return MPZ(n).bit_length()
 
 if gmpy and hasattr(MPZ, 'bit_scan1'):
