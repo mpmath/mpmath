@@ -98,8 +98,12 @@ del ip
             source_transformers.append(wrap_float_literals)
 
         try:
-            from _pyrepl.console import \
-                InteractiveColoredConsole as InteractiveConsole
+            from _pyrepl.main import CAN_USE_PYREPL
+            if CAN_USE_PYREPL:  # pragma: no cover
+                from _pyrepl.console import \
+                    InteractiveColoredConsole as InteractiveConsole
+            else:
+                raise ImportError
         except ImportError:  # pragma: no cover
             from code import InteractiveConsole
 
@@ -157,9 +161,13 @@ del ip
             c.push(l)
 
         try:
-            from _pyrepl.simple_interact import \
-                run_multiline_interactive_console
-            run_multiline_interactive_console(c)
+            from _pyrepl.main import CAN_USE_PYREPL
+            if CAN_USE_PYREPL:  # pragma: no cover
+                from _pyrepl.simple_interact import \
+                    run_multiline_interactive_console
+                run_multiline_interactive_console(c)
+            else:
+                raise ImportError
         except Exception:  # pragma: no cover
             c.interact('', '')
 
