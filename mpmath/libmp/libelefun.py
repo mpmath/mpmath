@@ -694,9 +694,21 @@ def mpf_log(x, prec, rnd=round_fast):
             return mpf_perturb(t, tsign, prec, rnd)
         else:
             wp += cancellation
-        # TODO: if close enough to 1, we could use Taylor series
-        # even in the AGM precision range, since the Taylor series
-        # converges rapidly
+            
+        # if close enough to 1, use Taylor series
+        # since Taylor series converges rapidly
+        if tsign:
+            tfixed = (MPZ_ONE << wp) - to_fixed(x,wp)
+        else:
+            tfixed = to_fixed(x, wp) - (MPZ_ONE << wp)
+        threshold = (1 << wp) // 1000
+        if (tfixed <= threshold):
+            s = log_taylor(to_fixed(x, wp), wp)
+            sb = s.bit_length()
+            rman = s << (sb)
+            rexp = -(sb+wp)
+            return from_man_exp(rman, rexp, prec, rnd)
+        
     #------------------------------------------------------------------
     # Another special case:
     # n*log(2) is a good enough approximation
