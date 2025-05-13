@@ -694,7 +694,7 @@ def mpf_log(x, prec, rnd=round_fast):
             return mpf_perturb(t, tsign, prec, rnd)
         else:
             wp += cancellation
-            
+
         # if close enough to 1, use Taylor series
         # since Taylor series converges rapidly
         if tsign:
@@ -708,7 +708,7 @@ def mpf_log(x, prec, rnd=round_fast):
             rman = s << (sb)
             rexp = -(sb+wp)
             return from_man_exp(rman, rexp, prec, rnd)
-        
+
     #------------------------------------------------------------------
     # Another special case:
     # n*log(2) is a good enough approximation
