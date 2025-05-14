@@ -172,13 +172,9 @@ class FixedTalbot(InverseLaplaceTransform):
 
         **References**
 
-        1. Abate, J., P. Valko (2004). Multi-precision Laplace
-           transform inversion. *International Journal for Numerical
-           Methods in Engineering* 60:979-993,
-           http://dx.doi.org/10.1002/nme.995
-        2. Talbot, A. (1979). The accurate numerical inversion of
-           Laplace transforms. *IMA Journal of Applied Mathematics*
-           23(1):97, http://dx.doi.org/10.1093/imamat/23.1.97
+        1. [Abate]_
+        2. [Talbot]_
+
         """
 
         # required
@@ -325,10 +321,8 @@ class Stehfest(InverseLaplaceTransform):
 
         **References**
 
-        1. Widder, D. (1941). *The Laplace Transform*. Princeton.
-        2. Stehfest, H. (1970). Algorithm 368: numerical inversion of
-           Laplace transforms. *Communications of the ACM* 13(1):47-49,
-           http://dx.doi.org/10.1145/361953.361969
+        1. [Widder]_
+        2. [Stehfest]_
 
         """
 
@@ -456,12 +450,8 @@ class deHoog(InverseLaplaceTransform):
 
         **References**
 
-        1. Davies, B. (2005). *Integral Transforms and their
-           Applications*, Third Edition. Springer.
-        2. de Hoog, F., J. Knight, A. Stokes (1982). An improved
-           method for numerical inversion of Laplace transforms. *SIAM
-           Journal of Scientific and Statistical Computing* 3:357-366,
-           http://dx.doi.org/10.1137/0903022
+        1. [Davies]_
+        2. [Hoog]_
 
         """
 
@@ -577,9 +567,7 @@ class Cohen(InverseLaplaceTransform):
 
         **References**
 
-        1. P. Glasserman, J. Ruiz-Mata (2006). Computing the credit loss
-        distribution in the Gaussian copula model: a comparison of methods.
-        *Journal of Credit Risk* 2(4):33-66, 10.21314/JCR.2006.057
+        1. [Glasserman]_
 
         """
         self.t = self.ctx.convert(t)
@@ -901,27 +889,15 @@ class LaplaceTransformInversionMethods:
         **References**
 
         1. [DLMF]_ section 1.14 (http://dlmf.nist.gov/1.14T4)
-        2. Cohen, A.M. (2007). Numerical Methods for Laplace Transform
-           Inversion, Springer.
-        3. Duffy, D.G. (1998). Advanced Engineering Mathematics, CRC Press.
+        2. [Cohen]_
+        3. [Duffy98]_
 
         **Numerical Inverse Laplace Transform Reviews**
 
-        1. Bellman, R., R.E. Kalaba, J.A. Lockett (1966). *Numerical
-           inversion of the Laplace transform: Applications to Biology,
-           Economics, Engineering, and Physics*. Elsevier.
-        2. Davies, B., B. Martin (1979). Numerical inversion of the
-           Laplace transform: a survey and comparison of methods. *Journal
-           of Computational Physics* 33:1-32,
-           http://dx.doi.org/10.1016/0021-9991(79)90025-1
-        3. Duffy, D.G. (1993). On the numerical inversion of Laplace
-           transforms: Comparison of three new methods on characteristic
-           problems from applications. *ACM Transactions on Mathematical
-           Software* 19(3):333-359, http://dx.doi.org/10.1145/155743.155788
-        4. Kuhlman, K.L., (2013). Review of Inverse Laplace Transform
-           Algorithms for Laplace-Space Numerical Approaches, *Numerical
-           Algorithms*, 63(2):339-355.
-           http://dx.doi.org/10.1007/s11075-012-9625-3
+        1. [Bellman]_
+        2. [Davies79]_
+        3. [Duffy93]_
+        4. [Kuhlman]_
 
         """
 

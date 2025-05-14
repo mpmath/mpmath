@@ -242,9 +242,8 @@ of two, 2**p, the logarithm becomes particularly easy to calculate.[1]
 We use the formulation of Algorithm 3.9 in [2] to make the summation
 more efficient.
 
-Reference:
-[1] Xavier Gourdon & Pascal Sebah, The Euler constant: gamma
-http://numbers.computation.free.fr/Constants/Gamma/gamma.pdf
+References:
+[1] [Gourdon]_
 
 [2] [BorweinBailey]_
 """
@@ -532,13 +531,11 @@ def bernfrac(n, plus=False):
 
     **References**
 
-    1. MathWorld, von Staudt-Clausen Theorem:
-       http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html
+    1. [Weisstein]_ http://mathworld.wolfram.com/vonStaudt-ClausenTheorem.html
 
-    2. The Bernoulli Number Page:
-       http://www.bernoulli.org/
+    2. [Bernoulli]_
 
-    3. https://en.wikipedia.org/wiki/Bernoulli_number
+    3. [Wikipedia]_ https://en.wikipedia.org/wiki/Bernoulli_number
 
     """
     n = int(n)
@@ -866,10 +863,9 @@ So for p bits, we should choose n > (p + 2.28*|b|) / 2.54.
 References:
 -----------
 
-Peter Borwein, "An Efficient Algorithm for the Riemann Zeta Function"
-http://www.cecm.sfu.ca/personal/pborwein/PAPERS/P117.ps
+* [BorweinZeta]_
 
-http://en.wikipedia.org/wiki/Dirichlet_eta_function
+* [Wikipedia]_ http://en.wikipedia.org/wiki/Dirichlet_eta_function
 """
 
 borwein_cache = {}
