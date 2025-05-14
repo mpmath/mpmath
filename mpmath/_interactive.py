@@ -1,5 +1,6 @@
 import ast
 import io
+import re
 import tokenize
 
 
@@ -58,3 +59,32 @@ def wrap_float_literals(lines):
     ast.fix_missing_locations(tree)
     source = ast.unparse(tree)
     return source.splitlines(keepends=True)
+
+
+_HEXFLT_MATCHER = re.compile(r"""
+    (?: [^"' ]|^)[ ]*(?P<hexflt>
+         0x
+         [0-9a-z]+
+         (?: \.[0-9a-z]*)?
+         p(?:[+-])?[0-9]+
+     )
+""", re.VERBOSE | re.IGNORECASE)
+_BINFLT_MATCHER = re.compile(r"""
+    (?: [^"' ]|^)[ ]*(?P<binflt>
+         0b
+         [01]+
+         (?: \.[01]*)?
+         p(?:[+-])?[0-9]+
+     )
+""", re.VERBOSE | re.IGNORECASE)
+
+
+def wrap_hexbinfloats(lines):
+    new_lines = []
+    for line in lines:
+        for r in _HEXFLT_MATCHER.findall(line):
+            line = line.replace(r, 'mpf("' + r + '", base=16)')
+        for r in _BINFLT_MATCHER.findall(line):
+            line = line.replace(r, 'mpf("' + r + '", base=2)')
+        new_lines.append(line)
+    return new_lines

@@ -16,7 +16,8 @@ import sys
 import tokenize
 
 from mpmath import __version__
-from mpmath._interactive import IntegerDivisionWrapper, wrap_float_literals
+from mpmath._interactive import (IntegerDivisionWrapper, wrap_float_literals,
+                                 wrap_hexbinfloats)
 
 
 __all__ = ()
@@ -80,8 +81,9 @@ def main():
             shell.run_cell(l, silent=True)
         if not args.no_wrap_floats:
             source = """
-from mpmath._interactive import wrap_float_literals
+from mpmath._interactive import wrap_float_literals, wrap_hexbinfloats
 ip = get_ipython()
+ip.input_transformers_post.append(wrap_float_literals)
 ip.input_transformers_post.append(wrap_float_literals)
 del ip
 """
@@ -95,6 +97,7 @@ del ip
         if not args.no_wrap_division:
             ast_transformers.append(IntegerDivisionWrapper())
         if not args.no_wrap_floats:
+            source_transformers.append(wrap_hexbinfloats)
             source_transformers.append(wrap_float_literals)
 
         try:

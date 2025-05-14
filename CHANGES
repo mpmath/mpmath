@@ -25,8 +25,8 @@ Features:
 * Support pickling for matrices and mpi, see #761 (Sergey B Kirpichev)
 * Support matrix.__array__() dunder method, see #767 (Sergey B Kirpichev)
 * Support more number syntaxes, see #778 (Sergey B Kirpichev)
-* Run mpmath as a module for interactive work, see #773, #923, #931, #936 and
-  #939 (Sergey B Kirpichev)
+* Run mpmath as a module for interactive work, see #773, #923, #931, #936,
+  #939 and #954 (Sergey B Kirpichev)
 * Add signed option to to_man_exp(), see #783 (Sergey B Kirpichev)
 * Add fp.hypot, see #798 (Sergey B Kirpichev)
 * Support inf/nan's in ctx.almosteq(), #802 (Sergey B Kirpichev)
