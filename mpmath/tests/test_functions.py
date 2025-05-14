@@ -209,6 +209,10 @@ def test_log():
     assert (log(-1j-1e-8).real*10**16).ae(0.5)
     assert (log(1+1e-40j).real*10**80).ae(0.5)
     assert (log(1j+1e-40).real*10**80).ae(0.5)
+    # Taylor series
+    assert (log(0.99999)).ae(-1.0000050000287824e-5)
+    assert (log(1.00001)).ae(9.9999500003988414e-6)
+
     # Huge
     assert log(ldexp(1.234,10**20)).ae(log(2)*1e20)
     assert log(ldexp(1.234,10**200)).ae(log(2)*1e200)
