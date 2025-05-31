@@ -121,7 +121,7 @@ def separate_zeros_in_block(ctx, zero_number_block, T, V, limitloop=None,
                 f = lambda x: ctx.rs_z(x,derivative=1)
                 t0=T[kMax-1]
                 t1 = T[kMax]
-                t=ctx.findroot(f, (t0,t1), solver ='illinois', verify=False)
+                t=ctx.findroot(f, (t0,t1), solver ='illinois')
                 v = ctx.siegelz(t)
                 if (t0<t) and (t<t1) and (v*V[kMax]<0):
                     T.insert(kMax,t)
