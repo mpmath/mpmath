@@ -827,7 +827,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     converge slowly. Consider this example::
 
         >>> f = lambda x: (x - 1)**99
-        >>> findroot(f, 0.9, verify=False)
+        >>> findroot(f, 0.9)
         0.918073542444929
 
     Even for a very close starting point the secant method converges very
