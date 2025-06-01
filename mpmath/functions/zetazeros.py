@@ -121,7 +121,7 @@ def separate_zeros_in_block(ctx, zero_number_block, T, V, limitloop=None,
                 f = lambda x: ctx.rs_z(x,derivative=1)
                 t0=T[kMax-1]
                 t1 = T[kMax]
-                t=ctx.findroot(f,  (t0,t1), solver ='illinois',verify=False, verbose=False)
+                t=ctx.findroot(f, (t0,t1), solver ='illinois')
                 v = ctx.siegelz(t)
                 if (t0<t) and (t<t1) and (v*V[kMax]<0):
                     T.insert(kMax,t)
@@ -159,7 +159,7 @@ def separate_my_zero(ctx, my_zero_number, zero_number_block, T, V, prec):
         index +=1
         precs = [precs[0] // 2 +3+2*index] + precs
     ctx.prec = precs[0] + guard
-    r = ctx.findroot(lambda x:ctx.siegelz(x), (t0,t1), solver ='illinois', verbose=False)
+    r = ctx.findroot(ctx.siegelz, (t0,t1), solver ='illinois')
     #print "first step at", ctx.dps, "digits"
     z=ctx.mpc(0.5,r)
     for prec in precs[1:]:
