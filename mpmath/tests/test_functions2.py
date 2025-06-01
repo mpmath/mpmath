@@ -617,10 +617,7 @@ def test_hyper_u():
     assert hyperu(2,6,pi).ae(0.55804439825913399130)
     assert (hyperu((3,2),8,100+201j)*10**4).ae(-0.3797318333856738798 - 2.9974928453561707782j)
     assert (hyperu((5,2),(-1,2),-5000)*10**10).ae(-5.6681877926881664678j)
-    # XXX: fails because of undetected cancellation in low level series code
-    # Alternatively: could use asymptotic series here, if convergence test
-    # tweaked back to recognize this one
-    #assert (hyperu((5,2),(-1,2),-500)*10**7).ae(-1.82526906001593252847j)
+    assert (hyperu((5,2),(-1,2),-500)*10**7).ae(-1.82526906001593252847j)
 
 def test_hyper_2f0():
     assert hyper([1,2],[],3) == hyp2f0(1,2,3)
