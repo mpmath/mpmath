@@ -288,11 +288,11 @@ def test_arithmetic_functions():
                 assert fneg(z1) == -(+z1)
 
 def test_exact_integer_arithmetic():
-    # XXX: re-fix this so that all operations are tested with all rounding modes
     random.seed(0)
     for prec in [6, 10, 25, 40, 100, 250, 725]:
         for rounding in ['d', 'u', 'f', 'c', 'n']:
             mp.dps = prec
+            mp.rounding = rounding
             M = 10**(prec-2)
             M2 = 10**(prec//2-2)
             for i in range(10):
@@ -665,3 +665,13 @@ def test_round_bulk(x, n):
             return
         assert nstr(mr, n=14, base=16, strip_zeros=False,
                     show_zero_exponent=True, binary_exp=True) == xr.hex()
+
+
+def test_rounding_prop():
+    assert mp.rounding == 'n'
+    assert mp.sin(1) == mpf('0x1.aed548f090ceep-1')
+    mp.rounding = 'u'
+    assert mp.rounding == 'u'
+    assert mp.sin(1) == mpf('0x1.aed548f090cefp-1')
+    with pytest.raises(ValueError):
+        mp.rounding = 'x'
