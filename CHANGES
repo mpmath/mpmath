@@ -70,7 +70,8 @@ Compatibility:
 * Drop to_pickable()/from_pickable() helpers, see #667 and #769 (Sergey B
   Kirpichev)
 * Direct access to _mpf_ tuples now deprecated, please use from/to_man_exp()
-  functions, see #783 (Sergey B Kirpichev)
+  functions and special constants (finf, fninf and fnan), see
+  #783 (Sergey B Kirpichev)
 * Removed sage backend, see #732 (Sergey B Kirpichev)
 * Drop MPMATH_STRICT environment variable, see #759 (Sergey B Kirpichev)
 * Deprecate current (descending) order of coefficients in polyval(), etc, see
