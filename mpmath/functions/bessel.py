@@ -909,7 +909,7 @@ def generalized_bisection(ctx,f,a,b,n):
         N = N*2
 
 def find_in_interval(ctx, f, ab):
-    return ctx.findroot(f, ab, solver='illinois', verify=False)
+    return ctx.findroot(f, ab, solver='illinois')
 
 def bessel_zero(ctx, kind, prime, v, m, isoltol=0.01, _interval_cache={}):
     prec = ctx.prec

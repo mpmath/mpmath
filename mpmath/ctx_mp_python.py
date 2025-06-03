@@ -130,13 +130,14 @@ class _mpf(mpnumeric):
     def __reduce__(self): return _make_mpf, (self._mpf_,)
 
     def __repr__(s):
+        rounding = s.context._rounding
         if s.context.pretty:
             ndigits = (s.context._repr_digits
                        if s.context._pretty_repr_dps else s.context._str_digits)
-            return to_str(s._mpf_, ndigits)
-        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits)
+            return to_str(s._mpf_, ndigits, rounding=rounding)
+        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits, rounding=rounding)
 
-    def __str__(s): return to_str(s._mpf_, s.context._str_digits)
+    def __str__(s): return to_str(s._mpf_, s.context._str_digits, rounding=s.context._rounding)
     def __hash__(s): return mpf_hash(s._mpf_)
     def __int__(s): return int(to_int(s._mpf_))
     def __float__(s): return to_float(s._mpf_, rnd=s.context._prec_rounding[1])
@@ -730,6 +731,7 @@ class PythonMPContext:
 
     def default(ctx):
         ctx._prec = ctx._prec_rounding[0] = sys.float_info.mant_dig
+        ctx._rounding = ctx._prec_rounding[1]
         ctx._dps = sys.float_info.dig
         ctx.trap_complex = False
 
@@ -741,8 +743,16 @@ class PythonMPContext:
         ctx._prec = ctx._prec_rounding[0] = dps_to_prec(n)
         ctx._dps = max(1, int(n))
 
+    def _set_rounding(ctx, r):
+        try:
+            ctx._prec_rounding[1] = ctx._parse_prec({'rounding': r})[1]
+            ctx._rounding = ctx._prec_rounding[1]
+        except KeyError:
+            raise ValueError('invalid rounding mode')
+
     prec = property(lambda ctx: ctx._prec, _set_prec)
     dps = property(lambda ctx: ctx._dps, _set_dps)
+    rounding = property(lambda ctx: ctx._rounding, _set_rounding)
 
     def _set_pretty_dps(ctx, v):
         ctx._pretty_repr_dps = True if v == 'repr' else False
