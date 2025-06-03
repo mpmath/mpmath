@@ -20,10 +20,8 @@ def test_nstr():
 [  0.1909  0.6562     0.2057]
 [-0.02992  0.2057  6.445e-21]'''
     # Check that kwargs works properly for mpc
-    assert nstr(mpc(1.23e-4+4.56e-4j)) == \
-    '''(0.000123 + 0.000456j)'''
-    assert nstr(mpc(1.23e-4+4.56e-4j), min_fixed=-4) == \
-    '''(1.23e-4 + 4.56e-4j)'''
+    assert nstr(mpc(1.23e-4+4.56e-4j)) == '(0.000123 + 0.000456j)'
+    assert nstr(mpc(1.23e-4+4.56e-4j), min_fixed=-4) == '(1.23e-4 + 4.56e-4j)'
 
 def test_matrix_repr():
     assert repr(A1) == \
