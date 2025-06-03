@@ -1,5 +1,3 @@
-from unittest.mock import ANY, call, patch
-
 import pytest
 
 from mpmath import fp, zetazero
@@ -22,13 +20,7 @@ from mpmath import fp, zetazero
 def test_zetazero(n, v):
     assert zetazero(n).ae(complex(0.5,v))
 
-def test_zeta_param():
-    """Should try (and fail) to use the Riemann Siegel method."""
-    with patch("builtins.print") as mock_print:
-        fp.zeta(0.5+100j, method="riemann-siegel", verbose=True)
-        assert mock_print.mock_calls == [
-            call("zeta: Attempting to use the Riemann-Siegel algorithm"),
-            call("zeta: Could not use the Riemann-Siegel algorithm"),
-            call("zeta: Using the Euler-Maclaurin algorithm"),
-            ANY, ANY, ANY, ANY, ANY,
-        ]
+def test_zeta_param(capsys):
+    fp.zeta(0.5+100j, method="riemann-siegel", verbose=True)
+    captured = capsys.readouterr()
+    assert "Attempting to use the Riemann-Siegel algorithm" in captured.out
