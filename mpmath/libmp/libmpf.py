@@ -267,7 +267,9 @@ def to_int(s, rnd=round_fast):
     input is inf/nan, an exception is raised."""
     sign, man, exp, bc = s
     if (not man) and exp:
-        raise ValueError("cannot convert inf or nan to int")
+        if s == fnan:
+            raise ValueError("cannot convert nan to int")
+        raise OverflowError("cannot convert infinity to int")
     if exp >= 0:
         if sign:
             return (-man) << exp
