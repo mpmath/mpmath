@@ -1,6 +1,6 @@
 import pytest
 
-from mpmath import zetazero
+from mpmath import fp, zetazero
 
 
 @pytest.mark.parametrize("n,v",
@@ -19,3 +19,8 @@ from mpmath import zetazero
      ])
 def test_zetazero(n, v):
     assert zetazero(n).ae(complex(0.5,v))
+
+def test_zeta_param(capsys):
+    fp.zeta(0.5+100j, method="riemann-siegel", verbose=True)
+    captured = capsys.readouterr()
+    assert "Attempting to use the Riemann-Siegel algorithm" in captured.out

@@ -151,6 +151,7 @@ Bug fixes:
   Kirpichev)
 * Use mpf_log1p in acos_asin() helper (implementing Hull et al algorithm), see
   #948 (Sergey B Kirpichev)
+* Fix kwargs passing in the nstr() for mpc, see #964 (David Walker)
 
 Maintenance:
 

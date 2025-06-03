@@ -546,7 +546,6 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
             pass
     s = ctx.convert(s)
     prec = ctx.prec
-    method = kwargs.get('method')
     verbose = kwargs.get('verbose')
     if (not s) and (not derivative):
         return ctx.mpf(0.5) - ctx._convert_param(a)[0]
