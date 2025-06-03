@@ -1,4 +1,4 @@
-from mpmath import inf, matrix, nstr, mpc
+from mpmath import inf, matrix, mpc, nstr
 
 
 A1 = matrix([])

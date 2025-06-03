@@ -1,7 +1,8 @@
-from unittest.mock import patch, call, ANY
+from unittest.mock import ANY, call, patch
+
 import pytest
 
-from mpmath import zetazero, fp
+from mpmath import fp, zetazero
 
 
 @pytest.mark.parametrize("n,v",
