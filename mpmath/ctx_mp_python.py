@@ -441,13 +441,17 @@ class _mpf(mpnumeric):
     def to_fixed(self, prec):
         return to_fixed(self._mpf_, prec)
 
-    def __round__(self, ndigits=0):
+    def __round__(self, ndigits=None):
         ctx = self.context
         if ctx.isfinite(self):
             frac = MPQ(*self.as_integer_ratio())
             res = round(frac, ndigits)
-            return ctx.convert(res)
-        return self
+            res = ctx.convert(res)
+        else:
+            res = self
+        if ndigits is None:
+            res = int(res)
+        return res
 
 
 class _constant(_mpf):

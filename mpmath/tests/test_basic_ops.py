@@ -665,6 +665,16 @@ def test_round_bulk(x, n):
             return
         assert nstr(mr, n=14, base=16, strip_zeros=False,
                     show_zero_exponent=True, binary_exp=True) == xr.hex()
+    try:
+        xr = round(x)
+    except ValueError:
+        pytest.raises(ValueError, lambda: round(m))
+    except OverflowError:
+        pytest.raises(OverflowError, lambda: round(m))
+    else:
+        mr = round(m)
+        assert type(mr) is int
+        assert mr == xr
 
 
 def test_rounding_prop():
