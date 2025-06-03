@@ -30,8 +30,8 @@ Features:
 * Add signed option to to_man_exp(), see #783 (Sergey B Kirpichev)
 * Add fp.hypot, see #798 (Sergey B Kirpichev)
 * Support inf/nan's in ctx.almosteq(), #802 (Sergey B Kirpichev)
-* Implement mpf.__format__(), see #819, #831, #850, #859, #857, #862, #881 and
-  #944 (Javier Garcia, Sergey B Kirpichev)
+* Implement mpf.__format__(), see #819, #831, #850, #859, #857, #862, #881,
+  #944 and #966 (Javier Garcia, Sergey B Kirpichev)
 * Support conversion from scalar ndarray's, see #821 (Sergey B Kirpichev)
 * Support rounding modes in mpf.__format__, see #823, #831 and #834 (Javier
   Garcia, Sergey B Kirpichev)
