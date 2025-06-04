@@ -267,7 +267,9 @@ def to_int(s, rnd=round_fast):
     input is inf/nan, an exception is raised."""
     sign, man, exp, bc = s
     if (not man) and exp:
-        raise ValueError("cannot convert inf or nan to int")
+        if s == fnan:
+            raise ValueError("cannot convert nan to int")
+        raise OverflowError("cannot convert infinity to int")
     if exp >= 0:
         if sign:
             return (-man) << exp
@@ -1397,12 +1399,12 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<sign>[-+ ]?)
     (?P<no_neg_0>z)?
     (?P<alternate>\#)?
-    (?P<zeropad>0(?=[0-9]))?
-    (?P<width>0|[1-9][0-9]*)?
+    (?P<zeropad>0(?=0*[1-9]))?
+    (?P<width>[0-9]+)?
     (?P<thousands_separators>[,_])?
     (?:\.
         (?=[,_0-9])  # lookahead for digit or separator
-        (?P<precision>0|[1-9][0-9]*)?
+        (?P<precision>[0-9]+)?
         (?P<frac_separators>[,_])?
     )?
     (?P<rounding>[UDYZN])?
@@ -1478,22 +1480,17 @@ def read_format_spec(format_spec):
             format_dict['rounding'] = _GMPY_ROUND_CHAR_DICT[rounding_char]
 
         if match['zeropad']:
-            if match['fill_char']:
-                raise ValueError("Fill character conflicts with '0'"
-                                 f" in format specifier: '{format_spec}'")
-            if match['align']:
-                raise ValueError("Alignment conflicts with '0'"
-                                 f" in format specifier: '{format_spec}'")
-            format_dict['align'] = '='
-            format_dict['fill_char'] = '0'
+            if not match['align']:
+                format_dict['align'] = '='
+            if not match['fill_char']:
+                format_dict['fill_char'] = '0'
 
-        if format_dict['precision'] < 0 and (format_dict['type'].lower()
-                                             not in ['', 'a', 'b']):
+        if format_dict['precision'] < 0 and format_dict['type'].lower() not in ['', 'a', 'b']:
             format_dict['precision'] = 6
+    else:
+        raise ValueError("Invalid format specifier '{}'".format(format_spec))
 
-        return format_dict
-
-    raise ValueError(f"Invalid format specifier '{format_spec}'")
+    return format_dict
 
 
 def format_fixed(s, precision=6, rounding=round_nearest):

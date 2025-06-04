@@ -30,8 +30,8 @@ Features:
 * Add signed option to to_man_exp(), see #783 (Sergey B Kirpichev)
 * Add fp.hypot, see #798 (Sergey B Kirpichev)
 * Support inf/nan's in ctx.almosteq(), #802 (Sergey B Kirpichev)
-* Implement mpf.__format__(), see #819, #831, #850, #859, #857, #862, #881 and
-  #944 (Javier Garcia, Sergey B Kirpichev)
+* Implement mpf.__format__(), see #819, #831, #850, #859, #857, #862, #881,
+  #944 and #966 (Javier Garcia, Sergey B Kirpichev)
 * Support conversion from scalar ndarray's, see #821 (Sergey B Kirpichev)
 * Support rounding modes in mpf.__format__, see #823, #831 and #834 (Javier
   Garcia, Sergey B Kirpichev)
@@ -40,7 +40,7 @@ Features:
 * Implement 'a'/'A' formating types for mpf.__format__, see #841 and #870
   (Sergey B Kirpichev)
 * Add mpc.__format__(), see #855 (Sergey B Kirpichev)
-* Now mpf.__round__() returns mpf, see #826 (Sergey B Kirpichev)
+* Now mpf.__round__() returns mpf, see #826 and #966 (Sergey B Kirpichev)
 * Support 'b' (binary) format type for mpf/mpc, see #867 (Sergey B Kirpichev)
 * Implement mpf.__floordiv__() and mpf.__divmod__(), see #873 (Sergey B
   Kirpichev)
@@ -70,7 +70,8 @@ Compatibility:
 * Drop to_pickable()/from_pickable() helpers, see #667 and #769 (Sergey B
   Kirpichev)
 * Direct access to _mpf_ tuples now deprecated, please use from/to_man_exp()
-  functions, see #783 (Sergey B Kirpichev)
+  functions and special constants (finf, fninf and fnan), see
+  #783 (Sergey B Kirpichev)
 * Removed sage backend, see #732 (Sergey B Kirpichev)
 * Drop MPMATH_STRICT environment variable, see #759 (Sergey B Kirpichev)
 * Deprecate current (descending) order of coefficients in polyval(), etc, see
@@ -152,6 +153,7 @@ Bug fixes:
 * Use mpf_log1p in acos_asin() helper (implementing Hull et al algorithm), see
   #948 (Sergey B Kirpichev)
 * Fix kwargs passing in the nstr() for mpc, see #964 (David Walker)
+* Fix exception type for int(inf), see #966 (Sergey B Kirpichev)
 
 Maintenance:
 
