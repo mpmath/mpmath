@@ -57,6 +57,24 @@ def test_matrix_basic():
     pytest.raises(IndexError, lambda: zeros(1,1)[:, 1])  # issue 318
     pytest.raises(IndexError, lambda: zeros(1,1)[1, :])
 
+    A10 = matrix([[1,2], [3,4], [5,6]])
+    assert A10[0, -1] == 2
+    assert A10[-1, -1] == 6
+    assert A10[1, -2] == 3
+    assert A10[-3, -2] == 1
+
+    A10[0, -1] = 3
+    assert A10[0, -1] == 3
+
+    A10[-1, -1] = 4
+    assert A10[-1, -1] == 4
+
+    A10[1, -2] = 5
+    assert A10[1, -2] == 5
+
+    A10[-3, -2] = 1
+    assert A10[-3, -2] == 1
+
 def test_matmul():
     """
     Test the PEP465 "@" matrix multiplication syntax.
@@ -79,6 +97,11 @@ def test_matrix_slices():
     assert A[0:2,0:2] == matrix([[1,2],[4,5]])  # issue 267
     assert A[:2,:2] == matrix([[1,2],[4,5]])
     assert V[2:4] == matrix([3,4])
+    assert A[-1, :] == A[2, :]
+    assert A[:, -1] == A[:, 2]
+
+    pytest.raises(IndexError, lambda: A[-4, 0])
+    pytest.raises(IndexError, lambda: A[0, -4])
     pytest.raises(IndexError, lambda: A[:,1:6])
 
     # Assign slice with matrix
@@ -116,6 +139,27 @@ def test_matrix_slices():
     for x in A1:
         assert x == 40
 
+    # test negative indexes
+    A2 = matrix(3)
+    A2[:,:] = A
+
+    A2[-3, :] = matrix([[10, 11, 12]])
+    assert A2 == matrix([[10, 11, 12],
+                         [4, 5, 6],
+                         [7, 8, 9]])
+    A2[:,-1] = matrix([[13], [14], [15]])
+    assert A2 == matrix([[10, 11, 13],
+                         [4, 5, 14],
+                         [7, 8, 15]])
+    A2[:-1,:-1] = matrix([[16, 17], [18, 19]])
+    assert A2 == matrix([[16, 17, 13],
+                         [18, 19, 14],
+                         [7, 8 ,15]])
+
+    with pytest.raises(IndexError):
+        A2[-123,1] = 123
+    with pytest.raises(IndexError):
+        A2[1,-123] = 123
 
 def test_matrix_power():
     A = matrix([[1, 2], [3, 4]])
@@ -200,10 +244,8 @@ def test_matrix_numpy():
     assert matrix(l) == matrix(a)
     assert (numpy.array(matrix(l)) == numpy.array(matrix(l).tolist(),
                                                   dtype=object)).all()
-
-    if sys.version_info < (3, 9):
-        pytest.skip("latest numpy dropped support for CPython 3.8")
-    pytest.raises(ValueError, lambda: numpy.array(matrix(l), copy=False))
+    if numpy.__version__ >= '2':
+        pytest.raises(ValueError, lambda: numpy.array(matrix(l), copy=False))
 
 def test_interval_matrix_scalar_mult():
     """Multiplication of iv.matrix and any scalar type"""

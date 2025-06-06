@@ -446,7 +446,7 @@ def Anderson(*args, **kwargs):
     1d-solver generating pairs of approximative root and error.
 
     Uses Anderson-Bjoerk method to find a root of f in [a, b].
-    Wrapper for illinois to use method='pegasus'.
+    Wrapper for illinois to use method='anderson'.
     """
     kwargs['method'] = 'anderson'
     return Illinois(*args, **kwargs)
@@ -751,7 +751,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
 
         >>> from mpmath import (diff, gamma, findroot, sin, zeta, exp, log,
         ...                     lambertw, mp, j)
-        >>> mp.dps = 30; mp.pretty = True
+        >>> mp.dps = 30
+        >>> mp.pretty = True
         >>> findroot(sin, 3)
         3.14159265358979323846264338328
 
@@ -788,11 +789,13 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         ...     return findroot(lambda w: w*exp(w) - x, log(1+x))
         ...
         >>> mp.dps = 15
-        >>> lambert(1); lambertw(1)
+        >>> lambert(1)
         0.567143290409784
+        >>> lambertw(1)
         0.567143290409784
-        >>> lambert(1000); lambert(1000)
+        >>> lambert(1000)
         5.2496028524016
+        >>> lambertw(1000)
         5.2496028524016
 
     Multidimensional functions are also supported::
@@ -824,7 +827,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     converge slowly. Consider this example::
 
         >>> f = lambda x: (x - 1)**99
-        >>> findroot(f, 0.9, verify=False)
+        >>> findroot(f, 0.9)
         0.918073542444929
 
     Even for a very close starting point the secant method converges very

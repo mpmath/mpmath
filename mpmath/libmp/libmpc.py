@@ -8,9 +8,9 @@ from .backend import MPZ
 from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
                         mpf_cos, mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi,
                         mpf_cosh, mpf_cosh_sinh, mpf_exp, mpf_fibonacci,
-                        mpf_log, mpf_log_hypot, mpf_nthroot, mpf_phi, mpf_pi,
-                        mpf_pow_int, mpf_sin, mpf_sin_pi, mpf_sinh, mpf_tan,
-                        mpf_tanh)
+                        mpf_log, mpf_log1p, mpf_log_hypot, mpf_nthroot,
+                        mpf_phi, mpf_pi, mpf_pow_int, mpf_sin, mpf_sin_pi,
+                        mpf_sinh, mpf_tan, mpf_tanh)
 from .libintmath import giant_steps, lshift, rshift
 from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fone,
                      from_float, from_int, from_man_exp, ftwo, fzero, mpf_abs,
@@ -46,7 +46,7 @@ def mpc_is_infnan(z):
 
 def mpc_to_str(z, dps, **kwargs):
     re, im = z
-    rs = to_str(re, dps)
+    rs = to_str(re, dps, **kwargs)
     if im[0]:
         return rs + " - " + to_str(mpf_neg(im), dps, **kwargs) + "j"
     else:
@@ -719,7 +719,7 @@ def acos_asin(z, prec, rnd, n):
             Am1 = mpf_shift(mpf_add(c1, c2, wp), -1)
         # im = log(1 + Am1 + sqrt(Am1*(alpha+1)))
         im = mpf_mul(Am1, mpf_add(alpha, fone, wp), wp)
-        im = mpf_log(mpf_add(fone, mpf_add(Am1, mpf_sqrt(im, wp), wp), wp), wp)
+        im = mpf_log1p(mpf_add(Am1, mpf_sqrt(im, wp), wp), wp)
     else:
         # im = log(alpha + sqrt(alpha*alpha - 1))
         im = mpf_sqrt(mpf_sub(mpf_mul(alpha, alpha, wp), fone, wp), wp)

@@ -18,7 +18,7 @@ from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     mpf_degree, mpf_div, mpf_e, mpf_euler, mpf_glaisher,
                     mpf_khinchin, mpf_ln2, mpf_ln10, mpf_mertens, mpf_mul,
                     mpf_neg, mpf_phi, mpf_pi, mpf_rand, mpf_sub, mpf_twinprime,
-                    repr_dps, to_man_exp, to_str)
+                    repr_dps, to_man_exp, to_str, round_nearest)
 
 
 get_complex = re.compile(r"""
@@ -44,14 +44,17 @@ class MPContext(BaseMPContext, StandardBaseContext):
     Context for multiprecision arithmetic with a global precision.
     """
 
-    def __init__(ctx):
+    def __init__(ctx, prec=sys.float_info.mant_dig,
+                 rounding=round_nearest, trap_complex=False):
         from mpmath.ctx_mp_python import _constant, _mpf
 
         BaseMPContext.__init__(ctx)
-        ctx.trap_complex = False
         ctx.pretty = False
         ctx.types = [_mpf, ctx.mpc, _constant]
         ctx.default()
+        ctx._set_prec(prec)
+        ctx._set_rounding(rounding)
+        ctx.trap_complex = trap_complex
         StandardBaseContext.__init__(ctx)
 
         ctx.init_builtins()
@@ -360,6 +363,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         lines = ["Mpmath settings:",
             ("  mp.prec = %s" % ctx.prec).ljust(30) + f"[default: {sys.float_info.mant_dig}]",
             ("  mp.dps = %s" % ctx.dps).ljust(30) + f"[default: {sys.float_info.dig}]",
+            ("  mp.rounding = '%s'" % ctx.rounding).ljust(30) + f"[default: 'n']",
             ("  mp.trap_complex = %s" % ctx.trap_complex).ljust(30) + "[default: False]",
         ]
         return "\n".join(lines)
@@ -462,14 +466,18 @@ class MPContext(BaseMPContext, StandardBaseContext):
         cancellation, but is fooled by too severe cancellation::
 
             >>> x = 1e-10
-            >>> exp(x)-1; expm1(x); autoprec(lambda t: exp(t)-1)(x)
+            >>> exp(x)-1
             1.00000008274037e-10
+            >>> expm1(x)
             1.00000000005e-10
+            >>> autoprec(lambda t: exp(t)-1)(x)
             1.00000000005e-10
             >>> x = 1e-50
-            >>> exp(x)-1; expm1(x); autoprec(lambda t: exp(t)-1)(x)
+            >>> exp(x)-1
             0.0
+            >>> expm1(x)
             1.0e-50
+            >>> autoprec(lambda t: exp(t)-1)(x)
             0.0
 
         With *catch*, an exception or list of exceptions to intercept
@@ -601,13 +609,24 @@ class MPContext(BaseMPContext, StandardBaseContext):
     def mpmathify(ctx, *args, **kwargs):
         return ctx.convert(*args, **kwargs)
 
+    _MPFR_rounding_map = {'N': 'n',
+                          'D': 'f',
+                          'U': 'c',
+                          'Y': 'u',
+                          'Z': 'd',
+                          'n': 'n',
+                          'f': 'f',
+                          'c': 'c',
+                          'u': 'u',
+                          'd': 'd'}
+
     def _parse_prec(ctx, kwargs):
         if kwargs:
             if kwargs.get('exact'):
                 return 0, 'f'
             prec, rounding = ctx._prec_rounding
             if 'rounding' in kwargs:
-                rounding = kwargs['rounding']
+                rounding = ctx._MPFR_rounding_map[kwargs['rounding']]
             if 'prec' in kwargs:
                 prec = kwargs['prec']
                 if prec == ctx.inf:
@@ -635,6 +654,30 @@ maxterms, or set zeroprec."""
         elif hasattr(z, "_mpc_"):
             key = p, q, flags, 'C'
             v = z._mpc_
+        for i, c in enumerate(coeffs[p:], start=p):
+            if flags[i] == 'Z':
+                if c <= 0:
+                    ok = False
+                    for ii, cc in enumerate(coeffs[:p]):
+                        # Note: c <= cc or c < cc, depending on convention
+                        if flags[ii] == 'Z' and cc <= 0 and c <= cc:
+                            ok = True
+                    if not ok:
+                        raise ZeroDivisionError("pole in hypergeometric series")
+        num = range(p)
+        den = range(p,p+q)
+        if ctx.isinf(z):
+            n = max(((n, c) for n, c in enumerate(coeffs[:p])
+                     if flags[n] == 'Z' and c < 0), default=(-1, 0),
+                    key=lambda x: x[1])[0]
+            if n >= 0:
+                n = -coeffs[n]
+                t = z**n
+                for k in range(n):
+                    for i in num: t *= (coeffs[i]+k)
+                    for i in den: t /= (coeffs[i]+k)
+                    t /= (k+1)
+                return t
         if key not in ctx.hyp_summators:
             ctx.hyp_summators[key] = libmp.make_hyp_summator(key)[1]
         summator = ctx.hyp_summators[key]
@@ -649,14 +692,6 @@ maxterms, or set zeroprec."""
         max_total_jump = 0
         for i, c in enumerate(coeffs):
             if flags[i] == 'Z':
-                if i >= p and c <= 0:
-                    ok = False
-                    for ii, cc in enumerate(coeffs[:p]):
-                        # Note: c <= cc or c < cc, depending on convention
-                        if flags[ii] == 'Z' and cc <= 0 and c <= cc:
-                            ok = True
-                    if not ok:
-                        raise ZeroDivisionError("pole in hypergeometric series")
                 continue
             n, d = ctx.nint_distance(c)
             n = -int(n)
@@ -809,9 +844,13 @@ maxterms, or set zeroprec."""
         *exact=True* is passed, an exact addition with no rounding is performed.
 
         When the precision is finite, the optional *rounding* keyword argument
-        specifies the direction of rounding. Valid options are ``'n'`` for
-        nearest (default), ``'f'`` for floor, ``'c'`` for ceiling, ``'d'``
-        for down, ``'u'`` for up.
+        specifies the direction of rounding.  Valid options are:
+
+            * ``'f'`` (alias ``'D'``) for floor, towards minus infinity
+            * ``'c'`` (alias ``'U'``) )for ceiling, towards plus infinity
+            * ``'d'`` (alias ``'Z'``) for down, towards zero
+            * ``'u'`` (alias ``'Y'``) for up, away from zero
+            * ``'n'`` (alias ``'N'``) for rounding to nearest (default)
 
         **Examples**
 
@@ -1076,28 +1115,34 @@ maxterms, or set zeroprec."""
 
             >>> from mpmath import nint_distance, mpf, mpc
             >>> n, d = nint_distance(5)
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -inf
             >>> n, d = nint_distance(mpf(5))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -inf
             >>> n, d = nint_distance(mpf(5.00000001))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -26
             >>> n, d = nint_distance(mpf(4.99999999))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -26
             >>> n, d = nint_distance(mpc(5,10))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             4
             >>> n, d = nint_distance(mpc(5,0.000001))
-            >>> print(n); print(d)
+            >>> print(n)
             5
+            >>> print(d)
             -19
 
         """
@@ -1200,12 +1245,14 @@ maxterms, or set zeroprec."""
             >>> from mpmath import fraction, mpf, mp
             >>> a = fraction(1,100)
             >>> b = mpf(1)/100
-            >>> print(a); print(b)
+            >>> print(a)
             0.01
+            >>> print(b)
             0.01
             >>> mp.dps = 30
-            >>> print(a); print(b)      # a will be accurate
+            >>> print(a)      # a will be accurate
             0.01
+            >>> print(b)
             0.0100000000000000002081668171172
         """
         return ctx.constant(lambda prec, rnd: from_rational(p, q, prec, rnd),

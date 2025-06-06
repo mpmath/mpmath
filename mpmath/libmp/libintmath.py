@@ -8,9 +8,10 @@ here from settings.py
 
 import math
 import sys
+import warnings
 from functools import lru_cache
 
-from .backend import BACKEND, MPZ, MPZ_ONE, MPZ_ZERO, gmpy
+from .backend import MPZ, MPZ_ONE, MPZ_ZERO, gmpy
 
 
 small_trailing = [0] * 256
@@ -71,10 +72,11 @@ def trailing(n):
 
 def bitcount(n):
     """Calculate bit size of abs(n)."""
+    warnings.warn("bitcount function is deprecated",
+                  DeprecationWarning)
     return MPZ(n).bit_length()
 
-if BACKEND == 'gmpy':
-    bitcount = gmpy.bit_length
+if gmpy and hasattr(MPZ, 'bit_scan1'):
     def trailing(n):
         return MPZ(n).bit_scan1() if n else MPZ(0)
 
@@ -138,7 +140,7 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
     # extremely large values to a string. The size limit may need to be
     # adjusted on some platforms, but 1500000 works on Windows and Linux.
     if size < 1500000:
-        return gmpy.digits(n, base)
+        return MPZ(n).digits(base)
     # Divide in half
     half = (size // 2) + (size & 1)
     A, B = divmod(n, MPZ(base)**half)
@@ -146,10 +148,10 @@ def numeral_gmpy(n, base=10, size=0, digits=stddigits):
     bd = numeral(B, base, half, digits).rjust(half, "0")
     return ad + bd
 
-if BACKEND == "gmpy":
+numeral = numeral_python
+
+if gmpy:
     numeral = numeral_gmpy
-else:
-    numeral = numeral_python
 
 _1_800 = 1<<800
 _1_600 = 1<<600
@@ -257,7 +259,7 @@ def sqrt_fixed(x, prec):
 
 sqrt_fixed2 = sqrt_fixed
 
-if BACKEND == 'gmpy':
+if gmpy:
     isqrt_small = isqrt_fast = isqrt = gmpy.isqrt
     sqrtrem = gmpy.isqrt_rem
 else:
@@ -270,19 +272,9 @@ else:
     sqrtrem = sqrtrem_python
     _gcd2 = math.gcd
 
-
-if sys.version_info >= (3, 9) and BACKEND == 'python':
-    gcd = math.gcd
-elif BACKEND == 'gmpy':
+gcd = math.gcd
+if gmpy:
     gcd = gmpy.gcd
-else:
-    def gcd(*args):
-        res = MPZ_ZERO
-        for a in args:
-            a = MPZ(a)
-            if res != MPZ_ONE:
-                res = _gcd2(res, a)
-        return res
 
 
 @lru_cache(maxsize=250)
@@ -306,6 +298,7 @@ def ifib(n):
             p, q = p*p+qq, qq+2*p*q
             n >>= 1
     return b
+ifib_python = ifib
 
 MAX_FACTORIAL_CACHE = 1000
 
@@ -324,13 +317,13 @@ def ifac2(n, memo_pair=[{0:1}, {1:1}]):
         if k <= MAX:
             memo[k] = p
     return p
+ifac2_python = ifac2
+ifac = math.factorial
 
-if BACKEND == 'gmpy':
+if gmpy:
     ifac = gmpy.fac
     ifac2 = gmpy.double_fac
     ifib = gmpy.fib
-else:
-    ifac = math.factorial
 
 ifac = lru_cache(maxsize=1024)(ifac)
 
@@ -390,8 +383,9 @@ def isprime(n):
         if not test(a):
             return False
     return True
+isprime_python = isprime
 
-if BACKEND == 'gmpy':
+if gmpy and hasattr(gmpy, 'is_prime'):
     isprime = gmpy.is_prime
 
 def moebius(n):

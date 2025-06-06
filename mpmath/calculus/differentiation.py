@@ -324,17 +324,21 @@ def diffs_prod(ctx, factors):
         >>> f = lambda x: exp(x)*cos(x)*sin(x)
         >>> u = diffs(f, 1)
         >>> v = mp.diffs_prod([diffs(exp,1), diffs(cos,1), diffs(sin,1)])
-        >>> next(u); next(v)
+        >>> next(u)
         1.23586333600241
+        >>> next(v)
         1.23586333600241
-        >>> next(u); next(v)
+        >>> next(u)
         0.104658952245596
+        >>> next(v)
         0.104658952245596
-        >>> next(u); next(v)
+        >>> next(u)
         -5.96999877552086
+        >>> next(v)
         -5.96999877552086
-        >>> next(u); next(v)
+        >>> next(u)
         -12.4632923122697
+        >>> next(v)
         -12.4632923122697
 
     """
@@ -419,17 +423,21 @@ def diffs_exp(ctx, fdiffs):
         ...
         >>> u = diffs_exp(diffs_loggamma(3))
         >>> v = diffs(gamma, 3)
-        >>> next(u); next(v)
+        >>> next(u)
         2.0
+        >>> next(v)
         2.0
-        >>> next(u); next(v)
+        >>> next(u)
         1.84556867019693
+        >>> next(v)
         1.84556867019693
-        >>> next(u); next(v)
+        >>> next(u)
         2.49292999190269
+        >>> next(v)
         2.49292999190269
-        >>> next(u); next(v)
+        >>> next(u)
         3.44996501352367
+        >>> next(v)
         3.44996501352367
 
     """
@@ -478,7 +486,9 @@ def differint(ctx, f, x, n=1, x0=0):
         >>> from mpmath import (mp, mpf, differint, gamma, inf, exp, pi,
         ...                     j, lower_gamma)
         >>> mp.pretty = True
-        >>> x = mpf(3); p = 2; n = 0.5
+        >>> x = mpf(3)
+        >>> p = 2
+        >>> n = 0.5
         >>> differint(lambda t: t**p, x, n)
         7.81764019044672
         >>> gamma(p+1)/gamma(p-n+1) * x**(p-n)

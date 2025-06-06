@@ -1,4 +1,6 @@
-from mpmath import inf, iv, mp, mpf, mpi, pi, sqrt
+import pytest
+
+from mpmath import inf, iv, mp, mpf, mpi, pi, sqrt, workprec
 
 
 def test_interval_identity():
@@ -303,8 +305,9 @@ def test_interval_complex():
     assert iv.mpc(2,2) ** (-2) == (2+2j) ** (-2)
     assert iv.cos(2).ae(mp.cos(2))
     assert iv.sin(2).ae(mp.sin(2))
-    assert iv.cos(2+3j).ae(mp.cos(2+3j))
-    assert iv.sin(2+3j).ae(mp.sin(2+3j))
+    with workprec(54):
+        assert iv.cos(2+3j).ae(mp.cos(2+3j))
+        assert iv.sin(2+3j).ae(mp.sin(2+3j))
 
 def test_interval_complex_arg():
     assert iv.arg(3) == 0
@@ -351,9 +354,9 @@ def test_interval_complex_arg():
 
 def test_interval_ae():
     x = iv.mpf([1,2])
-    assert x.ae(1) is None
-    assert x.ae(1.5) is None
-    assert x.ae(2) is None
+    pytest.raises(ValueError, lambda: x.ae(1))
+    pytest.raises(ValueError, lambda: x.ae(1.5))
+    pytest.raises(ValueError, lambda: x.ae(2))
     assert x.ae(2.01) is False
     assert x.ae(0.99) is False
     x = iv.mpf(3.5)
@@ -362,15 +365,14 @@ def test_interval_ae():
     assert x.ae(3.5-1e-15) is True
     assert x.ae(3.501) is False
     assert x.ae(3.499) is False
-    assert x.ae(iv.mpf([3.5,3.501])) is None
-    assert x.ae(iv.mpf([3.5,4.5+1e-15])) is None
+    pytest.raises(ValueError, lambda: x.ae(iv.mpf([3.5,3.501])))
+    pytest.raises(ValueError, lambda: x.ae(iv.mpf([3.5,4.5+1e-15])))
 
 def test_interval_nstr():
     iv.dps = n = 30
     x = mpi(1, 2)
-    # FIXME: error_dps should not be necessary
-    assert iv.nstr(x, n, mode='plusminus', error_dps=6) == '1.5 +- 0.5'
-    assert iv.nstr(x, n, mode='plusminus', use_spaces=False, error_dps=6) == '1.5+-0.5'
+    assert iv.nstr(x, n, mode='plusminus') == '1.5 +- 0.5'
+    assert iv.nstr(x, n, mode='plusminus', use_spaces=False) == '1.5+-0.5'
     assert iv.nstr(x, n, mode='percent') == '1.5 (33.33%)'
     assert iv.nstr(x, n, mode='brackets', use_spaces=False) == '[1.0,2.0]'
     assert iv.nstr(x, n, mode='brackets' , brackets=('<', '>')) == '<1.0, 2.0>'
@@ -439,3 +441,9 @@ def test_interval_conversions():
         assert float(r.b) == float(b)
         assert complex(r.a) == complex(a)
         assert complex(r.b) == complex(b)
+
+def test_issue_258():
+    a = iv.mpf([0, 1])
+    b = 0.5
+    pytest.raises(ValueError, lambda: min(a, b))
+    pytest.raises(ValueError, lambda: max(a, b))

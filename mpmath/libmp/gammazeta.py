@@ -421,7 +421,7 @@ def mpf_bernoulli(n, prec, rnd=round_fast, plus=False):
         # Accurately estimate size of B_m so we can use
         # fixed point math without using too much precision
         szbm = bernoulli_size(m)
-        s = 0
+        s = MPZ(0)
         sexp = max(0, szbm)  - wp
         if m < 6:
             a = MPZ_ZERO
@@ -448,7 +448,7 @@ def mpf_bernoulli(n, prec, rnd=round_fast, plus=False):
         if m > 6:
             bin1 = bin1 * ((2+m)*(3+m)) // ((m-7)*(m-6))
         state[:] = [m, bin, bin1]
-    return numbers[n]
+    return mpf_pos(numbers[n], prec, rnd)
 
 def mpf_bernoulli_huge(n, prec, rnd=round_fast):
     wp = prec + 10

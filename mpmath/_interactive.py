@@ -1,5 +1,6 @@
 import ast
 import io
+import re
 import tokenize
 
 
@@ -27,18 +28,63 @@ class IntegerDivisionWrapper(ast.NodeTransformer):
         return self.generic_visit(node)
 
 
+class _WrapFloats(ast.NodeTransformer):
+    """Wrap float literals by calls to specified type."""
+    def __init__(self, lines, type):
+        super().__init__()
+        self.lines = lines
+        self.type = type
+
+    def visit_Constant(self, node):
+        if isinstance(node.value, (float, complex)):
+            line = self.lines[node.lineno - 1]
+            value = line[node.col_offset:node.end_col_offset]
+            is_complex = value.endswith(('j', 'J'))
+            if is_complex:
+                value = value[:-1]
+            value = ast.Constant(value)
+            value = ast.Call(ast.Name(self.type, ast.Load()), [value], [])
+            if is_complex:
+                value = ast.BinOp(left=value, op=ast.Mult(),
+                                  right=ast.Constant(1j))
+            return value
+        return node
+
+
 def wrap_float_literals(lines):
     """Wraps all float/complex literals with mpmath classes."""
+    source = ''.join(lines)
+    tree = ast.parse(source)
+    tree = _WrapFloats(lines, 'mpf').visit(tree)
+    ast.fix_missing_locations(tree)
+    source = ast.unparse(tree)
+    return source.splitlines(keepends=True)
+
+
+_HEXFLT_MATCHER = re.compile(r"""
+    (?: [^"' ]|^)[ ]*(?P<hexflt>
+         0x
+         [0-9a-z]+
+         (?: \.[0-9a-z]*)?
+         p(?:[+-])?[0-9]+
+     )
+""", re.VERBOSE | re.IGNORECASE)
+_BINFLT_MATCHER = re.compile(r"""
+    (?: [^"' ]|^)[ ]*(?P<binflt>
+         0b
+         [01]+
+         (?: \.[01]*)?
+         p(?:[+-])?[0-9]+
+     )
+""", re.VERBOSE | re.IGNORECASE)
+
+
+def wrap_hexbinfloats(lines):
     new_lines = []
     for line in lines:
-        result = []
-        g = tokenize.tokenize(io.BytesIO(line.encode()).readline)
-        for toknum, tokval, _, _, _ in g:
-            if toknum == tokenize.NUMBER:
-                if 'j' in tokval:
-                    tokval = f"mpc(0, mpf('{tokval[:-1]}'))"
-                elif '.' in tokval:
-                    tokval = f"mpf('{tokval}')"
-            result.append((toknum, tokval))
-        new_lines.append(tokenize.untokenize(result).decode())
+        for r in _HEXFLT_MATCHER.findall(line):
+            line = line.replace(r, 'mpf("' + r + '", base=16)')
+        for r in _BINFLT_MATCHER.findall(line):
+            line = line.replace(r, 'mpf("' + r + '", base=2)')
+        new_lines.append(line)
     return new_lines

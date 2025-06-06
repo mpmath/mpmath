@@ -1,0 +1,50 @@
+name: Run coverage tests
+on: workflow_call
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+    env:
+      PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+      - name: Install dependencies
+        run: |
+          pip install --upgrade setuptools pip
+          pip install --upgrade .[develop,gmpy2,gmp,ci]
+      - name: Run coverage tests
+        run: |
+          pytest
+          pip uninstall -y ipython
+          pytest mpmath/tests/test_cli.py
+          pip uninstall -y gmpy2
+          pytest mpmath/tests/test_basic_ops.py mpmath/tests/test_convert.py \
+            mpmath/tests/test_functions.py mpmath/tests/test_gammazeta.py \
+            mpmath/tests/test_bitwise.py
+          pip uninstall -y python-gmp
+          pytest mpmath/tests/test_basic_ops.py mpmath/tests/test_convert.py \
+            mpmath/tests/test_functions.py mpmath/tests/test_gammazeta.py \
+            mpmath/tests/test_bitwise.py
+      - name: Generate coverage reports
+        run: |
+          coverage xml
+          coverage html
+          diff-cover coverage.xml --fail-under=100 \
+            --compare-branch=origin/master
+      - uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: |
+            coverage.xml
+            build/coverage/html/
+      - name: Upload coverage data
+        uses: codecov/codecov-action@v4
+        with:
+          files: ./coverage.xml
+          fail_ci_if_error: false

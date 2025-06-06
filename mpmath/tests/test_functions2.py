@@ -11,8 +11,8 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
                     legenq, lerchphi, li, log, lower_gamma, meijerg, mp, mpc,
                     mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
-                    spherharm, sqrt, struveh, struvel, upper_gamma, whitm,
-                    whitw, zeta)
+                    spherharm, spherical_jn, spherical_yn, sqrt, struveh,
+                    struvel, upper_gamma, whitm, whitw, zeta)
 from mpmath.ctx_mp_python import mpc as mpc_type
 from mpmath.ctx_mp_python import mpf as mpf_type
 from mpmath.libmp import BACKEND, NoConvergence
@@ -88,10 +88,18 @@ def test_bessel():
     assert besselk(0,j).ae(-0.13863371520405399968-1.20196971531720649914j)
     assert (besselk(3, 10**10) * mpf(10)**4342944824).ae(1.1628981033356187851)
     assert besselk(1,inf) == 0
+    assert spherical_jn(0, 1).ae(0.841470984807896)
+    assert spherical_yn(0, 1).ae(-0.54030230586814)
     # test for issue 331, bug reported by Michael Hartmann
     for n in range(10,100,10):
         mp.dps = n
         assert besseli(91.5,24.7708).ae("4.00830632138673963619656140653537080438462342928377020695738635559218797348548092636896796324190271316137982810144874264e-41")
+
+def test_issue_877():
+    mp.dps = 64
+    r = besseli(-127, 2)
+    assert besseli(127, 2) == r
+    assert r.ae("3.345358761443415013354345973251886375421555647081543375756063117036e-214")
 
 def test_bessel_zeros():
     assert besseljzero(0,1).ae(2.40482555769577276869)
@@ -161,6 +169,8 @@ def test_hyper_misc():
     mp.dps = 25
     v = mpc('1.2282306665029814734863026', '-0.1225033830118305184672133')
     assert hyper([(3,4),2+j,1],[1,5,j/3],mpf(1)/5+j/8).ae(v)
+    pytest.raises(ZeroDivisionError, lambda: mp.hyper([1, 2, -2], [-1, 3], 1.1))
+    pytest.raises(ZeroDivisionError, lambda: fp.hyper([1, 2, -2], [-1, 3], 1.1))
 
 def test_elliptic_integrals():
     assert ellipk(0).ae(pi/2)
@@ -524,6 +534,7 @@ def test_hyper_2f1():
 def test_hyper_2f1_hard():
     # Singular cases
     assert hyp2f1(2,-1,-1,3).ae(7)
+    pytest.raises(NotImplementedError, lambda: fp.hyp2f1(2,-1,-1,3))
     assert hyp2f1(2,-1,-1,3,eliminate_all=True).ae(0.25)
     assert hyp2f1(2,-2,-2,3).ae(34)
     assert hyp2f1(2,-2,-2,3,eliminate_all=True).ae(0.25)
@@ -608,10 +619,7 @@ def test_hyper_u():
     assert hyperu(2,6,pi).ae(0.55804439825913399130)
     assert (hyperu((3,2),8,100+201j)*10**4).ae(-0.3797318333856738798 - 2.9974928453561707782j)
     assert (hyperu((5,2),(-1,2),-5000)*10**10).ae(-5.6681877926881664678j)
-    # XXX: fails because of undetected cancellation in low level series code
-    # Alternatively: could use asymptotic series here, if convergence test
-    # tweaked back to recognize this one
-    #assert (hyperu((5,2),(-1,2),-500)*10**7).ae(-1.82526906001593252847j)
+    assert (hyperu((5,2),(-1,2),-500)*10**7).ae(-1.82526906001593252847j)
 
 def test_hyper_2f0():
     assert hyper([1,2],[],3) == hyp2f0(1,2,3)
@@ -2408,3 +2416,25 @@ def test_issue_505():
 
 def test_issue_653():
     pytest.raises(ValueError, lambda: zeta(2, -2))
+
+def test_issue_511():
+    assert mp.laguerre(1, 2, mp.inf) == -mp.inf
+    assert mp.laguerre(1, 7.2, mp.inf) == -mp.inf
+    assert fp.laguerre(1, 7.2, fp.inf) == -fp.inf
+
+def test_issue_473():
+    assert mp.polylog(1, -mp.inf) == -mp.inf
+    assert mp.polylog(2, -mp.inf) == -mp.inf
+    assert mp.polylog(3, -mp.inf) == -mp.inf
+    assert mp.polylog(4, -mp.inf) == -mp.inf
+    assert mp.polylog(5, -mp.inf) == -mp.inf
+
+def test_issue_634():
+    assert mp.polylog(1+1e-15, -2).ae(mp.mpf('-1.09861228866811'))
+
+def test_issue_908():
+    assert mp.besselj(-10+0j, 0+0j) == 0
+
+def test_issue_637():
+    assert hankel1(1, 1 + 30j).ae(-7.25495e-15 - 1.17346e-14j)
+    assert hankel2(1, 1 - 30j).ae(-7.25495e-15 + 1.17346e-14j)

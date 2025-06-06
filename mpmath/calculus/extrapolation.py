@@ -1,3 +1,5 @@
+import itertools
+
 from .calculus import defun
 
 
@@ -47,7 +49,8 @@ def richardson(ctx, seq):
     Applying Richardson extrapolation to the Leibniz series for `\pi`::
 
         >>> from mpmath import mp, mpf, richardson, nprint, pi
-        >>> mp.dps = 30; mp.pretty = True
+        >>> mp.dps = 30
+        >>> mp.pretty = True
         >>> S = [4*sum(mpf(-1)**n/(2*n+1) for n in range(m))
         ...     for m in range(1,30)]
         >>> v, c = richardson(S[:10])
@@ -907,7 +910,8 @@ def sumap(ctx, f, interval, integral=None, error=False):
 
         >>> from mpmath import (mp, sumap, zeta, inf, chop, expint, log,
         ...                     polylog)
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> sumap(lambda k: 1/k**2.5, [1,inf])
         1.34148725725091717975677
         >>> zeta(2.5)
@@ -921,7 +925,8 @@ def sumap(ctx, f, interval, integral=None, error=False):
     line is likely to give poor results, so it is better to evaluate
     the first term symbolically whenever possible:
 
-        >>> n=3; z=-0.75
+        >>> n=3
+        >>> z=-0.75
         >>> I = expint(n,-log(z))
         >>> chop(sumap(lambda k: z**k / k**n, [1,inf], integral=I))
         -0.6917036036904594510141448
@@ -1006,7 +1011,8 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
     integral and derivative values (the second should be much faster)::
 
         >>> from mpmath import mp, sumem, inf, fac, mpf
-        >>> mp.dps = 50; mp.pretty = True
+        >>> mp.dps = 50
+        >>> mp.pretty = True
         >>> sumem(lambda n: 1/n**2, [32, inf])
         0.03174336652030209012658168043874142714132886413417
         >>> I = mpf(1)/32
@@ -1744,15 +1750,6 @@ def standardize(ctx, f, intervals, options):
             return f(*args)
         return True, g
 
-# backwards compatible itertools.product
-def cartesian_product(args):
-    pools = map(tuple, args)
-    result = [[]]
-    for pool in pools:
-        result = [x+[y] for x in result for y in pool]
-    for prod in result:
-        yield tuple(prod)
-
 def fold_finite(ctx, f, intervals):
     if not intervals:
         return f
@@ -1762,7 +1759,7 @@ def fold_finite(ctx, f, intervals):
     def g(*args):
         args = list(args)
         s = ctx.zero
-        for xs in cartesian_product(ranges):
+        for xs in itertools.product(*ranges):
             for dim, x in zip(indices, xs):
                 args[dim] = ctx.mpf(x)
             s += f(*args)
@@ -1856,7 +1853,8 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
 
         >>> from mpmath import (mp, nprod, inf, csch, cosh, exp, pi, sinh,
         ...                     sqrt, exp, euler, cos, tanh, log, jtheta)
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> nprod(lambda k: k, [1, 4])
         24.0
 
@@ -1878,12 +1876,14 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
     Next, several more infinite products with more complicated
     values::
 
-        >>> nprod(lambda k: exp(1/k**2), [1, inf]); exp(pi**2/6)
+        >>> nprod(lambda k: exp(1/k**2), [1, inf])
         5.180668317897115748416626
+        >>> exp(pi**2/6)
         5.180668317897115748416626
 
-        >>> nprod(lambda k: (k**2-1)/(k**2+1), [2, inf]); pi*csch(pi)
+        >>> nprod(lambda k: (k**2-1)/(k**2+1), [2, inf])
         0.2720290549821331629502366
+        >>> pi*csch(pi)
         0.2720290549821331629502366
 
         >>> nprod(lambda k: (k**4-1)/(k**4+1), [2, inf])
@@ -1896,8 +1896,9 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
         >>> 3*sqrt(2)*cosh(pi*sqrt(3)/2)**2*csch(pi*sqrt(2))/pi
         1.848936182858244485224927
 
-        >>> nprod(lambda k: (1-1/k**4), [2, inf]); sinh(pi)/(4*pi)
+        >>> nprod(lambda k: (1-1/k**4), [2, inf])
         0.9190194775937444301739244
+        >>> sinh(pi)/(4*pi)
         0.9190194775937444301739244
 
         >>> nprod(lambda k: (1-1/k**6), [2, inf])
@@ -1905,8 +1906,9 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
         >>> (1+cosh(pi*sqrt(3)))/(12*pi**2)
         0.9826842777421925183244759
 
-        >>> nprod(lambda k: (1+1/k**2), [2, inf]); sinh(pi)/(2*pi)
+        >>> nprod(lambda k: (1+1/k**2), [2, inf])
         1.838038955187488860347849
+        >>> sinh(pi)/(2*pi)
         1.838038955187488860347849
 
         >>> nprod(lambda n: (1+1/n)**n * exp(1/(2*n)-1), [1, inf])
@@ -2036,7 +2038,8 @@ def limit(ctx, f, x, direction=1, exp=False, **kwargs):
 
         >>> from mpmath import (limit, mp, sin, inf, exp, fac, sqrt, pi, e,
         ...                     mpf, log, euler)
-        >>> mp.dps = 30; mp.pretty = True
+        >>> mp.dps = 30
+        >>> mp.pretty = True
         >>> limit(lambda x: (x-sin(x))/x**3, 0)
         0.166666666666666666666666666667
 

@@ -11,6 +11,9 @@ from mpmath import fp, inf, mp, nan, ninf, workdps
 from mpmath.libmp.libmpf import read_format_spec
 
 
+vinfo = sys.version_info
+
+
 @st.composite
 def fmt_str(draw, types='fFeE', for_complex=False):
     res = ''
@@ -38,7 +41,7 @@ def fmt_str(draw, types='fFeE', for_complex=False):
     res += draw(st.sampled_from([''] + list('-+ ')))
 
     # no_neg_0 (not used yet.)
-    if sys.version_info[:3] > (3, 11):
+    if vinfo >= (3, 11):
         res += draw(st.sampled_from([''] + ['z']))
 
     # alternate mode
@@ -54,7 +57,9 @@ def fmt_str(draw, types='fFeE', for_complex=False):
         skip_thousand_separators = True
 
     # Width
-    res += draw(st.sampled_from(['']*7 + list(map(str, range(1, 40)))))
+    res += draw(st.sampled_from(['']*7 + list(map(str, range(1, 40)))
+                                + ([] if for_complex else ['0' + str(_)
+                                                           for _ in range(40)])))
 
     # grouping character (thousand_separators)
     gchar = draw(st.sampled_from([''] + list(',_')))
@@ -62,9 +67,13 @@ def fmt_str(draw, types='fFeE', for_complex=False):
         res += gchar
 
     # Precision
-    prec = draw(st.sampled_from(['']*7 + list(map(str, range(40)))))
+    prec = draw(st.sampled_from(['']*7 + list(map(str, range(40)))
+                + ['0' + str(_) for _ in range(40)]))
     if prec:
         res += '.' + prec
+        if vinfo >= (3, 14):
+            gchar = draw(st.sampled_from([''] + list(',_')))
+            res += gchar
 
     # Type
     res += draw(st.sampled_from(types))
@@ -174,6 +183,9 @@ def test_mpf_fmt_cpython():
     assert f'{mp.mpf(0.000001):f}' == '0.000001'
     assert f'{mp.mpf(0.0000005001):f}' == '0.000001'
     assert f'{mp.mpf(0.0000004999):f}' == '0.000000'
+
+    # grouping in fractional part
+    assert f'{mp.mpf(0.0000004999):.9_f}' == '0.000_000_500'
 
     # 'e' code formatting with explicit precision (>= 0). Output should
     # always have exactly the number of places after the point that were
@@ -460,6 +472,10 @@ def test_mpf_fmt_cpython():
     # No formatting code.
 
     assert f'{mp.mpf(0.0):.0}' == '0e+00'
+    mp.pretty_dps = 'repr'
+    assert f'{mp.pi}' == '3.1415926535897931'
+    mp.pretty_dps = 'str'
+    assert f'{mp.pi}' == '3.14159265358979'
 
 
 @settings(max_examples=20000)
@@ -467,15 +483,28 @@ def test_mpf_fmt_cpython():
        st.floats(allow_nan=True,
                  allow_infinity=True,
                  allow_subnormal=True))
+@example(fmt='.0g', x=9.995074823339339e-05)  # issue 880
+@example(fmt='.016f', x=0.1)  # issue 915
+@example(fmt='0030f', x=0.3)
+@example(fmt='0=13,f', x=1.1)  # issue 917
+@example(fmt='013,f', x=1.1)
+@example(fmt='013,.0%', x=1.1)
+@example(fmt='010.6,f', x=0.1234567891)
+@example(fmt='010.7,f', x=0.1234567891)
+@example(fmt='010._f', x=0.1234567891)
 def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
     the same results for default precision.
     '''
 
+    mp.pretty_dps = "repr"
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if spec['frac_separators'] and vinfo < (3, 14):
+        mp.pretty_dps = "str"
+        return  # see also python/cpython#130860
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
@@ -485,6 +514,7 @@ def test_mpf_floats_bulk(fmt, x):
         if spec['type'] == '%' and math.isinf(100*x):
             return  # mpf can't overflow
         assert format(x, fmt) == format(mp.mpf(x), fmt)
+    mp.pretty_dps = "str"
 
 
 @settings(max_examples=20000)
@@ -493,10 +523,14 @@ def test_mpf_floats_bulk(fmt, x):
                           allow_infinity=True,
                           allow_subnormal=True))
 def test_mpc_complexes(fmt, z):
+    mp.pretty_dps = "repr"
     if ((not z.real and math.copysign(1, z.real) == -1)
             or (not z.imag and math.copysign(1, z.imag) == -1)):
+        mp.pretty_dps = "str"
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if spec['frac_separators'] and vinfo < (3, 14):
+        return  # see also python/cpython#130860
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
@@ -507,6 +541,7 @@ def test_mpc_complexes(fmt, z):
             assert complex(format(z)) == complex(format(mp.mpc(z)))
     else:
         assert format(z, fmt) == format(mp.mpc(z), fmt)
+    mp.pretty_dps = "str"
 
 
 def test_mpc_fmt():
@@ -796,10 +831,10 @@ def test_errors():
     with pytest.raises(ValueError, match="Invalid format specifier '12.3 E '"):
         f"{mp.mpf('4'):12.3 E }"
 
-    with pytest.raises(ValueError, match="Cannot specify both 0-padding "
-                       "and a fill character"):
-        f"{mp.mpf('4'):q<03f}"
-
+    with pytest.raises(ValueError):
+        f"{mp.mpf(1):.f}"
+    with pytest.raises(ValueError):
+        f"{mp.mpf(1):._6f}"
 
 
 @settings(max_examples=10000)

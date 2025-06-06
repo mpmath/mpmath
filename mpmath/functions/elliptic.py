@@ -64,22 +64,27 @@ between the various parameters (:func:`~mpmath.qfrom`, :func:`~mpmath.mfrom`,
 
 from .functions import defun, defun_wrapped
 
+
 @defun_wrapped
 def eta(ctx, tau):
     r"""
     Returns the Dedekind eta function of tau in the upper half-plane.
 
         >>> from mpmath import mp, eta, gamma, pi, sqrt, diff, chop, exp
-        >>> mp.dps = 25; mp.pretty = True
-        >>> eta(1j); gamma(0.25) / (2*pi**0.75)
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> eta(1j)
         (0.7682254223260566590025942 + 0.0j)
+        >>> gamma(0.25) / (2*pi**0.75)
         0.7682254223260566590025942
         >>> tau = sqrt(2) + sqrt(5)*1j
-        >>> eta(-1/tau); sqrt(-1j*tau) * eta(tau)
+        >>> eta(-1/tau)
         (0.9022859908439376463573294 + 0.07985093673948098408048575j)
+        >>> sqrt(-1j*tau) * eta(tau)
         (0.9022859908439376463573295 + 0.07985093673948098408048575j)
-        >>> eta(tau+1); exp(pi*1j/12) * eta(tau)
+        >>> eta(tau+1)
         (0.4493066139717553786223114 + 0.3290014793877986663915939j)
+        >>> exp(pi*1j/12) * eta(tau)
         (0.4493066139717553786223114 + 0.3290014793877986663915939j)
         >>> f = lambda z: diff(eta, z) / eta(z)
         >>> chop(36*diff(f,tau)**2 - 24*diff(f,tau,2)*f(tau) + diff(f,tau,3))
@@ -122,7 +127,8 @@ def qfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     Returns the elliptic nome `q`, given any of `q, m, k, \tau, \bar{q}`::
 
         >>> from mpmath import mp, qfrom, mfrom, kfrom, taufrom, qbarfrom
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> qfrom(q=0.25)
         0.25
         >>> qfrom(m=mfrom(q=0.25))
@@ -154,7 +160,8 @@ def qbarfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
 
         >>> from mpmath import (mp, qbarfrom, qfrom, extraprec, mfrom,
         ...                     kfrom, taufrom)
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> qbarfrom(qbar=0.25)
         0.25
         >>> qbarfrom(q=qfrom(qbar=0.25))
@@ -185,7 +192,8 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     `q, m, k, \tau, \bar{q}`::
 
         >>> from mpmath import mp, taufrom, qfrom, mfrom, kfrom, qbarfrom
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> taufrom(tau=0.5j)
         (0.0 + 0.5j)
         >>> taufrom(q=qfrom(tau=0.5j))
@@ -219,7 +227,8 @@ def kfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     `q, m, k, \tau, \bar{q}`::
 
         >>> from mpmath import mp, kfrom, mfrom, qfrom, taufrom, qbarfrom
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> kfrom(k=0.25)
         0.25
         >>> kfrom(m=mfrom(k=0.25))
@@ -264,7 +273,8 @@ def mfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     `q, m, k, \tau, \bar{q}`::
 
         >>> from mpmath import mp, mfrom, qfrom, kfrom, taufrom, qbarfrom, taylor
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> mfrom(m=0.25)
         0.25
         >>> mfrom(q=qfrom(m=0.25))
@@ -404,7 +414,8 @@ def kleinj(ctx, tau=None, **kwargs):
 
         >>> from mpmath import (mp, j, kleinj, taylor, sqrt, extraprec,
         ...                     chop, identify, cbrt)
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> tau = 0.625+0.75*j
         >>> tau = 0.625+0.75*j
         >>> kleinj(tau)
@@ -469,7 +480,7 @@ def RF_calc(ctx, x, y, z, r):
     if y == z: return RC_calc(ctx, x, y, r)
     if x == z: return RC_calc(ctx, y, x, r)
     if x == y: return RC_calc(ctx, z, x, r)
-    if not (ctx.isnormal(x) and ctx.isnormal(y) and ctx.isnormal(z)):
+    if ctx.isspecial(x) or ctx.isspecial(y) and ctx.isspecial(z):
         if ctx.isnan(x) or ctx.isnan(y) or ctx.isnan(z):
             return x*y*z
         if ctx.isinf(x) or ctx.isinf(y) or ctx.isinf(z):
@@ -499,7 +510,7 @@ def RF_calc(ctx, x, y, z, r):
     return ctx.power(Am,-0.5) * (9240-924*E2+385*E2**2+660*E3-630*E2*E3)/9240
 
 def RC_calc(ctx, x, y, r, pv=True):
-    if not (ctx.isnormal(x) and ctx.isnormal(y)):
+    if ctx.isspecial(x) or ctx.isspecial(y):
         if ctx.isinf(x) or ctx.isinf(y):
             return 1/(x*y)
         if y == 0:
@@ -539,8 +550,8 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
     Carlson's algorithm is correct.
     With integration == 2, uses only integration.
     """
-    if not (ctx.isnormal(x) and ctx.isnormal(y) and \
-        ctx.isnormal(z) and ctx.isnormal(p)):
+    if (ctx.isspecial(x) or ctx.isspecial(y)
+            or ctx.isspecial(z) or ctx.isspecial(p)):
         if ctx.isnan(x) or ctx.isnan(y) or ctx.isnan(z) or ctx.isnan(p):
             return x*y*z
         if ctx.isinf(x) or ctx.isinf(y) or ctx.isinf(z) or ctx.isinf(p):
@@ -651,9 +662,11 @@ def elliprf(ctx, x, y, z):
 
         >>> from mpmath import (mp, elliprf, pi, inf, ellipk, ellipe,
         ...                     elliprd, mpf, quad, extradps, sqrt, j, gamma)
-        >>> mp.dps = 25; mp.pretty = True
-        >>> elliprf(0,1,1); pi/2
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> elliprf(0,1,1)
         1.570796326794896619231322
+        >>> pi/2
         1.570796326794896619231322
         >>> elliprf(0,1,inf)
         0.0
@@ -661,36 +674,45 @@ def elliprf(ctx, x, y, z):
         1.0
         >>> elliprf(2,2,2)**2
         0.5
-        >>> elliprf(1,0,0); elliprf(0,0,1); elliprf(0,1,0); elliprf(0,0,0)
+        >>> elliprf(1,0,0)
         inf
+        >>> elliprf(0,0,1)
         inf
+        >>> elliprf(0,1,0)
         inf
+        >>> elliprf(0,0,0)
         inf
 
     Representing complete elliptic integrals in terms of `R_F`::
 
         >>> m = mpf(0.75)
-        >>> ellipk(m); elliprf(0,1-m,1)
+        >>> ellipk(m)
         2.156515647499643235438675
+        >>> elliprf(0,1-m,1)
         2.156515647499643235438675
-        >>> ellipe(m); elliprf(0,1-m,1)-m*elliprd(0,1-m,1)/3
+        >>> ellipe(m)
         1.211056027568459524803563
+        >>> elliprf(0,1-m,1)-m*elliprd(0,1-m,1)/3
         1.211056027568459524803563
 
     Some symmetries and argument transformations::
 
         >>> x,y,z = 2,3,4
-        >>> elliprf(x,y,z); elliprf(y,x,z); elliprf(z,y,x)
+        >>> elliprf(x,y,z)
         0.5840828416771517066928492
+        >>> elliprf(y,x,z)
         0.5840828416771517066928492
+        >>> elliprf(z,y,x)
         0.5840828416771517066928492
         >>> k = mpf(100000)
-        >>> elliprf(k*x,k*y,k*z); k**(-0.5) * elliprf(x,y,z)
+        >>> elliprf(k*x,k*y,k*z)
         0.001847032121923321253219284
+        >>> k**(-0.5) * elliprf(x,y,z)
         0.001847032121923321253219284
         >>> l = sqrt(x*y) + sqrt(y*z) + sqrt(z*x)
-        >>> elliprf(x,y,z); 2*elliprf(x+l,y+l,z+l)
+        >>> elliprf(x,y,z)
         0.5840828416771517066928492
+        >>> 2*elliprf(x+l,y+l,z+l)
         0.5840828416771517066928492
         >>> elliprf((x+l)/4,(y+l)/4,(z+l)/4)
         0.5840828416771517066928492
@@ -777,27 +799,34 @@ def elliprc(ctx, x, y, pv=True):
 
         >>> from mpmath import (mp, elliprc, pi, acosh, sqrt, acos,
         ...                     extradps, quad, inf, j)
-        >>> mp.dps = 25; mp.pretty = True
-        >>> elliprc(1,2)*4; elliprc(0,1)*2; +pi
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> elliprc(1,2)*4
         3.141592653589793238462643
+        >>> elliprc(0,1)*2
         3.141592653589793238462643
+        >>> +pi
         3.141592653589793238462643
         >>> elliprc(1,0)
         inf
         >>> elliprc(5,5)**2
         0.2
-        >>> elliprc(1,inf); elliprc(inf,1); elliprc(inf,inf)
+        >>> elliprc(1,inf)
         0.0
+        >>> elliprc(inf,1)
         0.0
+        >>> elliprc(inf,inf)
         0.0
 
     Comparing with the elementary closed-form solution::
 
-        >>> elliprc('1/3', '1/5'); sqrt(7.5)*acosh(sqrt('5/3'))
+        >>> elliprc('1/3', '1/5')
         2.041630778983498390751238
+        >>> sqrt(7.5)*acosh(sqrt('5/3'))
         2.041630778983498390751238
-        >>> elliprc('1/5', '1/3'); sqrt(7.5)*acos(sqrt('3/5'))
+        >>> elliprc('1/5', '1/3')
         1.875180765206547065111085
+        >>> sqrt(7.5)*acos(sqrt('3/5'))
         1.875180765206547065111085
 
     Comparing with numerical integration::
@@ -842,25 +871,31 @@ def elliprj(ctx, x, y, z, p, integration=1):
 
         >>> from mpmath import (mp, elliprj, sqrt, gamma, pi, chop, mpf,
         ...                     quad, inf, j)
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> elliprj(1,1,1,1)
         1.0
-        >>> elliprj(2,2,2,2); 1/(2*sqrt(2))
+        >>> elliprj(2,2,2,2)
         0.3535533905932737622004222
+        >>> 1/(2*sqrt(2))
         0.3535533905932737622004222
         >>> elliprj(0,1,2,2)
         1.067937989667395702268688
         >>> 3*(2*gamma('5/4')**2-pi**2/gamma('1/4')**2)/(sqrt(2*pi))
         1.067937989667395702268688
-        >>> elliprj(0,1,1,2); 3*pi*(2-sqrt(2))/4
+        >>> elliprj(0,1,1,2)
         1.380226776765915172432054
+        >>> 3*pi*(2-sqrt(2))/4
         1.380226776765915172432054
-        >>> elliprj(1,3,2,0); elliprj(0,1,1,0); elliprj(0,0,0,0)
+        >>> elliprj(1,3,2,0)
         inf
+        >>> elliprj(0,1,1,0)
         inf
+        >>> elliprj(0,0,0,0)
         inf
-        >>> elliprj(1,inf,1,0); elliprj(1,1,1,inf)
+        >>> elliprj(1,inf,1,0)
         0.0
+        >>> elliprj(1,1,1,inf)
         0.0
         >>> chop(elliprj(1+j, 1-j, 1, 1))
         0.8505007163686739432927844
@@ -869,8 +904,9 @@ def elliprj(ctx, x, y, z, p, integration=1):
 
         >>> x,y,z,p = 2,3,4,5
         >>> k = mpf(100000)
-        >>> elliprj(k*x,k*y,k*z,k*p); k**(-1.5)*elliprj(x,y,z,p)
+        >>> elliprj(k*x,k*y,k*z,k*p)
         4.521291677592745527851168e-9
+        >>> k**(-1.5)*elliprj(x,y,z,p)
         4.521291677592745527851168e-9
 
     Comparing with numerical integration::
@@ -913,7 +949,8 @@ def elliprd(ctx, x, y, z):
 
         >>> from mpmath import (mp, elliprd, elliprj, extradps, quad, sqrt,
         ...                     gamma, pi)
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> elliprd(1,2,3)
         0.2904602810289906442326534
         >>> elliprj(1,2,3,3)
@@ -948,9 +985,11 @@ def elliprg(ctx, x, y, z):
     Evaluation for real and complex arguments::
 
         >>> from mpmath import mp, pi, elliprg, chop, fp, nprint, mpf, j
-        >>> mp.dps = 25; mp.pretty = True
-        >>> elliprg(0,1,1)*4; +pi
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> elliprg(0,1,1)*4
         3.141592653589793238462643
+        >>> +pi
         3.141592653589793238462643
         >>> elliprg(0,0.5,1)
         0.6753219405238377512600874
@@ -1035,22 +1074,27 @@ def ellipf(ctx, phi, m):
 
         >>> from mpmath import (mp, ellipf, log, sec, tan, pi, eps, ellipk,
         ...                     sin, appellf1, quad)
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> ellipf(0,1)
         0.0
         >>> ellipf(0,0)
         0.0
-        >>> ellipf(1,0); ellipf(2+3j,0)
+        >>> ellipf(1,0)
         1.0
+        >>> ellipf(2+3j,0)
         (2.0 + 3.0j)
-        >>> ellipf(1,1); log(sec(1)+tan(1))
+        >>> ellipf(1,1)
         1.226191170883517070813061
+        >>> log(sec(1)+tan(1))
         1.226191170883517070813061
-        >>> ellipf(pi/2, -0.5); ellipk(-0.5)
+        >>> ellipf(pi/2, -0.5)
         1.415737208425956198892166
+        >>> ellipk(-0.5)
         1.415737208425956198892166
-        >>> ellipf(pi/2+eps, 1); ellipf(-pi/2-eps, 1)
+        >>> ellipf(pi/2+eps, 1)
         inf
+        >>> ellipf(-pi/2-eps, 1)
         inf
         >>> ellipf(1.5, 1)
         3.340677542798311003320813
@@ -1071,8 +1115,9 @@ def ellipf(ctx, phi, m):
         (1.269131241950351323305741 - 0.3561052815014558335412538j)
         >>> z,m = 2+3j, 1.25
         >>> k = 1011
-        >>> ellipf(z+pi*k,m); ellipf(z,m) + 2*k*ellipk(m)
+        >>> ellipf(z+pi*k,m)
         (4086.184383622179764082821 - 3003.003538923749396546871j)
+        >>> ellipf(z,m) + 2*k*ellipk(m)
         (4086.184383622179764082821 - 3003.003538923749396546871j)
 
     For `|\Re(z)| < \pi/2`, the function can be expressed as a
@@ -1087,7 +1132,7 @@ def ellipf(ctx, phi, m):
 
     """
     z = phi
-    if not (ctx.isnormal(z) and ctx.isnormal(m)):
+    if ctx.isspecial(z) or ctx.isspecial(m):
         if m == 0:
             return z + m
         if z == 0:
@@ -1156,7 +1201,8 @@ def ellipe(ctx, *args):
 
         >>> from mpmath import (mp, ellipe, inf, quad, sqrt, sin, pi,
         ...                     hyp2f1, appellf1)
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> ellipe(0)
         1.570796326794896619231322
         >>> ellipe(1)
@@ -1204,14 +1250,17 @@ def ellipe(ctx, *args):
         1.0
         >>> ellipe(2+3j,0)
         (2.0 + 3.0j)
-        >>> ellipe(1,1); sin(1)
+        >>> ellipe(1,1)
         0.8414709848078965066525023
+        >>> sin(1)
         0.8414709848078965066525023
-        >>> ellipe(pi/2, -0.5); ellipe(-0.5)
+        >>> ellipe(pi/2, -0.5)
         1.751771275694817862026502
+        >>> ellipe(-0.5)
         1.751771275694817862026502
-        >>> ellipe(pi/2, 1); ellipe(-pi/2, 1)
+        >>> ellipe(pi/2, 1)
         1.0
+        >>> ellipe(-pi/2, 1)
         -1.0
         >>> ellipe(1.5, 1)
         0.9974949866040544309417234
@@ -1232,8 +1281,9 @@ def ellipe(ctx, *args):
         (24.15299022574220502424466 + 75.2503670480325997418156j)
         >>> k = 35
         >>> z,m = 2+3j, 1.25
-        >>> ellipe(z+pi*k,m); ellipe(z,m) + 2*k*ellipe(m)
+        >>> ellipe(z+pi*k,m)
         (48.30138799412005235090766 + 17.47255216721987688224357j)
+        >>> ellipe(z,m) + 2*k*ellipe(m)
         (48.30138799412005235090766 + 17.47255216721987688224357j)
 
     For `|\Re(z)| < \pi/2`, the function can be expressed as a
@@ -1252,7 +1302,7 @@ def ellipe(ctx, *args):
     else:
         phi, m = args
     z = phi
-    if not (ctx.isnormal(z) and ctx.isnormal(m)):
+    if ctx.isspecial(z) or ctx.isspecial(m):
         if m == 0:
             return z + m
         if z == 0:
@@ -1316,9 +1366,11 @@ def ellippi(ctx, *args):
 
         >>> from mpmath import (mp, ellippi, ellipk, inf, pi, sqrt, ellipe,
         ...                     log, sec, tan, ellipf)
-        >>> mp.dps = 25; mp.pretty = True
-        >>> ellippi(0,-5); ellipk(-5)
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> ellippi(0,-5)
         0.9555039270640439337379334
+        >>> ellipk(-5)
         0.9555039270640439337379334
         >>> ellippi(inf,2)
         0.0
@@ -1331,57 +1383,52 @@ def ellippi(ctx, *args):
 
     Evaluation in terms of simpler functions::
 
-        >>> ellippi(0.25,0.25); ellipe(0.25)/(1-0.25)
+        >>> ellippi(0.25,0.25)
         1.956616279119236207279727
+        >>> ellipe(0.25)/(1-0.25)
         1.956616279119236207279727
-        >>> ellippi(3,0); pi/(2*sqrt(-2))
+        >>> ellippi(3,0)
         (0.0 - 1.11072073453959156175397j)
+        >>> pi/(2*sqrt(-2))
         (0.0 - 1.11072073453959156175397j)
-        >>> ellippi(-3,0); pi/(2*sqrt(4))
+        >>> ellippi(-3,0)
         0.7853981633974483096156609
+        >>> pi/(2*sqrt(4))
         0.7853981633974483096156609
 
     **Examples for the incomplete integral**
 
     Basic values and limits::
 
-        >>> ellippi(0.25,-0.5); ellippi(0.25,pi/2,-0.5)
+        >>> ellippi(0.25,-0.5)
         1.622944760954741603710555
+        >>> ellippi(0.25,pi/2,-0.5)
         1.622944760954741603710555
         >>> ellippi(1,0,1)
         0.0
         >>> ellippi(inf,0,1)
         0.0
-        >>> ellippi(0,0.25,0.5); ellipf(0.25,0.5)
+        >>> ellippi(0,0.25,0.5)
         0.2513040086544925794134591
+        >>> ellipf(0.25,0.5)
         0.2513040086544925794134591
-        >>> ellippi(1,1,1); (log(sec(1)+tan(1))+sec(1)*tan(1))/2
+        >>> ellippi(1,1,1)
         2.054332933256248668692452
+        >>> (log(sec(1)+tan(1))+sec(1)*tan(1))/2
         2.054332933256248668692452
-        >>> ellippi(0.25, 53*pi/2, 0.75); 53*ellippi(0.25,0.75)
+        >>> ellippi(0.25, 53*pi/2, 0.75)
         135.240868757890840755058
+        >>> 53*ellippi(0.25,0.75)
         135.240868757890840755058
-        >>> ellippi(0.5,pi/4,0.5); 2*ellipe(pi/4,0.5)-1/sqrt(3)
+        >>> ellippi(0.5,pi/4,0.5)
         0.9190227391656969903987269
+        >>> 2*ellipe(pi/4,0.5)-1/sqrt(3)
         0.9190227391656969903987269
 
     Complex arguments are supported::
 
         >>> ellippi(0.5, 5+6j-2*pi, -7-8j)
         (-0.3612856620076747660410167 + 0.5217735339984807829755815j)
-
-    Some degenerate cases::
-
-        >>> ellippi(1,1)
-        inf
-        >>> ellippi(1,0)
-        inf
-        >>> ellippi(1,2,0)
-        inf
-        >>> ellippi(1,2,1)
-        inf
-        >>> ellippi(1,0,1)
-        0.0
 
     """
     if len(args) == 2:
@@ -1392,14 +1439,11 @@ def ellippi(ctx, *args):
         n, phi, m = args
         complete = False
         z = phi
-    if not (ctx.isnormal(n) and ctx.isnormal(z) and ctx.isnormal(m)):
+    if ctx.isspecial(n) or ctx.isspecial(z) or ctx.isspecial(m):
         if ctx.isnan(n) or ctx.isnan(z) or ctx.isnan(m):
             raise ValueError
         if complete:
-            if m == 0:
-                if n == 1:
-                    return ctx.inf
-                return ctx.pi/(2*ctx.sqrt(1-n))
+            if m == 0: return ctx.pi/(2*ctx.sqrt(1-n))
             if n == 0: return ctx.ellipk(m)
             if ctx.isinf(n) or ctx.isinf(m): return ctx.zero
         else:
@@ -1409,10 +1453,7 @@ def ellippi(ctx, *args):
         if ctx.isinf(n) or ctx.isinf(z) or ctx.isinf(m):
             raise ValueError
     if complete:
-        if m == 1:
-            if n == 1:
-                return ctx.inf
-            return -ctx.inf/ctx.sign(n-1)
+        if m == 1: return -ctx.inf/ctx.sign(n-1)
         away = False
     else:
         x = z.real
@@ -1423,8 +1464,6 @@ def ellippi(ctx, *args):
         d = ctx.nint(x/pi)
         z = z-pi*d
         P = 2*d*ctx.ellippi(n,m)
-        if ctx.isinf(P):
-            return ctx.inf
     else:
         P = 0
     def terms():

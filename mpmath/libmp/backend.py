@@ -26,10 +26,16 @@ if 'MPMATH_NOGMPY' not in os.environ:
     try:
         import gmpy2 as gmpy
         BACKEND = 'gmpy'
+    except ImportError:
+        try:
+            import gmp as gmpy
+            BACKEND = 'gmp'
+        except ImportError:
+            pass
+
+    if gmpy:
         MPZ = gmpy.mpz
         MPQ = gmpy.mpq
-    except ImportError:
-        pass
 
 MPZ_ZERO = MPZ(0)
 MPZ_ONE = MPZ(1)

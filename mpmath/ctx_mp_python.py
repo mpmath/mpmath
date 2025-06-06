@@ -1,5 +1,7 @@
+import inspect
 import numbers
 import sys
+import warnings
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
@@ -65,7 +67,7 @@ class mpf(mpnumeric):
             if len(val) == 4:
                 val = val[0], MPZ(val[1]), *val[2:]
             elif len(val) == 2:
-                v._mpf_ = from_man_exp(val[0], val[1], prec, rounding)
+                v._mpf_ = from_man_exp(MPZ(val[0]), val[1], prec, rounding)
                 return v
             else:
                 raise ValueError
@@ -128,11 +130,14 @@ class mpf(mpnumeric):
     def __reduce__(self): return _make_mpf, (self._mpf_,)
 
     def __repr__(s):
+        rounding = s.context._prec_rounding[1]
         if s.context.pretty:
-            return str(s)
-        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits)
+            ndigits = (s.context._repr_digits
+                       if s.context._pretty_repr_dps else s.context._str_digits)
+            return to_str(s._mpf_, ndigits, rounding=rounding)
+        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits, rounding=rounding)
 
-    def __str__(s): return to_str(s._mpf_, s.context._str_digits)
+    def __str__(s): return to_str(s._mpf_, s.context._str_digits, rounding=s.context._prec_rounding[1])
     def __hash__(s): return mpf_hash(s._mpf_)
     def __int__(s): return int(to_int(s._mpf_))
     def __float__(s): return to_float(s._mpf_, rnd=s.context._prec_rounding[1])
@@ -360,7 +365,7 @@ class mpf(mpnumeric):
 
         The format specification adopts the same general form as Python's
         :external:ref:`formatspec`.  All of Python's format types are
-        supported, with the exception of ``n``.
+        supported, with the exception of ``'n'``.
 
         If precision is left as default, the resulting string is exactly the
         same as if printing a regular :external:class:`float`:
@@ -377,11 +382,11 @@ class mpf(mpnumeric):
         In addition to the normal Python features, four different kinds of
         rounding are supported:
 
-            * 'U': rounding towards plus infinity
-            * 'D': rounding towards minus infinity
-            * 'Y': rounding away from zero
-            * 'Z': rounding towards zero
-            * 'N': rounding to nearest (default)
+            * ``'U'``: rounding towards plus infinity
+            * ``'D'``: rounding towards minus infinity
+            * ``'Y'``: rounding away from zero
+            * ``'Z'``: rounding towards zero
+            * ``'N'``: rounding to nearest (default)
 
         The rounding option must be set right before the presentation type:
 
@@ -391,32 +396,33 @@ class mpf(mpnumeric):
             >>> f'{x:.5Df}'
             '-1.23457'
 
-        Format types 'a' and 'A' (use uppercase digits) allow to represent
-        floating-point number as a C99-style hexadecimal string
+        Format types ``'a'`` and ``'A'`` (use uppercase digits) allow to
+        represent floating-point number as a C99-style hexadecimal string
         ``[±][0x]h[.hhh]p±d``, where there is one hexadecimal digit before the
         dot and the fractional part either is exact or the number of its
         hexadecimal digits is equal to the specified precision.  The exponent
-        ``d`` is written in decimal, it always contains at least one digit, and
-        it gives the power of 2 by which to multiply the coefficient.  If no
-        digits follow the decimal point, the decimal point is also removed
-        unless the ``#`` option is specified.
+        ``d`` is written in decimal, it always contains at least one digit,
+        and it gives the power of 2 by which to multiply the coefficient.  If
+        no digits follow the decimal point, the decimal point is also removed
+        unless the ``'#'`` option is specified.
 
             >>> f'{x:a}'
             '-0x1.3c0ca2a5b1d5d0818d3359c99ff1a26f2b31063249p+0'
             >>> f'{x:.10a}'
             '-0x1.3c0ca2a5b2p+0'
 
-        Format type 'b' allows format number in binary:
+        Format type ``'b'`` allows format number in binary:
 
             >>> f'{x:.15b}'
             '-1.001111000000110p+0'
 
-        Alternate form (``#`` option) adds ``0b`` prefix.
+        Alternate form (``'#'`` option) adds ``0b`` prefix.
 
         """
 
         _, _, (prec, _) = s._ctxdata
-        return format_mpf(s._mpf_, format_spec, prec)
+        ctx = s.context
+        return format_mpf(s._mpf_, format_spec, prec, ctx._pretty_repr_dps)
 
     def sqrt(s):
         return s.context.sqrt(s)
@@ -427,13 +433,17 @@ class mpf(mpnumeric):
     def to_fixed(self, prec):
         return to_fixed(self._mpf_, prec)
 
-    def __round__(self, ndigits=0):
+    def __round__(self, ndigits=None):
         ctx = self.context
         if ctx.isfinite(self):
             frac = MPQ(*self.as_integer_ratio())
             res = round(frac, ndigits)
-            return ctx.convert(res)
-        return self
+            res = ctx.convert(res)
+        else:
+            res = self
+        if ndigits is None:
+            res = int(res)
+        return res
 _mpf = mpf
 
 
@@ -514,7 +524,9 @@ class mpc(mpnumeric):
 
     def __repr__(s):
         if s.context.pretty:
-            return str(s)
+            ndigits = (s.context._repr_digits
+                       if s.context._pretty_repr_dps else s.context._str_digits)
+            return "(%s)" % mpc_to_str(s._mpc_, ndigits)
         r = repr(s.real)[4:-1]
         i = repr(s.imag)[4:-1]
         return "%s(real=%s, imag=%s)" % (type(s).__name__, r, i)
@@ -684,13 +696,14 @@ class mpc(mpnumeric):
         ``mpc`` objects allow for formatting similar to Python
         :external:class:`complex`, specified in :external:ref:`formatspec`.
         All of Python's format types are supported, with the exception of
-        ``n``.  Also available additional options and formating types,
+        ``'n'``.  Also available additional options and formating types,
         accepted by :func:`mpmath.mpf.__format__`.
 
         """
 
         _, _, (prec, _) = s._ctxdata
-        return format_mpc(s._mpc_, format_spec, prec)
+        ctx = s.context
+        return format_mpc(s._mpc_, format_spec, prec, ctx._pretty_repr_dps)
 _mpc = mpc
 
 
@@ -700,6 +713,7 @@ complex_types = (complex, _mpc)
 class PythonMPContext:
     def __init__(ctx):
         ctx._prec_rounding = [sys.float_info.mant_dig, round_nearest]
+        ctx._pretty_repr_dps = False
 
     def mpf(ctx, v=fzero, **kwargs):
         return _mpf(v, context=ctx, **kwargs)
@@ -733,8 +747,23 @@ class PythonMPContext:
         ctx._prec = ctx._prec_rounding[0] = dps_to_prec(n)
         ctx._dps = max(1, int(n))
 
+    def _set_rounding(ctx, r):
+        try:
+            ctx._prec_rounding[1] = ctx._parse_prec({'rounding': r})[1]
+        except KeyError:
+            raise ValueError('invalid rounding mode')
+
     prec = property(lambda ctx: ctx._prec, _set_prec)
     dps = property(lambda ctx: ctx._dps, _set_dps)
+    rounding = property(lambda ctx: ctx._prec_rounding[1], _set_rounding)
+
+    def _set_pretty_dps(ctx, v):
+        ctx._pretty_repr_dps = True if v == 'repr' else False
+
+    def _get_pretty_dps(ctx):
+        return 'repr' if ctx._pretty_repr_dps else 'str'
+
+    pretty_dps = property(_get_pretty_dps, _set_pretty_dps)
 
     def convert(ctx, x, strings=True):
         """
@@ -824,29 +853,8 @@ class PythonMPContext:
         return ctx.isinf(x)
 
     def isnormal(ctx, x):
-        """
-        Determine whether *x* is "normal" in the sense of floating-point
-        representation; that is, return *False* if *x* is zero, an
-        infinity or NaN; otherwise return *True*. By extension, a
-        complex number *x* is considered "normal" if its magnitude is
-        normal::
-
-            >>> from mpmath import isnormal, inf, nan, mpc
-            >>> isnormal(3)
-            True
-            >>> isnormal(0)
-            False
-            >>> isnormal(inf); isnormal(-inf); isnormal(nan)
-            False
-            False
-            False
-            >>> isnormal(0+0j)
-            False
-            >>> isnormal(0+3j)
-            True
-            >>> isnormal(mpc(2,nan))
-            False
-        """
+        warnings.warn("the isnormal() method is deprecated",
+                      DeprecationWarning)
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
                 return bool(to_man_exp(x._mpf_, signed=True)[0])
@@ -862,6 +870,48 @@ class PythonMPContext:
             return bool(x)
         x = ctx.convert(x)
         return ctx.isnormal(x)
+
+    def isspecial(ctx, x):
+        """
+        Determine whether *x* is a "special" in the sense of floating-point
+        representation; that is, return *True* if *x* is zero, an
+        infinity or NaN; otherwise return *False*.  By extension, a
+        complex number *x* is considered "special" if its magnitude is
+        special::
+
+            >>> from mpmath import isspecial, inf, nan, mpc
+            >>> isspecial(3)
+            False
+            >>> isspecial(0)
+            True
+            >>> isspecial(inf)
+            True
+            >>> isspecial(-inf)
+            True
+            >>> isspecial(nan)
+            True
+            >>> isspecial(0+0j)
+            True
+            >>> isspecial(0+3j)
+            False
+            >>> isspecial(mpc(2,nan))
+            True
+        """
+        if hasattr(x, "_mpf_"):
+            if ctx.isfinite(x):
+                return not bool(to_man_exp(x._mpf_, signed=True)[0])
+            return True
+        if hasattr(x, "_mpc_"):
+            re, im = x._mpc_
+            re_special = not bool(re[1])
+            im_special = not bool(im[1])
+            if re == fzero: return im_special
+            if im == fzero: return re_special
+            return re_special or im_special
+        if isinstance(x, int_types) or isinstance(x, MPQ):
+            return not bool(x)
+        x = ctx.convert(x)
+        return ctx.isspecial(x)
 
     def isint(ctx, x, gaussian=False):
         """
@@ -1109,6 +1159,8 @@ class PythonMPContext:
         else:
             f_wrapped = f
         f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
+        f_wrapped.__signature__ = inspect.signature(f)
+        f_wrapped.__name__ = f.__name__
         setattr(cls, name, f_wrapped)
 
     def _convert_param(ctx, x):
