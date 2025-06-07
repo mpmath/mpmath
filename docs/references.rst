@@ -30,7 +30,11 @@ References not listed here can be found in the source code.
 
 .. [GravesMorris] P R Graves-Morris, D E Roberts & A Salam. "The epsilon algorithm and related topics", *Journal of Computational and Applied Mathematics*, Volume 122, Issue 1-2  (October 2000)
 
+.. [Homeir] H.H.H. Homeier - "Scalar Levin-Type Sequence Transformations" arXiv:math/0005209
+
 .. [MPFR] The MPFR team. "The MPFR Library: Algorithms and Proofs", http://www.mpfr.org/algorithms.pdf
+
+.. [Sidi] A. Sidi - "Pratical Extrapolation Methods"
 
 .. [Slater] L J Slater. *Generalized Hypergeometric Functions*. Cambridge University Press, 1966
 
@@ -41,6 +45,8 @@ References not listed here can be found in the source code.
 .. [Vidunas] R Vidunas. "Identities between Appell's and hypergeometric functions". http://arxiv.org/abs/0804.0655
 
 .. [Weisstein] E W Weisstein. *MathWorld*. http://mathworld.wolfram.com/
+
+.. [Weniger] E.J. Weniger - "Nonlinear Sequence Transformations for the Acceleration of Convergence and the Summation of Divergent Series" arXiv:math/0306302
 
 .. [WhittakerWatson] E T Whittaker & G N Watson. *A Course of Modern Analysis*. 4th Ed. 1946
     Cambridge University Press

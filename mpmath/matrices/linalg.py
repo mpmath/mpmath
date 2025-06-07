@@ -467,7 +467,7 @@ class LinearAlgebraMethods:
 
         **References**
 
-        1. [Wikipedia]_ http://en.wikipedia.org/wiki/Cholesky_decomposition
+        1. [Wikipedia]_ https://en.wikipedia.org/wiki/Cholesky_decomposition
 
         """
         if not isinstance(A, ctx.matrix):
