@@ -709,8 +709,7 @@ class PythonMPContext:
         return _mpf(v, context=ctx, **kwargs)
 
     def make_mpf(ctx, v):
-        a = _mpf(v, context=ctx)
-        return a
+        return _mpf(v, context=ctx)
 
     def constant(ctx, func, name, docname='', **kwargs):
         return _constant(func, name, docname=docname, context=ctx, **kwargs)
@@ -719,8 +718,7 @@ class PythonMPContext:
         return _mpc(real, imag, context=ctx, **kwargs)
 
     def make_mpc(ctx, v):
-        a = _mpc(*v, context=ctx)
-        return a
+        return _mpc(*v, context=ctx)
 
     def default(ctx):
         ctx._prec = ctx._prec_rounding[0] = sys.float_info.mant_dig
