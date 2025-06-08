@@ -485,7 +485,6 @@ class mpc(mpnumeric):
 
     def __new__(cls, real=0, imag=0, **kwargs):
         ctx = kwargs.pop('context')
-        prec, rounding = ctx._prec_rounding
         s = object.__new__(cls)
         s.context = ctx
         if isinstance(real, str):
@@ -502,8 +501,8 @@ class mpc(mpnumeric):
             i_real, i_imag = imag._mpc_
         else:
             i_real, i_imag = imag, 0
-        r_real, r_imag = map(ctx.mpf, [r_real, r_imag])
-        i_real, i_imag = map(ctx.mpf, [i_real, i_imag])
+        r_real, r_imag = map(ctx.make_mpf, [r_real, r_imag])
+        i_real, i_imag = map(ctx.make_mpf, [i_real, i_imag])
         real = r_real - i_imag
         imag = r_imag + i_real
         s._mpc_ = (real._mpf_, imag._mpf_)
