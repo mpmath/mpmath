@@ -1179,7 +1179,7 @@ def round_digits(sign, digits, dps, base, rnd=round_nearest, fixed=False):
 
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
            show_zero_exponent=False, base=10, binary_exp=False,
-           rounding=round_nearest):
+           rnd=round_nearest):
     """
     Convert a raw mpf to a floating-point literal in the given base
     with at most `dps` digits in the mantissa (not counting extra zeros
@@ -1209,10 +1209,9 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         if base not in (2, 16):
             raise ValueError("binary_exp option could be used for base 2 and 16")
 
-
-    if rounding not in (round_nearest, round_floor, round_ceiling, round_up,
-                        round_down):
-        raise ValueError("rounding should be one of " +
+    if rnd not in (round_nearest, round_floor, round_ceiling, round_up,
+                   round_down):
+        raise ValueError("rnd should be one of " +
                          ", ".join([round_nearest, round_floor, round_ceiling,
                                    round_up, round_down]) + ".")
 
@@ -1263,7 +1262,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 n = int(digits, 16) >> shift
                 digits = hex(n)[2:]
 
-        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
         exponent += exp_add
 
         # Prettify numbers close to unit magnitude

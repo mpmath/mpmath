@@ -134,10 +134,10 @@ class _mpf(mpnumeric):
         if s.context.pretty:
             ndigits = (s.context._repr_digits
                        if s.context._pretty_repr_dps else s.context._str_digits)
-            return to_str(s._mpf_, ndigits, rounding=rounding)
-        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits, rounding=rounding)
+            return to_str(s._mpf_, ndigits, rnd=rounding)
+        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits, rnd=rounding)
 
-    def __str__(s): return to_str(s._mpf_, s.context._str_digits, rounding=s.context._prec_rounding[1])
+    def __str__(s): return to_str(s._mpf_, s.context._str_digits, rnd=s.context._prec_rounding[1])
     def __hash__(s): return mpf_hash(s._mpf_)
     def __int__(s): return int(to_int(s._mpf_))
     def __float__(s): return to_float(s._mpf_, rnd=s.context._prec_rounding[1])
