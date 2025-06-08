@@ -1452,7 +1452,6 @@ def read_format_spec(format_spec):
         'frac_separators': '',
         'width': -1,
         'precision': -1,
-        'rounding': round_nearest,
         'type': ''
         }
 
@@ -1595,7 +1594,7 @@ def fill_sep(digits, sep, prev, nmod, sep_range):
                            for pos in range(nmod, len(digits), sep_range))
 
 
-def format_digits(num, format_dict, prec, _pretty_repr_dps):
+def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps):
     capitalize = False
     if format_dict['type'] in list('AFGE'):
         capitalize = True
@@ -1618,7 +1617,7 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
     strip_last_zero = False
     strip_zeros = False
 
-    rnd = format_dict['rounding']
+    rnd = format_dict.get('rounding', rnd)
 
     if not fmt_type or fmt_type == 'g':
         if not format_dict['alternate']:
@@ -1729,9 +1728,9 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
     return sign, int_part + digits
 
 
-def format_mpf(num, format_spec, prec, _pretty_repr_dps):
+def format_mpf(num, format_spec, prec, rnd, _pretty_repr_dps):
     format_dict = read_format_spec(format_spec)
-    sign, digits = format_digits(num, format_dict, prec, _pretty_repr_dps)
+    sign, digits = format_digits(num, format_dict, prec, rnd, _pretty_repr_dps)
     nchars = len(digits) + len(sign)
     lpad, rpad = calc_padding(
             nchars, format_dict['width'], format_dict['align'])
@@ -1744,7 +1743,7 @@ def format_mpf(num, format_spec, prec, _pretty_repr_dps):
             + rpad*format_dict['fill_char']
 
 
-def format_mpc(num, format_spec, prec, _pretty_repr_dps):
+def format_mpc(num, format_spec, prec, rnd, _pretty_repr_dps):
     format_dict = read_format_spec(format_spec)
 
     if format_dict['fill_char'] == '0':
@@ -1760,10 +1759,10 @@ def format_mpc(num, format_spec, prec, _pretty_repr_dps):
     fmt_type = format_dict['type'].lower()
     if not fmt_type:
         format_dict['type'] = 'g'
-    sign_re, digits_re = format_digits(num[0], format_dict, prec, _pretty_repr_dps)
+    sign_re, digits_re = format_digits(num[0], format_dict, prec, rnd, _pretty_repr_dps)
     fmt_sign = format_dict['sign']
     format_dict['sign'] = '+'
-    sign_im, digits_im = format_digits(num[1], format_dict, prec, _pretty_repr_dps)
+    sign_im, digits_im = format_digits(num[1], format_dict, prec, rnd, _pretty_repr_dps)
     digits_im += 'j'
 
     if not fmt_type:

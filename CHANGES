@@ -33,8 +33,8 @@ Features:
 * Implement mpf.__format__(), see #819, #831, #850, #859, #857, #862, #881,
   #944 and #966 (Javier Garcia, Sergey B Kirpichev)
 * Support conversion from scalar ndarray's, see #821 (Sergey B Kirpichev)
-* Support rounding modes in mpf.__format__, see #823, #831 and #834 (Javier
-  Garcia, Sergey B Kirpichev)
+* Support rounding modes in mpf.__format__, see #823, #831, #834
+  and #969 (Javier Garcia, Sergey B Kirpichev)
 * Support '%' presentation type for mpf, see #847 (Sergey B Kirpichev)
 * Support gmpy2-like rounding modes in to_str(), see #830 (Javier Garcia)
 * Implement 'a'/'A' formating types for mpf.__format__, see #841 and #870

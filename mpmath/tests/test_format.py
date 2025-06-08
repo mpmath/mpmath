@@ -806,6 +806,16 @@ def test_mpf_fmt():
             assert f"{mp.mpf('-0.1'):=.4Df}" == "-0.1000"
 
 
+def test_default_rounding():
+    x = mp.mpf(mp.pi)
+
+    assert f"{x:.3f}" == '3.142'
+    mp.rounding = 'd'
+    assert f"{x:.3f}" == '3.141'
+    mp.rounding = 'u'
+    assert f"{x:.3f}" == '3.142'
+
+
 def test_issue_858():
     for n in range(2, 15):
         str_num = '0.' + (n)*'9'

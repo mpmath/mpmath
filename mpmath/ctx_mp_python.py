@@ -396,6 +396,8 @@ class _mpf(mpnumeric):
             * ``'Z'``: rounding towards zero
             * ``'N'``: rounding to nearest (default)
 
+        If it's not specified, the context's rounding mode is used.
+
         The rounding option must be set right before the presentation type:
 
             >>> x = mp.mpf('-1.2345678')
@@ -428,9 +430,9 @@ class _mpf(mpnumeric):
 
         """
 
-        _, _, (prec, _) = s._ctxdata
+        _, _, (prec, rounding) = s._ctxdata
         ctx = s.context
-        return format_mpf(s._mpf_, format_spec, prec, ctx._pretty_repr_dps)
+        return format_mpf(s._mpf_, format_spec, prec, rounding, ctx._pretty_repr_dps)
 
     def sqrt(s):
         return s.context.sqrt(s)
@@ -701,9 +703,9 @@ class _mpc(mpnumeric):
 
         """
 
-        _, _, (prec, _) = s._ctxdata
+        _, _, (prec, rounding) = s._ctxdata
         ctx = s.context
-        return format_mpc(s._mpc_, format_spec, prec, ctx._pretty_repr_dps)
+        return format_mpc(s._mpc_, format_spec, prec, rounding, ctx._pretty_repr_dps)
 
 
 complex_types = (complex, _mpc)
