@@ -882,7 +882,7 @@ def mpc_si(z, prec, rnd=round_fast):
 # TODO: recompute at higher precision if the fixed-point mantissa
 # is very small
 
-def mpf_besseljn(n, x, prec, rounding=round_fast):
+def mpf_besseljn(n, x, prec, rnd=round_fast):
     prec += 50
     negate = n < 0 and n & 1
     mag = x[2]+x[3]
@@ -903,9 +903,9 @@ def mpf_besseljn(n, x, prec, rounding=round_fast):
         k += 1
     if negate:
         s = -s
-    return from_man_exp(s, -wp, prec, rounding)
+    return from_man_exp(s, -wp, prec, rnd)
 
-def mpc_besseljn(n, z, prec, rounding=round_fast):
+def mpc_besseljn(n, z, prec, rnd=round_fast):
     negate = n < 0 and n & 1
     n = abs(n)
     origprec = prec
@@ -937,8 +937,8 @@ def mpc_besseljn(n, z, prec, rounding=round_fast):
     if negate:
         sre = -sre
         sim = -sim
-    re = from_man_exp(sre, -prec, origprec, rounding)
-    im = from_man_exp(sim, -prec, origprec, rounding)
+    re = from_man_exp(sre, -prec, origprec, rnd)
+    im = from_man_exp(sim, -prec, origprec, rnd)
     return (re, im)
 
 def mpf_agm(a, b, prec, rnd=round_fast):
