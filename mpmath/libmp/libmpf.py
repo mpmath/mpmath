@@ -1098,8 +1098,7 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rnd=round_nearest,
-                 fixed=False):
+def round_digits(sign, digits, dps, base, rnd=round_nearest, fixed=False):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1491,7 +1490,7 @@ def read_format_spec(format_spec):
     return format_dict
 
 
-def format_fixed(s, precision=6, rnd=round_nearest):
+def format_fixed(s, dps, rnd=round_nearest):
     # First, get the exponent to know how many digits we will need
     base = 10
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1500,14 +1499,15 @@ def format_fixed(s, precision=6, rnd=round_nearest):
     # (we do this because the previous computation could yield the wrong
     # exponent by +- 1)
     _, digits, exponent = to_digits_exp(
-            s, max(precision+exponent+4, int(s[3]/blog2_10)), base)
-    dps = precision + exponent + 1
+            s, max(dps+exponent+4, int(s[3]/blog2_10)), base)
+    orig_dps = dps
+    dps += exponent + 1
 
     # The number we want to print is lower in magnitude that the requested
     # precision. We should only print 0s.
-    if exponent + precision < -1:
+    if dps < 0:
         int_part = '0'
-        frac_part = precision*'0'
+        frac_part = orig_dps*'0'
 
     else:
         digits, exp_add = round_digits(s[0], digits, dps, base, rnd, True)
@@ -1523,7 +1523,7 @@ def format_fixed(s, precision=6, rnd=round_nearest):
         int_part = digits[:split]
 
         # Finally, assemble the digits including the decimal point
-        if precision == 0:
+        if orig_dps == 0:
             return int_part, ''
 
         frac_part = digits[split:]
@@ -1535,11 +1535,11 @@ _MAP_FMT_EXP = {'E': 'E', 'e': 'e', 'G': 'E', 'g': 'e',
                 'A': 'P', 'a': 'p', 'B': 'p', 'b': 'p', '': 'e'}
 
 
-def format_scientific(s, precision=6, rnd=round_nearest):
+def format_scientific(s, dps, rnd=round_nearest):
     base = 10
 
     # First, get the exponent to know how many digits we will need
-    dps = precision + 1
+    dps += 1
     _, digits, exponent = to_digits_exp(s, max(dps + 10,
                                                int(s[3]/blog2_10) + 10),
                                         base)
@@ -1549,8 +1549,8 @@ def format_scientific(s, precision=6, rnd=round_nearest):
     return digits[0], digits[1:], f'e{exponent:+03d}'
 
 
-def format_hexadecimal(s, precision=-1, rnd=round_nearest):
-    prec = 4*precision + 1 if precision >= 0 else s[1].bit_length()
+def format_hexadecimal(s, dps, rnd=round_nearest):
+    prec = 4*dps + 1 if dps >= 0 else s[1].bit_length()
 
     if s[1]:
         s = mpf_pos(s, prec, rnd)
@@ -1566,9 +1566,9 @@ def format_hexadecimal(s, precision=-1, rnd=round_nearest):
         frac_digits = ""
         digits = "0"
 
-    if precision >= 0:
-        frac_digits = frac_digits[:precision]
-        frac_digits += "0"*(precision - len(frac_digits))
+    if dps >= 0:
+        frac_digits = frac_digits[:dps]
+        frac_digits += "0"*(dps - len(frac_digits))
     else:
         # Clean up trailing zeros
         frac_digits = frac_digits.rstrip('0')
@@ -1576,12 +1576,12 @@ def format_hexadecimal(s, precision=-1, rnd=round_nearest):
     return digits, frac_digits, f'p{exponent:+01d}'
 
 
-def format_binary(s, precision=-1, rnd=round_nearest):
-    prec = precision + 1 if precision >= 0 else s[1].bit_length()
+def format_binary(s, dps, rnd=round_nearest):
+    prec = dps + 1 if dps >= 0 else s[1].bit_length()
     s = mpf_pos(s, prec, rnd)
 
     digits = bin(s[1])[2:]
-    digits = digits + '0'*(precision + 1 - len(digits))
+    digits = digits + '0'*(dps + 1 - len(digits))
     exponent = s[2]
     if s[1]:
         exponent += s[1].bit_length() - 1
@@ -1607,9 +1607,9 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
     if fmt_type == '%':
         percent = True
         fmt_type = 'f'
-        num = mpf_mul(num, from_int(100), prec=prec, rnd=round_nearest)
+        num = mpf_mul(num, from_int(100), prec, rnd=round_nearest)
 
-    precision = format_dict['precision']
+    dps = format_dict['precision']
 
     int_part = ''
     exponent = ''
@@ -1627,22 +1627,22 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
             if fmt_type == 'g':
                 strip_last_zero = True
 
-        if precision < 0:
-            precision = repr_dps(prec) if _pretty_repr_dps else prec_to_dps(prec)
-        if precision == 0:
-            precision = 1
+        if dps < 0:
+            dps = repr_dps(prec) if _pretty_repr_dps else prec_to_dps(prec)
+        if dps == 0:
+            dps = 1
 
-        _, tdigits, exp = to_digits_exp(num, max(53/blog2_10, precision), 10)
+        _, tdigits, exp = to_digits_exp(num, max(53/blog2_10, dps), 10)
         if num[1]:
-            _, exp_add = round_digits(num, tdigits, precision, 10, rnd)
+            _, exp_add = round_digits(num, tdigits, dps, 10, rnd)
             exp += exp_add
 
         fix0 = 0 if fmt_type else 1
-        if -4 <= exp < precision - fix0:
-            precision = max(0, precision - exp - 1)
+        if -4 <= exp < dps - fix0:
+            dps = max(0, dps - exp - 1)
         else:
             fmt_type = 'e'
-            precision = max(0, precision - 1)
+            dps = max(0, dps - 1)
 
     if num in _MAP_SPEC_STR:  # special cases
         frac_part = _MAP_SPEC_STR[num]
@@ -1650,9 +1650,7 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
             frac_part = frac_part.upper()
 
     elif fmt_type == 'e':
-        int_part, frac_part, exponent = format_scientific(num,
-                                                          precision=precision,
-                                                          rnd=rnd)
+        int_part, frac_part, exponent = format_scientific(num, dps, rnd=rnd)
         if strip_zeros:
             frac_part = frac_part.rstrip('0')
         if frac_part or format_dict['alternate']:
@@ -1661,9 +1659,7 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
             exponent = exponent.replace('e', 'E')
 
     elif fmt_type == 'a':
-        int_part, frac_part, exponent = format_hexadecimal(num,
-                                                           precision=precision,
-                                                           rnd=rnd)
+        int_part, frac_part, exponent = format_hexadecimal(num, dps, rnd=rnd)
         if capitalize:
             int_part = '0X' + int_part
             frac_part = frac_part.upper()
@@ -1674,23 +1670,21 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
             frac_part = '.' + frac_part
 
     elif fmt_type == 'b':
-        int_part, frac_part, exponent = format_binary(num, precision=precision,
-                                                      rnd=rnd)
+        int_part, frac_part, exponent = format_binary(num, dps, rnd=rnd)
         if frac_part:
             frac_part = '.' + frac_part
         if format_dict['alternate']:
             int_part = '0b' + int_part
 
     else:  # fixed-point formats
-        int_part, frac_part = format_fixed(num, precision=precision,
-                                           rnd=rnd)
+        int_part, frac_part = format_fixed(num, dps, rnd=rnd)
 
         if strip_zeros:
             frac_part = frac_part.rstrip('0')
         if not frac_part and not fmt_type:
             frac_part = '0'
         if (frac_part or format_dict['alternate']
-                or (precision and not strip_last_zero)):
+                or (dps and not strip_last_zero)):
             frac_part = '.' + frac_part
 
     sep_range = 3
