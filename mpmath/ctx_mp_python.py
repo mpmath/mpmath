@@ -501,8 +501,8 @@ class mpc(mpnumeric):
             i_real, i_imag = imag._mpc_
         else:
             i_real, i_imag = imag, 0
-        r_real, r_imag = map(ctx.make_mpf, [r_real, r_imag])
-        i_real, i_imag = map(ctx.make_mpf, [i_real, i_imag])
+        r_real, r_imag = map(ctx.mpf, [r_real, r_imag])
+        i_real, i_imag = map(ctx.mpf, [i_real, i_imag])
         real = r_real - i_imag
         imag = r_imag + i_real
         s._mpc_ = (real._mpf_, imag._mpf_)
@@ -709,7 +709,9 @@ class PythonMPContext:
         return _mpf(v, context=ctx, **kwargs)
 
     def make_mpf(ctx, v):
-        return _mpf(v, context=ctx)
+        a = _mpf(context=ctx)
+        a._mpf_ = v
+        return a
 
     def constant(ctx, func, name, docname='', **kwargs):
         return _constant(func, name, docname=docname, context=ctx, **kwargs)
@@ -718,7 +720,9 @@ class PythonMPContext:
         return _mpc(real, imag, context=ctx, **kwargs)
 
     def make_mpc(ctx, v):
-        return _mpc(*v, context=ctx)
+        a = _mpc(context=ctx)
+        a._mpc_ = v
+        return a
 
     def default(ctx):
         ctx._prec = ctx._prec_rounding[0] = sys.float_info.mant_dig
