@@ -192,7 +192,6 @@ class _mpf(mpnumeric):
             return mpf_eq(sval, tval)
         if hasattr(other, '_mpc_'):
             tval = other._mpc_
-            mpc = type(other)
             return (tval[1] == fzero) and mpf_eq(tval[0], sval)
         try:
             other = ctx.convert(other, strings=False)
@@ -456,7 +455,7 @@ class _constant(_mpf):
 
     def __call__(self, prec=None, dps=None, rounding=None):
         ctx = self.context
-        prec2, rounding2 = self.context._prec_rounding
+        prec2, rounding2 = ctx._prec_rounding
         if not prec: prec = prec2
         if not rounding: rounding = rounding2
         if dps: prec = dps_to_prec(dps)
@@ -483,9 +482,10 @@ class _mpc(mpnumeric):
     __slots__ = ['_mpc_']
 
     def __new__(cls, real=0, imag=0):
+        ctx = cls.context
         s = object.__new__(cls)
         if isinstance(real, str):
-            real = cls.context.convert(real)
+            real = ctx.convert(real)
         if isinstance(real, complex_types):
             r_real, r_imag = real.real, real.imag
         elif hasattr(real, '_mpc_'):
@@ -498,8 +498,8 @@ class _mpc(mpnumeric):
             i_real, i_imag = imag._mpc_
         else:
             i_real, i_imag = imag, 0
-        r_real, r_imag = map(cls.context.mpf, [r_real, r_imag])
-        i_real, i_imag = map(cls.context.mpf, [i_real, i_imag])
+        r_real, r_imag = map(ctx.make_mpf, [r_real, r_imag])
+        i_real, i_imag = map(ctx.make_mpf, [i_real, i_imag])
         real = r_real - i_imag
         imag = r_imag + i_real
         s._mpc_ = (real._mpf_, imag._mpf_)
