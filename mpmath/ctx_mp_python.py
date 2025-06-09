@@ -38,7 +38,7 @@ class mpf(mpnumeric):
     work analogously to Python floats, but support arbitrary-precision
     arithmetic.
     """
-    __slots__ = ['_mpf_', 'context', '_ctxdata']
+    __slots__ = ['_mpf_', 'context']
 
     def __new__(cls, val=fzero, **kwargs):
         """A new mpf can be created from a Python float, an int, a
