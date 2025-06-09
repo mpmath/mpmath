@@ -8,7 +8,7 @@ import re
 import sys
 import warnings
 
-from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy
+from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy, int_types
 from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
                          stddigits, trailtable)
 
@@ -204,7 +204,10 @@ def normalize(sign, man, exp, bc, prec, rnd):
 def from_man_exp(man, exp, prec=0, rnd=round_fast):
     """Create raw mpf from (man, exp) pair. The mantissa may be signed.
     If no precision is specified, the mantissa is stored exactly."""
-    man = MPZ(man)
+    if isinstance(man, int_types):
+        man = MPZ(man)
+    else:
+        raise TypeError("man expected to be an integer")
     sign = 0
     if man < 0:
         sign = 1
