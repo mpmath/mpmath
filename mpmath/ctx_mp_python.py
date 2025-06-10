@@ -61,7 +61,7 @@ class mpf(mpnumeric):
             if len(val) == 4:
                 val = val[0], MPZ(val[1]), *val[2:]
             elif len(val) == 2:
-                v._mpf_ = from_man_exp(MPZ(val[0]), val[1], prec, rounding)
+                v._mpf_ = from_man_exp(val[0], val[1], prec, rounding)
                 return v
             else:
                 raise ValueError
@@ -132,14 +132,14 @@ class mpf(mpnumeric):
         if ctx.pretty:
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
-            return to_str(self._mpf_, ndigits, rounding=rounding)
+            return to_str(self._mpf_, ndigits, rnd=rounding)
         return "mpf('%s')" % to_str(self._mpf_, ctx._repr_digits,
-                                    rounding=rounding)
+                                    rnd=rounding)
 
     def __str__(self):
         ctx = self.context
         rounding = ctx._prec_rounding[1]
-        return to_str(self._mpf_, ctx._str_digits, rounding=rounding)
+        return to_str(self._mpf_, ctx._str_digits, rnd=rounding)
 
     def __hash__(self): return mpf_hash(self._mpf_)
     def __int__(self): return int(to_int(self._mpf_))
@@ -378,6 +378,8 @@ class mpf(mpnumeric):
             * ``'Z'``: rounding towards zero
             * ``'N'``: rounding to nearest (default)
 
+        If it's not specified, the context's rounding mode is used.
+
         The rounding option must be set right before the presentation type:
 
             >>> x = mp.mpf('-1.2345678')
@@ -410,8 +412,8 @@ class mpf(mpnumeric):
 
         """
         ctx = self.context
-        prec = ctx._prec_rounding[0]
-        return format_mpf(self._mpf_, format_spec, prec, ctx._pretty_repr_dps)
+        prec, rounding = ctx._prec_rounding
+        return format_mpf(self._mpf_, format_spec, prec, rounding, ctx._pretty_repr_dps)
 
     def sqrt(self):
         ctx = self.context
@@ -692,8 +694,8 @@ class mpc(mpnumeric):
 
         """
         ctx = self.context
-        prec = ctx._prec_rounding[0]
-        return format_mpc(self._mpc_, format_spec, prec, ctx._pretty_repr_dps)
+        prec, rounding = ctx._prec_rounding
+        return format_mpc(self._mpc_, format_spec, prec, rounding, ctx._pretty_repr_dps)
 _mpc = mpc
 
 

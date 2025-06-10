@@ -685,3 +685,8 @@ def test_rounding_prop():
     assert mp.sin(1) == mpf('0x1.aed548f090cefp-1')
     with pytest.raises(ValueError):
         mp.rounding = 'x'
+
+
+def test_from_man_exp():
+    with pytest.raises(TypeError):
+        mp.mpf(("!", 1))
