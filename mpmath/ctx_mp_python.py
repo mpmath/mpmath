@@ -64,7 +64,7 @@ class _mpf(mpnumeric):
             if len(val) == 4:
                 val = val[0], MPZ(val[1]), *val[2:]
             elif len(val) == 2:
-                v._mpf_ = from_man_exp(MPZ(val[0]), val[1], prec, rounding)
+                v._mpf_ = from_man_exp(val[0], val[1], prec, rounding)
                 return v
             else:
                 raise ValueError
@@ -134,10 +134,10 @@ class _mpf(mpnumeric):
         if s.context.pretty:
             ndigits = (s.context._repr_digits
                        if s.context._pretty_repr_dps else s.context._str_digits)
-            return to_str(s._mpf_, ndigits, rounding=rounding)
-        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits, rounding=rounding)
+            return to_str(s._mpf_, ndigits, rnd=rounding)
+        return "mpf('%s')" % to_str(s._mpf_, s.context._repr_digits, rnd=rounding)
 
-    def __str__(s): return to_str(s._mpf_, s.context._str_digits, rounding=s.context._prec_rounding[1])
+    def __str__(s): return to_str(s._mpf_, s.context._str_digits, rnd=s.context._prec_rounding[1])
     def __hash__(s): return mpf_hash(s._mpf_)
     def __int__(s): return int(to_int(s._mpf_))
     def __float__(s): return to_float(s._mpf_, rnd=s.context._prec_rounding[1])
@@ -396,6 +396,8 @@ class _mpf(mpnumeric):
             * ``'Z'``: rounding towards zero
             * ``'N'``: rounding to nearest (default)
 
+        If it's not specified, the context's rounding mode is used.
+
         The rounding option must be set right before the presentation type:
 
             >>> x = mp.mpf('-1.2345678')
@@ -428,9 +430,9 @@ class _mpf(mpnumeric):
 
         """
 
-        _, _, (prec, _) = s._ctxdata
+        _, _, (prec, rounding) = s._ctxdata
         ctx = s.context
-        return format_mpf(s._mpf_, format_spec, prec, ctx._pretty_repr_dps)
+        return format_mpf(s._mpf_, format_spec, prec, rounding, ctx._pretty_repr_dps)
 
     def sqrt(s):
         return s.context.sqrt(s)
@@ -701,9 +703,9 @@ class _mpc(mpnumeric):
 
         """
 
-        _, _, (prec, _) = s._ctxdata
+        _, _, (prec, rounding) = s._ctxdata
         ctx = s.context
-        return format_mpc(s._mpc_, format_spec, prec, ctx._pretty_repr_dps)
+        return format_mpc(s._mpc_, format_spec, prec, rounding, ctx._pretty_repr_dps)
 
 
 complex_types = (complex, _mpc)
