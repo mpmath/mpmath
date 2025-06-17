@@ -1684,7 +1684,7 @@ def mpf_gamma(x, prec, rnd=round_fast, type=0):
     function, G(x), as well as the following versions of the same:
 
     type = 0 -- G(x)                    [standard gamma function]
-    type = 1 -- G(x+1) = x*G(x+1) = x!  [factorial]
+    type = 1 -- G(x+1) = x*G(x) = x!    [factorial]
     type = 2 -- 1/G(x)                  [reciprocal gamma function]
     type = 3 -- log(|G(x)|)             [log-gamma function, real part]
     """
@@ -1713,10 +1713,12 @@ def mpf_gamma(x, prec, rnd=round_fast, type=0):
     is_integer = exp >= 0
     if is_integer:
         # Poles
-        if sign:
+        if sign: # Negative integers
             if type == 2:
                 return fzero
-            raise ValueError("gamma function pole")
+            if type == 1:
+                raise ValueError("factorial not defined for negative integers")
+            raise ValueError("gamma not defined for 0 or negative integers")
         # n = x
         n = man << exp
         if n < SMALL_FACTORIAL_CACHE_SIZE:
