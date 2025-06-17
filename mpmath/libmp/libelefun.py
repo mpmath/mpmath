@@ -702,7 +702,7 @@ def mpf_log(x, prec, rnd=round_fast):
         else:
             tfixed = to_fixed(x, wp) - (MPZ_ONE << wp)
         threshold = (1 << wp) // 1000
-        if (tfixed <= threshold):
+        if tfixed <= threshold:
             s = log_taylor(to_fixed(x, wp), wp)
             sb = s.bit_length()
             rman = s << (sb)
