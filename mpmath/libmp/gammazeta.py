@@ -1684,7 +1684,7 @@ def mpf_gamma(x, prec, rnd=round_fast, type=0):
     function, G(x), as well as the following versions of the same:
 
     type = 0 -- G(x)                    [standard gamma function]
-    type = 1 -- G(x+1) = x*G(x+1) = x!  [factorial]
+    type = 1 -- G(x+1) = x*G(x) = x!    [factorial]
     type = 2 -- 1/G(x)                  [reciprocal gamma function]
     type = 3 -- log(|G(x)|)             [log-gamma function, real part]
     """
