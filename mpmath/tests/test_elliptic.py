@@ -4,12 +4,10 @@ extensive testing can be found in elliptic_torture_tests.py
 
 Author of the first version: M.T. Taschuk
 
-References:
+**References**
 
-[1] Abramowitz & Stegun. 'Handbook of Mathematical Functions, 9th Ed.',
-    (Dover duplicate of 1972 edition)
-[2] Whittaker 'A Course of Modern Analysis, 4th Ed.', 1946,
-    Cambridge University Press
+1. [AbramowitzStegun]_
+2. [WhittakerWatson]_
 
 """
 
