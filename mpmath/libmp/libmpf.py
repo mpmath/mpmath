@@ -8,7 +8,7 @@ import re
 import sys
 import warnings
 
-from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy
+from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy, int_types
 from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
                          stddigits, trailtable)
 
@@ -204,7 +204,10 @@ def normalize(sign, man, exp, bc, prec, rnd):
 def from_man_exp(man, exp, prec=0, rnd=round_fast):
     """Create raw mpf from (man, exp) pair. The mantissa may be signed.
     If no precision is specified, the mantissa is stored exactly."""
-    man = MPZ(man)
+    if isinstance(man, int_types):
+        man = MPZ(man)
+    else:
+        raise TypeError("man expected to be an integer")
     sign = 0
     if man < 0:
         sign = 1
@@ -267,7 +270,9 @@ def to_int(s, rnd=round_fast):
     input is inf/nan, an exception is raised."""
     sign, man, exp, bc = s
     if (not man) and exp:
-        raise ValueError("cannot convert inf or nan to int")
+        if s == fnan:
+            raise ValueError("cannot convert nan to int")
+        raise OverflowError("cannot convert infinity to int")
     if exp >= 0:
         if sign:
             return (-man) << exp
@@ -1096,8 +1101,7 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rounding=round_nearest,
-                 fixed=False):
+def round_digits(sign, digits, dps, base, rnd=round_nearest, fixed=False):
     '''
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1106,21 +1110,19 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest,
     '''
 
     assert len(digits) > dps
-    assert rounding in (round_nearest, round_up, round_down, round_ceiling,
-                        round_floor)
+    assert rnd in (round_nearest, round_up, round_down, round_ceiling,
+                   round_floor)
 
-    if rounding == round_ceiling:
-        rounding = round_down if sign else round_up
-    elif rounding == round_floor:
-        rounding = round_up if sign else round_down
-    else:
-        rounding = rounding
+    if rnd == round_ceiling:
+        rnd = round_down if sign else round_up
+    elif rnd == round_floor:
+        rnd = round_up if sign else round_down
 
     exponent = 0
 
-    if rounding == round_down:
+    if rnd == round_down:
         return digits[:dps], 0
-    elif rounding == round_nearest:
+    elif rnd == round_nearest:
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
         rnd_digs = stddigits[1:base]
@@ -1128,7 +1130,7 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest,
     tie_down = False
     tie_up = False
 
-    if rounding == round_nearest:
+    if rnd == round_nearest:
         # The first digit after dps is a 5 and we should determine whether we
         # round it up or down.
         if digits[dps] == rnd_digs[0]:
@@ -1144,7 +1146,7 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest,
             if digits[dps-1] in stddigits[1:base:2]:
                 tie_down = False
 
-    elif rounding == round_up:
+    elif rnd == round_up:
         # If any digit following a 0 is different from zero, we round up.
         if digits[dps] == '0':
             for i in range(dps+1, len(digits)):
@@ -1180,7 +1182,7 @@ def round_digits(sign, digits, dps, base, rounding=round_nearest,
 
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
            show_zero_exponent=False, base=10, binary_exp=False,
-           rounding=round_nearest):
+           rnd=round_nearest):
     """
     Convert a raw mpf to a floating-point literal in the given base
     with at most `dps` digits in the mantissa (not counting extra zeros
@@ -1210,10 +1212,9 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
         if base not in (2, 16):
             raise ValueError("binary_exp option could be used for base 2 and 16")
 
-
-    if rounding not in (round_nearest, round_floor, round_ceiling, round_up,
-                        round_down):
-        raise ValueError("rounding should be one of " +
+    if rnd not in (round_nearest, round_floor, round_ceiling, round_up,
+                   round_down):
+        raise ValueError("rnd should be one of " +
                          ", ".join([round_nearest, round_floor, round_ceiling,
                                    round_up, round_down]) + ".")
 
@@ -1264,7 +1265,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 n = int(digits, 16) >> shift
                 digits = hex(n)[2:]
 
-        digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
         exponent += exp_add
 
         # Prettify numbers close to unit magnitude
@@ -1397,12 +1398,12 @@ _FLOAT_FORMAT_SPECIFICATION_MATCHER = re.compile(r"""
     (?P<sign>[-+ ]?)
     (?P<no_neg_0>z)?
     (?P<alternate>\#)?
-    (?P<zeropad>0(?=[0-9]))?
-    (?P<width>0|[1-9][0-9]*)?
+    (?P<zeropad>0(?=0*[1-9]))?
+    (?P<width>[0-9]+)?
     (?P<thousands_separators>[,_])?
     (?:\.
         (?=[,_0-9])  # lookahead for digit or separator
-        (?P<precision>0|[1-9][0-9]*)?
+        (?P<precision>[0-9]+)?
         (?P<frac_separators>[,_])?
     )?
     (?P<rounding>[UDYZN])?
@@ -1454,7 +1455,6 @@ def read_format_spec(format_spec):
         'frac_separators': '',
         'width': -1,
         'precision': -1,
-        'rounding': round_nearest,
         'type': ''
         }
 
@@ -1478,25 +1478,20 @@ def read_format_spec(format_spec):
             format_dict['rounding'] = _GMPY_ROUND_CHAR_DICT[rounding_char]
 
         if match['zeropad']:
-            if match['fill_char']:
-                raise ValueError("Fill character conflicts with '0'"
-                                 f" in format specifier: '{format_spec}'")
-            if match['align']:
-                raise ValueError("Alignment conflicts with '0'"
-                                 f" in format specifier: '{format_spec}'")
-            format_dict['align'] = '='
-            format_dict['fill_char'] = '0'
+            if not match['align']:
+                format_dict['align'] = '='
+            if not match['fill_char']:
+                format_dict['fill_char'] = '0'
 
-        if format_dict['precision'] < 0 and (format_dict['type'].lower()
-                                             not in ['', 'a', 'b']):
+        if format_dict['precision'] < 0 and format_dict['type'].lower() not in ['', 'a', 'b']:
             format_dict['precision'] = 6
+    else:
+        raise ValueError("Invalid format specifier '{}'".format(format_spec))
 
-        return format_dict
-
-    raise ValueError(f"Invalid format specifier '{format_spec}'")
+    return format_dict
 
 
-def format_fixed(s, precision=6, rounding=round_nearest):
+def format_fixed(s, dps, rnd=round_nearest):
     # First, get the exponent to know how many digits we will need
     base = 10
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1505,17 +1500,18 @@ def format_fixed(s, precision=6, rounding=round_nearest):
     # (we do this because the previous computation could yield the wrong
     # exponent by +- 1)
     _, digits, exponent = to_digits_exp(
-            s, max(precision+exponent+4, int(s[3]/blog2_10)), base)
-    dps = precision + exponent + 1
+            s, max(dps+exponent+4, int(s[3]/blog2_10)), base)
+    orig_dps = dps
+    dps += exponent + 1
 
     # The number we want to print is lower in magnitude that the requested
     # precision. We should only print 0s.
-    if exponent + precision < -1:
+    if dps < 0:
         int_part = '0'
-        frac_part = precision*'0'
+        frac_part = orig_dps*'0'
 
     else:
-        digits, exp_add = round_digits(s[0], digits, dps, base, rounding, True)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rnd, True)
         exponent += exp_add
 
         # Here we prepend the corresponding 0s to the digits string, according
@@ -1528,7 +1524,7 @@ def format_fixed(s, precision=6, rounding=round_nearest):
         int_part = digits[:split]
 
         # Finally, assemble the digits including the decimal point
-        if precision == 0:
+        if orig_dps == 0:
             return int_part, ''
 
         frac_part = digits[split:]
@@ -1540,25 +1536,25 @@ _MAP_FMT_EXP = {'E': 'E', 'e': 'e', 'G': 'E', 'g': 'e',
                 'A': 'P', 'a': 'p', 'B': 'p', 'b': 'p', '': 'e'}
 
 
-def format_scientific(s, precision=6, rounding=round_nearest):
+def format_scientific(s, dps, rnd=round_nearest):
     base = 10
 
     # First, get the exponent to know how many digits we will need
-    dps = precision + 1
+    dps += 1
     _, digits, exponent = to_digits_exp(s, max(dps + 10,
                                                int(s[3]/blog2_10) + 10),
                                         base)
-    digits, exp_add = round_digits(s[0], digits, dps, base, rounding)
+    digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
     exponent += exp_add
 
     return digits[0], digits[1:], f'e{exponent:+03d}'
 
 
-def format_hexadecimal(s, precision=-1, rounding=round_nearest):
-    prec = 4*precision + 1 if precision >= 0 else s[1].bit_length()
+def format_hexadecimal(s, dps, rnd=round_nearest):
+    prec = 4*dps + 1 if dps >= 0 else s[1].bit_length()
 
     if s[1]:
-        s = mpf_pos(s, prec, rounding)
+        s = mpf_pos(s, prec, rnd)
 
         exponent = s[2] + s[3] - 1
         man = s[1] | (1 << s[3] + 2)  # set leading digit (ignored) to 0x9
@@ -1571,9 +1567,9 @@ def format_hexadecimal(s, precision=-1, rounding=round_nearest):
         frac_digits = ""
         digits = "0"
 
-    if precision >= 0:
-        frac_digits = frac_digits[:precision]
-        frac_digits += "0"*(precision - len(frac_digits))
+    if dps >= 0:
+        frac_digits = frac_digits[:dps]
+        frac_digits += "0"*(dps - len(frac_digits))
     else:
         # Clean up trailing zeros
         frac_digits = frac_digits.rstrip('0')
@@ -1581,12 +1577,12 @@ def format_hexadecimal(s, precision=-1, rounding=round_nearest):
     return digits, frac_digits, f'p{exponent:+01d}'
 
 
-def format_binary(s, precision=-1, rounding=round_nearest):
-    prec = precision + 1 if precision >= 0 else s[1].bit_length()
-    s = mpf_pos(s, prec, rounding)
+def format_binary(s, dps, rnd=round_nearest):
+    prec = dps + 1 if dps >= 0 else s[1].bit_length()
+    s = mpf_pos(s, prec, rnd)
 
     digits = bin(s[1])[2:]
-    digits = digits + '0'*(precision + 1 - len(digits))
+    digits = digits + '0'*(dps + 1 - len(digits))
     exponent = s[2]
     if s[1]:
         exponent += s[1].bit_length() - 1
@@ -1601,7 +1597,7 @@ def fill_sep(digits, sep, prev, nmod, sep_range):
                            for pos in range(nmod, len(digits), sep_range))
 
 
-def format_digits(num, format_dict, prec, _pretty_repr_dps):
+def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps):
     capitalize = False
     if format_dict['type'] in list('AFGE'):
         capitalize = True
@@ -1612,9 +1608,9 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
     if fmt_type == '%':
         percent = True
         fmt_type = 'f'
-        num = mpf_mul(num, from_int(100), prec=prec, rnd=round_nearest)
+        num = mpf_mul(num, from_int(100), prec, rnd=round_nearest)
 
-    precision = format_dict['precision']
+    dps = format_dict['precision']
 
     int_part = ''
     exponent = ''
@@ -1624,7 +1620,7 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
     strip_last_zero = False
     strip_zeros = False
 
-    rounding = format_dict['rounding']
+    rnd = format_dict.get('rounding', rnd)
 
     if not fmt_type or fmt_type == 'g':
         if not format_dict['alternate']:
@@ -1632,22 +1628,22 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
             if fmt_type == 'g':
                 strip_last_zero = True
 
-        if precision < 0:
-            precision = repr_dps(prec) if _pretty_repr_dps else prec_to_dps(prec)
-        if precision == 0:
-            precision = 1
+        if dps < 0:
+            dps = repr_dps(prec) if _pretty_repr_dps else prec_to_dps(prec)
+        if dps == 0:
+            dps = 1
 
-        _, tdigits, exp = to_digits_exp(num, max(53/blog2_10, precision), 10)
+        _, tdigits, exp = to_digits_exp(num, max(53/blog2_10, dps), 10)
         if num[1]:
-            _, exp_add = round_digits(num, tdigits, precision, 10, rounding)
+            _, exp_add = round_digits(num, tdigits, dps, 10, rnd)
             exp += exp_add
 
         fix0 = 0 if fmt_type else 1
-        if -4 <= exp < precision - fix0:
-            precision = max(0, precision - exp - 1)
+        if -4 <= exp < dps - fix0:
+            dps = max(0, dps - exp - 1)
         else:
             fmt_type = 'e'
-            precision = max(0, precision - 1)
+            dps = max(0, dps - 1)
 
     if num in _MAP_SPEC_STR:  # special cases
         frac_part = _MAP_SPEC_STR[num]
@@ -1655,9 +1651,7 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
             frac_part = frac_part.upper()
 
     elif fmt_type == 'e':
-        int_part, frac_part, exponent = format_scientific(num,
-                                                          precision=precision,
-                                                          rounding=rounding)
+        int_part, frac_part, exponent = format_scientific(num, dps, rnd=rnd)
         if strip_zeros:
             frac_part = frac_part.rstrip('0')
         if frac_part or format_dict['alternate']:
@@ -1666,9 +1660,7 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
             exponent = exponent.replace('e', 'E')
 
     elif fmt_type == 'a':
-        int_part, frac_part, exponent = format_hexadecimal(num,
-                                                           precision=precision,
-                                                           rounding=rounding)
+        int_part, frac_part, exponent = format_hexadecimal(num, dps, rnd=rnd)
         if capitalize:
             int_part = '0X' + int_part
             frac_part = frac_part.upper()
@@ -1679,23 +1671,21 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
             frac_part = '.' + frac_part
 
     elif fmt_type == 'b':
-        int_part, frac_part, exponent = format_binary(num, precision=precision,
-                                                      rounding=rounding)
+        int_part, frac_part, exponent = format_binary(num, dps, rnd=rnd)
         if frac_part:
             frac_part = '.' + frac_part
         if format_dict['alternate']:
             int_part = '0b' + int_part
 
     else:  # fixed-point formats
-        int_part, frac_part = format_fixed(num, precision=precision,
-                                           rounding=rounding)
+        int_part, frac_part = format_fixed(num, dps, rnd=rnd)
 
         if strip_zeros:
             frac_part = frac_part.rstrip('0')
         if not frac_part and not fmt_type:
             frac_part = '0'
         if (frac_part or format_dict['alternate']
-                or (precision and not strip_last_zero)):
+                or (dps and not strip_last_zero)):
             frac_part = '.' + frac_part
 
     sep_range = 3
@@ -1741,9 +1731,9 @@ def format_digits(num, format_dict, prec, _pretty_repr_dps):
     return sign, int_part + digits
 
 
-def format_mpf(num, format_spec, prec, _pretty_repr_dps):
+def format_mpf(num, format_spec, prec, rnd, _pretty_repr_dps):
     format_dict = read_format_spec(format_spec)
-    sign, digits = format_digits(num, format_dict, prec, _pretty_repr_dps)
+    sign, digits = format_digits(num, format_dict, prec, rnd, _pretty_repr_dps)
     nchars = len(digits) + len(sign)
     lpad, rpad = calc_padding(
             nchars, format_dict['width'], format_dict['align'])
@@ -1756,7 +1746,7 @@ def format_mpf(num, format_spec, prec, _pretty_repr_dps):
             + rpad*format_dict['fill_char']
 
 
-def format_mpc(num, format_spec, prec, _pretty_repr_dps):
+def format_mpc(num, format_spec, prec, rnd, _pretty_repr_dps):
     format_dict = read_format_spec(format_spec)
 
     if format_dict['fill_char'] == '0':
@@ -1772,10 +1762,10 @@ def format_mpc(num, format_spec, prec, _pretty_repr_dps):
     fmt_type = format_dict['type'].lower()
     if not fmt_type:
         format_dict['type'] = 'g'
-    sign_re, digits_re = format_digits(num[0], format_dict, prec, _pretty_repr_dps)
+    sign_re, digits_re = format_digits(num[0], format_dict, prec, rnd, _pretty_repr_dps)
     fmt_sign = format_dict['sign']
     format_dict['sign'] = '+'
-    sign_im, digits_im = format_digits(num[1], format_dict, prec, _pretty_repr_dps)
+    sign_im, digits_im = format_digits(num[1], format_dict, prec, rnd, _pretty_repr_dps)
     digits_im += 'j'
 
     if not fmt_type:

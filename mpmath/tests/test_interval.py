@@ -371,9 +371,8 @@ def test_interval_ae():
 def test_interval_nstr():
     iv.dps = n = 30
     x = mpi(1, 2)
-    # FIXME: error_dps should not be necessary
-    assert iv.nstr(x, n, mode='plusminus', error_dps=6) == '1.5 +- 0.5'
-    assert iv.nstr(x, n, mode='plusminus', use_spaces=False, error_dps=6) == '1.5+-0.5'
+    assert iv.nstr(x, n, mode='plusminus') == '1.5 +- 0.5'
+    assert iv.nstr(x, n, mode='plusminus', use_spaces=False) == '1.5+-0.5'
     assert iv.nstr(x, n, mode='percent') == '1.5 (33.33%)'
     assert iv.nstr(x, n, mode='brackets', use_spaces=False) == '[1.0,2.0]'
     assert iv.nstr(x, n, mode='brackets' , brackets=('<', '>')) == '<1.0, 2.0>'

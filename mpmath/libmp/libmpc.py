@@ -46,7 +46,7 @@ def mpc_is_infnan(z):
 
 def mpc_to_str(z, dps, **kwargs):
     re, im = z
-    rs = to_str(re, dps)
+    rs = to_str(re, dps, **kwargs)
     if im[0]:
         return rs + " - " + to_str(mpf_neg(im), dps, **kwargs) + "j"
     else:
