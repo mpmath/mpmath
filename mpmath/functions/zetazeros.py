@@ -174,9 +174,9 @@ def sure_number_block(ctx, n):
     """The number of good Rosser blocks needed to apply
     Turing method
     References:
-    R. P. Brent, On the Zeros of the Riemann Zeta Function
-    in the Critical Strip, Math. Comp. 33 (1979) 1361--1372
-    T. Trudgian, Improvements to Turing Method, Math. Comp."""
+    * [Brent79]_
+    * [Trudgian]_
+    """
     if n < 9*10**5:
         return(2)
     g = ctx.grampoint(n-100)
@@ -603,21 +603,10 @@ that are noted in the literature by some reason.
 
 The list is composed from the data published in the references:
 
-R. P. Brent, J. van de Lune, H. J. J. te Riele, D. T. Winter,
-'On the Zeros of the Riemann Zeta Function in the Critical Strip. II',
-Math. Comp. 39 (1982) 681--688.
-See also Corrigenda in Math. Comp. 46 (1986) 771.
+* [Brent86]_
+* [Lune86]_
+* [Lune84]_
 
-J. van de Lune, H. J. J. te Riele,
-'On the Zeros of the Riemann Zeta Function in the Critical Strip. III',
-Math. Comp. 41 (1983) 759--767.
-See also  Corrigenda in Math. Comp. 46 (1986) 771.
-
-J. van de Lune,
-'Sums of Equal Powers of Positive Integers',
-Dissertation,
-Vrije Universiteit te Amsterdam, Centrum voor Wiskunde en Informatica,
-Amsterdam, 1984.
 
 Thanks to the authors all this papers and those others that have
 contributed to make this possible.
