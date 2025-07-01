@@ -310,7 +310,7 @@ reasonably efficient up to about 10,000 digits. See the source
 code for additional details.
 
 References:
-http://mathworld.wolfram.com/Glaisher-KinkelinConstant.html
+[Weisstein]_ http://mathworld.wolfram.com/Glaisher-KinkelinConstant.html
 """
 
 apery = r"""
@@ -372,7 +372,7 @@ The following gives the Mertens constant to 50 digits::
     0.2614972128476427837554268386086958590515666482612
 
 References:
-http://mathworld.wolfram.com/MertensConstant.html
+[Weisstein]_ http://mathworld.wolfram.com/MertensConstant.html
 """
 
 twinprime = r"""
@@ -399,7 +399,7 @@ Computing `C_2` to 50 digits::
     0.66016181584686957392781211001455577843262336028473
 
 References:
-http://mathworld.wolfram.com/TwinPrimesConstant.html
+[Weisstein]_ http://mathworld.wolfram.com/TwinPrimesConstant.html
 """
 
 ln = r"""
@@ -1907,7 +1907,7 @@ Some related sums can be done in closed form::
 
 **References**
 
-1. http://mathworld.wolfram.com/FibonacciNumber.html
+1. [Weisstein]_ http://mathworld.wolfram.com/FibonacciNumber.html
 """
 
 altzeta = r"""
@@ -1977,9 +1977,9 @@ so from below rather than from above::
 
 **References**
 
-1. http://mathworld.wolfram.com/DirichletEtaFunction.html
+1. [Weisstein]_ http://mathworld.wolfram.com/DirichletEtaFunction.html
 
-2. http://en.wikipedia.org/wiki/Dirichlet_eta_function
+2. [Wikipedia]_ http://en.wikipedia.org/wiki/Dirichlet_eta_function
 """
 
 factorial = r"""
@@ -2335,7 +2335,7 @@ function.
 
 **References**
 
-1. https://en.wikipedia.org/wiki/Bernoulli_number
+1. [Wikipedia]_ https://en.wikipedia.org/wiki/Bernoulli_number
 
 """
 
@@ -2406,18 +2406,13 @@ For some reference values with `a = 1`, see e.g. [4].
 
 **References**
 
-1. O. R. Ainsworth & L. W. Howell, "An integral representation of
-   the generalized Euler-Mascheroni constants", NASA Technical
-   Paper 2456 (1985),
-   http://ntrs.nasa.gov/archive/nasa/casi.ntrs.nasa.gov/19850014994_1985014994.pdf
+1. [Ainsworth]_
 
-2. M. W. Coffey, "The Stieltjes constants, their relation to the
-   `\eta_j` coefficients, and representation of the Hurwitz
-   zeta function", 	arXiv:0706.0343v1 http://arxiv.org/abs/0706.0343
+2. [Coffey]_
 
-3. http://mathworld.wolfram.com/StieltjesConstants.html
+3. [Weisstein]_ http://mathworld.wolfram.com/StieltjesConstants.html
 
-4. http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt
+4. https://web.archive.org/web/20110722205305/http://pi.lacim.uqam.ca/piDATA/stieltjesgamma.txt
 
 """
 
@@ -2821,9 +2816,9 @@ A beautiful Ramanujan sum::
 
 **References**
 
-1. http://functions.wolfram.com/GammaBetaErf/Factorial2/27/01/0002/
+1. [WolframFunctions]_ http://functions.wolfram.com/GammaBetaErf/Factorial2/27/01/0002/
 
-2. http://mathworld.wolfram.com/DoubleFactorial.html
+2. [Weisstein]_ http://mathworld.wolfram.com/DoubleFactorial.html
 
 """
 
@@ -4146,14 +4141,11 @@ hypergeometric function `\,_2F_2`::
 
 **References**
 
-1. Relations between Ei and other functions:
-   http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/
+1. [WolframFunctions]_ http://functions.wolfram.com/GammaBetaErf/ExpIntegralEi/27/01/
 
-2. Abramowitz & Stegun, section 5:
-   http://people.math.sfu.ca/~cbm/aands/page_228.htm
+2. [AbramowitzStegun]_, section 5:
 
-3. Asymptotic expansion for Ei:
-   http://mathworld.wolfram.com/En-Function.html
+3. [Weisstein]_ http://mathworld.wolfram.com/En-Function.html
 """
 
 li = r"""
@@ -4250,9 +4242,9 @@ A definite integral is::
 
 **References**
 
-1. http://mathworld.wolfram.com/PrimeCountingFunction.html
+1. [Weisstein]_ http://mathworld.wolfram.com/PrimeCountingFunction.html
 
-2. http://mathworld.wolfram.com/LogarithmicIntegral.html
+2. [Weisstein]_ http://mathworld.wolfram.com/LogarithmicIntegral.html
 
 """
 
@@ -6617,10 +6609,9 @@ precision::
 
 **References**
 
-1. Whittaker & Watson, *A Course of Modern Analysis*,
-   Cambridge University Press, 4th edition (1927), p.264
-2. http://en.wikipedia.org/wiki/Barnes_G-function
-3. http://mathworld.wolfram.com/BarnesG-Function.html
+1. [WhittakerWatson]_, p.264
+2. [Wikipedia]_ http://en.wikipedia.org/wiki/Barnes_G-function
+3. [Weisstein]_ http://mathworld.wolfram.com/BarnesG-Function.html
 
 """
 
@@ -6674,7 +6665,7 @@ Evaluation is supported for arbitrary arguments::
 
 **References**
 
-1. http://oeis.org/A000178
+1. [OEIS]_ http://oeis.org/A000178
 
 """
 
@@ -6778,8 +6769,8 @@ definition::
 
 **References**
 
-1. http://oeis.org/A002109
-2. http://mathworld.wolfram.com/Hyperfactorial.html
+1. [OEIS]_ http://oeis.org/A002109
+2. [Weisstein]_ http://mathworld.wolfram.com/Hyperfactorial.html
 
 """
 
@@ -7037,7 +7028,7 @@ nonintegral `n`. There is a fixed point where `g(x) = x`::
 
 **References**
 
-1. http://mathworld.wolfram.com/GramPoint.html
+1. [Weisstein]_ http://mathworld.wolfram.com/GramPoint.html
 
 """
 
@@ -7367,8 +7358,7 @@ For large `\mathrm{Re}(s)`, `P(s)` is asymptotic to `2^{-s}`::
 
 **References**
 
-Carl-Erik Froberg, "On the prime zeta function",
-BIT 8 (1968), pp. 187-202.
+* [Froberg]_
 
 """
 
@@ -7516,10 +7506,9 @@ It is also supported outside of the unit circle::
 
 **References**
 
-1. Richard Crandall, "Note on fast polylogarithm computation"
-   http://www.reed.edu/physics/faculty/crandall/papers/Polylog.pdf
-2. http://en.wikipedia.org/wiki/Polylogarithm
-3. http://mathworld.wolfram.com/Polylogarithm.html
+1. [Crandall]_
+2. [Wikipedia]_ http://en.wikipedia.org/wiki/Polylogarithm
+3. [Weisstein]_ http://mathworld.wolfram.com/Polylogarithm.html
 
 """
 
@@ -7625,7 +7614,7 @@ A determinant identity satisfied by Bell numbers::
 
 **References**
 
-1. http://mathworld.wolfram.com/DobinskisFormula.html
+1. [Weisstein]_ http://mathworld.wolfram.com/DobinskisFormula.html
 
 """
 
@@ -7964,13 +7953,13 @@ In the following case, different series give different values::
 
 **References**
 
-1. http://en.wikipedia.org/wiki/Meijer_G-function
+1. [Wikipedia]_ http://en.wikipedia.org/wiki/Meijer_G-function
 
-2. http://mathworld.wolfram.com/MeijerG-Function.html
+2. [Weisstein]_ http://mathworld.wolfram.com/MeijerG-Function.html
 
-3. http://functions.wolfram.com/HypergeometricFunctions/MeijerG/
+3. [WolframFunctions]_ http://functions.wolfram.com/HypergeometricFunctions/MeijerG/
 
-4. http://functions.wolfram.com/HypergeometricFunctions/MeijerG1/
+4. [WolframFunctions]_ http://functions.wolfram.com/HypergeometricFunctions/MeijerG1/
 
 """
 
@@ -9327,9 +9316,9 @@ Evaluation at zero and for negative integer `s`::
 
 **References**
 
-1. http://mathworld.wolfram.com/RiemannZetaFunction.html
+1. [Weisstein]_ http://mathworld.wolfram.com/RiemannZetaFunction.html
 
-2. http://mathworld.wolfram.com/HurwitzZetaFunction.html
+2. [Weisstein]_ http://mathworld.wolfram.com/HurwitzZetaFunction.html
 
 3. [BorweinZeta]_
 
@@ -9545,11 +9534,8 @@ the precision::
 
 **References**
 
-1. I.J. Thompson & A.R. Barnett, "Coulomb and Bessel Functions of Complex
-   Arguments and Order", J. Comp. Phys., vol 64, no. 2, June 1986.
-
-2. N. Michel, "Precise Coulomb wave functions for a wide range of
-   complex `l`, `\eta` and `z`", http://arxiv.org/abs/physics/0702051v1
+1. [Thompson]_
+2. [Michel]_
 
 """
 

@@ -282,7 +282,7 @@ class TanhSinh(QuadratureRule):
     **References**
 
     * [Bailey]_
-    * http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
+    * [BorweinTanhSinh]_
 
     """
 
@@ -717,7 +717,7 @@ class QuadratureMethods:
 
         **References**
 
-        1. http://mathworld.wolfram.com/DoubleIntegral.html
+        1. [Weisstein]_ http://mathworld.wolfram.com/DoubleIntegral.html
 
         """
         rule = kwargs.get('method', 'tanh-sinh')

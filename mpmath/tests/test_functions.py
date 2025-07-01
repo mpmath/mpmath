@@ -657,9 +657,8 @@ def test_root():
             r = nthroot(a, -n)
             r1 = pow(a, -mpf(1)/n)
             assert r.ae(r1)
-    # XXX: this is broken right now
     # tests for nthroot rounding
-    for rnd in ['nearest', 'up', 'down']:
+    for rnd in ['n', 'u', 'd']:
         mp.rounding = rnd
         for n in [-5, -3, 3, 5]:
             prec = 50
@@ -671,6 +670,7 @@ def test_root():
                 mp.prec = prec
                 r = nthroot(b, n)
                 assert r == a
+    mp.rounding = 'n'
     mp.dps = 30
     for n in range(3, 21):
         a = (random.random() + j*random.random())

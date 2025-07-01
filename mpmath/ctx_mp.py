@@ -18,7 +18,7 @@ from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     mpf_degree, mpf_div, mpf_e, mpf_euler, mpf_glaisher,
                     mpf_khinchin, mpf_ln2, mpf_ln10, mpf_mertens, mpf_mul,
                     mpf_neg, mpf_phi, mpf_pi, mpf_rand, mpf_sub, mpf_twinprime,
-                    repr_dps, to_man_exp, to_str)
+                    repr_dps, to_man_exp, to_str, round_nearest)
 
 
 get_complex = re.compile(r"""
@@ -44,12 +44,14 @@ class MPContext(BaseMPContext, StandardBaseContext):
     Context for multiprecision arithmetic with a global precision.
     """
 
-    def __init__(ctx, prec=sys.float_info.mant_dig, trap_complex=False):
+    def __init__(ctx, prec=sys.float_info.mant_dig,
+                 rounding=round_nearest, trap_complex=False):
         BaseMPContext.__init__(ctx)
         ctx.pretty = False
         ctx.types = [ctx.mpf, ctx.mpc, ctx.constant]
         ctx.default()
         ctx._set_prec(prec)
+        ctx._set_rounding(rounding)
         ctx.trap_complex = trap_complex
         StandardBaseContext.__init__(ctx)
 
@@ -359,6 +361,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         lines = ["Mpmath settings:",
             ("  mp.prec = %s" % ctx.prec).ljust(30) + f"[default: {sys.float_info.mant_dig}]",
             ("  mp.dps = %s" % ctx.dps).ljust(30) + f"[default: {sys.float_info.dig}]",
+            ("  mp.rounding = '%s'" % ctx.rounding).ljust(30) + f"[default: 'n']",
             ("  mp.trap_complex = %s" % ctx.trap_complex).ljust(30) + "[default: False]",
         ]
         return "\n".join(lines)
