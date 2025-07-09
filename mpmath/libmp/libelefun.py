@@ -49,7 +49,7 @@ cos_sin_cache = {}
 MAX_LOG_INT_CACHE = 2000
 log_int_cache = {}
 
-LOG_TAYLOR_PREC = 2500  # Use Taylor series with caching up to this prec
+LOG_TAYLOR_PREC = 2500  # Use Taylor series with caching or no caching up to this prec
 LOG_TAYLOR_SHIFT = 9    # Cache log values in steps of size 2^-N
 log_taylor_cache = {}
 # prec/size ratio of x for fastest convergence in AGM formula
@@ -695,19 +695,14 @@ def mpf_log(x, prec, rnd=round_fast):
         else:
             wp += cancellation
 
-        # if close enough to 1, use Taylor series
-        # since Taylor series converges rapidly
-        if tsign:
-            tfixed = (MPZ_ONE << wp) - to_fixed(x,wp)
-        else:
-            tfixed = to_fixed(x, wp) - (MPZ_ONE << wp)
-        threshold = (1 << wp) // 1000
-        if tfixed <= threshold:
-            s = log_taylor(to_fixed(x, wp), wp)
-            sb = s.bit_length()
-            rman = s << (sb)
-            rexp = -(sb+wp)
-            return from_man_exp(rman, rexp, prec, rnd)
+        # If close enough to 1, use Taylor series
+        # even in the AGM precision range, since the Taylor series
+        # converges rapidly
+        if cancellation > 15:
+            if wp <= LOG_TAYLOR_PREC:
+                a = to_fixed(x, wp)
+                s = log_taylor(a, wp)
+                return from_man_exp(s, -wp, prec, rnd)
 
     #------------------------------------------------------------------
     # Another special case:
