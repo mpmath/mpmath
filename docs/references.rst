@@ -70,7 +70,7 @@ References not listed here can be found in the source code.
 
 .. [GravesMorris] P R Graves-Morris, D E Roberts & A Salam. "The epsilon algorithm and related topics", *Journal of Computational and Applied Mathematics*, Volume 122, Issue 1-2  (October 2000)
 
-.. [Homeir] H.H.H. Homeier - "Scalar Levin-Type Sequence Transformations" arXiv:math/0005209
+.. [Homeier] H.H.H. Homeier - "Scalar Levin-Type Sequence Transformations" arXiv:math/0005209
 
 .. [Hoog] de Hoog, F., J. Knight, A. Stokes (1982). An improved method for numerical inversion of Laplace transforms. *SIAM Journal of Scientific and Statistical Computing* 3:357-366, http://dx.doi.org/10.1137/0903022
 
