@@ -267,8 +267,8 @@ def qr_step(ctx, n0, n1, A, Q, shift):
                 eigenvalue of the bottemmost part of the submatrix A[n0:n1,n0:n1].
 
     references:
-      Stoer, Bulirsch - Introduction to Numerical Analysis.
-      Kresser : Numerical Methods for General and Structured Eigenvalue Problems
+      [Stoer]_
+      [Kresser]_
     """
 
     # implicitly shifted and bulge chasing is explained at p.398/399 in "Stoer, Bulirsch - Introduction to Numerical Analysis"

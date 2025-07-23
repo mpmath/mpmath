@@ -798,10 +798,9 @@ def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
       0.0
 
     references:
-      - golub and welsch, "calculations of gaussian quadrature rules", mathematics of
-        computation 23, p. 221-230 (1969)
-      - golub, "some modified matrix eigenvalue problems", siam review 15, p. 318-334 (1973)
-      - stroud and secrest, "gaussian quadrature formulas", prentice-hall (1966)
+      - [GolubWelsch]_
+      - [Golub]_
+      - [Stroud]_
 
     See also the routine gaussq.f in netlog.org or ACM Transactions on
     Mathematical Software algorithm 726.

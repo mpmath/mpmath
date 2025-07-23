@@ -164,7 +164,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
 
     **References**
 
-    1. http://en.wikipedia.org/wiki/Durand-Kerner_method
+    1. [Wikipedia]_ https://en.wikipedia.org/wiki/Durand-Kerner_method
 
     """
     if len(coeffs) <= 1:

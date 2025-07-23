@@ -213,7 +213,6 @@ def shanks(ctx, seq, table=None, randomized=False):
     **References**
 
     1. [GravesMorris]_
-
     2. [BenderOrszag]_ pp. 368-375
 
     """
@@ -480,12 +479,9 @@ class levin_class:
 
     References:
 
-      [1] E.J. Weniger - "Nonlinear Sequence Transformations for the Acceleration of
-          Convergence and the Summation of Divergent Series" arXiv:math/0306302
-
-      [2] A. Sidi - "Pratical Extrapolation Methods"
-
-      [3] H.H.H. Homeier - "Scalar Levin-Type Sequence Transformations" arXiv:math/0005209
+    1. [Weniger]_
+    2. [Sidi]_
+    3. [Homeier]_
 
     """
 

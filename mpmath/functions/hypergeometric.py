@@ -506,9 +506,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
             if absz > 1.1 or ispoly:
                 raise
     # Use expansion at |z-1| -> 0.
-    # Reference: Wolfgang Buhring, "Generalized Hypergeometric Functions at
-    #   Unit Argument", Proc. Amer. Math. Soc., Vol. 114, No. 1 (Jan. 1992),
-    #   pp.145-153
+    # Reference: [Buhring]_
     # The current implementation has several problems:
     # 1. We only implement it for 3F2. The expansion coefficients are
     #    given by extremely messy nested sums in the higher degree cases
