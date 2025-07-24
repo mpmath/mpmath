@@ -1360,12 +1360,12 @@ def test_meijerg():
 
 def test_foxh():
     # from Mathematica, https://reference.wolfram.com/language/ref/FoxH.html
-    assert foxh([[(1/2,1)],[(1/3,2)]],[[(1/4,3)],[(pi,4)]],0.2).ae(0.014549867809356231)
-    assert foxh([[(1/10,(6,5)), (13/10,1)],[(17/5,2)]],[[(7/5,2)],[(1/5,1)]],0.2).ae(0.27964621202572)
+    assert foxh([[(mpf('1/2'),1)],[(mpf('1/3'),2)]],[[(mpf('1/4'),3)],[(pi,4)]],mpf('0.2')).ae(0.014549867809356231)
+    assert foxh([[(mpf('1/10'),(6,5)), (mpf('13/10'),1)],[(mpf('17/5'),2)]],[[(mpf('7/5'),2)],[(mpf('1/5'),1)]],mpf('0.2')).ae(0.27964621202572)
     # Equivalent by definition
     b = 1
     B = 2
-    z = 0.2
+    z = mpf('0.2')
     x1 = mpf(1)/B * (z ** (mpf(b)/B)) * exp(-z ** (mpf(1)/B))
     x2 = foxh([[],[]],[[(b,B)],[]],z)
     x3 = meijerg([[],[]],[[b],[]],z,r=B)/B
