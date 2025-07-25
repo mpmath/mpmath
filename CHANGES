@@ -60,6 +60,7 @@ Features:
 * Add exp2() and log2(), see #948 (Sergey B Kirpichev)
 * Add isspecial() method for contexts, see #949 (Sergey B Kirpichev)
 * Support rounding property for the mp context, see #963 (Sergey B Kirpichev)
+* Add Fox H-function with rational A/B parameters (foxh()), see #982 (Hongren Zheng)
 
 Compatibility:
 

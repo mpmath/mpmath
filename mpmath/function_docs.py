@@ -7963,6 +7963,126 @@ In the following case, different series give different values::
 
 """
 
+foxh = r"""
+Evaluates the Fox H-function, a generalization of Meijer G-function, defined as
+
+.. math ::
+
+    & H^{m,n}_{p,q} \left( \left. \begin{matrix}
+         (a_1, A_1), \dots, (a_n, A_n) ; (a_{n+1}, A_{n+1}) \dots (a_p, A_p) \\
+         (b_1, B_1), \dots, (b_m, B_m) ; (b_{m+1}, B_{m+1}) \dots (b_q, B_q)
+    \end{matrix}\; \right| \; z ; r \right) \\ = &
+    \frac{1}{2 \pi i} \int_L
+    \frac{\prod_{j=1}^m \Gamma(b_j+B_js) \prod_{j=1}^n\Gamma(1-a_j-A_js)}
+         {\prod_{j=n+1}^{p}\Gamma(a_j+A_js) \prod_{j=m+1}^q \Gamma(1-b_j-B_js)}
+         z^{-s/r} ds
+
+for an appropriate choice of the contour `L` (see references).
+
+There are `p` pairs `(a_j, A_j)`.
+The argument *aA_s* should be a pair of lists, the first containing the
+`n` pairs `(a_1, A_1), \ldots, (a_n, A_n)` and the second containing
+the `p-n` elements `(a_{n+1}, A_{n+1}), \ldots, (a_p, A_p)`.
+
+There are `q` pairs `(b_j, B_j)`.
+The argument *b_s* should be a pair of lists, the first containing the
+`m` pairs `(b_1, B_1), \ldots, (b_m, B_m)` and the second containing
+the `q-m` pairs `(b_{m+1}, B_{m+1}), \ldots, (b_q, B_q)`.
+
+This implementation supports only positive rational `A_j` and `B_j`.
+When `A_j` (and `B_j`) are integers, user can directly write `(a_j, A_j)` (and `b_j, B_j`).
+When `A_j` (and `B_j`) are positive rational numbers, user should write
+`(a_j, (E_j, D_j))` (and `b_j, (F_j, D_j)`), where `D_j` is the denominator.
+
+Other descriptions follow the Meijer G-function.
+
+**Algorithm**
+
+Using the following identity rational `A_j` and `B_j` are converted to integer `E_j` and `F_j`:
+
+.. math ::
+    H^{m,n}_{p,q} \left( \left. \begin{matrix}
+            \left(a_j, \frac{E_j}{D}\right) \\
+            \left(b_j, \frac{F_j}{D}\right)
+    \end{matrix}\; \right| \; z ; r \right) =
+    D \cdot H^{m,n}_{p,q} \left( \left. \begin{matrix}
+            \left(a_j, E_j\right) \\
+            \left(b_j, F_j\right)
+    \end{matrix}\; \right| \; z ; r/D \right)
+
+by choosing `D` to be the L.C.M. of the denominators of all `A_j` and `B_j`.
+
+Then by the Gauss Multiplicatoin formula
+
+.. math ::
+    \Gamma(kz) = (2\pi)^{(1-z)/2}k^{kz-1/2}\prod_{j=0}^{k-1} \Gamma\left(z + \frac{j}{k}\right)
+
+For terms in Fox-H function, for example, `\Gamma(a_j + E_j s)`, we can
+write it as
+
+.. math ::
+    \Gamma\left(E_j\left(\frac{a_j}{E_j} + s\right)\right) =
+    (2\pi)^{(1-E_j)/2} E_j^{a_j - 1/2} E_j^{E_j s}
+    \prod_{\ell=0}^{E_j-1} \Gamma\left(s + \frac{a_j + \ell}{E_j}\right)
+
+Notice that now `s` has coefficient of 1, so it coincides with the Meijer G-function, we have
+
+.. math ::
+    H^{m,n}_{p,q} \left( \left. \begin{matrix}
+            \left(a_j, E_j\right) \\
+            \left(b_j, F_j\right)
+    \end{matrix}\; \right| \; z ; r \right)
+    = (2\pi)^{c^*-a^*/2}\cdot M\cdot
+    G^{\tilde{m},\tilde{n}}_{\tilde{p},\tilde{q}} \left( \left. \begin{matrix}
+            \left(\frac{a_j + \ell}{E_j}\right) \\
+            \left(\frac{b_j + \ell}{F_j}\right)
+    \end{matrix}\; \right| \; \frac{z}{\beta^r} ; r \right)
+
+where
+
+.. math ::
+    c^* &= m + n - (p + q)/2\\
+    a^* &= \sum_{j=1}^{n}E_j - \sum_{j=n+1}^{p}E_j + \sum_{j=1}^{m}F_j - \sum_{j=m+1}^{q}F_j\\
+    M &= \frac{\prod_{j=1}^{q} F_j^{F_j}}{\prod_{j=1}^{p} E_j^{E_j}}\\
+    \beta &= \frac{\prod_{j=1}^{q} F_j^{b_j-1/2}}{\prod_{j=1}^{p} E_j^{a_j-1/2}}
+
+and `\tilde{m} = \sum_{j=1}^{m} F_j`, `\tilde{n} = \sum_{j=1}^{n} E_j`,
+`\tilde{p} = \sum_{j=1}^{p} E_j`, `\tilde{q} = \sum_{j=1}^{q} F_j`.
+
+Then it is evaluated using :func:`~mpmath.meijerg`.
+Keyword arguments are forwarded accordingly.
+
+**Examples**
+
+The exponential function:
+`\frac{1}{B}z^{b/B}\exp\left(-z^{1/B}\right) =
+H^{1,0}_{0,1} \left( \left. \begin{matrix}
+- \\ (b, B) \end{matrix} \; \right| \; z \right)`
+
+    >>> from mpmath import mp, mpf, exp, foxh, meijerg, pi
+    >>> mp.dps = 25
+    >>> mp.pretty = True
+    >>> b = 1; B = 2; z = mpf(0.2)
+    >>> mpf(1)/B * (z ** (mpf(b)/B)) * exp(-z ** (mpf(1)/B))
+    0.1429758230956905796188428
+    >>> foxh([[],[]],[[(b,B)],[]],z)
+    0.1429758230956905796188428
+    >>> meijerg([[],[]],[[b],[]],z,r=B)/B
+    0.1429758230956905796188428
+
+Another example involving rational `A_j` and irrational `a_j`:
+
+    >>> foxh([[(mpf('1/10'),(6,5)), (mpf('13/10'),1)],[(mpf('17/5'),2)]],[[(mpf('7/5'),2)],[(pi,1)]],mpf('0.2'))
+    0.1436702548477872392572574
+
+**References**
+
+1. [Wikipedia]_ http://en.wikipedia.org/wiki/Fox_H-function
+
+2. [Weisstein]_ http://mathworld.wolfram.com/FoxH-Function.html
+
+"""
+
 clsin = r"""
 Computes the Clausen sine function, defined formally by the series
 
