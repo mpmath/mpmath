@@ -1,6 +1,7 @@
 [build-system]
 requires = ['setuptools>=77', 'setuptools_scm[toml]>=6.0']
 build-backend = 'setuptools.build_meta'
+
 [project]
 name = 'mpmath'
 description = 'Python library for arbitrary-precision floating-point arithmetic'
@@ -21,37 +22,41 @@ classifiers = ['Topic :: Scientific/Engineering :: Mathematics',
                'Programming Language :: Python :: Implementation :: PyPy']
 dynamic = ['version']
 requires-python = '>=3.9'
-[project.readme]
-file = 'README.rst'
-content-type = 'text/x-rst'
+readme = 'README.rst'
+
 [project.urls]
 Homepage = 'https://mpmath.org/'
 'Source Code' = 'https://github.com/mpmath/mpmath'
 'Bug Tracker' = 'https://github.com/mpmath/mpmath/issues'
 Documentation = 'http://mpmath.org/doc/current/'
+
 [project.optional-dependencies]
 tests = ['pytest>=6', 'numpy; python_version<"3.14"', 'packaging', 'pytest-timeout',
          'matplotlib; platform_python_implementation!="PyPy" and python_version<"3.14"',
          'pexpect', 'ipython', 'hypothesis']
-develop = ['mpmath[tests]', 'flake518>=1.5; python_version>="3.9"',
-           'pytest-cov', 'wheel', 'build']
+develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov', 'wheel', 'build']
 gmpy2 = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
 gmpy = ['mpmath[gmpy2]']
-gmp = ['python-gmp>=0.4.0a1; platform_python_implementation!="PyPy"']
+gmp = ['python-gmp>=0.4.0b2; platform_python_implementation!="PyPy"']
 docs = ['sphinx',
         'matplotlib; platform_python_implementation!="PyPy" and python_version<"3.14"',
         'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist', 'diff_cover']
+
 [tool.setuptools]
 zip-safe = true
+
 [tool.setuptools.packages]
 find = {namespaces = false}
+
 [tool.flake8]
 select = ['E101', 'E111', 'E112', 'E113', 'E501', 'E703', 'E712', 'E713',
           'W191', 'W291', 'W292', 'W293', 'W391']
 exclude = ['.eggs', '.git']
 max_line_length = 200
+
 [tool.setuptools_scm]
+
 [tool.pytest.ini_options]
 testpaths = ['mpmath', 'docs']
 doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL', 'ELLIPSIS']
@@ -60,9 +65,11 @@ norecursedirs = ['docs/plots', 'demo', '.eggs', '.git', '.hypothesis']
 filterwarnings = ['error::DeprecationWarning']
 xfail_strict = true
 timeout = 600
+
 [tool.coverage.run]
 branch = true
 omit = ['mpmath/tests/*']
+
 [tool.coverage.html]
 directory = 'build/coverage/html'
 [tool.coverage.report]
@@ -71,6 +78,7 @@ exclude_lines = ['pragma: no cover',
                  'return NotImplemented',
                  'if __name__ == .__main__.:']
 show_missing = true
+
 [tool.isort]
 lines_after_imports = 2
 atomic = true
