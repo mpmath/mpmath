@@ -1080,20 +1080,18 @@ def foxh(ctx, aA_s, bB_s, z, r=1, series=None, **kwargs):
     z = ctx.convert(z)
     r = ctx.convert(r)
 
-    # Convert integer to rationals in form Ai / 1
-    Afrac = [(Ai, 1) if isinstance(Ai, int) else Ai for Ai in A]
-    Bfrac = [(Bj, 1) if isinstance(Bj, int) else Bj for Bj in B]
+    A = [ctx._convert_param(Ai) for Ai in A]
+    B = [ctx._convert_param(Bj) for Bj in B]
 
-    if not all(isinstance(c, int) and isinstance(d, int) and
-               c > 0 and d > 0 for c, d in Afrac + Bfrac):
+    if not all(Ai > 0 and (AiType == 'Z' or AiType == 'Q') for Ai, AiType in A + B):
         raise NotImplementedError("All A and B must be positive rationals")
 
     # Find L.C.M. of denominators
-    D = math.lcm(*[d for _, d in Afrac + Bfrac])
+    D = math.lcm(*[Ai.denominator if AiType == 'Q' else 1 for Ai, AiType in A + B])
 
     # Convert rationals to integers using common denominator
-    A = [c * D // d for c, d in Afrac]
-    B = [c * D // d for c, d in Bfrac]
+    A = [Ai.numerator * (D // Ai.denominator) if AiType == 'Q' else Ai * D for Ai, AiType in A]
+    B = [Bi.numerator * (D // Bi.denominator) if BiType == 'Q' else Bi * D for Bi, BiType in B]
     r = r / D
     prefactor = ctx.convert(D)
 
@@ -1111,21 +1109,21 @@ def foxh(ctx, aA_s, bB_s, z, r=1, series=None, **kwargs):
     m_tilde = sum(B[:m])
     n_tilde = sum(A[:n])
 
-    a_star = sum(A[:n]) - sum(A[n:]) + sum(B[:m]) - sum(B[m:])
-    c_star = m + n - (p + q) / 2
+    a_star = ctx.convert(sum(A[:n]) - sum(A[n:]) + sum(B[:m]) - sum(B[m:]))
+    c_star = m + n - (ctx.convert(p) + q) / 2
 
-    beta = ctx.convert(1)
+    beta = ctx.one
     for Ai in A:
         beta /= Ai**Ai
     for Bj in B:
         beta *= Bj**Bj
 
     # Compute M factor = prod(B_j^(b_j - 1/2)) / prod(A_i^(a_i - 1/2))
-    M = ctx.convert(1)
+    M = ctx.one
     for bj, Bj in zip(b, B):
-        M *= Bj**(bj - ctx.convert(1)/2)
+        M *= Bj**(bj - ctx.one/2)
     for ai, Ai in zip(a, A):
-        M /= Ai**(ai - ctx.convert(1)/2)
+        M /= Ai**(ai - ctx.one/2)
 
     prefactor *= (2 * ctx.pi)**(c_star - a_star/2) * M
 
