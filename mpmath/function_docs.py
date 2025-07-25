@@ -8079,9 +8079,7 @@ Another example involving rational `A_j` and irrational `a_j`:
 
 1. [Wikipedia]_ http://en.wikipedia.org/wiki/Fox_H-function
 
-2. https://reference.wolfram.com/language/ref/FoxH.html
-
-3. [Weisstein]_ http://mathworld.wolfram.com/FoxH-Function.html
+2. [Weisstein]_ http://mathworld.wolfram.com/FoxH-Function.html
 
 """
 
