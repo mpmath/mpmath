@@ -52,6 +52,11 @@ Meijer G-function
 
 .. autofunction:: mpmath.meijerg
 
+Fox H-function
+.................
+
+.. autofunction:: mpmath.foxh
+
 
 Bilateral hypergeometric series
 ...............................

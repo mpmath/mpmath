@@ -4,7 +4,7 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     besseljzero, besselk, bessely, besselyzero, betainc,
                     chebyt, chebyu, chi, ci, convert, coulombg, e, e1, ei,
                     ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp, expint,
-                    fadd, fmul, fp, fraction, fresnelc, fresnels, fsub, fsum,
+                    fadd, fmul, foxh, fp, fraction, fresnelc, fresnels, fsub, fsum,
                     gamma, gammainc, gegenbauer, hankel1, hankel2, hermite,
                     hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2, hyp2f3,
                     hyper, hypercomb, hyperu, inf, isnan, j, j0, j1, jacobi,
@@ -1357,6 +1357,24 @@ def test_meijerg():
         x3 = gamma(b)/gamma(a)*meijerg([[1-0],[1-(1-b)]],[[1-(1-a)],[]],-1/z)
         assert x1.ae(x2)
         assert x1.ae(x3)
+
+def test_foxh():
+    # from Mathematica, https://reference.wolfram.com/language/ref/FoxH.html
+    assert foxh([[(mpf('1/2'),1)],[(mpf('1/3'),2)]],[[(mpf('1/4'),3)],[(pi,4)]],mpf('0.2')).ae(0.014549867809356231)
+    assert foxh([[(mpf('1/10'),(6,5)), (mpf('13/10'),1)],[(mpf('17/5'),2)]],[[(mpf('7/5'),2)],[(mpf('1/5'),1)]],mpf('0.2')).ae(0.27964621202572)
+    # Equivalent by definition
+    b = 1
+    B = 2
+    z = mpf('0.2')
+    x1 = mpf(1)/B * (z ** (mpf(b)/B)) * exp(-z ** (mpf(1)/B))
+    x2 = foxh([[],[]],[[(b,B)],[]],z)
+    x3 = meijerg([[],[]],[[b],[]],z,r=B)/B
+    assert x1.ae(x2)
+    assert x1.ae(x3)
+    # Test foxh with r != 1
+    x2 = foxh([[],[]],[[(b,B)],[]],z,r=3)
+    x3 = meijerg([[],[]],[[b],[]],z,r=(3*B))/B
+    assert x2.ae(x3)
 
 def test_appellf1():
     assert appellf1(2,-2,1,1,2,3).ae(-1.75)

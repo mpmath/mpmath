@@ -335,6 +335,7 @@ hyp3f2 = mp.hyp3f2
 hyperu = mp.hyperu
 hypercomb = mp.hypercomb
 meijerg = mp.meijerg
+foxh = mp.foxh
 appellf1 = mp.appellf1
 appellf2 = mp.appellf2
 appellf3 = mp.appellf3
