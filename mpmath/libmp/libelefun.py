@@ -697,12 +697,14 @@ def mpf_log(x, prec, rnd=round_fast):
 
         # If close enough to 1, use Taylor series
         # even in the AGM precision range, since the Taylor series
-        # converges rapidly
-        if cancellation > 15:
-            if wp <= 10000:
-                a = to_fixed(x, wp)
-                s = log_taylor(a, wp)
-                return from_man_exp(s, -wp, prec, rnd)
+        # converges rapidly. 
+        # Taylor = AGM when O~(prec) = O~(prec^2/cancellation) where cancellation
+        # is greater than or equal to precision
+        wpb = wp.bit_length()
+        if wpb <= cancellation: #possibly include constant (big integer operations)
+            a = to_fixed(x, wp)
+            s = log_taylor(a, wp)
+            return from_man_exp(s, -wp, prec, rnd)
 
     #------------------------------------------------------------------
     # Another special case:
