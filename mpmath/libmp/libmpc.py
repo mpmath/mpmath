@@ -59,8 +59,8 @@ def mpc_to_complex(z, strict=False, rnd=round_fast):
 def mpc_hash(z):
     re, im = z
     h = mpf_hash(re) + sys.hash_info.imag * mpf_hash(im)
-    # Need to reduce either module 2^32 or 2^64
-    h = h % (2**sys.hash_info.width)
+    if h == -1:
+        h = -2
     return int(h)
 
 def mpc_conjugate(z, prec, rnd=round_fast):

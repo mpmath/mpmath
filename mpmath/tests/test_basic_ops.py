@@ -690,3 +690,9 @@ def test_rounding_prop():
 def test_from_man_exp():
     with pytest.raises(TypeError):
         mp.mpf(("!", 1))
+
+
+def test_issue_985():
+    assert hash(mpc(-1)) == -2
+    assert hash(mpmath.mpc(-1000004, 1)) == -2
+    assert mpc(-1) in {1, -1}
