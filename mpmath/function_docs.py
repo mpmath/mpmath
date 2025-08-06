@@ -189,6 +189,7 @@ and `\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)`, see
 **References**
 
 * [BorweinBailey]_
+* [Gourdon]_
 
 """
 
@@ -3013,6 +3014,10 @@ with ``eliminate_all=True``:
     0.25
     >>> hyper([2], [], 3)
     0.25
+
+** References **
+
+* [Buhring]_
 
 """
 

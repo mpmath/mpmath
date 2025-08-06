@@ -397,6 +397,15 @@ def zetazero(ctx, n, info=False, round=True):
     of zeros in this interval. The numbers indicate the number of zeros
     in each Gram interval (Rosser blocks between parenthesis). In this case
     there is only one Rosser block of length nine.
+
+    ** References **
+
+    * [Brent79]_
+    * [Trudgian]_
+    * [Brent86]_
+    * [Lune86]_
+    * [Lune84]_
+
     """
     n = int(n)
     if n < 0:
