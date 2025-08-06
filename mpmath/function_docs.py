@@ -189,6 +189,7 @@ and `\gamma = \lim_{x\to1} \zeta(x)-1/(x-1)`, see
 **References**
 
 * [BorweinBailey]_
+* [Gourdon]_
 
 """
 
@@ -1335,7 +1336,7 @@ converts a non-mpmath number to an mpmath number::
 
 conj = r"""
 Returns the complex conjugate of `x`, `\overline{x}`. Unlike
-``x.conjugate()``, :func:`~mpmath.im` converts `x` to a mpmath number::
+``x.conjugate()``, :func:`~mpmath.conj` converts `x` to a mpmath number::
 
     >>> from mpmath import conj
     >>> conj(3)
@@ -3013,6 +3014,10 @@ with ``eliminate_all=True``:
     0.25
     >>> hyper([2], [], 3)
     0.25
+
+** References **
+
+* [Buhring]_
 
 """
 
