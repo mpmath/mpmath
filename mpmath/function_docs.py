@@ -1335,7 +1335,7 @@ converts a non-mpmath number to an mpmath number::
 
 conj = r"""
 Returns the complex conjugate of `x`, `\overline{x}`. Unlike
-``x.conjugate()``, :func:`~mpmath.im` converts `x` to a mpmath number::
+``x.conjugate()``, :func:`~mpmath.conj` converts `x` to a mpmath number::
 
     >>> from mpmath import conj
     >>> conj(3)
