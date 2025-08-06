@@ -696,3 +696,9 @@ def test_issue_985():
     assert hash(mpc(-1)) == -2
     assert hash(mpmath.mpc(-1000004, 1)) == -2
     assert mpc(-1) in {1, -1}
+
+def test_mpfmpc_log_deprecation():
+    with pytest.deprecated_call():
+        mpmath.libmp.mpf_log(mpf(123)._mpf_, 53)
+    with pytest.deprecated_call():
+        mpmath.libmp.mpc_log(mpc(123)._mpc_, 53)

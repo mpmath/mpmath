@@ -10,6 +10,7 @@ see libmpc and libmpi.
 """
 
 import math
+import warnings
 
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_TWO, MPZ_ZERO
 from .libintmath import (giant_steps, ifib, isqrt_fast, lshift, rshift,
@@ -289,7 +290,7 @@ mpf_ln10   = def_mpf_constant(ln10_fixed)
 def ln_sqrt2pi_fixed(prec):
     wp = prec + 10
     # ln(sqrt(2*pi)) = ln(2*pi)/2
-    return to_fixed(mpf_log(mpf_shift(mpf_pi(wp), 1), wp), prec-1)
+    return to_fixed(mpf_ln(mpf_shift(mpf_pi(wp), 1), wp), prec-1)
 
 @constant_memo
 def sqrtpi_fixed(prec):
@@ -332,7 +333,7 @@ def mpf_pow(s, t, prec, rnd=round_fast):
         return fone
     # General formula: s**t = exp(t*log(s))
     # TODO: handle rnd direction of the logarithm carefully
-    c = mpf_log(s, prec+10, rnd)
+    c = mpf_ln(s, prec+10, rnd)
     return mpf_exp(mpf_mul(t, c), prec, rnd)
 
 def int_pow_fixed(y, n, prec):
@@ -516,7 +517,7 @@ def log_int_fixed(n, prec, ln2=None):
             return value >> (vprec - prec)
     wp = prec + 10
     assert wp > LOG_TAYLOR_SHIFT
-    v = to_fixed(mpf_log(from_int(n), wp+5), wp)
+    v = to_fixed(mpf_ln(from_int(n), wp+5), wp)
     if n < MAX_LOG_INT_CACHE:
         log_int_cache[n] = (v, wp)
     return v >> (wp-prec)
@@ -651,7 +652,7 @@ def log_taylor_cached(x, prec):
     s = (s0+s1) << 1
     return log_a + s
 
-def mpf_log(x, prec, rnd=round_fast):
+def mpf_ln(x, prec, rnd=round_fast):
     """
     Compute the natural logarithm of the mpf value x. If x is negative,
     ComplexResult is raised.
@@ -723,13 +724,18 @@ def mpf_log(x, prec, rnd=round_fast):
         m -= n*ln2_fixed(wp)
     return from_man_exp(m, -wp, prec, rnd)
 
+def mpf_log(x, prec, rnd=round_fast):
+    warnings.warn("mpf_log is deprecated, use mpf_ln",
+                  DeprecationWarning)
+    return mpf_ln(x, prec, rnd)
+
 def mpf_log1p(x, prec, rnd=round_fast):
     """
     Computes log(1+x) accurately.
     """
     wp = prec + 10
     u = mpf_add(fone, x, wp*2)
-    return mpf_mul(mpf_log(u, wp),
+    return mpf_mul(mpf_ln(u, wp),
                    mpf_div(x, mpf_sub(u, fone, wp),
                            wp), prec, rnd)
 
@@ -753,7 +759,7 @@ def mpf_log_hypot(a, b, prec, rnd):
         # only a is inf/nan/0
         if a == fzero:
             # log(sqrt(0+b^2)) = log(|b|)
-            return mpf_log(mpf_abs(b), prec, rnd)
+            return mpf_ln(mpf_abs(b), prec, rnd)
         if a == fnan:
             return fnan
         return finf
@@ -770,7 +776,7 @@ def mpf_log_hypot(a, b, prec, rnd):
     # and the other is tiny...)
     if cancelled == fzero or mag_cancelled < -extra//2:
         h2 = mpf_add(a2, b2, prec+extra-min(a2[2],b2[2]))
-    return mpf_shift(mpf_log(h2, prec, rnd), -1)
+    return mpf_shift(mpf_ln(h2, prec, rnd), -1)
 
 
 #----------------------------------------------------------------------
@@ -953,9 +959,9 @@ def mpf_asinh(x, prec, rnd=round_fast):
     q = mpf_sqrt(mpf_add(mpf_mul(x, x), fone, wp), wp)
     q = mpf_add(mpf_abs(x), q, wp)
     if sign:
-        return mpf_neg(mpf_log(q, prec, negative_rnd[rnd]))
+        return mpf_neg(mpf_ln(q, prec, negative_rnd[rnd]))
     else:
-        return mpf_log(q, prec, rnd)
+        return mpf_ln(q, prec, rnd)
 
 def mpf_acosh(x, prec, rnd=round_fast):
     # acosh(x) = log(x+sqrt(x**2-1))
@@ -963,7 +969,7 @@ def mpf_acosh(x, prec, rnd=round_fast):
     if mpf_cmp(x, fone) == -1:
         raise ComplexResult("acosh(x) is real only for x >= 1")
     q = mpf_sqrt(mpf_add(mpf_mul(x,x), fnone, wp), wp)
-    return mpf_log(mpf_add(x, q, wp), prec, rnd)
+    return mpf_ln(mpf_add(x, q, wp), prec, rnd)
 
 def mpf_atanh(x, prec, rnd=round_fast):
     # atanh(x) = log((1+x)/(1-x))/2
@@ -984,7 +990,7 @@ def mpf_atanh(x, prec, rnd=round_fast):
         wp += (-mag)
     a = mpf_add(x, fone, wp)
     b = mpf_sub(fone, x, wp)
-    return mpf_shift(mpf_log(mpf_div(a, b, wp), prec, rnd), -1)
+    return mpf_shift(mpf_ln(mpf_div(a, b, wp), prec, rnd), -1)
 
 def mpf_fibonacci(x, prec, rnd=round_fast):
     sign, man, exp, bc = x

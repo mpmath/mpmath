@@ -83,6 +83,7 @@ Compatibility:
 * Importing from the mpmath.libmp submodules is deprecated, use instead ``from
   mpmath.libmp import mpf_foo``, see issue #704 (Sergey B Kirpichev)
 * Deprecate bitcount function, see #721 and #955 (Sergey B Kirpichev)
+* Deprecate mpf/mpc_log, see #989 (Sergey B Kirpichev)
 
 Bug fixes:
 
