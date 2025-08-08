@@ -46,9 +46,11 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
     def __init__(ctx, prec=sys.float_info.mant_dig,
                  rounding=round_nearest, trap_complex=False):
+        from mpmath.ctx_mp_python import _constant, _mpf
+
         BaseMPContext.__init__(ctx)
         ctx.pretty = False
-        ctx.types = [ctx.mpf, ctx.mpc, ctx.constant]
+        ctx.types = [_mpf, ctx.mpc, _constant]
         ctx.default()
         ctx._set_prec(prec)
         ctx._set_rounding(rounding)
@@ -81,7 +83,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
         ctx.eps = ctx.constant(lambda prec, rnd: (0, MPZ_ONE, 1-prec, 1),
                                "epsilon of working precision", "eps",
-                               lambda: ctx.dps)
+                               _reprdps_getter=lambda: ctx.dps)
 
         # Approximate constants
         ctx.pi = ctx.constant(mpf_pi, "pi", "pi")

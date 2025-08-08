@@ -19,8 +19,6 @@ from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     to_rational, to_str)
 
 
-new = object.__new__
-
 class mpnumeric:
     """Base class for mpf and mpc."""
 
@@ -34,7 +32,7 @@ def _make_mpc(x, y):
     return mp.mpc(x, y)
 
 
-class _mpf(mpnumeric):
+class mpf(mpnumeric):
     """
     An mpf instance holds a real-valued floating-point number. mpf:s
     work analogously to Python floats, but support arbitrary-precision
@@ -46,7 +44,7 @@ class _mpf(mpnumeric):
         """A new mpf can be created from a Python float, an int, a
         or a decimal string representing a number in floating-point
         format."""
-        ctx = cls.context
+        ctx = kwargs.pop('context')
         prec, rounding = ctx._prec_rounding
         base = 0
         if kwargs:
@@ -55,7 +53,8 @@ class _mpf(mpnumeric):
                 prec = dps_to_prec(kwargs['dps'])
             rounding = kwargs.get('rounding', rounding)
             base = kwargs.get('base', base)
-        v = new(cls)
+        v = super().__new__(cls)
+        v.context = ctx
         if type(val) is cls:
             val = val._mpf_
         elif type(val) is tuple:
@@ -69,18 +68,17 @@ class _mpf(mpnumeric):
         elif isinstance(val, str):
             val = from_str(val, prec, rounding, base)
         else:
-            val = cls.mpf_convert_arg(val, prec, rounding)
+            val = v.mpf_convert_arg(val, prec, rounding)
         v._mpf_ = mpf_pos(val, prec, rounding)
         return v
 
-    @classmethod
     def mpf_convert_arg(cls, x, prec, rounding):
         if isinstance(x, int_types): return from_int(x)
         if isinstance(x, float): return from_float(x)
-        ctx = cls.context
-        if isinstance(x, ctx.constant): return x.func(prec, rounding)
+        if isinstance(x, constant): return x.func(prec, rounding)
         if hasattr(x, '_mpf_'): return x._mpf_
         if hasattr(x, '_mpmath_'):
+            ctx = cls.context
             t = ctx.convert(x._mpmath_(prec, rounding))
             if hasattr(t, '_mpf_'):
                 return t._mpf_
@@ -96,7 +94,6 @@ class _mpf(mpnumeric):
             return from_Decimal(x, prec, rounding)
         raise TypeError("cannot create mpf from " + repr(x))
 
-    @classmethod
     def mpf_convert_rhs(cls, x):
         try:
             ctx = cls.context
@@ -107,7 +104,6 @@ class _mpf(mpnumeric):
         except (ValueError, TypeError):
             return NotImplemented
 
-    @classmethod
     def mpf_convert_lhs(cls, x):
         x = cls.mpf_convert_rhs(x)
         if type(x) is tuple:
@@ -155,22 +151,22 @@ class _mpf(mpnumeric):
     def __bool__(self): return self._mpf_ != fzero
 
     def __abs__(self):
-        mpf, new, (prec, rounding) = self._ctxdata
-        v = new(mpf)
-        v._mpf_ = mpf_abs(self._mpf_, prec, rounding)
-        return v
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
+        v = mpf_abs(self._mpf_, prec, rounding)
+        return ctx.make_mpf(v)
 
     def __pos__(self):
-        mpf, new, (prec, rounding) = self._ctxdata
-        v = new(mpf)
-        v._mpf_ = mpf_pos(self._mpf_, prec, rounding)
-        return v
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
+        v = mpf_pos(self._mpf_, prec, rounding)
+        return ctx.make_mpf(v)
 
     def __neg__(self):
-        mpf, new, (prec, rounding) = self._ctxdata
-        v = new(mpf)
-        v._mpf_ = mpf_neg(self._mpf_, prec, rounding)
-        return v
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
+        v = mpf_neg(self._mpf_, prec, rounding)
+        return ctx.make_mpf(v)
 
     def _cmp(self, other, func):
         if hasattr(other, '_mpf_'):
@@ -187,7 +183,6 @@ class _mpf(mpnumeric):
     def __ge__(self, other): return self._cmp(other, mpf_ge)
 
     def __eq__(self, other):
-        mpf, new, (prec, rounding) = self._ctxdata
         sval = self._mpf_
         if hasattr(other, '_mpf_'):
             oval = other._mpf_
@@ -196,30 +191,25 @@ class _mpf(mpnumeric):
             oval = other._mpc_
             return (oval[1] == fzero) and mpf_eq(oval[0], sval)
         try:
-            ctx = mpf.context
+            ctx = self.context
             other = ctx.convert(other, strings=False)
         except TypeError:
             return NotImplemented
         return self.__eq__(other)
 
     def __add__(self, other):
-        mpf, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpf_
         if hasattr(other, '_mpf_'):
             oval = other._mpf_
             val = mpf_add(sval, oval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
+            return ctx.make_mpf(val)
         if hasattr(other, '_mpc_'):
             oval = other._mpc_
-            mpc = type(other)
             val = mpc_add_mpf(oval, sval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
+            return ctx.make_mpc(val)
         try:
-            ctx = mpf.context
             other = ctx.convert(other, strings=False)
         except TypeError:
             return NotImplemented
@@ -227,23 +217,18 @@ class _mpf(mpnumeric):
     __radd__ = __add__
 
     def __sub__(self, other):
-        mpf, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpf_
         if hasattr(other, '_mpf_'):
             oval = other._mpf_
             val = mpf_sub(sval, oval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
+            return ctx.make_mpf(val)
         if hasattr(other, '_mpc_'):
             oval = other._mpc_
-            mpc = type(other)
             val = mpc_mpf_sub(sval, oval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
+            return ctx.make_mpc(val)
         try:
-            ctx = mpf.context
             other = ctx.convert(other, strings=False)
         except TypeError:
             return NotImplemented
@@ -256,23 +241,18 @@ class _mpf(mpnumeric):
         return other - self
 
     def __mul__(self, other):
-        mpf, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpf_
         if hasattr(other, '_mpf_'):
             oval = other._mpf_
             val = mpf_mul(sval, oval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
+            return ctx.make_mpf(val)
         if hasattr(other, '_mpc_'):
             oval = other._mpc_
-            mpc = type(other)
             val = mpc_mul_mpf(oval, sval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
+            return ctx.make_mpc(val)
         try:
-            ctx = mpf.context
             other = ctx.convert(other, strings=False)
         except TypeError:
             return NotImplemented
@@ -280,23 +260,18 @@ class _mpf(mpnumeric):
     __rmul__ = __mul__
 
     def __truediv__(self, other):
-        mpf, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpf_
         if hasattr(other, '_mpf_'):
             oval = other._mpf_
             val = mpf_div(sval, oval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
+            return ctx.make_mpf(val)
         if hasattr(other, '_mpc_'):
             oval = other._mpc_
-            mpc = type(other)
             val = mpc_mpf_div(sval, oval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
+            return ctx.make_mpc(val)
         try:
-            ctx = mpf.context
             other = ctx.convert(other, strings=False)
         except TypeError:
             return NotImplemented
@@ -309,18 +284,16 @@ class _mpf(mpnumeric):
         return other / self
 
     def __mod__(self, other):
-        mpf, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpf_
         if hasattr(other, '_mpf_'):
             oval = other._mpf_
             val = mpf_mod(sval, oval, prec, rounding)
-            obj = new(mpf)
-            obj._mpf_ = val
-            return obj
+            return ctx.make_mpf(val)
         if hasattr(other, '_mpc_'):
             return NotImplemented
         try:
-            ctx = mpf.context
             other = ctx.convert(other, strings=False)
         except TypeError:
             return NotImplemented
@@ -340,31 +313,23 @@ class _mpf(mpnumeric):
         return (self - mod) / other, mod
 
     def __pow__(self, other):
-        mpf, new, (prec, rounding) = self._ctxdata
-        ctx = mpf.context
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpf_
         if hasattr(other, '_mpf_'):
             oval = other._mpf_
             try:
                 val = mpf_pow(sval, oval, prec, rounding)
-                obj = new(mpf)
-                obj._mpf_ = val
-                return obj
+                return ctx.make_mpf(val)
             except ComplexResult:
                 if ctx.trap_complex:
                     raise
-                mpc = ctx.mpc
                 val = mpc_pow_mpf((sval, fzero), oval, prec, rounding)
-                obj = new(mpc)
-                obj._mpc_ = val
-                return obj
+                return ctx.make_mpc(val)
         if hasattr(other, '_mpc_'):
             oval = other._mpc_
-            mpc = ctx.mpc
             val = mpc_pow((sval, fzero), oval, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
+            return ctx.make_mpc(val)
         try:
             other = ctx.convert(other, strings=False)
         except TypeError:
@@ -446,9 +411,8 @@ class _mpf(mpnumeric):
         Alternate form (``'#'`` option) adds ``0b`` prefix.
 
         """
-
-        _, _, (prec, rounding) = self._ctxdata
         ctx = self.context
+        prec, rounding = ctx._prec_rounding
         return format_mpf(self._mpf_, format_spec, prec, rounding,
                           ctx._pretty_repr_dps)
 
@@ -474,16 +438,19 @@ class _mpf(mpnumeric):
         if ndigits is None:
             res = int(res)
         return res
+_mpf = mpf
 
 
-class _constant(_mpf):
+class constant(mpf):
     """Represents a mathematical constant with dynamic precision.
     When printed or used in an arithmetic operation, a constant
     is converted to a regular mpf at the working precision. A
     regular mpf can also be obtained using the operation +x."""
 
-    def __new__(cls, func, name, docname='', _reprdps_getter=lambda: 15):
+    def __new__(cls, func, name, docname='', **kwargs):
         a = object.__new__(cls)
+        ctx = a.context = kwargs['context']
+        _reprdps_getter = kwargs.get('_reprdps_getter', lambda: 15)
         a.name = name
         a.func = func
         a._reprdps_getter = _reprdps_getter
@@ -491,33 +458,38 @@ class _constant(_mpf):
         return a
 
     def __call__(self, prec=None, dps=None, rounding=None):
-        prec2, rounding2 = self.context._prec_rounding
+        ctx = self.context
+        prec2, rounding2 = ctx._prec_rounding
         if not prec: prec = prec2
         if not rounding: rounding = rounding2
         if dps: prec = dps_to_prec(dps)
-        return self.context.make_mpf(self.func(prec, rounding))
+        return ctx.make_mpf(self.func(prec, rounding))
 
     @property
     def _mpf_(self):
-        prec, rounding = self.context._prec_rounding
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         return self.func(prec, rounding)
 
     def __repr__(self):
-        return "<%s: %s~>" % (self.name, self.context.nstr(self(dps=self._reprdps_getter())))
+        ctx = self.context
+        return "<%s: %s~>" % (self.name, ctx.nstr(self(dps=self._reprdps_getter())))
+_constant = constant
 
 
-class _mpc(mpnumeric):
+class mpc(mpnumeric):
     """
     An mpc represents a complex number using a pair of mpf's (one
     for the real part and another for the imaginary part.) The mpc
     class behaves fairly similarly to Python's complex type.
     """
 
-    __slots__ = ['_mpc_']
+    __slots__ = ['_mpc_', 'context', '_ctxdata']
 
-    def __new__(cls, real=0, imag=0):
-        ctx = cls.context
+    def __new__(cls, real=0, imag=0, **kwargs):
+        ctx = kwargs.pop('context')
         s = object.__new__(cls)
+        s.context = ctx
         if isinstance(real, str):
             real = ctx.convert(real)
         if isinstance(real, complex_types):
@@ -560,33 +532,32 @@ class _mpc(mpnumeric):
 
     def __complex__(self):
         ctx = self.context
-        return mpc_to_complex(self._mpc_, rnd=ctx._prec_rounding[1])
+        rounding = ctx._prec_rounding[1]
+        return mpc_to_complex(self._mpc_, rnd=rounding)
 
     def __pos__(self):
-        mpc, new, (prec, rounding) = self._ctxdata
-        v = new(mpc)
-        v._mpc_ = mpc_pos(self._mpc_, prec, rounding)
-        return v
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
+        v = mpc_pos(self._mpc_, prec, rounding)
+        return ctx.make_mpc(v)
 
     def __abs__(self):
         ctx = self.context
-        mpf = ctx.mpf
-        _, new, (prec, rounding) = self._ctxdata
-        v = new(mpf)
-        v._mpf_ = mpc_abs(self._mpc_, prec, rounding)
-        return v
+        prec, rounding = ctx._prec_rounding
+        v = mpc_abs(self._mpc_, prec, rounding)
+        return ctx.make_mpf(v)
 
     def __neg__(self):
-        mpc, new, (prec, rounding) = self._ctxdata
-        v = new(mpc)
-        v._mpc_ = mpc_neg(self._mpc_, prec, rounding)
-        return v
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
+        v = mpc_neg(self._mpc_, prec, rounding)
+        return ctx.make_mpc(v)
 
     def conjugate(self):
-        mpc, new, (prec, rounding) = self._ctxdata
-        v = new(mpc)
-        v._mpc_ = mpc_conjugate(self._mpc_, prec, rounding)
-        return v
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
+        v = mpc_conjugate(self._mpc_, prec, rounding)
+        return ctx.make_mpc(v)
 
     def __bool__(self):
         return mpc_is_nonzero(self._mpc_)
@@ -594,9 +565,8 @@ class _mpc(mpnumeric):
     def __hash__(self):
         return mpc_hash(self._mpc_)
 
-    @classmethod
-    def mpc_convert_lhs(cls, x):
-        ctx = cls.context
+    def mpc_convert_lhs(self, x):
+        ctx = self.context
         try:
             return ctx.convert(x, strings=False)
         except (TypeError, ValueError):
@@ -612,7 +582,8 @@ class _mpc(mpnumeric):
         return self.real == other.real and self.imag == other.imag
 
     def __add__(self, other):
-        mpc, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpc_
         if not hasattr(other, '_mpc_'):
             other = self.mpc_convert_lhs(other)
@@ -621,18 +592,15 @@ class _mpc(mpnumeric):
             if hasattr(other, '_mpf_'):
                 oval = other._mpf_
                 val = mpc_add_mpf(sval, oval, prec, rounding)
-                obj = new(mpc)
-                obj._mpc_ = val
-                return obj
+                return ctx.make_mpc(val)
         oval = other._mpc_
         val = mpc_add(sval, oval, prec, rounding)
-        obj = new(mpc)
-        obj._mpc_ = val
-        return obj
+        return ctx.make_mpc(val)
     __radd__ = __add__
 
     def __sub__(self, other):
-        mpc, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpc_
         if not hasattr(other, '_mpc_'):
             other = self.mpc_convert_lhs(other)
@@ -640,15 +608,11 @@ class _mpc(mpnumeric):
                 return other
             if hasattr(other, '_mpf_'):
                 oval = other._mpf_
-                val = mpc_sub_mpf(sval, other._mpf_, prec, rounding)
-                obj = new(mpc)
-                obj._mpc_ = val
-                return obj
+                val = mpc_sub_mpf(sval, oval, prec, rounding)
+                return ctx.make_mpc(val)
         oval = other._mpc_
         val = mpc_sub(sval, oval, prec, rounding)
-        obj = new(mpc)
-        obj._mpc_ = val
-        return obj
+        return ctx.make_mpc(val)
 
     def __rsub__(self, other):
         other = self.mpc_convert_lhs(other)
@@ -657,44 +621,39 @@ class _mpc(mpnumeric):
         return other - self
 
     def __mul__(self, other):
-        mpc, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpc_
         if not hasattr(other, '_mpc_'):
             if isinstance(other, int_types):
                 val = mpc_mul_int(sval, other, prec, rounding)
-                obj = new(mpc)
-                obj._mpc_ = val
-                return obj
+                return ctx.make_mpc(val)
             other = self.mpc_convert_lhs(other)
             if other is NotImplemented:
                 return other
             if hasattr(other, '_mpf_'):
                 oval = other._mpf_
                 val = mpc_mul_mpf(sval, oval, prec, rounding)
-                obj = new(mpc)
-                obj._mpc_ = val
-                return obj
+                return ctx.make_mpc(val)
         oval = other._mpc_
         val = mpc_mul(sval, oval, prec, rounding)
-        obj = new(mpc)
-        obj._mpc_ = val
-        return obj
+        return ctx.make_mpc(val)
 
     def __rmul__(self, other):
-        mpc, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         if isinstance(other, int_types):
             sval = self._mpc_
             val = mpc_mul_int(sval, other, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
+            return ctx.make_mpc(val)
         other = self.mpc_convert_lhs(other)
         if other is NotImplemented:
             return other
         return other * self
 
     def __truediv__(self, other):
-        mpc, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpc_
         if not hasattr(other, '_mpc_'):
             other = self.mpc_convert_lhs(other)
@@ -703,14 +662,10 @@ class _mpc(mpnumeric):
             if hasattr(other, '_mpf_'):
                 oval = other._mpf_
                 val = mpc_div_mpf(sval, oval, prec, rounding)
-                obj = new(mpc)
-                obj._mpc_ = val
-                return obj
+                return ctx.make_mpc(val)
         oval = other._mpc_
         val = mpc_div(sval, oval, prec, rounding)
-        obj = new(mpc)
-        obj._mpc_ = val
-        return obj
+        return ctx.make_mpc(val)
 
     def __rtruediv__(self, other):
         other = self.mpc_convert_lhs(other)
@@ -719,13 +674,12 @@ class _mpc(mpnumeric):
         return other / self
 
     def __pow__(self, other):
-        mpc, new, (prec, rounding) = self._ctxdata
+        ctx = self.context
+        prec, rounding = ctx._prec_rounding
         sval = self._mpc_
         if isinstance(other, int_types):
             val = mpc_pow_int(sval, other, prec, rounding)
-            obj = new(mpc)
-            obj._mpc_ = val
-            return obj
+            return ctx.make_mpc(val)
         other = self.mpc_convert_lhs(other)
         if other is NotImplemented:
             return other
@@ -735,9 +689,7 @@ class _mpc(mpnumeric):
         else:
             oval = other._mpc_
             val = mpc_pow(sval, oval, prec, rounding)
-        obj = new(mpc)
-        obj._mpc_ = val
-        return obj
+        return ctx.make_mpc(val)
 
     def __rpow__(self, other):
         other = self.mpc_convert_lhs(other)
@@ -759,9 +711,10 @@ class _mpc(mpnumeric):
 
         """
         ctx = self.context
-        _, _, (prec, rounding) = self._ctxdata
+        prec, rounding = ctx._prec_rounding
         return format_mpc(self._mpc_, format_spec, prec, rounding,
                           ctx._pretty_repr_dps)
+_mpc = mpc
 
 
 complex_types = (complex, _mpc)
@@ -771,23 +724,23 @@ class PythonMPContext:
     def __init__(ctx):
         ctx._prec_rounding = [sys.float_info.mant_dig, round_nearest]
         ctx._pretty_repr_dps = False
-        ctx.mpf = type('mpf', (_mpf,), {})
-        ctx.mpf._ctxdata = [ctx.mpf, new, ctx._prec_rounding]
-        ctx.mpf.context = ctx
-        ctx.mpc = type('mpc', (_mpc,), {})
-        ctx.mpc._ctxdata = [ctx.mpc, new, ctx._prec_rounding]
-        ctx.mpc.context = ctx
-        ctx.constant = type('constant', (_constant,), {})
-        ctx.constant._ctxdata = [ctx.mpf, new, ctx._prec_rounding]
-        ctx.constant.context = ctx
+
+    def mpf(ctx, v=fzero, **kwargs):
+        return _mpf(v, context=ctx, **kwargs)
 
     def make_mpf(ctx, v):
-        a = new(ctx.mpf)
+        a = _mpf(context=ctx)
         a._mpf_ = v
         return a
 
+    def constant(ctx, func, name, docname='', **kwargs):
+        return _constant(func, name, docname=docname, context=ctx, **kwargs)
+
+    def mpc(ctx, real=fzero, imag=fzero, **kwargs):
+        return _mpc(real, imag, context=ctx, **kwargs)
+
     def make_mpc(ctx, v):
-        a = new(ctx.mpc)
+        a = _mpc(context=ctx)
         a._mpc_ = v
         return a
 
@@ -1320,4 +1273,4 @@ class PythonMPContext:
 #   parts of the expected interfaces.  See
 #   https://docs.python.org/3/library/numbers.html for list of abstract methods.
 numbers.Complex.register(_mpc)
-numbers.Real.register(_mpf)
+numbers.Real.register(mpf)
