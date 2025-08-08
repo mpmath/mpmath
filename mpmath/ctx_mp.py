@@ -103,7 +103,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
         # Standard functions
         ctx.sqrt = ctx._wrap_libmp_function(libmp.mpf_sqrt, libmp.mpc_sqrt)
         ctx.cbrt = ctx._wrap_libmp_function(libmp.mpf_cbrt, libmp.mpc_cbrt)
-        ctx.ln = ctx._wrap_libmp_function(libmp.mpf_log, libmp.mpc_log)
+        ctx.ln = ctx._wrap_libmp_function(libmp.mpf_ln, libmp.mpc_ln)
         ctx.atan = ctx._wrap_libmp_function(libmp.mpf_atan, libmp.mpc_atan)
         ctx.exp = ctx._wrap_libmp_function(libmp.mpf_exp, libmp.mpc_exp)
         ctx.expj = ctx._wrap_libmp_function(libmp.mpf_expj, libmp.mpc_expj)

@@ -9,11 +9,11 @@ import math
 
 from .backend import MPZ, MPZ_ONE, MPZ_ZERO
 from .gammazeta import euler_fixed, mpf_euler, mpf_gamma_int
-from .libelefun import (agm_fixed, mpf_cos_sin, mpf_exp, mpf_log, mpf_pi,
+from .libelefun import (agm_fixed, mpf_cos_sin, mpf_exp, mpf_ln, mpf_pi,
                         mpf_sin, mpf_sqrt, pi_fixed)
 from .libintmath import ifac, sqrt_fixed
 from .libmpc import (complex_int_pow, mpc_abs, mpc_add, mpc_add_mpf, mpc_div,
-                     mpc_exp, mpc_is_infnan, mpc_log, mpc_mpf_div, mpc_mul,
+                     mpc_exp, mpc_is_infnan, mpc_ln, mpc_mpf_div, mpc_mul,
                      mpc_neg, mpc_one, mpc_pos, mpc_shift, mpc_sqrt, mpc_sub,
                      mpc_zero)
 from .libmpf import (ComplexResult, finf, fnan, fninf, fnone, fone, from_int,
@@ -480,7 +480,7 @@ def mpf_ei(x, prec, rnd=round_fast, e1=False):
             u = to_fixed(x, wp)
             v = ei_taylor(u, wp) + euler_fixed(wp)
             t1 = from_man_exp(v,-wp)
-            t2 = mpf_log(xabs,wp)
+            t2 = mpf_ln(xabs,wp)
             v = mpf_add(t1, t2, prec, rnd)
     else:
         if x == fzero: v = fninf
@@ -548,9 +548,9 @@ def mpc_ei(z, prec, rnd=round_fast, e1=False):
     vre += euler_fixed(wp)
     v = from_man_exp(vre,-wp), from_man_exp(vim,-wp)
     if e1:
-        u = mpc_log(mpc_neg(z),wp)
+        u = mpc_ln(mpc_neg(z),wp)
     else:
-        u = mpc_log(z,wp)
+        u = mpc_ln(z,wp)
     v = mpc_add(v, u, prec, rnd)
     if e1:
         v = mpc_neg(v)
@@ -761,7 +761,7 @@ def mpf_ci_si(x, prec, rnd=round_fast, which=2):
         if which != 1:
             y = mpf_euler(wp)
             xabs = mpf_abs(x)
-            ci = mpf_add(y, mpf_log(xabs, wp), prec, rnd)
+            ci = mpf_add(y, mpf_ln(xabs, wp), prec, rnd)
         return ci, si
     # For huge x: Ci(x) ~ sin(x)/x, Si(x) ~ pi/2
     elif mag > wp:
@@ -786,7 +786,7 @@ def mpf_ci_si(x, prec, rnd=round_fast, which=2):
         if which != 1:
             ci = mpf_ci_si_taylor(x, wp, 0)
             ci = mpf_add(ci, mpf_euler(wp), wp)
-            ci = mpf_add(ci, mpf_log(mpf_abs(x), wp), prec, rnd)
+            ci = mpf_add(ci, mpf_ln(mpf_abs(x), wp), prec, rnd)
         return ci, si
     x = mpf_abs(x)
     # Case 2: asymptotic series for x >> 1
@@ -839,7 +839,7 @@ def mpc_ci(z, prec, rnd=round_fast):
     wp = prec + 20
     cre, cim = mpc_ci_si_taylor(re, im, wp, 0)
     cre = mpf_add(cre, mpf_euler(wp), wp)
-    ci = mpc_add((cre, cim), mpc_log(z, wp), prec, rnd)
+    ci = mpc_add((cre, cim), mpc_ln(z, wp), prec, rnd)
     return ci
 
 def mpc_si(z, prec, rnd=round_fast):

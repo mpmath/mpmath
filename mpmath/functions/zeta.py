@@ -1011,11 +1011,9 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
 
     **References**
 
-    A. Voros, Zeta functions for the Riemann zeros, Ann. Institute Fourier,
-    53, (2003) 665--699.
+    * [Voros2003]_
+    * [Voros2009]_
 
-    A. Voros, Zeta functions over Zeros of Zeta Functions, Lecture Notes
-    of the Unione Matematica Italiana, Springer, 2009.
     """
     s = ctx.convert(s)
     a = ctx.convert(a)

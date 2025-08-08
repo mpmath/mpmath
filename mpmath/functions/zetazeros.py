@@ -121,7 +121,7 @@ def separate_zeros_in_block(ctx, zero_number_block, T, V, limitloop=None,
                 f = lambda x: ctx.rs_z(x,derivative=1)
                 t0=T[kMax-1]
                 t1 = T[kMax]
-                t=ctx.findroot(f, (t0,t1), solver ='illinois')
+                t=ctx.findroot(f, (t0,t1), solver ='anderson')
                 v = ctx.siegelz(t)
                 if (t0<t) and (t<t1) and (v*V[kMax]<0):
                     T.insert(kMax,t)
@@ -159,7 +159,7 @@ def separate_my_zero(ctx, my_zero_number, zero_number_block, T, V, prec):
         index +=1
         precs = [precs[0] // 2 +3+2*index] + precs
     ctx.prec = precs[0] + guard
-    r = ctx.findroot(ctx.siegelz, (t0,t1), solver ='illinois')
+    r = ctx.findroot(ctx.siegelz, (t0,t1), solver ='anderson')
     #print "first step at", ctx.dps, "digits"
     z=ctx.mpc(0.5,r)
     for prec in precs[1:]:
@@ -174,9 +174,9 @@ def sure_number_block(ctx, n):
     """The number of good Rosser blocks needed to apply
     Turing method
     References:
-    R. P. Brent, On the Zeros of the Riemann Zeta Function
-    in the Critical Strip, Math. Comp. 33 (1979) 1361--1372
-    T. Trudgian, Improvements to Turing Method, Math. Comp."""
+    * [Brent79]_
+    * [Trudgian]_
+    """
     if n < 9*10**5:
         return(2)
     g = ctx.grampoint(n-100)
@@ -397,6 +397,15 @@ def zetazero(ctx, n, info=False, round=True):
     of zeros in this interval. The numbers indicate the number of zeros
     in each Gram interval (Rosser blocks between parenthesis). In this case
     there is only one Rosser block of length nine.
+
+    ** References **
+
+    * [Brent79]_
+    * [Trudgian]_
+    * [Brent86]_
+    * [Lune86]_
+    * [Lune84]_
+
     """
     n = int(n)
     if n < 0:
@@ -603,21 +612,10 @@ that are noted in the literature by some reason.
 
 The list is composed from the data published in the references:
 
-R. P. Brent, J. van de Lune, H. J. J. te Riele, D. T. Winter,
-'On the Zeros of the Riemann Zeta Function in the Critical Strip. II',
-Math. Comp. 39 (1982) 681--688.
-See also Corrigenda in Math. Comp. 46 (1986) 771.
+* [Brent86]_
+* [Lune86]_
+* [Lune84]_
 
-J. van de Lune, H. J. J. te Riele,
-'On the Zeros of the Riemann Zeta Function in the Critical Strip. III',
-Math. Comp. 41 (1983) 759--767.
-See also  Corrigenda in Math. Comp. 46 (1986) 771.
-
-J. van de Lune,
-'Sums of Equal Powers of Positive Integers',
-Dissertation,
-Vrije Universiteit te Amsterdam, Centrum voor Wiskunde en Informatica,
-Amsterdam, 1984.
 
 Thanks to the authors all this papers and those others that have
 contributed to make this possible.

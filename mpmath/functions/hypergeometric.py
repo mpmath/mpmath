@@ -1,5 +1,6 @@
 from ..libmp.backend import MPQ
 from .functions import defun, defun_wrapped
+import math
 
 def _check_need_perturb(ctx, terms, prec, discard_known_zeros):
     perturb = recompute = False
@@ -506,9 +507,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
             if absz > 1.1 or ispoly:
                 raise
     # Use expansion at |z-1| -> 0.
-    # Reference: Wolfgang Buhring, "Generalized Hypergeometric Functions at
-    #   Unit Argument", Proc. Amer. Math. Soc., Vol. 114, No. 1 (Jan. 1992),
-    #   pp.145-153
+    # Reference: [Buhring]_
     # The current implementation has several problems:
     # 1. We only implement it for 3F2. The expansion coefficients are
     #    given by extremely messy nested sums in the higher degree cases
@@ -1063,6 +1062,80 @@ def meijerg(ctx, a_s, b_s, z, r=1, series=None, **kwargs):
                 terms.append((bases, expts, gn, gd, hn, hd, hz))
             return terms
     return ctx.hypercomb(h, a+b, **kwargs)
+
+@defun
+def foxh(ctx, aA_s, bB_s, z, r=1, series=None, **kwargs):
+    aAn, aAp = aA_s
+    bBm, bBq = bB_s
+    n = len(aAn)
+    p = n + len(aAp)
+    m = len(bBm)
+    q = m + len(bBq)
+    aA = aAn+aAp
+    bB = bBm+bBq
+    a = [ctx.convert(a) for a, _ in aA]
+    b = [ctx.convert(b) for b, _ in bB]
+    A = [A for _, A in aA]
+    B = [B for _, B in bB]
+    z = ctx.convert(z)
+    r = ctx.convert(r)
+
+    A = [ctx._convert_param(Ai) for Ai in A]
+    B = [ctx._convert_param(Bj) for Bj in B]
+
+    if not all(Ai > 0 and (AiType == 'Z' or AiType == 'Q') for Ai, AiType in A + B):
+        raise NotImplementedError("All A and B must be positive rationals")
+
+    # Find L.C.M. of denominators
+    D = math.lcm(*[Ai.denominator if AiType == 'Q' else 1 for Ai, AiType in A + B])
+
+    # Convert rationals to integers using common denominator
+    A = [Ai.numerator * (D // Ai.denominator) if AiType == 'Q' else Ai * D for Ai, AiType in A]
+    B = [Bi.numerator * (D // Bi.denominator) if BiType == 'Q' else Bi * D for Bi, BiType in B]
+    r = r / D
+    prefactor = ctx.convert(D)
+
+    # Expand using Gauss Multiplication Formula
+    a_tilde = []
+    for ai, Ai in zip(a, A):
+        for k in range(Ai):
+            a_tilde.append((ai + k) / Ai)
+
+    b_tilde = []
+    for bj, Bj in zip(b, B):
+        for k in range(Bj):
+            b_tilde.append((bj + k) / Bj)
+
+    m_tilde = sum(B[:m])
+    n_tilde = sum(A[:n])
+
+    a_star = ctx.convert(sum(A[:n]) - sum(A[n:]) + sum(B[:m]) - sum(B[m:]))
+    c_star = m + n - (ctx.convert(p) + q) / 2
+
+    beta = ctx.one
+    for Ai in A:
+        beta /= Ai**Ai
+    for Bj in B:
+        beta *= Bj**Bj
+
+    # Compute M factor = prod(B_j^(b_j - 1/2)) / prod(A_i^(a_i - 1/2))
+    M = ctx.one
+    for bj, Bj in zip(b, B):
+        M *= Bj**(bj - ctx.one/2)
+    for ai, Ai in zip(a, A):
+        M /= Ai**(ai - ctx.one/2)
+
+    prefactor *= (2 * ctx.pi)**(c_star - a_star/2) * M
+
+    return prefactor * meijerg(
+        ctx,
+        [a_tilde[:n_tilde], a_tilde[n_tilde:]],
+        [b_tilde[:m_tilde], b_tilde[m_tilde:]],
+        z / (beta ** r),
+        r,
+        series=series,
+        **kwargs
+    )
 
 @defun_wrapped
 def appellf1(ctx,a,b1,b2,c,x,y,**kwargs):

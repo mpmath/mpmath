@@ -5,7 +5,7 @@ Computational functions for interval arithmetic.
 from .backend import MPZ_ONE
 from .gammazeta import mpc_loggamma, mpf_gamma, mpf_loggamma, mpf_rgamma
 from .libelefun import (mod_pi2, mpf_atan, mpf_atan2, mpf_cos_sin, mpf_exp,
-                        mpf_log, mpf_pi, mpf_sqrt)
+                        mpf_ln, mpf_pi, mpf_sqrt)
 from .libmpf import (dps_to_prec, fhalf, finf, fnan, fninf, fnone, fone,
                      from_float, from_int, from_man_exp, from_str, fzero,
                      mpf_abs, mpf_add, mpf_div, mpf_ge, mpf_gt, mpf_le, mpf_lt,
@@ -273,8 +273,8 @@ def mpi_exp(s, prec):
 def mpi_log(s, prec):
     sa, sb = s
     # log is monotonic
-    a = mpf_log(sa, prec, round_floor)
-    b = mpf_log(sb, prec, round_ceiling)
+    a = mpf_ln(sa, prec, round_floor)
+    b = mpf_ln(sb, prec, round_ceiling)
     return a, b
 
 def mpi_sqrt(s, prec):

@@ -388,6 +388,8 @@ def test_polygamma():
     # issue #647
     mp.prec = 42
     assert digamma(-0.5+0.5j).ae(mpc('0.131892637354523', '2.44065951997751'))
+    mp.prec = 53
+    assert digamma(1e300+1j).ae(690.77552789821368)
 
 def test_polygamma_high_prec():
     mp.dps = 100
