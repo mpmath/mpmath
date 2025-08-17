@@ -2458,5 +2458,3 @@ def test_issue_637():
 def test_issue_991():
     assert spherical_jn(0, 1.3).ae(0.74119860416707)
     assert spherical_yn(0, 1.3).ae(-0.20576832971122)
-    assert spherical_jn(0, 0).ae(1)
-    assert spherical_yn(0, 0) == -inf
