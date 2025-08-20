@@ -311,7 +311,6 @@ class MPIntervalContext(StandardBaseContext):
         ctx._constant = type('ivmpf_constant', (ivmpf_constant,), {})
         ctx._prec = [sys.float_info.mant_dig]
         ctx._set_prec(ctx._prec[0])
-        ctx._constant._ctxdata = ctx.mpf._ctxdata = ctx.mpc._ctxdata = [ctx.mpf, new, ctx._prec]
         ctx._constant.ctx = ctx.mpf.ctx = ctx.mpc.ctx = ctx
         ctx.pretty = False
         StandardBaseContext.__init__(ctx)
