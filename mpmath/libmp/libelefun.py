@@ -10,6 +10,7 @@ see libmpc and libmpi.
 """
 
 import math
+import threading
 import warnings
 
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_TWO, MPZ_ZERO
@@ -22,6 +23,9 @@ from .libmpf import (ComplexResult, bctable, finf, fnan, fninf, fnone, fone,
                      mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
                      normalize, reciprocal_rnd, round_ceiling, round_fast,
                      round_up, to_fixed, to_int)
+
+
+local = threading.local()
 
 
 #-------------------------------------------------------------------------------
@@ -44,21 +48,21 @@ if BACKEND == 'python':
 else:
     COS_SIN_CACHE_PREC = 200
 COS_SIN_CACHE_STEP = 8
-cos_sin_cache = {}
+cos_sin_cache = local.cos_sin_cache = {}
 
 # Number of integer logarithms to cache (for zeta sums)
 MAX_LOG_INT_CACHE = 2000
-log_int_cache = {}
+log_int_cache = local.log_int_cache = {}
 
 LOG_TAYLOR_PREC = 2500  # Use Taylor series with caching up to this prec
 LOG_TAYLOR_SHIFT = 9    # Cache log values in steps of size 2^-N
-log_taylor_cache = {}
+log_taylor_cache = local.log_taylor_cache = {}
 # prec/size ratio of x for fastest convergence in AGM formula
 LOG_AGM_MAG_PREC_RATIO = 20
 
 ATAN_TAYLOR_PREC = 3000  # Same as for log
 ATAN_TAYLOR_SHIFT = 7   # steps of size 2^-N
-atan_taylor_cache = {}
+atan_taylor_cache = local.atan_taylor_cache = {}
 
 
 # ~= next power of two + 20
