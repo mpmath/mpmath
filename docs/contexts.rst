@@ -8,6 +8,11 @@ High-level code in mpmath is implemented as methods on a "context object". The c
   * Arbitrary-precision interval arithmetic (``iv``)
   * Double-precision arithmetic using Python's builtin ``float`` and ``complex`` types (``fp``)
 
+.. note::
+
+   Using global context is not thread-safe, create instead
+   local contexts with e.g. :class:`~mpmath.MPContext`.
+
 Most global functions in the global mpmath namespace are actually methods of the ``mp``
 context. This fact is usually transparent to the user, but sometimes shows up in the
 form of an initial parameter called "ctx" visible in the help for the function::
@@ -107,6 +112,18 @@ Arbitrary-precision floating-point (``mp``)
 The ``mp`` context is what most users probably want to use most of the time, as it supports the most functions, is most well-tested, and is implemented with a high level of optimization. Nearly all examples in this documentation use ``mp`` functions.
 
 See :doc:`basics` for a description of basic usage.
+
+.. autoclass:: mpmath.MPContext
+
+Local contexts, created on demand, could be used just as the global ``mp``:
+
+    >>> from mpmath import MPContext
+    >>> ctx = MPContext()
+    >>> ctx.sin(1)
+    mpf('0.8414709848078965')
+    >>> ctx.prec = 113
+    >>> ctx.sin(1)
+    mpf('0.841470984807896506652502321630298954')
 
 Arbitrary-precision interval arithmetic (``iv``)
 ------------------------------------------------
