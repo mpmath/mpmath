@@ -697,7 +697,7 @@ def mpf_log(x, prec, rnd=round_fast):
 
         # If close enough to 1, use Taylor series
         # even in the AGM precision range, since the Taylor series
-        # converges rapidly. 
+        # converges rapidly.
         # Taylor = AGM when O~(prec) = O~(prec^2/cancellation) where cancellation
         # is greater than or equal to precision
         wpb = wp.bit_length()
