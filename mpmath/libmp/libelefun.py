@@ -701,7 +701,7 @@ def mpf_log(x, prec, rnd=round_fast):
         # Taylor = AGM when O~(prec) = O~(prec^2/cancellation) where cancellation
         # is greater than or equal to precision
         wpb = wp.bit_length()
-        if wpb <= cancellation: #possibly include constant (big integer operations)
+        if wpb <= cancellation:  # possibly include constant (big integer operations)
             a = to_fixed(x, wp)
             s = log_taylor(a, wp)
             return from_man_exp(s, -wp, prec, rnd)
