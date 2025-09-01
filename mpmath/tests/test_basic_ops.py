@@ -1,7 +1,9 @@
+import collections
 import decimal
 import math
 import operator
 import random
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 from hypothesis import example, given, settings
@@ -697,8 +699,21 @@ def test_issue_985():
     assert hash(mpmath.mpc(-1000004, 1)) == -2
     assert mpc(-1) in {1, -1}
 
+
 def test_mpfmpc_log_deprecation():
     with pytest.deprecated_call():
         mpmath.libmp.mpf_log(mpf(123)._mpf_, 53)
     with pytest.deprecated_call():
         mpmath.libmp.mpc_log(mpc(123)._mpc_, 53)
+
+
+def test_issue_975():
+    def worker():
+        mp = mpmath.MPContext()
+        mp.quad(lambda x: mp.exp(-x**2), [-mp.inf, mp.inf]) ** 2
+    sz = 100
+    tpe = ThreadPoolExecutor(max_workers=4)
+    futures = [None]*sz
+    for i in range(sz):
+        futures[i] = tpe.submit(worker)
+    assert len(collections.Counter(f.result() for f in futures))

@@ -15,6 +15,7 @@ This module implements gamma- and zeta-related functions:
 
 import math
 import sys
+import threading
 
 from .backend import MPZ, MPZ_ONE, MPZ_THREE, MPZ_ZERO
 from .libelefun import (constant_memo, cos_sin_fixed, def_mpf_constant,
@@ -36,6 +37,9 @@ from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fone, from_int,
                      mpf_pow_int, mpf_rdiv_int, mpf_shift, mpf_sign, mpf_sub,
                      negative_rnd, round_fast, round_nearest, to_fixed,
                      to_float, to_int)
+
+
+local = threading.local()
 
 
 # Catalan's constant is computed using Lupas's rapidly convergent series
@@ -365,7 +369,7 @@ can then be used to optionally find the exact value of the
 numerator and denominator.
 """
 
-bernoulli_cache = {}
+bernoulli_cache = local.bernoulli_cache = {}
 f3 = from_int(3)
 f6 = from_int(6)
 
@@ -868,7 +872,7 @@ References:
 * [Wikipedia]_ http://en.wikipedia.org/wiki/Dirichlet_eta_function
 """
 
-borwein_cache = {}
+borwein_cache = local.borwein_cache = {}
 
 def borwein_coefficients(n):
     if n in borwein_cache:
@@ -885,7 +889,7 @@ def borwein_coefficients(n):
     return ds
 
 ZETA_INT_CACHE_MAX_PREC = 1000
-zeta_int_cache = {}
+zeta_int_cache = local.zeta_int_cache = {}
 
 def mpf_zeta_int(s, prec, rnd=round_fast):
     """
@@ -1140,9 +1144,9 @@ def pow_fixed(x, n, wp):
     return y
 
 # TODO: optimize / cleanup interface / unify with list_primes
-sieve_cache = []
-primes_cache = []
-mult_cache = []
+sieve_cache = local.sieve_cache = []
+primes_cache = local.primes_cache = []
+mult_cache = local.mult_cache = []
 
 def primesieve(n):
     global sieve_cache, primes_cache, mult_cache
@@ -1348,8 +1352,8 @@ GAMMA_STIRLING_BETA = 0.2
 
 SMALL_FACTORIAL_CACHE_SIZE = 150
 
-gamma_taylor_cache = {}
-gamma_stirling_cache = {}
+gamma_taylor_cache = local.gamma_taylor_cache = {}
+gamma_stirling_cache = local.gamma_stirling_cache = {}
 
 small_factorial_cache = [from_int(ifac(n)) for \
     n in range(SMALL_FACTORIAL_CACHE_SIZE+1)]
