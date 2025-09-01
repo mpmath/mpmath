@@ -36,7 +36,7 @@ tests = ['pytest>=6', 'numpy; python_version<"3.14"', 'packaging', 'pytest-timeo
          'matplotlib; platform_python_implementation!="PyPy" and python_version<"3.14"',
          'pexpect', 'ipython', 'hypothesis']
 develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov', 'wheel', 'build']
-gmpy2 = ['gmpy2>=2.2; platform_python_implementation!="PyPy"']
+gmpy2 = ['gmpy2>=2.3.0a1; platform_python_implementation!="PyPy"']
 gmpy = ['mpmath[gmpy2]']
 gmp = ['python-gmp>=0.4; platform_python_implementation!="PyPy"']
 docs = ['sphinx',
