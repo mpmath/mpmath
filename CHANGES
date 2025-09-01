@@ -81,7 +81,9 @@ Compatibility:
 * Drop support for CPython 3.8, see #911 (Sergey B Kirpichev)
 * Deprecate isnormal() method of contexts, see #949 (Sergey B Kirpichev)
 * Importing from the mpmath.libmp submodules is deprecated, use instead ``from
-  mpmath.libmp import mpf_foo``, see issue #704 (Sergey B Kirpichev)
+  mpmath.libmp import foo``, see
+  issue https://github.com/mpmath/mpmath/issues/704#issuecomment-2953536980
+  for available functions (Sergey B Kirpichev)
 * Deprecate bitcount function, see #721 and #955 (Sergey B Kirpichev)
 * Deprecate mpf/mpc_log, see #989 (Sergey B Kirpichev)
 
