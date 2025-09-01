@@ -2456,3 +2456,7 @@ def test_issue_908():
 def test_issue_637():
     assert hankel1(1, 1 + 30j).ae(-7.25495e-15 - 1.17346e-14j)
     assert hankel2(1, 1 - 30j).ae(-7.25495e-15 + 1.17346e-14j)
+
+def test_issue_991():
+    assert spherical_jn(0, 1.3).ae(0.74119860416707)
+    assert spherical_yn(0, 1.3).ae(-0.20576832971122)

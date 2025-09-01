@@ -18,7 +18,7 @@ from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     mpf_degree, mpf_div, mpf_e, mpf_euler, mpf_glaisher,
                     mpf_khinchin, mpf_ln2, mpf_ln10, mpf_mertens, mpf_mul,
                     mpf_neg, mpf_phi, mpf_pi, mpf_rand, mpf_sub, mpf_twinprime,
-                    repr_dps, to_man_exp, to_str, round_nearest)
+                    repr_dps, round_nearest, to_man_exp, to_str)
 
 
 get_complex = re.compile(r"""
@@ -41,7 +41,7 @@ from .ctx_mp_python import PythonMPContext as BaseMPContext
 
 class MPContext(BaseMPContext, StandardBaseContext):
     """
-    Context for multiprecision arithmetic with a global precision.
+    Context for multiple precision floatng-point arithmetic.
     """
 
     def __init__(ctx, prec=sys.float_info.mant_dig,
