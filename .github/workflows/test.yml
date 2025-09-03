@@ -19,9 +19,9 @@ jobs:
         nogmpy: [false]
         purepy: [false]
         include:
-          - python-version: 3.13
+          - python-version: 3.14
             nogmpy: true
-          - python-version: 3.13
+          - python-version: 3.14
             purepy: true
     env:
       PYTEST_ADDOPTS: -n auto
