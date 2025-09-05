@@ -2,13 +2,13 @@ name: Run coverage tests
 on: workflow_call
 jobs:
   coverage:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: true
     env:
       PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v5

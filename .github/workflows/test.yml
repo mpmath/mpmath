@@ -11,19 +11,26 @@ jobs:
     needs:
       - linter
       - coverage
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
         python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14, 3.13t, pypy3.11]
         nogmpy: [false]
+        purepy: [false]
         include:
-          - python-version: 3.13
+          - python-version: 3.14
             nogmpy: true
+          - python-version: 3.14
+            purepy: true
+          - python-version: pypy3.11
+            nogmpy: true
+          - python-version: pypy3.11
+            purepy: true
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
@@ -40,4 +47,6 @@ jobs:
         pip install --upgrade .[develop,gmpy2,gmp,ci]
     - run: pip uninstall -y gmpy2
       if: matrix.nogmpy
+    - run: pip uninstall -y gmpy2 python-gmp
+      if: matrix.purepy
     - run: pytest
