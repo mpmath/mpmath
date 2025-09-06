@@ -207,6 +207,82 @@ class Halley:
             error = abs(x - prevx)
             yield x, error
 
+class Brent:
+    """
+    Brent's method: is a mix of bisection, secant and inverse quadratic method.
+    Requires an interval [a, b] with f(a) and f(b) of opposite signs.
+
+    Pro:
+    Guaranteed Convergence,
+    Faster than Newton/Secant i certain cases
+
+    Contra:
+    Other cases where exist, where f'(x) exists then Newton is fast
+    More bookkeeping around here.
+
+    """
+
+    maxsteps = 100
+
+    def __init__(self, ctx, f, x0, **kwargs):
+        self.ctx = ctx
+        if not len(x0) == 2:
+            raise ValueError("Brent's method requires an interval [a, b].")
+        self.a,self.b= x0
+        self.f= f
+        self.tol= kwargs.get("tol", ctx.eps * 2**10)
+    def __iter__(self):
+        a,b= self.a,self.b
+        fa, fb = self.f(a),self.f(b)
+        if fa*fb>0:
+            raise ValueError("Root must be bracketed for Brent's method.")
+        c,fc=a,fa
+        d=e=b-a
+        ctx= self.ctx
+        tol= self.tol
+        while True:
+            if abs(fc)<abs(fb):
+                a,b,c=b,c,b
+                fa,fb,fc=fb,fc,fb
+
+            tol_act=2*tol*max(1,abs(b))
+            m=0.5*(c-b)
+            # FOR STOPPING
+            if abs(m)<=tol_act or abs(fb)< tol:
+                yield b, abs(m)
+                return
+            # INTERPOLAITION METHOD
+            if abs(e)>=tol_act and abs(fa)> abs(fb):
+                s=fb/fa
+                if a==c:
+                    p=2*m*s
+                    q=1-s
+                else:
+                    q=fa/fc
+                    r=fb/fc
+                    p=s*(2*m*q*(q-r)-(b-a)*(r-1))
+                    q=(q-1)*(r-1)*(s-1)
+                if p> 0:
+                    q= -q
+                else:
+                    p= -p
+                if (2*p< min(3*m*q-abs(tol_act*q),abs(e*q))):
+                    e,d=d,p/q
+                else:
+                    d,e=m,m
+            else:
+                d,e=m,m
+            a,fa=b,fb
+            if abs(d)> tol_act:
+                b+=d
+            else:
+                b+=tol_act if m>0 else -tol_act
+            fb=self.f(b)
+            if (fb>0 and fc>0) or (fb<0 and fc<0):
+                c,fc=a,fa
+                d=e=b-a
+            yield b, abs(d)
+
 class Muller:
     """
     1d-solver generating pairs of approximative root and error.
@@ -686,7 +762,7 @@ class MDNewton:
 str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'halley':Halley, 'muller':Muller, 'bisect':Bisection,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
-              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton}
+              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton,'brent': Brent}
 
 def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""
