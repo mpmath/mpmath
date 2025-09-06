@@ -5,7 +5,7 @@ from mpmath import (cos, eps, findroot, fp, inf, iv, jacobian, matrix, mnorm,
                     workprec)
 from mpmath.calculus.optimization import (Anderson, ANewton, Bisection,
                                           Illinois, MDNewton, MNewton, Muller,
-                                          Newton, Pegasus, Ridder, Secant)
+                                          Newton, Pegasus, Ridder, Secant, Brent)
 
 
 def test_findroot():
@@ -21,7 +21,7 @@ def test_findroot():
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
     for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
-                   Ridder]:
+                   Ridder,Brent]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
     # test types
@@ -69,6 +69,11 @@ def test_multiplicity():
     for i in range(1, 5):
         assert multiplicity(lambda x: (x - 1)**i, 1) == i
     assert multiplicity(lambda x: x**2, 1) == 0
+
+def test_brent():
+    f = lambda x: x**2-2
+    x = findroot(f,(1,2),solver='brent')
+    assert abs(f(x))<eps
 
 def test_multidimensional(capsys):
     def f(*x):
