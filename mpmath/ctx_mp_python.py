@@ -1197,6 +1197,7 @@ class PythonMPContext:
             raise NotImplementedError("%s of a %s" % (name, type(x)))
         name = mpf_f.__name__[4:]
         f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)
+        f.__name__ = name
         return f
 
     # Called by SpecialFunctions.__init__()
