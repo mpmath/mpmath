@@ -209,6 +209,7 @@ class Halley:
 
 class Brent:
     """
+    1d-solver with a pair of approximate root and error.
     Brent's method: is a mix of bisection, secant and inverse quadratic method.
     Requires an interval [a, b] with f(a) and f(b) of opposite signs.
 

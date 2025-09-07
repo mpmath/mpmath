@@ -75,6 +75,57 @@ def test_brent():
     x = findroot(f,(1,2),solver='brent')
     assert abs(f(x))<eps
 
+def test_brent_invalid_interval():
+    f= lambda x: x**2+1
+    with pytest.raises(ValueError):
+        findroot(f,(0,1),solver="brent")
+
+def test_brent_swapping_branch():
+    f= lambda x: (x-1.5)*(x-2.5)
+    x= findroot(f,(1.4,2),solver="brent")
+    assert abs(f(x))<1e-12
+
+
+def test_brent_interpolation_branch():
+    f= lambda x: x**2 - 2
+    x= findroot(f,(1,2),solver="brent")
+    assert abs(x-sqrt(2))<1e-12
+
+
+def test_brent_fallback_to_bisection():
+    f=lambda x:x-3
+    x=findroot(f,(0,5),solver="brent")
+    assert abs(f(x))<1e-12
+
+
+def test_brent_bracket_update():
+    f= lambda x:x**3-x-2
+    x= findroot(f,(1,2),solver="brent")
+    assert abs(f(x))<1e-12
+
+def test_brent_bisection_fallback():
+    f= lambda x:(x-1)*(x-2)
+    x= findroot(f,(1.5,3.0),solver="brent")
+    assert abs(f(x))<1e-12
+
+
+def test_brent_small_step_safeguard():
+    f= lambda x:(x-1e-14)
+    x= findroot(f,(0.0,1.0),solver="brent")
+    assert abs(f(x))<1e-12
+
+
+def test_brent_maxsteps_reached():
+    f= lambda x:x-0.5
+    solver= Brent(mp,f,(0.0,1.0),tol=mp.eps**5)
+    last_x= None
+    for i,(x,err) in enumerate(solver):
+        last_x=x
+        if i>solver.maxsteps:
+            break
+    assert abs(f(last_x))<1e-2
+
+
 def test_multidimensional(capsys):
     def f(*x):
         return [3*x[0]**2-2*x[1]**2-1, x[0]**2-2*x[0]+x[1]**2+2*x[1]-8]
