@@ -125,7 +125,36 @@ def test_brent_maxsteps_reached():
             break
     assert abs(f(last_x))<1e-2
 
+def test_brent_raises_without_interval():
+    f = lambda x: x**2 - 2
+    # Providing only one point instead of an interval
+    with pytest.raises(ValueError, match="Brent's method requires an interval"):
+        findroot(f, 1.0, solver="brent")
 
+def test_brent_triggers_b_adjustment():
+    # Root very close to left endpoint
+    f = lambda x: x - 1e-12
+    # Bracket [0, 1]: f(0) = -1e-12 (negative), f(1) = 1 - 1e-12 (positive)
+    root = findroot(f, (0, 1), solver="brent")
+    assert abs(root - 1e-12) < 1e-8
+
+def test_brent_requires_interval():
+    f = lambda x: x**2 - 2
+    with pytest.raises(ValueError, match="requires an interval"):
+        findroot(f, 1, solver="brent")   # single start, not (a, b)
+
+def test_brent_requires_interval():
+    f = lambda x: x**2 - 2
+    # Brent must be given an interval (a, b), so this raises
+    with pytest.raises(ValueError, match="requires an interval"):
+        findroot(f, 1, solver="brent")   # wrong usage: only one starting point
+
+def test_brent_triggers_b_adjustment():
+    # Root very close to the right endpoint, forces b-adjustment line
+    eps = 1e-15
+    f = lambda x: x - (1 - eps)
+    root = findroot(f, (0, 1), solver="brent")
+    assert abs(root - (1 - eps)) < 1e-12
 def test_multidimensional(capsys):
     def f(*x):
         return [3*x[0]**2-2*x[1]**2-1, x[0]**2-2*x[0]+x[1]**2+2*x[1]-8]
