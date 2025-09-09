@@ -211,36 +211,28 @@ class Brent:
     """
     1d-solver with a pair of approximate root and error.
     Brent's method: is a mix of bisection, secant and inverse quadratic method.
-    Requires an interval [a, b] with f(a) and f(b) of opposite signs.
-
-    Pro:
-    Guaranteed Convergence,
-    Faster than Newton/Secant i certain cases
-
-    Contra:
-    Other cases where exist, where f'(x) exists then Newton is fast
-    More bookkeeping around here.
-
+    Requires an interval [a,b] with f(a) and f(b) of opposite signs.
     """
 
-    maxsteps = 100
+    maxsteps=100
 
-    def __init__(self, ctx, f, x0, **kwargs):
-        self.ctx = ctx
-        if not len(x0) == 2:
-            raise ValueError("Brent's method requires an interval [a, b].")
-        self.a,self.b= x0
-        self.f= f
-        self.tol= kwargs.get("tol", ctx.eps * 2**10)
+    def __init__(self,ctx,f,x0,**kwargs):
+        self.ctx=ctx
+        if not len(x0)==2:
+            raise ValueError("Brent's method requires an interval [a,b].")
+        self.a,self.b=x0
+        self.f=f
+        self.tol=kwargs.get("tol",ctx.eps*2**10)
+
     def __iter__(self):
-        a,b= self.a,self.b
-        fa, fb = self.f(a),self.f(b)
+        a,b=self.a,self.b
+        fa,fb=self.f(a),self.f(b)
         if fa*fb>0:
             raise ValueError("Root must be bracketed for Brent's method.")
         c,fc=a,fa
         d=e=b-a
-        ctx= self.ctx
-        tol= self.tol
+        ctx=self.ctx
+        tol=self.tol
         while True:
             if abs(fc)<abs(fb):
                 a,b,c=b,c,b
@@ -248,12 +240,11 @@ class Brent:
 
             tol_act=2*tol*max(1,abs(b))
             m=0.5*(c-b)
-            # FOR STOPPING
-            if abs(m)<=tol_act or abs(fb)< tol:
-                yield b, abs(m)
+            if abs(m)<=tol_act or abs(fb)<tol:
+                yield b,abs(m)
                 return
-            # INTERPOLAITION METHOD
-            if abs(e)>=tol_act and abs(fa)> abs(fb):
+
+            if abs(e)>=tol_act and abs(fa)>abs(fb):
                 s=fb/fa
                 if a==c:
                     p=2*m*s
@@ -263,26 +254,27 @@ class Brent:
                     r=fb/fc
                     p=s*(2*m*q*(q-r)-(b-a)*(r-1))
                     q=(q-1)*(r-1)*(s-1)
-                if p> 0:
-                    q= -q
+                if p>0:
+                    q=-q
                 else:
-                    p= -p
-                if (2*p< min(3*m*q-abs(tol_act*q),abs(e*q))):
+                    p=-p
+                if 2*p<min(3*m*q-abs(tol_act*q),abs(e*q)):
                     e,d=d,p/q
                 else:
                     d,e=m,m
             else:
                 d,e=m,m
             a,fa=b,fb
-            if abs(d)> tol_act:
+            if abs(d)>tol_act:
                 b+=d
             else:
-                b+=tol_act if m>0 else -tol_act
+                # safeguard redundant, can just nudge toward midpoint
+                b+=m/abs(m)*tol_act
             fb=self.f(b)
             if (fb>0 and fc>0) or (fb<0 and fc<0):
                 c,fc=a,fa
                 d=e=b-a
-            yield b, abs(d)
+            yield b,abs(d)
 
 class Muller:
     """

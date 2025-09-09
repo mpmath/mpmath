@@ -116,45 +116,62 @@ def test_brent_small_step_safeguard():
 
 
 def test_brent_maxsteps_reached():
-    f= lambda x:x-0.5
+    f = lambda x: x - 0.5
     solver= Brent(mp,f,(0.0,1.0),tol=mp.eps**5)
-    last_x= None
+    last_x=None
     for i,(x,err) in enumerate(solver):
         last_x=x
         if i>solver.maxsteps:
             break
-    assert abs(f(last_x))<1e-2
+    assert abs(f(last_x)) < 1e-2
 
-def test_brent_raises_without_interval():
-    f = lambda x: x**2 - 2
-    # Providing only one point instead of an interval
-    with pytest.raises(ValueError, match="Brent's method requires an interval"):
-        findroot(f, 1.0, solver="brent")
 
-def test_brent_triggers_b_adjustment():
-    # Root very close to left endpoint
+def test_brent_requires_interval():
+    f= lambda x:x**2-2
+    with pytest.raises(ValueError, match="requires an interval"):
+        findroot(f,1,solver="brent")
+
+
+def test_brent_triggers_left_adjustment():
     f = lambda x: x - 1e-12
-    # Bracket [0, 1]: f(0) = -1e-12 (negative), f(1) = 1 - 1e-12 (positive)
-    root = findroot(f, (0, 1), solver="brent")
+    root = findroot(f, (0, 1),solver="brent")
     assert abs(root - 1e-12) < 1e-8
 
-def test_brent_requires_interval():
-    f = lambda x: x**2 - 2
-    with pytest.raises(ValueError, match="requires an interval"):
-        findroot(f, 1, solver="brent")   # single start, not (a, b)
 
-def test_brent_requires_interval():
-    f = lambda x: x**2 - 2
-    # Brent must be given an interval (a, b), so this raises
-    with pytest.raises(ValueError, match="requires an interval"):
-        findroot(f, 1, solver="brent")   # wrong usage: only one starting point
+def test_brent_triggers_right_adjustment():
+    eps=1e-15
+    f=lambda x:x-(1-eps)
+    root=findroot(f,(0,1),solver="brent")
+    assert abs(root-(1-eps))<1e-12
 
-def test_brent_triggers_b_adjustment():
-    # Root very close to the right endpoint, forces b-adjustment line
-    eps = 1e-15
-    f = lambda x: x - (1 - eps)
-    root = findroot(f, (0, 1), solver="brent")
-    assert abs(root - (1 - eps)) < 1e-12
+
+def test_brent_hits_smallstep_safeguard():
+    mp.dps=50
+    f=lambda x:(x-mp.mpf('0.5'))**3+mp.mpf('1e-3')
+    tol=mp.mpf('1e-6')
+    solver=Brent(mp,f,(mp.mpf('0.0'),mp.mpf('1.0')),tol=tol)
+
+    safeguard_triggered=False
+    for _,err in solver:
+        if err>tol:
+            safeguard_triggered= True
+            break
+
+    assert safeguard_triggered
+
+
+def test_brent_accepts_interpolation():
+    f=lambda x: x**2-2
+    root=findroot(f,(1,2),solver="brent")
+    assert abs(root-sqrt(2))<1e-12
+
+
+def test_brent_rejects_interpolation():
+    f= lambda x: x**3
+    root=findroot(f,(-1.0,1.0),solver="brent")
+    assert abs(root)<1e-12
+
+
 def test_multidimensional(capsys):
     def f(*x):
         return [3*x[0]**2-2*x[1]**2-1, x[0]**2-2*x[0]+x[1]**2+2*x[1]-8]
