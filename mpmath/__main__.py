@@ -131,7 +131,7 @@ del ip
                         source += "\n"
 
                 try:
-                    code = self.compile(source, filename, symbol)
+                    code = self.compile(source, filename, 'exec')
                 except (OverflowError, SyntaxError, ValueError):
                     if sys.version_info >= (3, 13):
                         self.showsyntaxerror(filename, source=source)
