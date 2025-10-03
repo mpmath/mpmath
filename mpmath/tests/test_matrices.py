@@ -75,6 +75,9 @@ def test_matrix_basic():
     A10[-3, -2] = 1
     assert A10[-3, -2] == 1
 
+    pytest.raises(ValueError, lambda: matrix(-2))
+    pytest.raises(ValueError, lambda: matrix(2, -3))
+
 def test_matmul():
     """
     Test the PEP465 "@" matrix multiplication syntax.

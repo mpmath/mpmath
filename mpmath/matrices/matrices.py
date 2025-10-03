@@ -320,10 +320,14 @@ class _matrix:
         elif isinstance(args[0], int):
             # create empty matrix of given dimensions
             if len(args) == 1:
+                if args[0] < 0:
+                    raise ValueError("expected non-negative int")
                 self._rows = self._cols = args[0]
             else:
                 if not isinstance(args[1], int):
                     raise TypeError("expected int")
+                if args[0] < 0 or args[1] < 0:
+                    raise ValueError("expected non-negative int")
                 self._rows = args[0]
                 self._cols = args[1]
         elif isinstance(args[0], _matrix):
