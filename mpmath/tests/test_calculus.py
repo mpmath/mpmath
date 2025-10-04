@@ -238,7 +238,7 @@ def test_invlap():
     assert invertlaplace(fp,t,method='cohen').ae(ftt)
 
 def test_expm():
-    
+
     #  Simple tests with known exact results
     A = matrix([[2, 0], [0, 1]])
     A = expm(A)
@@ -253,7 +253,7 @@ def test_expm():
     for i in range(2):
         for j in range(2):
             assert abs(A[i,j] - B[i,j]) < 1e-15
-     
+
     # Test with input as list of lists
     A = [[1, 0], [0, 2]]
     A = expm(A)
@@ -265,7 +265,7 @@ def test_expm():
     # Test non-square matrix input
     A = [[1, 0], [0, 1], [0, 0]]
     pytest.raises(ValueError, lambda: expm(A))
-    
+
 def test_cosm_sinm():
 
     # Simple test with known exact result

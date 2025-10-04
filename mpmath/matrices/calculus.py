@@ -112,8 +112,8 @@ class MatrixCalculusMethods:
         """
         A = ctx.matrix(A)
         if(A.rows != A.cols):
-            raise ValueError("expected square matrix")  
-        
+            raise ValueError("expected square matrix")
+
         if method == 'pade':
             prec = ctx.prec
             try:
@@ -122,7 +122,7 @@ class MatrixCalculusMethods:
             finally:
                 ctx.prec = prec
             return res
-        
+
         prec = ctx.prec
         j = int(max(1, ctx.mag(ctx.mnorm(A,'inf'))))
         j += int(0.5*prec**0.5)
@@ -173,8 +173,8 @@ class MatrixCalculusMethods:
         A = ctx.matrix(A)
 
         if(A.rows != A.cols):
-            raise ValueError("expected square matrix")  
-        
+            raise ValueError("expected square matrix")
+
         B = 0.5 * (ctx.expm(A*ctx.j) + ctx.expm(A*(-ctx.j)))
         if not sum(A.apply(ctx.im).apply(abs)):
             B = B.apply(ctx.re)
@@ -207,8 +207,8 @@ class MatrixCalculusMethods:
         A = ctx.matrix(A)
 
         if(A.rows != A.cols):
-            raise ValueError("expected square matrix")  
-        
+            raise ValueError("expected square matrix")
+
         B = (-0.5j) * (ctx.expm(A*ctx.j) - ctx.expm(A*(-ctx.j)))
         if not sum(A.apply(ctx.im).apply(abs)):
             B = B.apply(ctx.re)
