@@ -110,16 +110,17 @@ class MatrixCalculusMethods:
             42.0927851137247
 
         """
+        A = ctx.matrix(A)
+
         if method == 'pade':
             prec = ctx.prec
             try:
-                A = ctx.matrix(A)
                 ctx.prec += 2*A.rows
                 res = ctx._exp_pade(A)
             finally:
                 ctx.prec = prec
             return res
-        A = ctx.matrix(A)
+
         prec = ctx.prec
         j = int(max(1, ctx.mag(ctx.mnorm(A,'inf'))))
         j += int(0.5*prec**0.5)
@@ -167,6 +168,7 @@ class MatrixCalculusMethods:
             [(0.833730025131149 - 0.988897705762865j)  (1.07485840848393 - 0.17192140544213j)]
             [                                     0.0               (1.54308063481524 + 0.0j)]
         """
+        A = ctx.matrix(A)
         B = 0.5 * (ctx.expm(A*ctx.j) + ctx.expm(A*(-ctx.j)))
         if not sum(A.apply(ctx.im).apply(abs)):
             B = B.apply(ctx.re)
@@ -196,6 +198,7 @@ class MatrixCalculusMethods:
             [(1.29845758141598 + 0.634963914784736j)  (-1.96751511930922 + 0.314700021761367j)]
             [                                    0.0                  (0.0 - 1.1752011936438j)]
         """
+        A = ctx.matrix(A)
         B = (-0.5j) * (ctx.expm(A*ctx.j) - ctx.expm(A*(-ctx.j)))
         if not sum(A.apply(ctx.im).apply(abs)):
             B = B.apply(ctx.re)
