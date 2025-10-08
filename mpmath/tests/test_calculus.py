@@ -1,8 +1,9 @@
 import pytest
 
-from mpmath import (arange, chebyfit, cos, differint, e, euler, exp, fourier,
-                    fourierval, inf, invertlaplace, j, limit, log, matrix, mp,
-                    mpf, pade, pi, polyroots, polyval, sin, sqrt, expm, cosm, sinm)
+from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
+                    expm, fourier, fourierval, inf, invertlaplace, j, limit,
+                    log, matrix, mp, mpf, norm, pade, pi, polyroots, polyval,
+                    sin, sinm, sqrt)
 
 
 def test_approximation():
@@ -238,46 +239,36 @@ def test_invlap():
     assert invertlaplace(fp,t,method='cohen').ae(ftt)
 
 def test_expm():
-
     #  Simple tests with known exact results
     A = matrix([[2, 0], [0, 1]])
     A = expm(A)
     B = matrix([[e**2, 0], [0, e]])
-    for i in range(2):
-        for j in range(2):
-            assert abs(A[i,j] - B[i,j]) < 1e-15
+    assert norm(A-B, inf) < 1e-15
 
     A = matrix([[0, -pi], [pi, 0]])
     A = expm(A)
     B = matrix([[-1, 0], [0, -1]])
-    for i in range(2):
-        for j in range(2):
-            assert abs(A[i,j] - B[i,j]) < 1e-15
+    assert norm(A-B, inf) < 1e-15
 
     # Test with input as list of lists
     A = [[1, 0], [0, 2]]
     A = expm(A)
     B = matrix([[e, 0], [0, e**2]])
-    for i in range(2):
-        for j in range(2):
-            assert abs(A[i,j] - B[i,j]) < 1e-15
+    assert norm(A-B, inf) < 1e-15
 
     # Test non-square matrix input
     A = [[1, 0], [0, 1], [0, 0]]
     pytest.raises(ValueError, lambda: expm(A))
 
 def test_cosm_sinm():
-
     # Simple test with known exact result
     A = matrix([[-pi, 0], [0, pi]])
     C = cosm(A)
     S = sinm(A)
     C_exact = matrix([[cos(-pi), 0], [0, cos(pi)]])
     S_exact = matrix([[0, 0], [0, 0]])
-    for i in range(2):
-        for j in range(2):
-            assert abs(C[i,j] - C_exact[i,j]) < 1e-15
-            assert abs(S[i,j] - S_exact[i,j]) < 1e-15
+    assert norm(C-C_exact, inf) < 1e-15
+    assert norm(S-S_exact, inf) < 1e-15
 
     # Test with input as list of lists
     A = [[-pi, 0], [0, pi]]
@@ -285,10 +276,8 @@ def test_cosm_sinm():
     S = sinm(A)
     C_exact = matrix([[cos(-pi), 0], [0, cos(pi)]])
     S_exact = matrix([[0, 0], [0, 0]])
-    for i in range(2):
-        for j in range(2):
-            assert abs(C[i,j] - C_exact[i,j]) < 1e-15
-            assert abs(S[i,j] - S_exact[i,j]) < 1e-15
+    assert norm(C-C_exact, inf) < 1e-15
+    assert norm(S-S_exact, inf) < 1e-15
 
     # Test non-square matrix input
     A = [[1, 0], [0, 1], [0, 0]]
