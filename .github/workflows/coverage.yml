@@ -43,8 +43,3 @@ jobs:
           path: |
             coverage.xml
             build/coverage/html/
-      - name: Upload coverage data
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
