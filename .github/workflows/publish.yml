@@ -1,5 +1,5 @@
 name: Publish on PyPI
-on: push
+on: [push, workflow_dispatch, workflow_call]
 jobs:
   build:
     name: Build distributions

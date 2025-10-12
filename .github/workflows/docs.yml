@@ -1,5 +1,5 @@
 name: Build & test docs
-on: workflow_call
+on: [workflow_dispatch, workflow_call]
 jobs:
   docs:
     runs-on: ubuntu-24.04

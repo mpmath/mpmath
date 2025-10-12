@@ -158,6 +158,11 @@ Bug fixes:
   #948 (Sergey B Kirpichev)
 * Fix kwargs passing in the nstr() for mpc, see #964 (David Walker)
 * Fix exception type for int(inf), see #966 (Sergey B Kirpichev)
+* Ensure exp, sin, tan, etc have a correct __name__ attribute, see #997
+  (Warren Weckesser)
+* Matrix raise ValueError in case of negative dimensions, see #1004 (Ayush
+  Baranwal)
+* Support lists in sinm() and cosm(), see #1003 (Ayush Baranwal)
 
 Maintenance:
 
@@ -194,7 +199,7 @@ Maintenance:
 * Use the intended setuptools_scm integration pattern, see #940 (Ronny
   Pfannschmidt)
 
-See the release milestone (1.4) for complete list of issues and pull requests
+See the release milestone (1.4) for a complete list of issues and pull requests
 involved in this release.
 
 

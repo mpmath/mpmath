@@ -1,5 +1,10 @@
 name: test
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0 * * 2'
 jobs:
   linter:
     uses: ./.github/workflows/linter.yml
@@ -15,7 +20,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14, 3.13t, pypy3.11]
+        python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14, 3.13t,
+                         pypy3.11, 3.14t]
         nogmpy: [false]
         purepy: [false]
         include:
@@ -39,7 +45,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
     - name: Install gmpy2 deps
-      if: matrix.python-version == 3.14
+      if: ${{ startsWith(matrix.python-version, '3.14') }}
       run: sudo apt install libmpc-dev
     - name: Install dependencies
       run: |

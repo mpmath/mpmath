@@ -1,5 +1,5 @@
 name: Run coverage tests
-on: workflow_call
+on: [workflow_dispatch, workflow_call]
 jobs:
   coverage:
     runs-on: ubuntu-24.04
@@ -43,8 +43,3 @@ jobs:
           path: |
             coverage.xml
             build/coverage/html/
-      - name: Upload coverage data
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false
