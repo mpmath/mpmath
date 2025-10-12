@@ -47,6 +47,8 @@ or new features to mpmath:
 * Max Gaukler <max.gaukler@fau.de>
 * Guillermo Navas-Palencia <g.navas.palencia@gmail.com>
 * Nike Dattani <nike@hpqc.org>
+* Tim Peters <tim.peters@gmail.com>
+* Javier Garcia <javier.garcia.tw@hotmail.com>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
