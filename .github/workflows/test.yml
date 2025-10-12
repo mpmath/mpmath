@@ -27,6 +27,8 @@ jobs:
             nogmpy: true
           - python-version: pypy3.11
             purepy: true
+          - python-version: graalpy-25.0
+            purepy: true
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
@@ -39,7 +41,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
     - name: Install gmpy2 deps
-      if: matrix.python-version == 3.14
+      if: startsWith(matrix.python-version, '3.14') || startsWith(matrix.python-version, 'graal')
       run: sudo apt install libmpc-dev
     - name: Install dependencies
       run: |
