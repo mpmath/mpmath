@@ -1,5 +1,5 @@
 name: Run coverage tests
-on: workflow_call
+on: [workflow_dispatch, workflow_call]
 jobs:
   coverage:
     runs-on: ubuntu-24.04
