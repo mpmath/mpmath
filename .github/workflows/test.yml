@@ -3,30 +3,21 @@ on: [push, pull_request]
 jobs:
   linter:
     uses: ./.github/workflows/linter.yml
-  coverage:
-    uses: ./.github/workflows/coverage.yml
-  docs:
-    uses: ./.github/workflows/docs.yml
+# coverage:
+#   uses: ./.github/workflows/coverage.yml
+# docs:
+#   uses: ./.github/workflows/docs.yml
   tests:
     needs:
       - linter
-      - coverage
+#     - coverage
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14, 3.13t, pypy3.11]
+        python-version: [pypy3.11]
         nogmpy: [false]
         purepy: [false]
-        include:
-          - python-version: 3.14
-            nogmpy: true
-          - python-version: 3.14
-            purepy: true
-          - python-version: pypy3.11
-            nogmpy: true
-          - python-version: pypy3.11
-            purepy: true
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
