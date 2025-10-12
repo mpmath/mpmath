@@ -7,8 +7,6 @@ mpmath
    :target: https://pypi.python.org/pypi/mpmath
 .. |Build status| image:: https://github.com/mpmath/mpmath/workflows/test/badge.svg
    :target: https://github.com/mpmath/mpmath/actions?workflow=test
-.. |Code coverage status| image:: https://codecov.io/gh/mpmath/mpmath/branch/master/graph/badge.svg
-   :target: https://codecov.io/gh/mpmath/mpmath
 .. |Zenodo Badge| image:: https://zenodo.org/badge/2934512.svg
    :target: https://zenodo.org/badge/latestdoi/2934512
 
@@ -49,6 +47,8 @@ or new features to mpmath:
 * Max Gaukler <max.gaukler@fau.de>
 * Guillermo Navas-Palencia <g.navas.palencia@gmail.com>
 * Nike Dattani <nike@hpqc.org>
+* Tim Peters <tim.peters@gmail.com>
+* Javier Garcia <javier.garcia.tw@hotmail.com>
 
 Numerous other people have contributed by reporting bugs,
 requesting new features, or suggesting improvements to the
