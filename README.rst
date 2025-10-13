@@ -1,7 +1,7 @@
 mpmath
 ======
 
-|pypi version| |Build status| |Code coverage status| |Zenodo Badge|
+|pypi version| |Build status| |Zenodo Badge|
 
 .. |pypi version| image:: https://img.shields.io/pypi/v/mpmath.svg
    :target: https://pypi.python.org/pypi/mpmath
