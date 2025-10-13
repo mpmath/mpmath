@@ -20,8 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14, 3.13t,
-                         pypy3.11, 3.14t]
+        python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14, 3.13t, 3.14t]
         nogmpy: [false]
         purepy: [false]
         include:
@@ -29,8 +28,6 @@ jobs:
             nogmpy: true
           - python-version: 3.14
             purepy: true
-          - python-version: pypy3.11
-            nogmpy: true
           - python-version: pypy3.11
             purepy: true
     env:
