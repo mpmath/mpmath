@@ -209,72 +209,67 @@ class Halley:
 
 class Brent:
     """
-    1d-solver with a pair of approximate root and error.
-    Brent's method: is a mix of bisection, secant and inverse quadratic method.
+    Brent's method for 1D root-finding.
+
     Requires an interval [a,b] with f(a) and f(b) of opposite signs.
+    Combines bisection, secant, and inverse quadratic interpolation.
     """
+    maxsteps = 100
 
-    maxsteps=100
-
-    def __init__(self,ctx,f,x0,**kwargs):
-        self.ctx=ctx
-        if not len(x0)==2:
+    def __init__(self, ctx, f, x0, **kwargs):
+        self.ctx = ctx
+        if not len(x0) == 2:
             raise ValueError("Brent's method requires an interval [a,b].")
-        self.a,self.b=x0
-        self.f=f
-        self.tol=kwargs.get("tol",ctx.eps*2**10)
-
+        self.a, self.b = x0
+        self.f = f
+        self.tol = kwargs.get("tol", ctx.eps * 2**10)
+        self.verbose = kwargs.get("verbose", False)
     def __iter__(self):
-        a,b=self.a,self.b
-        fa,fb=self.f(a),self.f(b)
-        if fa*fb>0:
+        a, b = self.a, self.b
+        f = self.f
+        ctx = self.ctx
+        tol = self.tol
+        fa, fb = f(a), f(b)
+        if fa * fb > 0:
             raise ValueError("Root must be bracketed for Brent's method.")
-        c,fc=a,fa
-        d=e=b-a
-        ctx=self.ctx
-        tol=self.tol
-        while True:
-            if abs(fc)<abs(fb):
-                a,b,c=b,c,b
-                fa,fb,fc=fb,fc,fb
-
-            tol_act=2*tol*max(1,abs(b))
-            m=0.5*(c-b)
-            if abs(m)<=tol_act or abs(fb)<tol:
-                yield b,abs(m)
+        if abs(fa) < abs(fb):
+            a, b = b, a
+            fa, fb = fb, fa
+        c, fc = a, fa
+        d = e = b - a
+        for _ in range(self.maxsteps):
+            if fb == 0:
+                yield b, 0
                 return
-
-            if abs(e)>=tol_act and abs(fa)>abs(fb):
-                s=fb/fa
-                if a==c:
-                    p=2*m*s
-                    q=1-s
-                else:
-                    q=fa/fc
-                    r=fb/fc
-                    p=s*(2*m*q*(q-r)-(b-a)*(r-1))
-                    q=(q-1)*(r-1)*(s-1)
-                if p>0:
-                    q=-q
-                else:
-                    p=-p
-                if 2*p<min(3*m*q-abs(tol_act*q),abs(e*q)):
-                    e,d=d,p/q
-                else:
-                    d,e=m,m
+            if fa != fc and fb != fc:
+                # Inverse quadratic interpolation
+                s = (a * fb * fc) / ((fa - fb) * (fa - fc)) \
+                  + (b * fa * fc) / ((fb - fa) * (fb - fc)) \
+                  + (c * fa * fb) / ((fc - fa) * (fc - fb))
             else:
-                d,e=m,m
-            a,fa=b,fb
-            if abs(d)>tol_act:
-                b+=d
+                # Secant method
+                s = b - fb * (b - a) / (fb - fa)
+            # Conditions to accept s
+            cond1 = not ((3*a + b)/4 < s < b) and not ((3*b + a)/4 > s > b)
+            cond2 = abs(s - b) >= abs(b - c)/2
+            cond3 = abs(b - c) < tol
+            if cond1 or cond2 or cond3:
+                # Bisection fallback
+                s = (a + b)/2
+            fs = f(s)
+            d, c = c, b
+            fc = fb
+            if fa * fs < 0:
+                b = s
+                fb = fs
             else:
-                # safeguard redundant, can just nudge toward midpoint
-                b+=m/abs(m)*tol_act
-            fb=self.f(b)
-            if (fb>0 and fc>0) or (fb<0 and fc<0):
-                c,fc=a,fa
-                d=e=b-a
-            yield b,abs(d)
+                a = s
+                fa = fs
+            if abs(fa) < abs(fb):
+                a, b = b, a
+                fa, fb = fb, fa
+            error = abs(b - a)
+            yield b, error
 
 class Muller:
     """
