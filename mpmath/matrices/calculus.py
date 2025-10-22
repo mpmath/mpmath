@@ -433,6 +433,8 @@ class MatrixCalculusMethods:
 
         """
         A = ctx.matrix(A)
+        if ctx.mnorm(A, 'inf') == 0:
+            raise ValueError("The logarithm is undefined for the zero matrix.")
         prec = ctx.prec
         try:
             ctx.prec += 10
