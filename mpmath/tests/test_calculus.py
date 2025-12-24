@@ -3,7 +3,7 @@ import pytest
 from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
                     expm, fourier, fourierval, inf, invertlaplace, j, limit,
                     log, matrix, mp, mpf, norm, pade, pi, polyroots, polyval,
-                    sin, sinm, sqrt)
+                    sin, sinm, sqrt, logm)
 
 
 def test_approximation():
@@ -283,3 +283,8 @@ def test_cosm_sinm():
     A = [[1, 0], [0, 1], [0, 0]]
     pytest.raises(ValueError, lambda: cosm(A))
     pytest.raises(ValueError, lambda: sinm(A))
+
+def test_logm():
+    # Test for zero matrix
+    A = [[0, 0], [0, 0]]
+    pytest.raises(ValueError, lambda: logm(A))
