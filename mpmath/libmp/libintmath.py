@@ -322,8 +322,10 @@ ifac = math.factorial
 
 if gmpy:
     ifac = gmpy.fac
-    ifac2 = gmpy.double_fac
-    ifib = gmpy.fib
+    if hasattr(gmpy, 'double_fac'):
+        ifac2 = gmpy.double_fac
+    if hasattr(gmpy, 'fib'):
+        ifib = gmpy.fib
 
 ifac = lru_cache(maxsize=1024)(ifac)
 
