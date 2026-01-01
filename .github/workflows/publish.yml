@@ -13,7 +13,7 @@ jobs:
         python-version: "3.x"
     - run: pip install build
     - run: python -m build
-    - uses: actions/upload-artifact@v5
+    - uses: actions/upload-artifact@v6
       with:
         name: build
         path: dist/

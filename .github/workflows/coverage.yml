@@ -37,7 +37,7 @@ jobs:
           coverage html
           diff-cover coverage.xml --fail-under=100 \
             --compare-branch=origin/master
-      - uses: actions/upload-artifact@v5
+      - uses: actions/upload-artifact@v6
         with:
           name: coverage
           path: |
