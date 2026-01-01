@@ -973,8 +973,8 @@ class PythonMPContext:
             re, im = x._mpc_
             re_special = not bool(re[1])
             im_special = not bool(im[1])
-            if re == fzero: return im_special
-            if im == fzero: return re_special
+            if re in (fzero, fnzero): return im_special
+            if im in (fzero, fnzero): return re_special
             return re_special or im_special
         if isinstance(x, int_types) or isinstance(x, MPQ):
             return not bool(x)
