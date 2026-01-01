@@ -33,7 +33,7 @@ jobs:
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
