@@ -24,7 +24,7 @@ jobs:
       - build
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/download-artifact@v6
+      - uses: actions/download-artifact@v7
         with:
           pattern: build
           path: dist/
