@@ -2,99 +2,54 @@ name: test
 on:
   push:
   pull_request:
+  workflow_dispatch:
   schedule:
     - cron: '0 0 * * 2'
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  linter:
+    uses: ./.github/workflows/linter.yml
+  coverage:
+    uses: ./.github/workflows/coverage.yml
+  docs:
+    uses: ./.github/workflows/docs.yml
+  tests:
+    needs:
+      - linter
+      - coverage
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
-        python-version: [3.8, 3.9, '3.10', 3.11, 3.12, 3.13, 3.14, pypy3.10-nightly]
-        coverage: [false]
+        python-version: [3.9, '3.10', 3.11, 3.12, 3.13, 3.14, 3.13t, 3.14t]
         nogmpy: [false]
-        default: [false]
+        purepy: [false]
         include:
-          - python-version: 3.11
-            coverage: true
+          - python-version: 3.14
             nogmpy: true
-          - python-version: 3.12
-            coverage: true
-            default: true
+          - python-version: 3.14
+            purepy: true
+          - python-version: pypy3.11
+            purepy: true
     env:
       PYTEST_ADDOPTS: -n auto
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
       with:
         fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
-    - name: Install libs
-      run: |
-        sudo apt update
-        sudo apt install latexmk texlive-xetex
     - name: Install gmpy2 deps
-      if: matrix.python-version == 3.14
+      if: ${{ startsWith(matrix.python-version, '3.14') }}
       run: sudo apt install libmpc-dev
     - name: Install dependencies
       run: |
         pip install --upgrade setuptools pip
-        pip install --upgrade .[develop,gmpy2,docs,ci]
-    - name: Remove gmpy (for coverage tests)
+        pip install --upgrade .[develop,gmpy2,gmp,ci]
+    - run: pip uninstall -y gmpy2
       if: matrix.nogmpy
-      run: pip uninstall -y gmpy2
-    - name: Install ~/.python_history
-      run: touch ~/.python_history
-    - name: Linting with flake8, etc
-      if: matrix.default
-      run: |
-        python -We:invalid -m compileall -f mpmath -q
-        flake518 mpmath
-    - name: Tests
-      if: ${{ ! matrix.coverage }}
-      run: pytest
-    - name: Run coverage tests
-      env:
-        PYTEST_ADDOPTS: --cov mpmath --cov-append --cov-report=xml -n auto
-      if: matrix.coverage
-      run: |
-        pytest
-        pip uninstall -y ipython
-        pytest mpmath/tests/test_cli.py
-        coverage html
-        coverage xml
-        diff-cover coverage.xml --fail-under=100 --compare-branch=origin/master
-    - name: Upload coverage data
-      if: matrix.coverage
-      uses: codecov/codecov-action@v4
-      with:
-        files: ./coverage.xml
-        fail_ci_if_error: false
-    - name: Building docs
-      if: matrix.default
-      run: |
-        sphinx-build --color -W --keep-going -b html docs build/sphinx/html
-        sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
-        make -C build/sphinx/latex all-pdf
-    - name: Make packages
-      if: matrix.default
-      run: python -m build
-    - name: Archive production artifacts
-      uses: actions/upload-artifact@v4
-      if: matrix.default
-      with:
-        path: |
-          dist/
-          build/sphinx/html/
-          build/sphinx/latex/mpmath.pdf
-          coverage.xml
-          build/coverage/html/
-    - name: Publish package on PyPI
-      if: matrix.default && github.event_name == 'push' && startsWith(github.event.ref, 'refs/tags')
-      uses: pypa/gh-action-pypi-publish@release/v1
-      with:
-        user: __token__
-        password: ${{ secrets.PYPI_API_TOKEN }}
+    - run: pip uninstall -y gmpy2 python-gmp
+      if: matrix.purepy
+    - run: pytest

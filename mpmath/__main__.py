@@ -9,15 +9,15 @@ some initialization code.
 import argparse
 import ast
 import atexit
-import code
 import os
 import readline
 import rlcompleter
 import sys
+import tokenize
 
 from mpmath import __version__
-from mpmath._interactive import (IntegerDivisionWrapper,
-                                 wrap_float_literals)
+from mpmath._interactive import (IntegerDivisionWrapper, wrap_float_literals,
+                                 wrap_hexbinfloats)
 
 
 __all__ = ()
@@ -38,7 +38,7 @@ parser.add_argument('-V', '--version',
                     action='store_true')
 parser.add_argument('--prec', type=int,
                     help='Set default mpmath precision')
-parser.add_argument('--pretty', help='Enable pretty-printing',
+parser.add_argument('--no-pretty', help='Disable pretty-printing',
                     action='store_true')
 
 
@@ -54,8 +54,9 @@ def main():
 
     if args.prec:
         lines.append(f'mp.prec = {args.prec}')
-    if args.pretty:
+    if not args.no_pretty:
         lines.append('mp.pretty = True')
+        lines.append('mp.pretty_dps = "repr"')
 
     try:
         import IPython
@@ -79,10 +80,14 @@ def main():
         for l in lines:
             shell.run_cell(l, silent=True)
         if not args.no_wrap_floats:
-            shell.run_cell('from mpmath._interactive import wrap_float_literals')
-            shell.run_cell('ip = get_ipython()')
-            shell.run_cell('ip.input_transformers_post.append(wrap_float_literals)')
-            shell.run_cell('del ip')
+            source = """
+from mpmath._interactive import wrap_float_literals, wrap_hexbinfloats
+ip = get_ipython()
+ip.input_transformers_post.append(wrap_float_literals)
+ip.input_transformers_post.append(wrap_float_literals)
+del ip
+"""
+            shell.run_cell(source)
         app.start()
     else:
         ast_transformers = []
@@ -92,53 +97,82 @@ def main():
         if not args.no_wrap_division:
             ast_transformers.append(IntegerDivisionWrapper())
         if not args.no_wrap_floats:
+            source_transformers.append(wrap_hexbinfloats)
             source_transformers.append(wrap_float_literals)
 
-        class MpmathConsole(code.InteractiveConsole):
+        try:
+            from _pyrepl.main import CAN_USE_PYREPL
+            if CAN_USE_PYREPL:  # pragma: no cover
+                from _pyrepl.console import \
+                    InteractiveColoredConsole as InteractiveConsole
+            else:
+                raise ImportError
+        except ImportError:  # pragma: no cover
+            from code import InteractiveConsole
+
+        class MpmathConsole(InteractiveConsole):
             """An interactive console with readline support."""
 
             def __init__(self, ast_transformers=[],
                          source_transformers=[], **kwargs):
                 super().__init__(**kwargs)
-
-                readline.set_completer(rlcompleter.Completer(ns).complete)
-                readline.parse_and_bind('tab: complete')
-
-                history = os.path.expanduser('~/.python_history')
-                readline.read_history_file(history)
-                atexit.register(readline.write_history_file, history)
                 self.ast_transformers = ast_transformers
                 self.source_transformers = source_transformers
 
             def runsource(self, source, filename='<input>', symbol='single'):
-                if not source:
+                if self.source_transformers:
+                    last_line = source.endswith("\n")  # signals the end of a block
+                    try:
+                        for t in self.source_transformers:
+                            source = ''.join(t(source.splitlines(keepends=True)))
+                    except SyntaxError:
+                        pass  # XXX: emit warning?
+                    if last_line:
+                        source += "\n"
+
+                try:
+                    code = self.compile(source, filename, 'exec')
+                except (OverflowError, SyntaxError, ValueError):
+                    if sys.version_info >= (3, 13):
+                        self.showsyntaxerror(filename, source=source)
+                    else:  # pragma: no cover
+                        self.showsyntaxerror(filename)
+                    return False
+
+                if code is None:
                     return True
 
-                for t in self.source_transformers:
-                    source = '\n'.join(t(source.splitlines()))
-
                 if self.ast_transformers:
-                    tree = ast.parse(source, mode=symbol)
-
+                    tree = ast.parse(source)
                     for t in self.ast_transformers:
                         tree = t.visit(tree)
                     ast.fix_missing_locations(tree)
-
-                    code_obj = compile(tree, filename, mode=symbol)
-                    try:
-                        self.runcode(code_obj)
-                    except SystemExit:
-                        os.exit(0)
-                    return False
+                    source = ast.unparse(tree)
+                    source += "\n"
 
                 return super().runsource(source, filename=filename, symbol=symbol)
 
         c = MpmathConsole(ast_transformers=ast_transformers,
                           source_transformers=source_transformers, locals=ns)
 
+        interactive_hook = getattr(sys, "__interactivehook__", None)
+        if interactive_hook is not None:  # pragma: no branch
+            sys.audit("cpython.run_interactivehook", interactive_hook)
+            interactive_hook()
+
         for l in lines:
             c.push(l)
-        c.interact('', '')
+
+        try:
+            from _pyrepl.main import CAN_USE_PYREPL
+            if CAN_USE_PYREPL:  # pragma: no cover
+                from _pyrepl.simple_interact import \
+                    run_multiline_interactive_console
+                run_multiline_interactive_console(c)
+            else:
+                raise ImportError
+        except Exception:  # pragma: no cover
+            c.interact('', '')
 
 
 if __name__ == '__main__':

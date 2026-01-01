@@ -4,9 +4,13 @@ Contexts
 High-level code in mpmath is implemented as methods on a "context object". The context implements arithmetic, type conversions and other fundamental operations. The context also holds settings such as precision, and stores cache data. A few different contexts (with a mostly compatible interface) are provided so that the high-level algorithms can be used with different implementations of the underlying arithmetic, allowing different features and speed-accuracy tradeoffs. Currently, mpmath provides the following contexts:
 
   * Arbitrary-precision arithmetic (``mp``)
-  * A faster Cython-based version of ``mp`` (used by default in Sage, and currently only available there)
   * Arbitrary-precision interval arithmetic (``iv``)
   * Double-precision arithmetic using Python's builtin ``float`` and ``complex`` types (``fp``)
+
+.. note::
+
+   Using global context is not thread-safe, create instead
+   local contexts with e.g. :class:`~mpmath.MPContext`.
 
 Most global functions in the global mpmath namespace are actually methods of the ``mp``
 context. This fact is usually transparent to the user, but sometimes shows up in the
@@ -108,6 +112,18 @@ The ``mp`` context is what most users probably want to use most of the time, as 
 
 See :doc:`basics` for a description of basic usage.
 
+.. autoclass:: mpmath.MPContext
+
+Local contexts, created on demand, could be used just as the global ``mp``:
+
+    >>> from mpmath import MPContext
+    >>> ctx = MPContext()
+    >>> ctx.sin(1)
+    mpf('0.8414709848078965')
+    >>> ctx.prec = 113
+    >>> ctx.sin(1)
+    mpf('0.841470984807896506652502321630298954')
+
 Arbitrary-precision interval arithmetic (``iv``)
 ------------------------------------------------
 
@@ -144,7 +160,11 @@ Intervals may be infinite or half-infinite::
     >>> print(1 / iv.mpf([2, 'inf']))
     [0.0, 0.5]
 
-The equality testing operators ``==`` and ``!=`` check whether their operands are identical as intervals; that is, have the same endpoints. The ordering operators ``< <= > >=`` permit inequality testing using triple-valued logic: a guaranteed inequality returns ``True`` or ``False`` while an indeterminate inequality returns ``None``::
+The equality testing operators ``==`` and ``!=`` check whether their operands
+are identical as intervals; that is, have the same endpoints. The ordering
+operators ``< <= > >=`` permit inequality testing using triple-valued logic: a
+guaranteed inequality returns ``True`` or ``False`` while an indeterminate
+inequality raises :exc:`ValueError`::
 
     >>> iv.mpf([1,2]) == iv.mpf([1,2])
     True
@@ -156,12 +176,18 @@ The equality testing operators ``==`` and ``!=`` check whether their operands ar
     True
     >>> iv.mpf([1,2]) < 1
     False
-    >>> iv.mpf([1,2]) < 2    # returns None
+    >>> iv.mpf([1,2]) < 2
+    Traceback (most recent call last):
+      ...
+    ValueError
     >>> iv.mpf([2,2]) < 2
     False
     >>> iv.mpf([1,2]) <= iv.mpf([2,3])
     True
-    >>> iv.mpf([1,2]) < iv.mpf([2,3])  # returns None
+    >>> iv.mpf([1,2]) < iv.mpf([2,3])
+    Traceback (most recent call last):
+      ...
+    ValueError
     >>> iv.mpf([1,2]) < iv.mpf([-1,0])
     False
 
@@ -236,13 +262,19 @@ seen by increasing the precision::
     >>> print(mp.exp(mp.pi*mp.sqrt(163)))
     262537412640768743.99999999999925007259719818568888
 
-With interval arithmetic, the comparison returns ``None`` until the precision
-is large enough for `x-y` to have a definite sign::
+With interval arithmetic, the comparison raises :exc:`ValueError` until the
+precision is large enough for `x-y` to have a definite sign::
 
     >>> iv.dps = 15
     >>> iv.exp(iv.pi*iv.sqrt(163)) > (640320**3+744)
+    Traceback (most recent call last):
+      ...
+    ValueError
     >>> iv.dps = 30
     >>> iv.exp(iv.pi*iv.sqrt(163)) > (640320**3+744)
+    Traceback (most recent call last):
+      ...
+    ValueError
     >>> iv.dps = 60
     >>> iv.exp(iv.pi*iv.sqrt(163)) > (640320**3+744)
     False

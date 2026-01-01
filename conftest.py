@@ -24,7 +24,9 @@ def pytest_configure(config):
 @pytest.fixture(autouse=True)
 def reset_mp_globals():
     from mpmath import mp, iv
-    mp.dps = 15
+    mp.prec = sys.float_info.mant_dig
     mp.pretty = False
-    iv.dps = 15
+    mp.rounding = 'n'
+    mp.pretty_dps = "str"
+    iv.prec = mp.prec
     iv.pretty = False

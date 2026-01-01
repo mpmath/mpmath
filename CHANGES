@@ -1,3 +1,208 @@
+--1.4.0--
+Released TBD
+
+Features:
+
+* Support underscores as digit separators per PEP 515, see #661 (Sergey B
+  Kirpichev)
+* Add rationals converter for mpf's, see #666 (Sergey B Kirpichev)
+* Rewrite bernpoly/eulerpoly to avoid dependency on bernoulli(1) convention,
+  see #700 (Sergey B Kirpichev)
+* Support base kwarg for from_str(), see #703 (Jonathan Warner, Sergey B
+  Kirpichev)
+* Support randmatrix() for mp.iv and mp contexts, see #527 (Maximilian
+  Gaukler)
+* Added rand() function for matrices, see #610 (Jan-Philipp Hoffmann)
+* Add plus flag to select the B_1 sign convention for bernoulli/bernfrac, see
+  #724 (Jeremy Tan Jie Rui, Sergey B Kirpichev)
+* Add mpf.as_integer_ratio() method, support construction of mpf from Decimal
+  objects, see #731 (Sergey B Kirpichev)
+* Expose lower/upper_gamma functions, see #740 (Sergey B Kirpichev)
+* Support mpc initialization from string, see #743 (Sergey B Kirpichev)
+* Support asinh/acosh/atanh in the fp context, see #750 (Sergey B Kirpichev)
+* Support binary/octal/hexadecimal string output, see #711 (Jonathan Warner,
+  Sergey B Kirpichev)
+* Support pickling for matrices and mpi, see #761 (Sergey B Kirpichev)
+* Support matrix.__array__() dunder method, see #767 (Sergey B Kirpichev)
+* Support more number syntaxes, see #778 (Sergey B Kirpichev)
+* Run mpmath as a module for interactive work, see #773, #923, #931, #936,
+  #939 and #954 (Sergey B Kirpichev)
+* Add signed option to to_man_exp(), see #783 (Sergey B Kirpichev)
+* Add fp.hypot, see #798 (Sergey B Kirpichev)
+* Support inf/nan's in ctx.almosteq(), #802 (Sergey B Kirpichev)
+* Implement mpf.__format__(), see #819, #831, #850, #859, #857, #862, #881,
+  #944 and #966 (Javier Garcia, Sergey B Kirpichev)
+* Support conversion from scalar ndarray's, see #821 (Sergey B Kirpichev)
+* Support rounding modes in mpf.__format__, see #823, #831, #834
+  and #969 (Javier Garcia, Sergey B Kirpichev)
+* Support '%' presentation type for mpf, see #847 (Sergey B Kirpichev)
+* Support gmpy2-like rounding modes in to_str(), see #830 (Javier Garcia)
+* Implement 'a'/'A' formating types for mpf.__format__, see #841 and #870
+  (Sergey B Kirpichev)
+* Add mpc.__format__(), see #855 (Sergey B Kirpichev)
+* Now mpf.__round__() returns mpf, see #826 and #966 (Sergey B Kirpichev)
+* Support 'b' (binary) format type for mpf/mpc, see #867 (Sergey B Kirpichev)
+* Implement mpf.__floordiv__() and mpf.__divmod__(), see #873 (Sergey B
+  Kirpichev)
+* Add parameters for MPContext constructor, see #876 and #963 (Sergey B Kirpichev)
+* Add MPFR-compatible aliases for rounding modes, see #892 (Sergey B
+  Kirpichev)
+* Support negative indexes in matrix, see #897 (Riccardo Orsi)
+* Better introspection support for decorated functions, see #900 (Sergey B
+  Kirpichev)
+* Add moving sofa demo, see #924 (Sergey B Kirpichev)
+* Support spherical Bessel functions (jn/yn), #935 (Sergey B Kirpichev)
+* Add pretty_dps context property to control number of printed digits, see
+  #933 (Sergey B Kirpichev)
+* Support thousands separators for formatting of fractional part, see #925 and
+  #936 (Sergey B Kirpichev)
+* Use PyREPL, as fallback (no IPython), see #941 (Sergey B Kirpichev)
+* Add exp2() and log2(), see #948 (Sergey B Kirpichev)
+* Add isspecial() method for contexts, see #949 (Sergey B Kirpichev)
+* Support rounding property for the mp context, see #963 (Sergey B Kirpichev)
+* Add Fox H-function with rational A/B parameters (foxh()), see #982 (Hongren Zheng)
+
+Compatibility:
+
+* Drop Python 2 support, see #629 (Fangchen Li)
+* Drop support for Python versions < 3.8, see #675 (Sergey B Kirpichev)
+* Drop private mpq class, use Rational's, provided by backend, see #691 and
+  #769 (Sergey B Kirpichev)
+* Drop to_pickable()/from_pickable() helpers, see #667 and #769 (Sergey B
+  Kirpichev)
+* Direct access to _mpf_ tuples now deprecated, please use from/to_man_exp()
+  functions and special constants (finf, fninf and fnan), see
+  #783 (Sergey B Kirpichev)
+* Removed sage backend, see #732 (Sergey B Kirpichev)
+* Drop MPMATH_STRICT environment variable, see #759 (Sergey B Kirpichev)
+* Deprecate current (descending) order of coefficients in polyval(), etc, see
+  #779, #844 and #845 (Sergey B Kirpichev, Warren Weckesser)
+* Deprecate mpmath.math2, see #769 (Sergey B Kirpichev)
+* Drop support for CPython 3.8, see #911 (Sergey B Kirpichev)
+* Deprecate isnormal() method of contexts, see #949 (Sergey B Kirpichev)
+* Importing from the mpmath.libmp submodules is deprecated, use instead ``from
+  mpmath.libmp import foo``, see
+  issue https://github.com/mpmath/mpmath/issues/704#issuecomment-2953536980
+  for available functions (Sergey B Kirpichev)
+* Deprecate bitcount function, see #721 and #955 (Sergey B Kirpichev)
+* Deprecate mpf/mpc_log, see #989 (Sergey B Kirpichev)
+
+Bug fixes:
+
+* sum_accurately(), betainc() and power() fixes, see #664 (Sergey B Kirpichev)
+* Warn users about Python's true division, see #670 (Sergey B Kirpichev)
+* Propagate nan's in ei_asympt(), see #672 (Sergey B Kirpichev)
+* Fix matrix.__eq__, fix string parsing with underscores, see #679 (Sergey B
+  Kirpichev)
+* Raise IndexError if matrix index out of bounds, see #689 (Sergey B
+  Kirpichev)
+* Fix nan handling in fp.mag() and hyper(), see #688 (Sergey B Kirpichev)
+* Optimize sparse matrix dot product, see #450 (Tyler Chen)
+* Correct pow() for mpf's to be consistent with mpfr/float's, see #690 (Sergey
+  B Kirpichev)
+* Improve hypsum non-convergence behaviour, see #703 (Benjamin Fischer)
+* Fixed TypeError in LU_comp, see #610 (Jan-Philipp Hoffmann)
+* Fix disagreement fp.mod vs mp.mod, see #710 (Sergey B Kirpichev)
+* Skip eigenvectors if left=right=False for one-dimentional matrix, see #713
+  (Sergey B Kirpichev)
+* Fix mpc() constructor to be compatible with complex(), fix disagreement
+  fp.pow vs mp.pow, see #731 (Sergey B Kirpichev)
+* Add derivative keyword argument for besselk(), see #735 (Sergey B Kirpichev)
+* Fix quadosc(), fast case in _hyp2f1(), correct fp.gamma() and fp.isnprint(),
+  see #740 (Sergey B Kirpichev)
+* Pevent erroneous setting of dps/prec on mpmath module, see #678
+  (Colin B. Macdonald)
+* Update splot() for recent matplotlib, see #747 (Sergey B Kirpichev)
+* acos_asin(): don't try to normalize special numbers, fix repr(mp.eps), see
+  #750 (Sergey B Kirpichev)
+* Fix choleksy_solve for complex matrix, see #755 (Qiming Sun)
+* Fix hang in polylog_general(), fix demos, use cholesky_solve() for
+  overdetermined complex linear systems, fix several issues with empty
+  matrices, see #759
+* sqrt(z): special case for infinite z.imag, see #777 (Sergey B Kirpichev)
+* Correct atan2(±inf, ±inf), see #775 (Sergey B Kirpichev)
+* Handle infinite arguments in tan/tanh, see #785 (Sergey B Kirpichev)
+* Drop mpf.__complex__(), workaround 1/z division for acot/asec/acsc/acoth,
+  see #797 (Sergey B Kirpichev)
+* Handle more special cases in besselk and hyp1f1, see #792, #800 and #801
+  (Sergey B Kirpichev)
+* Correct asin/acos for infinite arguments, see #795 (Sergey B Kirpichev)
+* Reduce memory usage for QuadratureRule cache, see #812 (Sergey B Kirpichev)
+* Drop sign from nstr(mpf('inf')) output, see #828 (Sergey B Kirpichev)
+* Improve accuracy of log1p(), see #803 and #854 (Tim Peters, Sergey B
+  Kirpichev)
+* Normalize mpf in mp.npconvert(), fix special cases in bernpoly(), see #839
+  (Sergey B Kirpichev)
+* Fix mpf_div() for prec=0, see #849 (Sergey B Kirpichev)
+* Raise ValueError for complex infininity condition in zeta(s, a), see #864
+  (Sergey B Kirpichev)
+* Enable trap_complex for MDNewton, see #870 (Sergey B Kirpichev)
+* Use correct mixed-mode functions in fsub/fdiv, add special cases for
+  infinities in mpc_*div(), see #873 (Sergey B Kirpichev)
+* Revert "fix ellippi to return an inf instead of raising an exception", see
+  #875 (Sergey B Kirpichev)
+* Reject invalid strings in from_str(), see #886 (Sergey B Kirpichev)
+* Use parity formula for besseli, see #889 (Sergey B Kirpichev)
+* Special case in ctx.hypsum for infinite z, see #902 (Sergey B Kirpichev)
+* Raise an exception if iv's comparison can't be decided, see #903 (Sergey B
+  Kirpichev)
+* Add special case for ±inf in polylog_continuation(), see #904 (Sergey B
+  Kirpichev)
+* Increase working precision in polylog_general() for negative s, see #898
+  (Sergey B Kirpichev)
+* Correct case for integer n in besselj/besseli, see #909 (Sergey B Kirpichev)
+* Use sum_accurately() in hankel1/2(), see #926 (Sergey B Kirpichev)
+* Ensure mpf_bernoulli() returns normalized answer, see #939 (Sergey B
+  Kirpichev)
+* Use mpf_log1p in acos_asin() helper (implementing Hull et al algorithm), see
+  #948 (Sergey B Kirpichev)
+* Fix kwargs passing in the nstr() for mpc, see #964 (David Walker)
+* Fix exception type for int(inf), see #966 (Sergey B Kirpichev)
+* Ensure exp, sin, tan, etc have a correct __name__ attribute, see #997
+  (Warren Weckesser)
+* Matrix raise ValueError in case of negative dimensions, see #1004 (Ayush
+  Baranwal)
+* Support lists in sinm() and cosm(), see #1003 (Ayush Baranwal)
+
+Maintenance:
+
+* Use codecov/coverage-action, see #674 (Sergey B Kirpichev)
+* Run CI tests with pytest-xdist, see #685 (Sergey B Kirpichev)
+* Add pyproject.toml, depend on flake518, see #684 (Sergey B Kirpichev)
+* Port torture.py/extratest_zeta.py/extratest_gamma.py to the pytest
+  framework, see #687 (Sergey B Kirpichev)
+* Create CITATION.bib, see #681 (Devharsh Trivedi)
+* Avoid using star imports in tests and documentation, see #698 (Sergey B
+  Kirpichev)
+* Fix some py2's remnants and remove old gmpy workarounds, see #699 (Sergey B
+  Kirpichev)
+* Use math.isqrt in isqrt_python calculations, see #695 (Daiki Takahashi)
+* Use gcd() and other bigint's functions from the backend, see #697 (Sergey B
+  Kirpichev)
+* Drop legacy and redundant code, see #701 (Sergey B Kirpichev)
+* Change FPContext to use more functions from the stdlib, see #692 (Sergey B
+  Kirpichev)
+* Avoid dynamic method creation in _mpf, see #702 (Sergey B Kirpichev)
+* Enable testing on CPython 3.12-dev, see #706 (Sergey B Kirpichev)
+* Use bit_length() method instead of bitcount(), see #721 (Sergey B Kirpichev)
+* Use lru_cache() in ifib() and eulernum(), isprime() alternatives from
+  backends, see #722 (Sergey B Kirpichev)
+* Use setuptools_scm to update __version__, see #694 (Sergey B Kirpichev)
+* Run tests on 3.13, see #759 (Sergey B Kirpichev)
+* Do not build depend on pip and wheel, see #758 (Gonzalo Tornaría)
+* Add CONTRIBUTING.rst, see #763 (Sergey B Kirpichev)
+* Simplify ctx_mp_python.py, see #806 (Sergey B Kirpichev)
+* Update gmpy2 deps, see #808 and #813 (Sergey B Kirpichev)
+* Enable testing on 3.14, see #851 (Sergey B Kirpichev)
+* Refactor Github Actions, see 905 (Sergey B Kirpichev)
+* Build and publish wheel, see #913 (David Hotham)
+* Use the intended setuptools_scm integration pattern, see #940 (Ronny
+  Pfannschmidt)
+
+See the release milestone (1.4) for a complete list of issues and pull requests
+involved in this release.
+
+
 --1.3.0--
 Released March 7, 2023
 

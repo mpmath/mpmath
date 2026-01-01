@@ -360,6 +360,14 @@ def log10(ctx, x):
     return ctx.log(x, 10)
 
 @defun
+def log2(ctx, x):
+    return ctx.log(x, 2)
+
+@defun
+def exp2(ctx, x):
+    return ctx.power(2, x)
+
+@defun
 def fmod(ctx, x, y):
     return ctx.convert(x) % ctx.convert(y)
 
@@ -387,8 +395,9 @@ def _lambertw_special(ctx, z, k):
     # Some kind of nan or complex inf/nan?
     return ctx.ln(z)
 
-import math
 import cmath
+import math
+
 
 def _lambertw_approx_hybrid(z, k):
     imag_sign = 0
@@ -506,7 +515,7 @@ def _lambertw_series(ctx, z, k, tol):
 def lambertw(ctx, z, k=0):
     z = ctx.convert(z)
     k = int(k)
-    if not ctx.isnormal(z):
+    if ctx.isspecial(z):
         return _lambertw_special(ctx, z, k)
     prec = ctx.prec
     ctx.prec += 20 + ctx.mag(k or 1)
@@ -619,7 +628,8 @@ def mangoldt(ctx, n):
     **Examples**
 
         >>> from mpmath import mp, mangoldt, fsum
-        >>> mp.dps = 25; mp.pretty = True
+        >>> mp.dps = 25
+        >>> mp.pretty = True
         >>> [mangoldt(n) for n in range(-2,3)]
         [0.0, 0.0, 0.0, 0.0, 0.6931471805599453094172321]
         >>> mangoldt(6)

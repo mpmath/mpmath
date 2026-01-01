@@ -8,13 +8,13 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     asech, asin, asinh, atan, atan2, atanh, catalan, cbrt,
                     ceil, conj, cos, cos_sin, cosh, cospi, cospi_sinpi, cot,
                     coth, csc, csch, cyclotomic, degree, degrees, e, eps,
-                    euler, exp, expj, expjpi, expm1, fabs, fadd, fib,
+                    euler, exp, exp2, expj, expjpi, expm1, fabs, fadd, fib,
                     fibonacci, floor, fmod, fp, frexp, glaisher, hypot, im,
                     inf, isnan, j, khinchin, ldexp, linspace, ln, ln2, ln10,
-                    log, log1p, log10, mertens, mp, mpc, mpf, nan, nthroot,
-                    phi, pi, power, powm1, radians, rand, re, root, sec, sech,
-                    sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan, tanh,
-                    twinprime, unitroots)
+                    log, log1p, log2, log10, mertens, mp, mpc, mpf, nan,
+                    nthroot, phi, pi, power, powm1, radians, rand, re, root,
+                    sec, sech, sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan,
+                    tanh, twinprime, unitroots)
 from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
                           mpf_mul, mpf_pow_int, mpf_rand, mpf_sqrt,
                           round_ceiling, round_down, round_nearest, round_up)
@@ -209,6 +209,10 @@ def test_log():
     assert (log(-1j-1e-8).real*10**16).ae(0.5)
     assert (log(1+1e-40j).real*10**80).ae(0.5)
     assert (log(1j+1e-40).real*10**80).ae(0.5)
+    # Taylor series
+    assert log(0.99999).ae(-1.0000050000287824e-5)
+    assert log(1.00001).ae(9.9999500003988414e-6)
+
     # Huge
     assert log(ldexp(1.234,10**20)).ae(log(2)*1e20)
     assert log(ldexp(1.234,10**200)).ae(log(2)*1e200)
@@ -325,6 +329,12 @@ def test_asin():
     assert asin(mpc(-2, 0)).ae(mpc(-pi2, -log(2 - sqrt(3))))
     assert asin(mpc(+2, 0)).ae(mpc(+pi2, -log(2 + sqrt(3))))
     assert asin(mpc(0.5, 0)).ae(pi/6)
+
+    # issue 787
+    assert asin(mpc(0, 1e-22)).ae(1e-22j)
+    mp.prec = 700
+    assert asin(mpc(0, 1e-220)).ae(1e-220j)
+    mp.prec = 53
 
 def test_acos():
     pi4 = pi/4
@@ -543,6 +553,8 @@ def test_frexp():
 def test_aliases():
     assert ln(7) == log(7)
     assert log10(3.75) == log(3.75,10)
+    assert log2(1.25) == log(1.25,2)
+    assert exp2(-0.5) == power(2, -0.5)
     assert degrees(5.6) == 5.6 / degree
     assert radians(5.6) == 5.6 * degree
     assert power(-1,0.5) == j
@@ -648,9 +660,8 @@ def test_root():
             r = nthroot(a, -n)
             r1 = pow(a, -mpf(1)/n)
             assert r.ae(r1)
-    # XXX: this is broken right now
     # tests for nthroot rounding
-    for rnd in ['nearest', 'up', 'down']:
+    for rnd in ['n', 'u', 'd']:
         mp.rounding = rnd
         for n in [-5, -3, 3, 5]:
             prec = 50
@@ -662,6 +673,7 @@ def test_root():
                 mp.prec = prec
                 r = nthroot(b, n)
                 assert r == a
+    mp.rounding = 'n'
     mp.dps = 30
     for n in range(3, 21):
         a = (random.random() + j*random.random())

@@ -1,0 +1,15 @@
+name: Linting with flake8, etc
+on: [workflow_dispatch, workflow_call]
+jobs:
+  linter:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.x"
+      - run: pip install --upgrade .[develop]
+      - run: python -We:invalid -m compileall -f mpmath -q
+      - run: flake518 mpmath

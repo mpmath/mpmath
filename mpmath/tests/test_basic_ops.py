@@ -1,7 +1,9 @@
+import collections
 import decimal
 import math
 import operator
 import random
+from concurrent.futures import ThreadPoolExecutor
 
 import pytest
 from hypothesis import example, given, settings
@@ -9,11 +11,12 @@ from hypothesis import strategies as st
 
 import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
-                    isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
-                    mpi, nan, ninf, nint, nint_distance, nstr, pi, workprec)
+                    isinf, isint, isnan, isnormal, isspecial, iv, monitor, mp,
+                    mpc, mpf, mpi, nan, ninf, nint, nint_distance, nstr, pi,
+                    workprec)
 from mpmath.libmp import (MPQ, MPZ, finf, fnan, fninf, fnone, fone, from_float,
-                          from_int, from_pickable, from_str, mpf_add, mpf_eq,
-                          mpf_mul, mpf_sub, round_down, round_nearest,
+                          from_int, from_pickable, from_str, isprime, mpf_add,
+                          mpf_eq, mpf_mul, mpf_sub, round_down, round_nearest,
                           round_up, to_int, to_man_exp, to_pickable)
 
 
@@ -90,11 +93,20 @@ def test_div():
     assert 6.0 / mpc(3) == 2.0
     assert (6+0j) / mpc(3) == 2.0
     assert isnan(mpf(0) / nan)
+    assert 1/mpc(inf, 1) == 0.0
+    assert (1+1j)/mpc(2, inf) == 0.0
+    assert mpc(inf, 1)**-1 == 0.0
 
 def test_mod():
     assert mpf(3.1) % decimal.Decimal(5.3) == mpf('3.1000000000000001')
     assert mpf(2.53) % inf == mpf(2.53)
     assert mpf(2.53) % ninf == mpf(2.53)
+
+def test_floordiv():
+    assert mpf(30.21) // mpf(2.53) == mpf(11)
+
+def test_divmod():
+    assert divmod(mpf(30.21), mpf(2.53)) == (mpf(11), mpf(2.380000000000003))
 
 def test_pow():
     assert mpf(6) ** mpf(3) == 216.0
@@ -293,11 +305,11 @@ def test_arithmetic_functions():
                 assert fneg(z1) == -(+z1)
 
 def test_exact_integer_arithmetic():
-    # XXX: re-fix this so that all operations are tested with all rounding modes
     random.seed(0)
     for prec in [6, 10, 25, 40, 100, 250, 725]:
         for rounding in ['d', 'u', 'f', 'c', 'n']:
             mp.dps = prec
+            mp.rounding = rounding
             M = 10**(prec-2)
             M2 = 10**(prec//2-2)
             for i in range(10):
@@ -467,36 +479,40 @@ def test_isnan_etc():
     assert isinf(MPQ(3, 2)) is False
     assert isinf(MPQ(0, 1)) is False
     pytest.raises(TypeError, lambda: isinf(object()))
-    assert isnormal(3) is True
-    assert isnormal(3.5) is True
-    assert isnormal(mpf(3.5)) is True
-    assert isnormal(0) is False
-    assert isnormal(mpf(0)) is False
-    assert isnormal(0.0) is False
-    assert isnormal(inf) is False
-    assert isnormal(-inf) is False
-    assert isnormal(nan) is False
-    assert isnormal(float(inf)) is False
-    assert isnormal(mpc(0, 0)) is False
-    assert isnormal(mpc(3, 0)) is True
-    assert isnormal(mpc(0, 3)) is True
-    assert isnormal(mpc(3, 3)) is True
-    assert isnormal(mpc(0, nan)) is False
-    assert isnormal(mpc(0, inf)) is False
-    assert isnormal(mpc(3, nan)) is False
-    assert isnormal(mpc(3, inf)) is False
-    assert isnormal(mpc(3, -inf)) is False
-    assert isnormal(mpc(nan, 0)) is False
-    assert isnormal(mpc(inf, 0)) is False
-    assert isnormal(mpc(nan, 3)) is False
-    assert isnormal(mpc(inf, 3)) is False
-    assert isnormal(mpc(inf, nan)) is False
-    assert isnormal(mpc(nan, inf)) is False
-    assert isnormal(mpc(nan, nan)) is False
-    assert isnormal(mpc(inf, inf)) is False
-    assert isnormal(MPQ(3, 2)) is True
-    assert isnormal(MPQ(0, 1)) is False
-    pytest.raises(TypeError, lambda: isnormal(object()))
+    assert isspecial(3) is False
+    assert isspecial(3.5) is False
+    assert isspecial(mpf(3.5)) is False
+    assert isspecial(0) is True
+    assert isspecial(mpf(0)) is True
+    assert isspecial(0.0) is True
+    assert isspecial(inf) is True
+    assert isspecial(-inf) is True
+    assert isspecial(nan) is True
+    assert isspecial(float(inf)) is True
+    assert isspecial(mpc(0, 0)) is True
+    assert isspecial(mpc(3, 0)) is False
+    assert isspecial(mpc(0, 3)) is False
+    assert isspecial(mpc(3, 3)) is False
+    assert isspecial(mpc(0, nan)) is True
+    assert isspecial(mpc(0, inf)) is True
+    assert isspecial(mpc(3, nan)) is True
+    assert isspecial(mpc(3, inf)) is True
+    assert isspecial(mpc(3, -inf)) is True
+    assert isspecial(mpc(nan, 0)) is True
+    assert isspecial(mpc(inf, 0)) is True
+    assert isspecial(mpc(nan, 3)) is True
+    assert isspecial(mpc(inf, 3)) is True
+    assert isspecial(mpc(inf, nan)) is True
+    assert isspecial(mpc(nan, inf)) is True
+    assert isspecial(mpc(nan, nan)) is True
+    assert isspecial(mpc(inf, inf)) is True
+    assert isspecial(MPQ(3, 2)) is False
+    assert isspecial(MPQ(0, 1)) is True
+    pytest.raises(TypeError, lambda: isspecial(object()))
+    assert isspecial(5e-324) is False  # issue 946
+    assert fp.isspecial(5e-324) is False
+    assert fp.isspecial(0.0) is True
+    assert fp.isspecial(-0.0) is True
     assert isint(3) is True
     assert isint(0) is True
     assert isint(int(3)) is True
@@ -545,6 +561,18 @@ def test_isnan_etc():
     assert mp.isnpint(-1 + 0.1j) is False
     assert mp.isnpint(0 + 0.1j) is False
     assert mp.isnpint(inf) is False
+    with pytest.deprecated_call():
+        for ctx in [mp, fp]:
+            assert ctx.isnormal(1) is True
+            assert ctx.isnormal(0.0) is False
+            assert ctx.isnormal(ctx.mpc(0)) is False
+            assert ctx.isnormal(ctx.mpc(0, 1)) is True
+            assert ctx.isnormal(ctx.mpc(1, inf)) is False
+
+
+def test_isprime():
+    assert isprime(MPZ(2))
+    assert not isprime(MPZ(4))
 
 
 def test_issue_438():
@@ -656,3 +684,53 @@ def test_round_bulk(x, n):
             return
         assert nstr(mr, n=14, base=16, strip_zeros=False,
                     show_zero_exponent=True, binary_exp=True) == xr.hex()
+    try:
+        xr = round(x)
+    except ValueError:
+        pytest.raises(ValueError, lambda: round(m))
+    except OverflowError:
+        pytest.raises(OverflowError, lambda: round(m))
+    else:
+        mr = round(m)
+        assert type(mr) is int
+        assert mr == xr
+
+
+def test_rounding_prop():
+    assert mp.rounding == 'n'
+    assert mp.sin(1) == mpf('0x1.aed548f090ceep-1')
+    mp.rounding = 'u'
+    assert mp.rounding == 'u'
+    assert mp.sin(1) == mpf('0x1.aed548f090cefp-1')
+    with pytest.raises(ValueError):
+        mp.rounding = 'x'
+
+
+def test_from_man_exp():
+    with pytest.raises(TypeError):
+        mp.mpf(("!", 1))
+
+
+def test_issue_985():
+    assert hash(mpc(-1)) == -2
+    assert hash(mpmath.mpc(-1000004, 1)) == -2
+    assert mpc(-1) in {1, -1}
+
+
+def test_mpfmpc_log_deprecation():
+    with pytest.deprecated_call():
+        mpmath.libmp.mpf_log(mpf(123)._mpf_, 53)
+    with pytest.deprecated_call():
+        mpmath.libmp.mpc_log(mpc(123)._mpc_, 53)
+
+
+def test_issue_975():
+    def worker():
+        mp = mpmath.MPContext()
+        mp.quad(lambda x: mp.exp(-x**2), [-mp.inf, mp.inf]) ** 2
+    sz = 100
+    tpe = ThreadPoolExecutor(max_workers=4)
+    futures = [None]*sz
+    for i in range(sz):
+        futures[i] = tpe.submit(worker)
+    assert len(collections.Counter(f.result() for f in futures))

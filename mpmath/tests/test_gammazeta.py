@@ -6,7 +6,7 @@ from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     fraction, gamma, gammaprod, harmonic, hyperfac, inf, isnan,
                     j, log, loggamma, mp, mpc, mpf, mpmathify, nan, pi,
                     polyexp, polylog, primezeta, psi, rf, rgamma, sech,
-                    siegelz, sinc, sqrt, stieltjes, superfac, zeta)
+                    secondzeta, siegelz, sinc, sqrt, stieltjes, superfac, zeta)
 from mpmath.libmp import from_float, mpf_zeta_int, round_up
 
 
@@ -41,6 +41,7 @@ def test_bernoulli(plus):
     assert bernoulli(5, plus) == 0
     assert bernoulli(6, plus).ae(1./42)
     assert str(bernoulli(10, plus)) == '0.0757575757575758'
+    assert repr(bernoulli(10, plus)) == "mpf('0.07575757575757576')"
     assert str(bernoulli(234, plus)) == '7.62772793964344e+267'
     assert str(bernoulli(10**5, plus)) == '-5.82229431461335e+376755'
     assert str(bernoulli(10**8+2, plus)) == '1.19570355039953e+676752584'
@@ -386,6 +387,8 @@ def test_polygamma():
     # issue #647
     mp.prec = 42
     assert digamma(-0.5+0.5j).ae(mpc('0.131892637354523', '2.44065951997751'))
+    mp.prec = 53
+    assert digamma(1e300+1j).ae(690.77552789821368)
 
 def test_polygamma_high_prec():
     mp.dps = 100
@@ -630,6 +633,9 @@ def test_primezeta():
     assert primezeta(1) == inf
     assert primezeta(inf) == 0
     assert isnan(primezeta(nan))
+
+def test_secondzeta():
+    assert secondzeta(2, 0.6).ae(0.022849870007492626)
 
 def test_rs_zeta():
     assert zeta(0.5+100000j).ae(1.0730320148577531321 + 5.7808485443635039843j)

@@ -402,6 +402,8 @@ def polylog_series(ctx, s, z):
 def polylog_continuation(ctx, n, z):
     if n < 0:
         return z*0
+    if ctx._is_real_type(z) and ctx.isinf(z) and n > 0:
+        return ctx.ninf
     twopij = 2j * ctx.pi
     a = -twopij**n/ctx.fac(n) * ctx.bernpoly(n, ctx.ln(z)/twopij)
     if ctx._is_real_type(z) and z < 0:
@@ -456,6 +458,10 @@ def polylog_general(ctx, s, z):
         return ctx.gamma(v)*(j**v*ctx.zeta(v,0.5+y) + j**-v*ctx.zeta(v,0.5-y))/(2*ctx.pi)**v
     t = 1
     k = 0
+    prec = ctx.prec
+    if ctx.isfinite(s):
+        ctx.prec += max(0, -ctx.nint_distance(s)[1])
+
     while 1:
         term = ctx.zeta(s-k) * t
         if not abs(term) >= ctx.eps:
@@ -464,7 +470,10 @@ def polylog_general(ctx, s, z):
         k += 1
         t *= u
         t /= k
-    return ctx.gamma(1-s)*(-u)**(s-1) + v
+
+    r = ctx.gamma(1-s)*(-u)**(s-1) + v
+    ctx.prec = prec
+    return r
 
 @defun_wrapped
 def polylog(ctx, s, z):
@@ -537,7 +546,6 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
             pass
     s = ctx.convert(s)
     prec = ctx.prec
-    method = kwargs.get('method')
     verbose = kwargs.get('verbose')
     if (not s) and (not derivative):
         return ctx.mpf(0.5) - ctx._convert_param(a)[0]
@@ -1003,11 +1011,9 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
 
     **References**
 
-    A. Voros, Zeta functions for the Riemann zeros, Ann. Institute Fourier,
-    53, (2003) 665--699.
+    * [Voros2003]_
+    * [Voros2009]_
 
-    A. Voros, Zeta functions over Zeros of Zeta Functions, Lecture Notes
-    of the Unione Matematica Italiana, Springer, 2009.
     """
     s = ctx.convert(s)
     a = ctx.convert(a)
@@ -1078,18 +1084,23 @@ def lerchphi(ctx, z, s, a):
 
         >>> from mpmath import (mp, lerchphi, catalan, diff, zeta, pi, log,
         ...                     atanh, sqrt, j, polylog)
-        >>> mp.dps = 25; mp.pretty = True
-        >>> lerchphi(-1,2,0.5); 4*catalan
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> lerchphi(-1,2,0.5)
         3.663862376708876060218414
+        >>> 4*catalan
         3.663862376708876060218414
-        >>> diff(lerchphi, (-1,-2,1), (0,1,0)); 7*zeta(3)/(4*pi**2)
+        >>> diff(lerchphi, (-1,-2,1), (0,1,0))
         0.2131391994087528954617607
+        >>> 7*zeta(3)/(4*pi**2)
         0.2131391994087528954617607
-        >>> lerchphi(-4,1,1); log(5)/4
+        >>> lerchphi(-4,1,1)
         0.4023594781085250936501898
+        >>> log(5)/4
         0.4023594781085250936501898
-        >>> lerchphi(-3+2j,1,0.5); 2*atanh(sqrt(-3+2j))/sqrt(-3+2j)
+        >>> lerchphi(-3+2j,1,0.5)
         (1.142423447120257137774002 + 0.2118232380980201350495795j)
+        >>> 2*atanh(sqrt(-3+2j))/sqrt(-3+2j)
         (1.142423447120257137774002 + 0.2118232380980201350495795j)
 
     Evaluation works for complex arguments and `|z| \ge 1`::

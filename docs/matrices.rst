@@ -471,6 +471,9 @@ Examples::
     [0.0  0.0  0.0]
 
 
+See also [Stoer]_ and [Kresser]_.
+
+
 The symmetric eigenvalue problem
 ................................
 
@@ -514,6 +517,9 @@ Examples::
     >>> print(mp.chop(A * Q[:,0] - E[0] * Q[:,0]))
     [0.0]
     [0.0]
+
+
+See also [Golub]_, [GolubWelsch]_, [Stoer]_ and [Stroud]_.
 
 
 Determinant

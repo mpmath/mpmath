@@ -1,5 +1,8 @@
+import inspect
 import numbers
+import sys
 
+from . import function_docs
 from . import libmp
 from .libmp import (MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     from_float, from_int, from_str, fzero, int_types, mpc_hash,
@@ -306,8 +309,8 @@ class MPIntervalContext(StandardBaseContext):
         ctx.mpc = type('ivmpc', (ivmpc,), {})
         ctx._types = (ctx.mpf, ctx.mpc)
         ctx._constant = type('ivmpf_constant', (ivmpf_constant,), {})
-        ctx._prec = [53]
-        ctx._set_prec(53)
+        ctx._prec = [sys.float_info.mant_dig]
+        ctx._set_prec(ctx._prec[0])
         ctx._constant._ctxdata = ctx.mpf._ctxdata = ctx.mpc._ctxdata = [ctx.mpf, new, ctx._prec]
         ctx._constant.ctx = ctx.mpf.ctx = ctx.mpc.ctx = ctx
         ctx.pretty = False
@@ -379,6 +382,9 @@ class MPIntervalContext(StandardBaseContext):
                 return +retval
         else:
             f_wrapped = f
+        f_wrapped.__doc__ = function_docs.__dict__.get(name, f.__doc__)
+        f_wrapped.__signature__ = inspect.signature(f)
+        f_wrapped.__name__ = f.__name__
         setattr(cls, name, f_wrapped)
 
     def _set_prec(ctx, n):

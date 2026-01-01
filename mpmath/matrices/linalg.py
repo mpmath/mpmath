@@ -426,7 +426,8 @@ class LinearAlgebraMethods:
 
             >>> from mpmath import (mp, eye, hilbert, nprint, cholesky,
             ...                     chop, matrix)
-            >>> mp.dps = 25; mp.pretty = True
+            >>> mp.dps = 25
+            >>> mp.pretty = True
             >>> A = eye(3) + hilbert(3)
             >>> nprint(A)
             [     2.0      0.5  0.333333]
@@ -466,7 +467,7 @@ class LinearAlgebraMethods:
 
         **References**
 
-        1. [Wikipedia]_ http://en.wikipedia.org/wiki/Cholesky_decomposition
+        1. [Wikipedia]_ https://en.wikipedia.org/wiki/Cholesky_decomposition
 
         """
         if not isinstance(A, ctx.matrix):

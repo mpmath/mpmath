@@ -282,7 +282,7 @@ class TanhSinh(QuadratureRule):
     **References**
 
     * [Bailey]_
-    * http://users.cs.dal.ca/~jborwein/tanh-sinh.pdf
+    * [BorweinTanhSinh]_
 
     """
 
@@ -682,11 +682,13 @@ class QuadratureMethods:
         `\sin(x)` accurately over an interval of length 100 but not over
         length 1000::
 
-            >>> quad(sin, [0, 100]); 1-cos(100)   # Good
+            >>> quad(sin, [0, 100])  # Good
             0.137681127712316
+            >>> 1-cos(100)
             0.137681127712316
-            >>> quad(sin, [0, 1000]); 1-cos(1000)   # Bad
+            >>> quad(sin, [0, 1000])  # Bad
             -37.8587612408485
+            >>> 1-cos(1000)
             0.437620923709297
 
         One solution is to break the integration into 10 intervals of
@@ -715,7 +717,7 @@ class QuadratureMethods:
 
         **References**
 
-        1. http://mathworld.wolfram.com/DoubleIntegral.html
+        1. [Weisstein]_ http://mathworld.wolfram.com/DoubleIntegral.html
 
         """
         rule = kwargs.get('method', 'tanh-sinh')

@@ -9,23 +9,23 @@ Conversion and printing
 
 :func:`~mpmath.mpmathify` / ``convert()``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.mpmathify(x, strings=True)
+.. autofunction:: mpmath.mpmathify
 
 :func:`~mpmath.nstr`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.nstr(x, n=6, **kwargs)
+.. autofunction:: mpmath.nstr
 
 :func:`~mpmath.nprint`
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.nprint(x, n=6, **kwargs)
+.. autofunction:: mpmath.nprint
 
 :func:`mpmath.mpf.__format__`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.mpf.__format__(s, format_spec)
+.. autofunction:: mpmath.mpf.__format__
 
 :func:`mpmath.mpc.__format__`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.mpc.__format__(s, format_spec)
+.. autofunction:: mpmath.mpc.__format__
 
 Arithmetic operations
 ---------------------
@@ -55,123 +55,123 @@ in :doc:`functions/powers`
 
 :func:`~mpmath.fmod`
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.fmod(x, y)
+.. autofunction:: mpmath.fmod
 
 :func:`~mpmath.fsum`
 ^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.fsum(terms, absolute=False, squared=False)
+.. autofunction:: mpmath.fsum
 
 :func:`~mpmath.fprod`
 ^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.fprod(factors)
+.. autofunction:: mpmath.fprod
 
 :func:`~mpmath.fdot`
 ^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.fdot(A, B=None, conjugate=False)
+.. autofunction:: mpmath.fdot
 
 Complex components
 ------------------
 
 :func:`~mpmath.fabs`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.fabs(x)
+.. autofunction:: mpmath.fabs
 
 :func:`~mpmath.sign`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.sign(x)
+.. autofunction:: mpmath.sign
 
 :func:`~mpmath.re`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.re(x)
+.. autofunction:: mpmath.re
 
 :func:`~mpmath.im`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.im(x)
+.. autofunction:: mpmath.im
 
 :func:`~mpmath.arg`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.arg(x)
+.. autofunction:: mpmath.arg
 
 :func:`~mpmath.conj`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.conj(x)
+.. autofunction:: mpmath.conj
 
 :func:`~mpmath.polar`
 ^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.polar(x)
+.. autofunction:: mpmath.polar
 
 :func:`~mpmath.rect`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.rect(x)
+.. autofunction:: mpmath.rect
 
 Integer and fractional parts
 -----------------------------
 
 :func:`~mpmath.floor`
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.floor(x)
+.. autofunction:: mpmath.floor
 
 :func:`~mpmath.ceil`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.ceil(x)
+.. autofunction:: mpmath.ceil
 
 :func:`~mpmath.nint`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.nint(x)
+.. autofunction:: mpmath.nint
 
 :func:`~mpmath.frac`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.frac(x)
+.. autofunction:: mpmath.frac
 
 Tolerances and approximate comparisons
 --------------------------------------
 
 :func:`~mpmath.chop`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.chop(x, tol=None)
+.. autofunction:: mpmath.chop
 
 :func:`~mpmath.almosteq`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.almosteq(s, t, rel_eps=None, abs_eps=None)
+.. autofunction:: mpmath.almosteq
 
 Properties of numbers
 -------------------------------------
 
 :func:`~mpmath.isinf`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.isinf(x)
+.. autofunction:: mpmath.isinf
 
 :func:`~mpmath.isnan`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.isnan(x)
+.. autofunction:: mpmath.isnan
 
 :func:`~mpmath.isnormal`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.isnormal(x)
+.. autofunction:: mpmath.isnormal
 
 :func:`~mpmath.isfinite`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.isfinite(x)
+.. autofunction:: mpmath.isfinite
 
 :func:`~mpmath.isint`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.isint(x, gaussian=False)
+.. autofunction:: mpmath.isint
 
 :func:`~mpmath.ldexp`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.ldexp(x, n)
+.. autofunction:: mpmath.ldexp
 
 :func:`~mpmath.frexp`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.frexp(x, n)
+.. autofunction:: mpmath.frexp
 
 :func:`~mpmath.mag`
 ^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.mag(x)
+.. autofunction:: mpmath.mag
 
 :func:`~mpmath.nint_distance`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.nint_distance(x)
+.. autofunction:: mpmath.nint_distance
 
 .. :func:`~mpmath.absmin`
 .. ^^^^^^^^^^^^^^^^^^^^^^^^
@@ -183,19 +183,19 @@ Number generation
 
 :func:`~mpmath.fraction`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.fraction(p,q)
+.. autofunction:: mpmath.fraction
 
 :func:`~mpmath.rand`
 ^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.rand()
+.. autofunction:: mpmath.rand
 
 :func:`~mpmath.arange`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.arange(*args)
+.. autofunction:: mpmath.arange
 
 :func:`~mpmath.linspace`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. autofunction:: mpmath.linspace(*args, **kwargs)
+.. autofunction:: mpmath.linspace
 
 Precision management
 --------------------
