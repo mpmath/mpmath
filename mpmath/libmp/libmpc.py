@@ -630,7 +630,7 @@ def acos_asin(z, prec, rnd, n):
     a, b = z
     wp = prec + 10
     # special cases with real argument
-    if b == fzero:
+    if b in (fzero, fnzero):
         am = mpf_sub(fone, mpf_abs(a), wp)
         # case abs(a) <= 1
         if not am[0]:
