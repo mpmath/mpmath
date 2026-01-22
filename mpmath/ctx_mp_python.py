@@ -443,8 +443,7 @@ class _mpf(mpnumeric):
             >>> f'{x:.15b}'
             '-1.001111000000110p+0'
 
-        Alternate form (``'#'`` option) adds ``0b`` prefix.
-
+        Alternate form (``'#'`` option) works like for ``'a'`` type.
         """
 
         _, _, (prec, rounding) = self._ctxdata

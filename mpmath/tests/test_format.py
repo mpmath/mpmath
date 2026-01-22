@@ -902,7 +902,9 @@ def test_binary_fmt():
     assert f'{x:b}' == '1.1p+1'
     assert f'{x:.2b}' == '1.10p+1'
     assert f'{x:+.2b}' == '+1.10p+1'
-    assert f'{x:#.2b}' == '0b1.10p+1'
+    assert f'{x:#.2b}' == '1.10p+1'
+    assert f'{x:.0b}' == '1p+2'
+    assert f'{x:#.0b}' == '1.p+2'
 
     x = mp.mpf(0)
     assert f'{x:.2b}' == '0.00p+0'
