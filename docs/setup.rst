@@ -84,7 +84,7 @@ Python interpreter and do the following::
 Using gmpy2 (optional)
 ----------------------
 
-If `gmpy2 <https://github.com/aleaxit/gmpy>`_ version 2.2.0 or later is
+If `gmpy2 <https://github.com/gmpy2/gmpy2>`_ version 2.3.0 or later is
 installed on your system, mpmath will automatically detect it and transparently
 use gmpy2 integers instead of Python integers.  This makes mpmath much faster,
 especially at high precision (approximately above 100 digits).
@@ -95,6 +95,11 @@ equal to 'gmpy'.
 Using the gmpy2 backend can be disabled by setting the ``MPMATH_NOGMPY``
 environment variable.  Note that the mode cannot be switched during runtime;
 mpmath must be re-imported for this change to take effect.
+
+Alternatively, you can use `python-gmp
+<https://github.com/diofant/python-gmp>`_ extension.  The ``BACKEND`` value
+will be equal to 'gmp' in this case.  If both extensions are installed on your
+system, the gmpy2 will be preferred.
 
 Running tests
 -------------
