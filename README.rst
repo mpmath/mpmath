@@ -171,8 +171,8 @@ Mpmath is a work in progress. Major issues include:
   or two units in the last place (even if otherwise accurate).
 
 * Some IEEE 754 features are not available. Inifinities and NaN are
-  partially supported, there is no signed zero; denormal rounding is
-  not available at all.
+  partially supported; denormal rounding is currently not available
+  at all.
 
 * The interface for switching precision and rounding is not finalized.
   The current method is not threadsafe.

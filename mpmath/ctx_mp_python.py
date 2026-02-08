@@ -5,18 +5,18 @@ import warnings
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
-                    format_mpc, format_mpf, from_Decimal, from_float, from_int,
-                    from_man_exp, from_npfloat, from_rational, from_str, fzero,
-                    int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
-                    mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
-                    mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
-                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
-                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
-                    mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_neg, mpf_pos, mpf_pow, mpf_sub, mpf_sum, prec_to_dps,
-                    round_nearest, to_fixed, to_float, to_int, to_man_exp,
-                    to_rational, to_str)
+                    fnzero, format_mpc, format_mpf, from_Decimal, from_float,
+                    from_int, from_man_exp, from_npfloat, from_rational,
+                    from_str, fzero, int_types, mpc_abs, mpc_add, mpc_add_mpf,
+                    mpc_conjugate, mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf,
+                    mpc_is_nonzero, mpc_mpf_div, mpc_mpf_sub, mpc_mul,
+                    mpc_mul_int, mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow,
+                    mpc_pow_int, mpc_pow_mpf, mpc_sub, mpc_sub_mpf,
+                    mpc_to_complex, mpc_to_str, mpf_abs, mpf_add, mpf_div,
+                    mpf_eq, mpf_ge, mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod,
+                    mpf_mul, mpf_neg, mpf_pos, mpf_pow, mpf_sub, mpf_sum,
+                    prec_to_dps, round_nearest, to_fixed, to_float, to_int,
+                    to_man_exp, to_rational, to_str)
 
 
 new = object.__new__
@@ -152,7 +152,7 @@ class _mpf(mpnumeric):
         rounding = ctx._prec_rounding[1]
         return to_float(self._mpf_, rnd=rounding)
 
-    def __bool__(self): return self._mpf_ != fzero
+    def __bool__(self): return self._mpf_ not in (fzero, fnzero)
 
     def __abs__(self):
         mpf, new, (prec, rounding) = self._ctxdata
@@ -194,7 +194,7 @@ class _mpf(mpnumeric):
             return mpf_eq(sval, oval)
         if hasattr(other, '_mpc_'):
             oval = other._mpc_
-            return (oval[1] == fzero) and mpf_eq(oval[0], sval)
+            return (oval[1] in (fzero, fnzero)) and mpf_eq(oval[0], sval)
         try:
             ctx = mpf.context
             other = ctx.convert(other, strings=False)
@@ -517,24 +517,35 @@ class _mpc(mpnumeric):
     def __new__(cls, real=0, imag=0):
         ctx = cls.context
         s = object.__new__(cls)
+        r_isreal = i_isreal = False
         if isinstance(real, str):
             real = ctx.convert(real)
         if isinstance(real, complex_types):
             r_real, r_imag = real.real, real.imag
         elif hasattr(real, '_mpc_'):
             r_real, r_imag = real._mpc_
+        elif isinstance(real, float) or hasattr(real, '_mpf_'):
+            r_isreal = True
+            r_real, r_imag = real, 0
         else:
             r_real, r_imag = real, 0
         if isinstance(imag, complex_types):
             i_real, i_imag = imag.real, imag.imag
         elif hasattr(imag, '_mpc_'):
             i_real, i_imag = imag._mpc_
+        elif isinstance(imag, float) or hasattr(imag, '_mpf_'):
+            i_isreal = True
+            i_real, i_imag = imag, 0
         else:
             i_real, i_imag = imag, 0
-        r_real, r_imag = map(ctx.mpf, [r_real, r_imag])
+        real, imag = map(ctx.mpf, [r_real, r_imag])
         i_real, i_imag = map(ctx.mpf, [i_real, i_imag])
-        real = r_real - i_imag
-        imag = r_imag + i_real
+        if r_isreal and i_isreal:
+            real = real
+            imag = i_real
+        else:
+            real -= i_imag
+            imag += i_real
         s._mpc_ = (real._mpf_, imag._mpf_)
         return s
 
@@ -919,8 +930,8 @@ class PythonMPContext:
             re, im = x._mpc_
             re_normal = bool(re[1])
             im_normal = bool(im[1])
-            if re == fzero: return im_normal
-            if im == fzero: return re_normal
+            if re in (fzero, fnzero): return im_normal
+            if im in (fzero, fnzero): return re_normal
             return re_normal and im_normal
         if isinstance(x, int_types) or isinstance(x, MPQ):
             return bool(x)
@@ -961,8 +972,8 @@ class PythonMPContext:
             re, im = x._mpc_
             re_special = not bool(re[1])
             im_special = not bool(im[1])
-            if re == fzero: return im_special
-            if im == fzero: return re_special
+            if re in (fzero, fnzero): return im_special
+            if im in (fzero, fnzero): return re_special
             return re_special or im_special
         if isinstance(x, int_types) or isinstance(x, MPQ):
             return not bool(x)
@@ -999,20 +1010,20 @@ class PythonMPContext:
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
                 man, exp = to_man_exp(x._mpf_, signed=True)
-                return bool((man and exp >= 0) or x._mpf_ == fzero)
+                return bool((man and exp >= 0) or x._mpf_ in (fzero, fnzero))
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
             if ctx.isfinite(x):
                 man, exp = to_man_exp(re, signed=True)
-                re_isint = bool((man and exp >= 0) or re == fzero)
+                re_isint = bool((man and exp >= 0) or re in (fzero, fnzero))
                 man, exp = to_man_exp(im, signed=True)
-                im_isint = bool((man and exp >= 0) or im == fzero)
+                im_isint = bool((man and exp >= 0) or im in (fzero, fnzero))
             else:
                 return False
             if gaussian:
                 return re_isint and im_isint
-            return re_isint and im == fzero
+            return re_isint and im in (fzero, fnzero)
         if isinstance(x, MPQ):
             p, q = x.numerator, x.denominator
             return p % q == 0
@@ -1264,7 +1275,7 @@ class PythonMPContext:
         raise NotImplementedError
 
     def _mpf_mag(ctx, x):
-        if x == fzero:
+        if x in (fzero, fnzero):
             return ctx.ninf
         if x in (finf, fninf, fnan):
             return ctx.make_mpf(mpf_abs(x))
@@ -1296,9 +1307,9 @@ class PythonMPContext:
             return ctx._mpf_mag(x._mpf_)
         if hasattr(x, "_mpc_"):
             r, i = x._mpc_
-            if r == fzero:
+            if r in (fzero, fnzero):
                 return ctx._mpf_mag(i)
-            if i == fzero:
+            if i in (fzero, fnzero):
                 return ctx._mpf_mag(r)
             return 1+max(ctx._mpf_mag(r), ctx._mpf_mag(i))
         if isinstance(x, int_types):

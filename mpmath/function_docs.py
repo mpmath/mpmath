@@ -1545,9 +1545,9 @@ Some exact high order roots::
     >>> root(75**210, 105)
     5625.0
     >>> root(1, 128, 96)
-    (0.0 - 1.0j)
+    (-0.0 - 1.0j)
     >>> root(4**128, 128, 96)
-    (0.0 - 4.0j)
+    (-0.0 - 4.0j)
 
 """
 
@@ -1575,7 +1575,7 @@ The roots of unity up to `n = 4`::
     >>> nprint(unitroots(3))
     [1.0, (-0.5 + 0.866025j), (-0.5 - 0.866025j)]
     >>> nprint(unitroots(4))
-    [1.0, (0.0 + 1.0j), -1.0, (0.0 - 1.0j)]
+    [1.0, (0.0 + 1.0j), -1.0, (-0.0 - 1.0j)]
 
 Roots of unity form a geometric series that sums to 0::
 
@@ -1593,7 +1593,7 @@ Primitive roots up to `n = 4`::
     >>> nprint(unitroots(3, primitive=True))
     [(-0.5 + 0.866025j), (-0.5 - 0.866025j)]
     >>> nprint(unitroots(4, primitive=True))
-    [(0.0 + 1.0j), (0.0 - 1.0j)]
+    [(0.0 + 1.0j), (-0.0 - 1.0j)]
 
 There are only four primitive 12th roots::
 
@@ -3648,7 +3648,7 @@ relations::
 Evaluation at integers and poles::
 
     >>> gammainc(-3, -4, -5)
-    (-0.2214577048967798566234192 + 0.0j)
+    (-0.2214577048967798566234192 - 0.0j)
     >>> lower_gamma(-3, 5)
     inf
 
@@ -6540,7 +6540,7 @@ Some elementary values and limits of the Barnes G-function::
     >>> barnesg(inf)
     inf
     >>> barnesg(0), barnesg(-1), barnesg(-2)
-    (0.0, 0.0, 0.0)
+    (0.0, -0.0, -0.0)
 
 Closed-form values are known for some rational arguments::
 
@@ -6601,7 +6601,7 @@ precision::
     >>> barnesg(100)
     3.10361006263698e+6626
     >>> barnesg(-101)
-    0.0
+    -0.0
     >>> barnesg(-10.5)
     5.94463017605008e+25
     >>> barnesg(-10000.5)
@@ -9291,7 +9291,7 @@ Some values of the Riemann zeta function::
     >>> zeta(-1)
     -0.08333333333333333333333333
     >>> zeta(-2)
-    0.0
+    -0.0
 
 For large positive `s`, `\zeta(s)` rapidly approaches 1::
 

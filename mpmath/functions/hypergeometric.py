@@ -2,6 +2,7 @@ from ..libmp.backend import MPQ
 from .functions import defun, defun_wrapped
 import math
 
+
 def _check_need_perturb(ctx, terms, prec, discard_known_zeros):
     perturb = recompute = False
     extraprec = 0
