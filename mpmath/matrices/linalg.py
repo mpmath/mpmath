@@ -312,23 +312,20 @@ class LinearAlgebraMethods:
         return result
 
     def pinv(A, tol=None):
-        r"""
-        Gives the Moore Penrose inverse (aka the pseudoinverse) of the matrix A.
-        An optional tolerance parameter allows you set a tolerance threshold.
-        """
+        "Moore Penrose pseudoinverse."
+        U, S, V = svd(A)
         if tol is None:
             tol = len(A) * S[0] * mp.eps
 
-        U, S, V = svd(A)
-
         S_inv = [1/val if val > tol else 0 for val in S]
-        n = len(S_inv)
-        m = len(U[0])
+        n = S.rows
+        m = U.cols
         S_mat = matrix(n, m)
         for i in range(n):
             S_mat[i, i] = S_inv[i]
 
-        return V * S_mat * conj(U).T
+        U_conjugate_transpose = U.apply(lambda x: conj(x)).T
+        return V * S_mat * U_conjugate_transpose
 
     def householder(ctx, A):
         """
