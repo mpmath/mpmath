@@ -4,7 +4,7 @@ import pytest
 
 from mpmath import (cond, det, diag, exp, expm, extend, extradps, eye, fp,
                     hilbert, inf, inverse, iv, j, lu, lu_solve, matrix, mnorm,
-                    mp, mpc, mpf, nint, norm, pi, pinv, qr, qr_solve, rand, rank, svd,
+                    mp, mpc, mpf, nint, norm, pi, pinv, qr, qr_solve, rand, rank,
                     randmatrix, residual, zeros, absmin, eps)
 
 
