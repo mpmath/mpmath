@@ -320,7 +320,7 @@ class LinearAlgebraMethods:
         S_inv = [1/val if val > tol else 0 for val in S]
         n = S.rows
         m = U.cols
-        S_mat = matrix(n, m)
+        S_mat = zeros(n, m)
         for i in range(n):
             S_mat[i, i] = S_inv[i]
 
