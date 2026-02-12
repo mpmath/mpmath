@@ -312,7 +312,9 @@ class LinearAlgebraMethods:
         return result
 
     def pinv(A, tol=None):
-        "Moore Penrose pseudoinverse."
+        """
+        Moore Penrose pseudoinverse of the matrix 'A'.
+        An optional tolerance is provided to set a zero threshold for the singular values."""
         U, S, V = svd(A)
         if tol is None:
             tol = len(A) * S[0] * mp.eps
