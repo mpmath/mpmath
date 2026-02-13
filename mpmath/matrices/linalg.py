@@ -311,22 +311,22 @@ class LinearAlgebraMethods:
             ctx.prec = prec
         return result
 
-    def pinv(A, tol=None):
+    def pinv(ctx, A, tol=None):
         """
         Moore Penrose pseudoinverse of the matrix 'A'.
         An optional tolerance is provided to set a zero threshold for the singular values."""
-        U, S, V = svd(A)
+        U, S, V = ctx.svd(A)
         if tol is None:
-            tol = len(A) * S[0] * mp.eps
+            tol = len(A) * S[0] * ctx.eps
 
         S_inv = [1/val if val > tol else 0 for val in S]
         n = S.rows
         m = U.cols
-        S_mat = zeros(n, m)
+        S_mat = ctx.zeros(n, m)
         for i in range(n):
             S_mat[i, i] = S_inv[i]
 
-        U_conjugate_transpose = U.apply(lambda x: conj(x)).T
+        U_conjugate_transpose = U.apply(lambda x: ctx.conj(x)).T
         return V * S_mat * U_conjugate_transpose
 
     def householder(ctx, A):
