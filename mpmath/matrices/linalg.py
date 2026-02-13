@@ -311,13 +311,10 @@ class LinearAlgebraMethods:
             ctx.prec = prec
         return result
 
-    def pinv(ctx, A, tol=None):
-        """
-        Moore Penrose pseudoinverse of the matrix 'A'.
-        An optional tolerance is provided to set a zero threshold for the singular values."""
+    def pinv(ctx, A):
+        """Moore Penrose pseudoinverse of the matrix 'A'."""
         U, S, V = ctx.svd(A)
-        if tol is None:
-            tol = len(A) * S[0] * ctx.eps
+        tol = len(A) * S[0] * ctx.eps
 
         S_inv = [1/val if val > tol else 0 for val in S]
         n = S.rows
