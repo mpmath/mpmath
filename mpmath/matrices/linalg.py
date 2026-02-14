@@ -314,17 +314,16 @@ class LinearAlgebraMethods:
     def pinv(ctx, A):
         """Moore Penrose pseudoinverse of the matrix 'A'."""
         U, S, V = ctx.svd(A)
-        tol = len(A) * S[0] * ctx.eps
+        tolerance = max(A.rows, A.cols) * S[0] * ctx.eps
 
-        S_inv = [1/val if val > tol else 0 for val in S]
-        n = S.rows
-        m = U.cols
-        S_mat = ctx.zeros(n, m)
-        for i in range(n):
-            S_mat[i, i] = S_inv[i]
+        Splus = zeros(V.cols, U.cols)
+        for ind, val in enumerate(S):
+            if val > tolerance:
+                Splus[ind, ind] = 1/val
 
-        U_conjugate_transpose = U.apply(lambda x: ctx.conj(x)).T
-        return V * S_mat * U_conjugate_transpose
+        v_conj_T = V.apply(lambda x: conj(x)).T
+        u_conj_T = U.apply(lambda x: conj(x)).T
+        return v_conj_T * Splus * u_conj_T
 
     def householder(ctx, A):
         """
