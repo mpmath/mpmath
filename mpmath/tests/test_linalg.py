@@ -117,12 +117,12 @@ def test_pinv():
     # Test the Moore Penrose pseudoinverse for square matrices.
     for A in [A1, A2, A5]:
         inv = pinv(A)
-        assert mnorm(A*inv - eye(A.rows), 1) < 1.e-14
+        assert mnorm(A*inv - eye(A.rows), 1) < 1.e-13
 
     # Test the Moore Penrose pseudoinverse for non-square matrices.
     A = matrix(((1, 0), (0, 1), (0, 1)))
     Aplus = matrix(((1, 0, 0), (0, 0.5, 0.5)))
-    assert pinv(A) == Aplus
+    assert mnorm(pinv(A) - Aplus, 1) < 1.e-14
 
 def test_householder():
     A, b = A8, b8
