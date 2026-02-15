@@ -4,7 +4,7 @@ import pytest
 
 from mpmath import (cond, det, diag, exp, expm, extend, extradps, eye, fp,
                     hilbert, inf, inverse, iv, j, lu, lu_solve, matrix, mnorm,
-                    mp, mpc, mpf, nint, norm, pi, qr, qr_solve, rand, rank,
+                    mp, mpc, mpf, nint, norm, pi, pinv, qr, qr_solve, rand, rank,
                     randmatrix, residual, zeros, absmin, eps)
 
 
@@ -112,6 +112,17 @@ def test_inverse():
     for A in [A1, A2, A5]:
         inv = inverse(A)
         assert mnorm(A*inv - eye(A.rows), 1) < 1.e-14
+
+def test_pinv():
+    # Test the Moore Penrose pseudoinverse for square matrices.
+    for A in [A1, A2, A5]:
+        inv = pinv(A)
+        assert mnorm(A*inv - eye(A.rows), 1) < 1.e-13
+
+    # Test the Moore Penrose pseudoinverse for non-square matrices.
+    A = matrix(((1, 0), (0, 1), (0, 1)))
+    Aplus = matrix(((1, 0, 0), (0, 0.5, 0.5)))
+    assert mnorm(pinv(A) - Aplus, 1) < 1.e-14
 
 def test_householder():
     A, b = A8, b8
