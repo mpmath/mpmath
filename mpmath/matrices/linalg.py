@@ -316,13 +316,13 @@ class LinearAlgebraMethods:
         U, S, V = ctx.svd(A)
         tolerance = max(A.rows, A.cols) * S[0] * ctx.eps
 
-        Splus = zeros(V.cols, U.cols)
+        Splus = ctx.zeros(V.cols, U.cols)
         for ind, val in enumerate(S):
             if val > tolerance:
                 Splus[ind, ind] = 1/val
 
-        v_conj_T = V.apply(lambda x: conj(x)).T
-        u_conj_T = U.apply(lambda x: conj(x)).T
+        v_conj_T = V.apply(lambda x: ctx.conj(x)).T
+        u_conj_T = U.apply(lambda x: ctx.conj(x)).T
         return v_conj_T * Splus * u_conj_T
 
     def householder(ctx, A):
