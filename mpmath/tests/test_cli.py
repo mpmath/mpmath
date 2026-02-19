@@ -1,36 +1,17 @@
 """Tests for the Command-Line Interface."""
 
-import os
 import platform
 import sys
-import time
 
 import pexpect
 import pytest
+
+from mpmath.tests.test_demos import Console
 
 
 if platform.python_implementation() == 'PyPy':
     pytest.skip("Don't run CLI tests on PyPy.",
                 allow_module_level=True)
-
-
-class Console(pexpect.spawn):
-    """Spawned console for testing."""
-
-    def __init__(self, command, timeout=60, _dumb=True):
-        env = os.environ.copy()
-        if _dumb:
-            env['TERM'] = 'dumb'
-        else:
-            env['TERM'] = 'xterm'
-            env['NO_COLOR'] = '1'
-        super().__init__(command, timeout=timeout, encoding='utf-8', env=env)
-
-    def __del__(self):
-        self.send('exit()\r\n')
-        time.sleep(10)  # a delay to allow coverage finish work
-        if self.isalive():
-            self.terminate(force=True)
 
 
 def test_bare_console_no_bare_division():
