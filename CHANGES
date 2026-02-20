@@ -146,8 +146,8 @@ Bug fixes:
 * Special case in ctx.hypsum for infinite z, see #902 (Sergey B Kirpichev)
 * Raise an exception if iv's comparison can't be decided, see #903 (Sergey B
   Kirpichev)
-* Add special case for ±inf in polylog_continuation(), see #904 (Sergey B
-  Kirpichev)
+* Add special case for ±inf in polylog_continuation(), see #904, #1034
+  and #1037 (Sergey B Kirpichev, Colin B. Macdonald)
 * Increase working precision in polylog_general() for negative s, see #898
   (Sergey B Kirpichev)
 * Correct case for integer n in besselj/besseli, see #909 (Sergey B Kirpichev)
