@@ -163,6 +163,7 @@ Bug fixes:
 * Matrix raise ValueError in case of negative dimensions, see #1004 (Ayush
   Baranwal)
 * Support lists in sinm() and cosm(), see #1003 (Ayush Baranwal)
+* Properly handle nan's elliprj(), see #1038 (Sergey B Kirpichev)
 
 Maintenance:
 
