@@ -155,7 +155,7 @@ Bug fixes:
 * Ensure mpf_bernoulli() returns normalized answer, see #939 (Sergey B
   Kirpichev)
 * Use mpf_log1p in acos_asin() helper (implementing Hull et al algorithm), see
-  #948 (Sergey B Kirpichev)
+  #948 and #1036 (Sergey B Kirpichev)
 * Fix kwargs passing in the nstr() for mpc, see #964 (David Walker)
 * Fix exception type for int(inf), see #966 (Sergey B Kirpichev)
 * Ensure exp, sin, tan, etc have a correct __name__ attribute, see #997
@@ -164,6 +164,7 @@ Bug fixes:
   Baranwal)
 * Support lists in sinm() and cosm(), see #1003 (Ayush Baranwal)
 * Properly handle nan's elliprj(), see #1038 (Sergey B Kirpichev)
+* Raise ValueError for logm(0), see #1017 (Ayush Baranwal)
 
 Maintenance:
 
