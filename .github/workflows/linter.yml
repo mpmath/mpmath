@@ -1,10 +1,10 @@
 name: Linting with flake8, etc
-on: workflow_call
+on: [workflow_dispatch, workflow_call]
 jobs:
   linter:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6

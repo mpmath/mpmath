@@ -1,5 +1,5 @@
 name: Run coverage tests
-on: workflow_call
+on: [workflow_dispatch, workflow_call]
 jobs:
   coverage:
     runs-on: ubuntu-24.04
@@ -8,12 +8,12 @@ jobs:
     env:
       PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
+          python-version: "3.13"
       - name: Install dependencies
         run: |
           pip install --upgrade setuptools pip
@@ -37,14 +37,9 @@ jobs:
           coverage html
           diff-cover coverage.xml --fail-under=100 \
             --compare-branch=origin/master
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: coverage
           path: |
             coverage.xml
             build/coverage/html/
-      - name: Upload coverage data
-        uses: codecov/codecov-action@v4
-        with:
-          files: ./coverage.xml
-          fail_ci_if_error: false

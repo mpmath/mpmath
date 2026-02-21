@@ -1,10 +1,10 @@
 name: Build & test docs
-on: workflow_call
+on: [workflow_dispatch, workflow_call]
 jobs:
   docs:
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
@@ -24,7 +24,7 @@ jobs:
           sphinx-build -b html docs build/sphinx/html
           sphinx-build -b latex docs build/sphinx/latex
           make -C build/sphinx/latex all-pdf
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: docs
           path: |

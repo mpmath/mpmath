@@ -9,7 +9,7 @@ import pytest
 from mpmath import fp, mp
 
 
-@pytest.mark.filterwarnings("ignore:datetime.datetime.utc.*:DeprecationWarning")
+@pytest.mark.filterwarnings("ignore:.*:DeprecationWarning")
 def test_axes():
     try:
         import matplotlib

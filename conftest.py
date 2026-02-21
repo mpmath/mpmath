@@ -27,5 +27,6 @@ def reset_mp_globals():
     mp.prec = sys.float_info.mant_dig
     mp.pretty = False
     mp.rounding = 'n'
+    mp.pretty_dps = "str"
     iv.prec = mp.prec
     iv.pretty = False
