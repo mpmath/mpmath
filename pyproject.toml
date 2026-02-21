@@ -37,7 +37,7 @@ matplotlib = ["matplotlib; python_implementation != 'GraalVM'"]
 tests = ['pytest>=6', 'packaging', 'pytest-timeout',
          'mpmath[matplotlib]', 'pexpect', 'ipython', 'hypothesis']
 develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov>=7', 'wheel', 'build']
-gmpy2 = ['gmpy2>=2.3']
+gmpy2 = ["gmpy2>=2.3; python_implementation != 'GraalVM'"]
 gmpy = ['mpmath[gmpy2]']
 gmp = ['python-gmp>=0.5; python_version>="3.11"',
        'python-gmp>=0.4; python_version<"3.11"']
