@@ -2448,6 +2448,8 @@ def test_issue_473():
 def test_issue_1033():
     assert isnan(mp.polylog(2, mp.inf))
     assert isnan(mp.polylog(3, mp.inf))
+    assert mp.polylog(2, mp.inf).real == -mp.inf
+    assert mp.polylog(3, mp.inf).real == -mp.inf
 
 def test_issue_634():
     assert mp.polylog(1+1e-15, -2).ae(mp.mpf('-1.09861228866811'))
