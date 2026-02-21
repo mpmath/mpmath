@@ -24,9 +24,9 @@ jobs:
         nogmpy: [false]
         purepy: [false]
         include:
-          - python-version: 3.14
+          - python-version: "3.x"
             nogmpy: true
-          - python-version: 3.14
+          - python-version: "3.x"
             purepy: true
           - python-version: pypy3.11
             purepy: true
