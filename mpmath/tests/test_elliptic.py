@@ -659,3 +659,6 @@ def test_issue_238():
 
 def test_issue_604():
     assert ellipe(pi, 1).ae('2.0')
+
+def test_issue_486():
+    assert isnan(elliprj(1, 2, 3, nan))

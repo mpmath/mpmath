@@ -553,7 +553,7 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
     if (ctx.isspecial(x) or ctx.isspecial(y)
             or ctx.isspecial(z) or ctx.isspecial(p)):
         if ctx.isnan(x) or ctx.isnan(y) or ctx.isnan(z) or ctx.isnan(p):
-            return x*y*z
+            return x*y*z*p
         if ctx.isinf(x) or ctx.isinf(y) or ctx.isinf(z) or ctx.isinf(p):
             return ctx.zero
     if not p:
