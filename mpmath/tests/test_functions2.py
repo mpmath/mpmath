@@ -2,17 +2,17 @@ import pytest
 
 from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     besseljzero, besselk, bessely, besselyzero, betainc,
-                    chebyt, chebyu, chi, ci, convert, coulombg, e, e1, ei,
-                    ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp, expint,
-                    fadd, fmul, foxh, fp, fraction, fresnelc, fresnels, fsub, fsum,
-                    gamma, gammainc, gegenbauer, hankel1, hankel2, hermite,
-                    hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2, hyp2f3,
-                    hyper, hypercomb, hyperu, inf, isnan, j, j0, j1, jacobi,
-                    kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
-                    legenq, lerchphi, li, log, lower_gamma, meijerg, mp, mpc,
-                    mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
-                    spherharm, spherical_jn, spherical_yn, sqrt, struveh,
-                    struvel, upper_gamma, whitm, whitw, zeta)
+                    chebyt, chebyu, chi, ci, clsin, convert, coulombg, e, e1,
+                    ei, ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp,
+                    expint, fadd, fmul, foxh, fp, fraction, fresnelc, fresnels,
+                    fsub, fsum, gamma, gammainc, gegenbauer, hankel1, hankel2,
+                    hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2,
+                    hyp2f3, hyper, hypercomb, hyperu, inf, isnan, j, j0, j1,
+                    jacobi, kei, ker, laguerre, lambertw, ldexp, legendre,
+                    legenp, legenq, lerchphi, li, log, lower_gamma, meijerg,
+                    mp, mpc, mpf, nan, ncdf, npdf, nthroot, pi, polylog, qp,
+                    quadts, shi, si, spherharm, spherical_jn, spherical_yn,
+                    sqrt, struveh, struvel, upper_gamma, whitm, whitw, zeta)
 from mpmath.libmp import BACKEND, NoConvergence
 
 
@@ -2475,3 +2475,9 @@ def test_issue_545():
                      rel_eps=mpf('1e-4346'))
     assert erf(-x).ae(mpc(-1, '1.5120569745187501e-4345'),
                       rel_eps=mpf('1e-4346'))
+
+def test_issue_459():
+    assert isnan(clsin(1, mp.inf))
+    assert isnan(clsin(2, mp.inf))
+    assert isnan(clsin(2, mp.nan))
+    assert isnan(polylog(-2, mp.nan))

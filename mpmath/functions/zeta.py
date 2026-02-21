@@ -493,6 +493,10 @@ def polylog(ctx, s, z):
         return polylog_series(ctx, s, z)
     if abs(z) >= 1.4 and ctx.isint(s):
         return (-1)**(s+1)*polylog_series(ctx, s, 1/z) + polylog_continuation(ctx, int(ctx.re(s)), z)
+    if ctx.isnan(z):
+        if ctx._is_real_type(z) and ctx.isnpint(s):
+            return ctx.nan
+        return ctx.mpc(ctx.nan, ctx.nan)
     if ctx.isint(s):
         return polylog_unitcircle(ctx, int(ctx.re(s)), z)
     return polylog_general(ctx, s, z)
