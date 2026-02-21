@@ -33,7 +33,7 @@ Homepage = 'https://mpmath.org/'
 Documentation = 'http://mpmath.org/doc/current/'
 
 [project.optional-dependencies]
-matplotlib = ["matplotlib; python_implementation != 'GraalPy'"]
+matplotlib = ["matplotlib; python_implementation != 'GraalVM'"]
 tests = ['pytest>=6', 'packaging', 'pytest-timeout',
          'mpmath[matplotlib]', 'pexpect', 'ipython', 'hypothesis']
 develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov>=7', 'wheel', 'build']
