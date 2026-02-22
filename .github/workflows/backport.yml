@@ -1,0 +1,37 @@
+name: Automatic backport action
+
+on:
+  pull_request_target:
+    types: ["labeled", "closed"]
+
+permissions:
+  contents: write # so it can comment
+  pull-requests: write # so it can create pull requests
+
+jobs:
+  backport:
+    name: Backport PR
+    if: github.event.pull_request.merged == true && !(contains(github.event.pull_request.labels.*.name, 'backport')) && !(contains(github.event.pull_request.labels.*.name, 'backport-pr-created'))
+    runs-on: ubuntu-24.04
+    steps:
+      # Workaround not to fail the workflow if the PR does not need a backport
+      # https://github.com/sorenlouv/backport-github-action/issues/127#issuecomment-2277248320
+      - name: Check for backport labels
+        id: check_labels
+        run: |-
+          labels='${{ toJSON(github.event.pull_request.labels.*.name) }}'
+          matched=$(echo "${labels}" | jq '. | map(select(startswith("backport-to-"))) | length')
+          echo "matched=$matched"
+          echo "matched=$matched" >> $GITHUB_OUTPUT
+      - name: Backport Action
+        if: fromJSON(steps.check_labels.outputs.matched) > 0
+        uses: sorenlouv/backport-github-action@v10.2.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          auto_backport_label_prefix: backport-to-
+      - name: Info log
+        if: ${{ success() && fromJSON(steps.check_labels.outputs.matched) > 0 }}
+        run: cat ~/.backport/backport.info.log
+      - name: Debug log
+        if: ${{ failure() && fromJSON(steps.check_labels.outputs.matched) > 0 }}
+        run: cat ~/.backport/backport.debug.log

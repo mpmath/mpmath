@@ -201,6 +201,7 @@ Maintenance:
 * Build and publish wheel, see #913 (David Hotham)
 * Use the intended setuptools_scm integration pattern, see #940 (Ronny
   Pfannschmidt)
+* Add backport action, see #1042 (Sergey B Kirpichev)
 
 See the release milestone (1.4) for a complete list of issues and pull requests
 involved in this release.
