@@ -165,6 +165,7 @@ Bug fixes:
 * Support lists in sinm() and cosm(), see #1003 (Ayush Baranwal)
 * Properly handle nan's elliprj(), see #1038 (Sergey B Kirpichev)
 * Raise ValueError for logm(0), see #1017 (Ayush Baranwal)
+* Fix erf(z) with re(z) of large magnitude, see #1039 (Sergey B Kirpichev)
 
 Maintenance:
 
