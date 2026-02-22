@@ -62,6 +62,7 @@ def repr_dps(n):
 # Regular number format:
 # (-1)**sign * mantissa * 2**exponent, plus mantissa.bit_length()
 fzero = (0, MPZ_ZERO, 0, 0)
+fnzero = (1, MPZ_ZERO, 0, 0)
 fone = (0, MPZ_ONE, 0, 1)
 fnone = (1, MPZ_ONE, 0, 1)
 ftwo = (0, MPZ_ONE, 1, 1)
@@ -74,6 +75,7 @@ finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
 math_float_inf = math.inf
+math_float_nan = math.nan
 blog2_10 = 3.3219280948873626
 
 
@@ -195,6 +197,8 @@ def normalize(sign, man, exp, bc, prec, rnd):
     assert type(exp) in _exp_types
     assert bc == man.bit_length()
     assert man >= 0
+    if not man and not exp:
+        return sign, man, 0, 0
     return _normalize(sign, man, exp, bc, prec, rnd)
 
 #----------------------------------------------------------------------------#
@@ -339,6 +343,7 @@ def from_float(x, prec=53, rnd=round_fast):
     if x != x: return fnan
     if x == math_float_inf: return finf
     if x == -math_float_inf: return fninf
+    if not x: return int(math.copysign(1., x) == -1.), MPZ(0), 0, 0
     m, e = math.frexp(x)
     return from_man_exp(MPZ(m*(1<<53)), e-53, prec, rnd)
 
@@ -381,9 +386,10 @@ def to_float(s, strict=False, rnd=round_fast):
     sign, man, exp, bc = s
     if not man:
         if s == fzero: return 0.0
+        if s == fnzero: return -0.0
         if s == finf: return math_float_inf
         if s == fninf: return -math_float_inf
-        return math_float_inf/math_float_inf
+        return math_float_nan
     if bc > 53:
         sign, man, exp, bc = normalize(sign, man, exp, bc, 53, rnd)
     if sign:
@@ -452,6 +458,8 @@ def mpf_eq(s, t):
     if not s[1] or not t[1]:
         if s == fnan or t == fnan:
             return False
+        if all(_ in (fzero, fnzero) for _ in [s, t]):
+            return True
     return s == t
 
 def mpf_hash(s):
@@ -578,7 +586,8 @@ def mpf_neg(s, prec=0, rnd=round_fast):
         if exp:
             if s == finf: return fninf
             if s == fninf: return finf
-        return s
+            return fnan
+        return 1-sign, *s[1:]
     if not prec:
         return (1-sign, man, exp, bc)
     return normalize(1-sign, man, exp, bc, prec, rnd)
@@ -696,12 +705,12 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
             return fnan
         if tman:
             return normalize(tsign, tman, texp, tbc, prec or tbc, rnd)
-        return t
+        if texp:
+            return t
+        return 0 if tsign != ssign else ssign, tman, texp, tbc
     if texp:
         return t
-    if sman:
-        return normalize(ssign, sman, sexp, sbc, prec or sbc, rnd)
-    return s
+    return normalize(ssign, sman, sexp, sbc, prec or sbc, rnd)
 
 def mpf_sub(s, t, prec=0, rnd=round_fast):
     """Return the difference of two raw mpfs, s-t. This function is
@@ -771,7 +780,7 @@ def mpf_mul(s, t, prec=0, rnd=round_fast):
     s_special = (not sman) and sexp
     t_special = (not tman) and texp
     if not s_special and not t_special:
-        return fzero
+        return sign, man, 0, 0
     if fnan in (s, t): return fnan
     if (not tman) and texp: s, t = t, s
     if t == fzero: return fnan
@@ -825,8 +834,8 @@ def mpf_frexp(x):
     """Convert x = y*2**n to (y, n) with abs(y) in [0.5, 1) if nonzero"""
     sign, man, exp, bc = x
     if not man:
-        if x == fzero:
-            return (fzero, 0)
+        if x in (fzero, fnzero):
+            return (x, 0)
         else:
             raise ValueError
     return mpf_shift(x, -bc-exp), bc+exp
@@ -836,11 +845,11 @@ def mpf_div(s, t, prec, rnd=round_fast):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     if not sman or not tman:
-        if s == fzero:
-            if t == fzero: raise ZeroDivisionError
+        if s in (fzero, fnzero):
+            if t in (fzero, fnzero): raise ZeroDivisionError
             if t == fnan: return fnan
-            return fzero
-        if t == fzero:
+            return ssign^tsign, sman, sexp, sbc
+        if t in (fzero, fnzero):
             raise ZeroDivisionError
         s_special = (not sman) and sexp
         t_special = (not tman) and texp
@@ -849,8 +858,6 @@ def mpf_div(s, t, prec, rnd=round_fast):
         if s == fnan or t == fnan:
             return fnan
         if not t_special:
-            if t == fzero:
-                return fnan
             return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
         return fzero
     sign = ssign ^ tsign
@@ -1235,6 +1242,12 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
             if show_zero_exponent:
                 t += sep + '+0'
             return prefix + t
+        if s == fnzero:
+            if dps: t = '-0.0'
+            else:   t = '-.0'
+            if show_zero_exponent:
+                t += sep + '+0'
+            return prefix + t
         if s == finf: return 'inf'
         if s == fninf: return '-inf'
         if s == fnan: return 'nan'
@@ -1294,7 +1307,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     if exponent == 0 and dps and not show_zero_exponent: return sign + digits
     return sign + digits + sep + f"{exponent:+}"
 
-def str_to_man_exp(x, base=10):
+def str_to_sign_man_exp(x, base=10):
     """Helper function for from_str."""
     x = x.lower().rstrip('l').replace('_', '')
     # Split into mantissa, exponent
@@ -1322,15 +1335,18 @@ def str_to_man_exp(x, base=10):
             exp -= len(b)*e2
         if a == '':
             a = '0'
+        if a == '-':
+            a = '-0'
         x = a + b
     int_max_str_digits = 0
     if BACKEND == 'python' and hasattr(sys, 'get_int_max_str_digits'):
         int_max_str_digits = sys.get_int_max_str_digits()
         sys.set_int_max_str_digits(0)
+    sign = int('-' in x)
     x = MPZ(x, base)
     if int_max_str_digits:
         sys.set_int_max_str_digits(int_max_str_digits)
-    return x, exp
+    return sign, x, exp
 
 special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan,
                'oo':finf, '+oo':finf, '-oo':fninf}
@@ -1363,7 +1379,7 @@ def from_str(x, prec=0, rnd=round_fast, base=0):
         p, q = p.rstrip('l'), q.rstrip('l')
         return from_rational(int(p, base), int(q, base), prec, rnd)
 
-    man, exp = str_to_man_exp(x, base)
+    sign, man, exp = str_to_sign_man_exp(x, base)
 
     if base == 10:
         # XXX: appropriate cutoffs & track direction
@@ -1383,7 +1399,7 @@ def from_str(x, prec=0, rnd=round_fast, base=0):
             s = from_man_exp(man, exp, prec, rnd)
     else:
         raise NotImplementedError
-    return s
+    return sign, *s[1:]
 
 
 #----------------------------------------------------------------------------#
@@ -1817,7 +1833,7 @@ def mpf_sqrt(s, prec, rnd=round_fast):
 def mpf_hypot(x, y, prec, rnd=round_fast):
     """Compute the Euclidean norm sqrt(x**2 + y**2) of two raw mpfs
     x and y."""
-    if y == fzero: return mpf_abs(x, prec, rnd)
-    if x == fzero: return mpf_abs(y, prec, rnd)
+    if y in (fzero, fnzero): return mpf_abs(x, prec, rnd)
+    if x in (fzero, fnzero): return mpf_abs(y, prec, rnd)
     hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+4)
     return mpf_sqrt(hypot2, prec, rnd)

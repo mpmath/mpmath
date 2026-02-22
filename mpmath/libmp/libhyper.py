@@ -16,12 +16,12 @@ from .libmpc import (complex_int_pow, mpc_abs, mpc_add, mpc_add_mpf, mpc_div,
                      mpc_exp, mpc_is_infnan, mpc_ln, mpc_mpf_div, mpc_mul,
                      mpc_neg, mpc_one, mpc_pos, mpc_shift, mpc_sqrt, mpc_sub,
                      mpc_zero)
-from .libmpf import (ComplexResult, finf, fnan, fninf, fnone, fone, from_int,
-                     from_man_exp, from_rational, ftwo, fzero, mpf_abs,
-                     mpf_add, mpf_div, mpf_le, mpf_lt, mpf_min_max, mpf_mul,
-                     mpf_neg, mpf_perturb, mpf_pos, mpf_pow_int, mpf_shift,
-                     mpf_sign, mpf_sqrt, mpf_sub, negative_rnd, round_fast,
-                     to_fixed, to_int)
+from .libmpf import (ComplexResult, finf, fnan, fninf, fnone, fnzero, fone,
+                     from_int, from_man_exp, from_rational, ftwo, fzero,
+                     mpf_abs, mpf_add, mpf_div, mpf_le, mpf_lt, mpf_min_max,
+                     mpf_mul, mpf_neg, mpf_perturb, mpf_pos, mpf_pow_int,
+                     mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
+                     round_fast, to_fixed, to_int)
 
 
 class NoConvergence(Exception):
@@ -454,8 +454,6 @@ def mpf_ei(x, prec, rnd=round_fast, e1=False):
         x = mpf_neg(x)
     sign, man, exp, bc = x
     if e1 and not sign:
-        if x == fzero:
-            return finf
         raise ComplexResult("E1(x) for x < 0")
     if man:
         xabs = 0, man, exp, bc
@@ -483,7 +481,7 @@ def mpf_ei(x, prec, rnd=round_fast, e1=False):
             t2 = mpf_ln(xabs,wp)
             v = mpf_add(t1, t2, prec, rnd)
     else:
-        if x == fzero: v = fninf
+        if x in (fzero, fnzero): v = fninf
         elif x == finf: v = finf
         elif x == fninf: v = fzero
         else: v = fnan
@@ -497,7 +495,7 @@ def mpc_ei(z, prec, rnd=round_fast, e1=False):
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
-    if b == fzero:
+    if b in (fzero, fnzero):
         if e1:
             x = mpf_neg(mpf_ei(a, prec, rnd))
             if not asign:
@@ -507,7 +505,7 @@ def mpc_ei(z, prec, rnd=round_fast, e1=False):
             return x, y
         else:
             return mpf_ei(a, prec, rnd), fzero
-    if a != fzero:
+    if a not in (fzero, fnzero):
         if not aman or not bman:
             return (fnan, fnan)
     wp = prec + 40

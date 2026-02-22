@@ -389,7 +389,7 @@ def test_atan():
     assert atan(mpc(-inf,0)).ae(-pi2)
     assert atan(mpc(-inf,-1)).ae(-pi2)
     assert atan(mpc(-1,-inf)).ae(-pi2)
-    assert atan(mpc(0,-inf)).ae(-pi2)
+    assert atan(mpc(0,-inf)).ae(pi2)
     assert atan(mpc(1,-inf)).ae(pi2)
 
 def test_atan2():
@@ -546,6 +546,9 @@ def test_frexp():
     assert frexp(1) == (0.5, 1)
     assert frexp(0.2) == (0.8, -2)
     assert frexp(1000) == (0.9765625, 10)
+    pytest.raises(ValueError, lambda: frexp(+inf))
+    pytest.raises(ValueError, lambda: frexp(-inf))
+    pytest.raises(ValueError, lambda: frexp(nan))
 
 def test_aliases():
     assert ln(7) == log(7)
