@@ -539,33 +539,35 @@ class LinearAlgebraMethods:
 
         Determinant of identity is 1.
 
-        >>> from mpmath import eye, matrix, det
+        >>> from mpmath import eye, matrix, det, mp
+        >>> mp.pretty = True
         >>> A = eye(3)
-        >>> print(det(A))
+        >>> det(A)
         1.0
 
         The determinant of a 0 by 0 matrix is 1 as the product of no factors
         is by convention the multiplicative identity.
+
         >>> A = matrix(0, 0)
-        >>> print(det(A))
+        >>> det(A)
         1
 
         But in general a matrix can have any number as its determinant.
 
         >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
-        >>> print(det(A))
+        >>> det(A)
         0
 
         The determinant is vanishing if a matrix has no inverse.
 
         >>> A = matrix([[1, 3, 2],[0, 1, 0],[0, 0, 0]])
-        >>> print(det(A))
+        >>> det(A)
         0
 
         But, matrix has determinate different from zero full rank if and only is is equivalent to identity,
 
         >>> A = matrix([[1, 3, -2], [1, 9, -6], [1, 4, -3]])
-        >>> print(det(A))
+        >>> det(A)
         -2.0
 
         i.e. has an inverse matrix.
@@ -573,7 +575,7 @@ class LinearAlgebraMethods:
         >>> B = matrix([[3, -1, 0], [3, 1, -4], [5, 1, -6]]) / 2
         >>> A*B == eye(3)
         True
-        >>> print(det(B))
+        >>> det(B)
         -0.5
 
         Moreover, a matrix of integers has an inverse matrix of integers
@@ -583,8 +585,8 @@ class LinearAlgebraMethods:
         >>> B = matrix([[3, -1, 1],[2, 1, 0],[-2, 1, -1]])
         >>> A*B == eye(3)
         True
-        >>> print(det(A), det(B))
-        -1.0 -1.0
+        >>> det(A), det(B)
+        (-1.0, -1.0)
 
         """
         prec = ctx.prec

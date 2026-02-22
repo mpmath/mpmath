@@ -85,6 +85,7 @@ Credit also goes to:
 
 Release history:
 
+* Version 1.4.0 released on February 23, 2026
 * Version 1.3.0 released on March 7, 2023
 * Version 1.2.1 released on February 9, 2021
 * Version 1.2.0 released on February 1, 2021

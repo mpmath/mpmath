@@ -3015,7 +3015,7 @@ with ``eliminate_all=True``:
     >>> hyper([2], [], 3)
     0.25
 
-** References **
+**References**
 
 * [Buhring]_
 

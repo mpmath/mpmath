@@ -398,7 +398,7 @@ def zetazero(ctx, n, info=False, round=True):
     in each Gram interval (Rosser blocks between parenthesis). In this case
     there is only one Rosser block of length nine.
 
-    ** References **
+    **References**
 
     * [Brent79]_
     * [Trudgian]_

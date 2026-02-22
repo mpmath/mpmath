@@ -1,5 +1,5 @@
 [build-system]
-requires = ['setuptools>=77', 'setuptools_scm[toml]>=6.0']
+requires = ['setuptools>=77', 'setuptools-scm>=8']
 build-backend = 'setuptools.build_meta'
 
 [project]
@@ -37,8 +37,7 @@ tests = ['pytest>=6', 'numpy', 'packaging', 'pytest-timeout',
 develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov>=7', 'wheel', 'build']
 gmpy2 = ['gmpy2>=2.3']
 gmpy = ['mpmath[gmpy2]']
-gmp = ['python-gmp>=0.5; python_version>="3.11"',
-       'python-gmp>=0.4; python_version<"3.11"']
+gmp = ['python-gmp']
 docs = ['sphinx', 'matplotlib', 'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist', 'diff_cover']
 

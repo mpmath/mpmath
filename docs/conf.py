@@ -22,7 +22,7 @@ nitpicky = True
 
 # Project information.
 project = mpmath.__name__
-copyright = '2007-2027, Fredrik Johansson and mpmath developers'
+copyright = '2007-2026, Fredrik Johansson and mpmath developers'
 release = version = mpmath.__version__
 
 # Define how the current time is formatted using time.strftime().

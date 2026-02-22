@@ -24,6 +24,9 @@ jobs:
           sphinx-build -b html docs build/sphinx/html
           sphinx-build -b latex docs build/sphinx/latex
           make -C build/sphinx/latex all-pdf
+        env:
+          NO_COLOR: 1  # workaround for sphinx-contrib/autoprogram#76
+          COLUMNS: 80  # also enable line wrapping for argparse
       - uses: actions/upload-artifact@v6
         with:
           name: docs

@@ -24,9 +24,9 @@ jobs:
         nogmpy: [false]
         purepy: [false]
         include:
-          - python-version: 3.14
+          - python-version: "3.x"
             nogmpy: true
-          - python-version: 3.14
+          - python-version: "3.x"
             purepy: true
           - python-version: pypy3.11
             purepy: true
@@ -41,9 +41,6 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
         allow-prereleases: true
-    - name: Install gmpy2 deps
-      if: ${{ startsWith(matrix.python-version, '3.14') }}
-      run: sudo apt install libmpc-dev
     - name: Install dependencies
       run: |
         pip install --upgrade setuptools pip

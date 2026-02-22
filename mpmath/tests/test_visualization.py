@@ -19,8 +19,7 @@ def test_axes():
             raise ImportError
         import pylab
     except ImportError:
-        print("\nSkipping test (pylab not available or too old version)\n")
-        return
+        pytest.skip("\nSkipping test (pylab not available or too old version)\n")
     fig = pylab.figure()
     axes = fig.add_subplot(111)
     for ctx in [mp, fp]:
