@@ -15,7 +15,8 @@ if platform.python_implementation() == 'PyPy':
 
 
 def test_bare_console_no_bare_division():
-    c = Console(f'{sys.executable} -m mpmath --no-ipython --no-wrap-floats')
+    c = Console(f'{sys.executable} -m mpmath --no-ipython '
+                '--no-wrap-floats --int-limits')  # for coverage
 
     assert c.expect_exact('>>> ') == 0
     assert c.send('1 + 2\r\n') == 7
