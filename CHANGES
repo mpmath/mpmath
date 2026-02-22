@@ -166,6 +166,8 @@ Bug fixes:
 * Properly handle nan's elliprj(), see #1038 (Sergey B Kirpichev)
 * Raise ValueError for logm(0), see #1017 (Ayush Baranwal)
 * Fix erf(z) with re(z) of large magnitude, see #1039 (Sergey B Kirpichev)
+* Return nan's for polylog(s, nan) or polylog(s, nan+nanj),
+  see #1041 (Sergey B Kirpichev)
 
 Maintenance:
 
