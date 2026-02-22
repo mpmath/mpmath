@@ -3,22 +3,30 @@ from .functions import defun, defun_wrapped
 
 @defun_wrapped
 def _erf_complex(ctx, z):
-    z2 = ctx.square_exp_arg(z, -1)
-    #z2 = -z**2
-    v = (2/ctx.sqrt(ctx.pi))*z * ctx.hyp1f1((1,2),(3,2), z2)
-    if not ctx._re(z):
+    re_z = ctx.re(z)
+    if re_z > 2:
+        nz = ctx.fneg(z, exact=True)
+        v = ctx._erf_complex(nz)
+        return ctx.fneg(v, exact=True)
+    elif re_z < -2:
+        v = ctx._erfc_complex(ctx.fneg(z, exact=True)) - 1
+    else:
+        z2 = ctx.square_exp_arg(z, -1)
+        v = (2/ctx.sqrt(ctx.pi))*z * ctx.hyp1f1((1,2),(3,2), z2)
+    if not re_z:
         v = ctx._im(v)*ctx.j
     return v
 
 @defun_wrapped
 def _erfc_complex(ctx, z):
-    if ctx.re(z) > 2:
+    re_z = ctx.re(z)
+    if re_z > 2:
         z2 = ctx.square_exp_arg(z)
         nz2 = ctx.fneg(z2, exact=True)
         v = ctx.exp(nz2)/ctx.sqrt(ctx.pi) * ctx.hyperu((1,2),(1,2), z2)
     else:
         v = 1 - ctx._erf_complex(z)
-    if not ctx._re(z):
+    if not re_z:
         v = 1+ctx._im(v)*ctx.j
     return v
 

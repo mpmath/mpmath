@@ -146,8 +146,8 @@ Bug fixes:
 * Special case in ctx.hypsum for infinite z, see #902 (Sergey B Kirpichev)
 * Raise an exception if iv's comparison can't be decided, see #903 (Sergey B
   Kirpichev)
-* Add special case for ±inf in polylog_continuation(), see #904 (Sergey B
-  Kirpichev)
+* Add special case for ±inf in polylog_continuation(), see #904, #1034
+  and #1037 (Sergey B Kirpichev, Colin B. Macdonald)
 * Increase working precision in polylog_general() for negative s, see #898
   (Sergey B Kirpichev)
 * Correct case for integer n in besselj/besseli, see #909 (Sergey B Kirpichev)
@@ -155,7 +155,7 @@ Bug fixes:
 * Ensure mpf_bernoulli() returns normalized answer, see #939 (Sergey B
   Kirpichev)
 * Use mpf_log1p in acos_asin() helper (implementing Hull et al algorithm), see
-  #948 (Sergey B Kirpichev)
+  #948 and #1036 (Sergey B Kirpichev)
 * Fix kwargs passing in the nstr() for mpc, see #964 (David Walker)
 * Fix exception type for int(inf), see #966 (Sergey B Kirpichev)
 * Ensure exp, sin, tan, etc have a correct __name__ attribute, see #997
@@ -163,6 +163,9 @@ Bug fixes:
 * Matrix raise ValueError in case of negative dimensions, see #1004 (Ayush
   Baranwal)
 * Support lists in sinm() and cosm(), see #1003 (Ayush Baranwal)
+* Properly handle nan's elliprj(), see #1038 (Sergey B Kirpichev)
+* Raise ValueError for logm(0), see #1017 (Ayush Baranwal)
+* Fix erf(z) with re(z) of large magnitude, see #1039 (Sergey B Kirpichev)
 
 Maintenance:
 

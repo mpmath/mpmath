@@ -443,8 +443,7 @@ class _mpf(mpnumeric):
             >>> f'{x:.15b}'
             '-1.001111000000110p+0'
 
-        Alternate form (``'#'`` option) adds ``0b`` prefix.
-
+        Alternate form (``'#'`` option) works like for ``'a'`` type.
         """
 
         _, _, (prec, rounding) = self._ctxdata
@@ -764,10 +763,10 @@ class _mpc(mpnumeric):
         """
         ``mpc`` objects allow for formatting similar to Python
         :external:class:`complex`, specified in :external:ref:`formatspec`.
-        All of Python's format types are supported, with the exception of
-        ``'n'``.  Also available additional options and formating types,
-        accepted by :func:`mpmath.mpf.__format__`.
 
+        All ``mpf``'s format types and options are supported, with
+        the exception for ``'%'`` format type, ``'='`` alignment and
+        zero padding.
         """
         ctx = self.context
         _, _, (prec, rounding) = self._ctxdata

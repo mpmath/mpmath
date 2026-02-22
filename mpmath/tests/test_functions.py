@@ -1089,3 +1089,6 @@ def test_issue_749():
     assert mp.asinh(mp.inf) == mp.inf
     assert mp.asinh(mp.mpc(mp.inf, 0)) == mp.mpc(mp.inf, 0)
     assert fp.asinh(fp.mpc(fp.inf, 0)) == fp.mpc(fp.inf, 0)
+
+def test_issue_1035():
+    assert mp.acos(1e-50j).ae(1.5707963267948966)

@@ -746,11 +746,14 @@ def mpf_log1p(x, prec, rnd=round_fast):
     """
     Computes log(1+x) accurately.
     """
-    wp = prec + 10
-    u = mpf_add(fone, x, wp*2)
-    return mpf_mul(mpf_ln(u, wp),
-                   mpf_div(x, mpf_sub(u, fone, wp),
-                           wp), prec, rnd)
+    wp = prec + 20
+    wp2 = wp*2
+    _, man, exp, bc = x
+    if exp + bc < -wp and (man or exp):
+        # x - x**2/2
+        x2 = mpf_sub(fone, mpf_shift(x, -1), wp2, rnd)
+        return mpf_mul(x, x2, wp, rnd)
+    return mpf_ln(mpf_add(fone, x, wp2), wp, rnd)
 
 def mpf_log_hypot(a, b, prec, rnd):
     """

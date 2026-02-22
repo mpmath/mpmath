@@ -2446,6 +2446,12 @@ def test_issue_473():
     assert mp.polylog(4, -mp.inf) == -mp.inf
     assert mp.polylog(5, -mp.inf) == -mp.inf
 
+def test_issue_1033():
+    assert isnan(mp.polylog(2, mp.inf))
+    assert isnan(mp.polylog(3, mp.inf))
+    assert mp.polylog(2, mp.inf).real == -mp.inf
+    assert mp.polylog(3, mp.inf).real == -mp.inf
+
 def test_issue_634():
     assert mp.polylog(1+1e-15, -2).ae(mp.mpf('-1.09861228866811'))
 
@@ -2459,3 +2465,14 @@ def test_issue_637():
 def test_issue_991():
     assert spherical_jn(0, 1.3).ae(0.74119860416707)
     assert spherical_yn(0, 1.3).ae(-0.20576832971122)
+
+def test_issue_545():
+    x = 100+j
+    assert erfc(x).ae(mpc('8.634691205220881e-4346',
+                          '1.5120569745187501e-4345'))
+    assert erfc(-x).ae(mpc(2, '-1.5120569745187501e-4345'),
+                       rel_eps=mpf('1e-4346'))
+    assert erf(x).ae(mpc(1, '-1.5120569745187501e-4345'),
+                     rel_eps=mpf('1e-4346'))
+    assert erf(-x).ae(mpc(-1, '1.5120569745187501e-4345'),
+                      rel_eps=mpf('1e-4346'))
