@@ -546,6 +546,7 @@ class LinearAlgebraMethods:
 
         The determinant of a 0 by 0 matrix is 1 as the product of no factors
         is by convention the multiplicative identity.
+
         >>> A = matrix(0, 0)
         >>> print(det(A))
         1
