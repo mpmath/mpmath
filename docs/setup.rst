@@ -40,17 +40,6 @@ See `debian <http://packages.debian.org/stable/python/python3-mpmath>`_ and
 `ubuntu <https://launchpad.net/ubuntu/+source/mpmath>`_ package information;
 please verify that you are getting the latest version.
 
-OpenSUSE
-........
-
-Mpmath is provided in the "Science" repository for all recent versions of
-`openSUSE <https://www.opensuse.org/>`_. To add this repository to the YAST
-software management tool, see
-https://en.opensuse.org/SDB:Add_package_repositories
-
-Look up https://download.opensuse.org/repositories/science/ for a list
-of supported OpenSUSE versions.
-
 Current development version
 ...........................
 
