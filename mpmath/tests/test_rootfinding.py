@@ -5,7 +5,7 @@ from mpmath import (cos, eps, findroot, fp, inf, iv, jacobian, matrix, mnorm,
                     workprec)
 from mpmath.calculus.optimization import (Anderson, ANewton, Bisection,
                                           Illinois, MDNewton, MNewton, Muller,
-                                          Newton, Pegasus, Ridder, Secant)
+                                          Newton, Pegasus, Ridder, Secant, Brent)
 
 
 def test_findroot():
@@ -21,7 +21,7 @@ def test_findroot():
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
     for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
-                   Ridder]:
+                   Ridder,Brent]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
     # test types
@@ -69,6 +69,39 @@ def test_multiplicity():
     for i in range(1, 5):
         assert multiplicity(lambda x: (x - 1)**i, 1) == i
     assert multiplicity(lambda x: x**2, 1) == 0
+
+def test_brent_comprehensive():
+    f=lambda x:x**2-2
+    x=findroot(f,(1,2),solver="brent")
+    assert abs(f(x))<eps
+
+    f=lambda x:x-2
+    solver=Brent(mp,f,(mpf("1.0"),mpf("2.0")),tol=mp.eps)
+    solver.fb=mpf("0.0")
+    solver.fa=f(solver.a)
+    results=list(solver)
+    assert abs(f(results[0][0]))<mp.eps
+
+    f=lambda x:x**2+1
+    with pytest.raises(ValueError):
+        findroot(f,(0,1),solver="brent")
+
+    f=lambda x:x**2-2
+    with pytest.raises(ValueError,match="requires an interval"):
+        findroot(f,1,solver="brent")
+
+    f=lambda x:mp.sin(x)+0.1
+    solver=Brent(mp,f,(mpf("3.0"),mpf("4.0")),tol=mp.eps)
+    results=list(solver)
+    assert results
+
+    f=lambda x:x-mpf("1.5")
+    solver=Brent(mp,f,(mpf("1.0"),mpf("2.0")),tol=mpf("0.5"))
+    results=list(solver)
+    final_b,final_error=results[-1]
+    assert final_error<mpf("0.5")
+    assert abs(f(final_b))<mp.eps
+
 
 def test_multidimensional(capsys):
     def f(*x):

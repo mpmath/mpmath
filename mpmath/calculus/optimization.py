@@ -207,6 +207,65 @@ class Halley:
             error = abs(x - prevx)
             yield x, error
 
+class Brent:
+    """
+    Brent's method for 1D root-finding.
+
+    Requires an interval [a,b] with f(a) and f(b) of opposite signs.
+    Combines bisection, secant, and inverse quadratic interpolation.
+    """
+    maxsteps=100
+
+    def __init__(self,ctx,f,x0,**kwargs):
+        self.ctx=ctx
+        if not len(x0)==2:
+            raise ValueError("Brent's method requires an interval [a,b].")
+        self.a,self.b=x0
+        self.f=f
+        self.tol=kwargs.get("tol",ctx.eps*2**10)
+        self.verbose=kwargs.get("verbose",False)
+
+    def __iter__(self):
+        a,b=self.a,self.b
+        f=self.f
+        ctx=self.ctx
+        tol=self.tol
+        fa,fb=f(a),f(b)
+        if fa*fb>0:
+            raise ValueError("Root must be bracketed for Brent's method.")
+        if abs(fa)<abs(fb):
+            a,b=b,a
+            fa,fb=fb,fa
+        c,fc=a,fa
+        d=e=b-a
+        for _ in range(self.maxsteps):
+            if fb==0:
+                yield b,0
+                return
+            if fa!=fc and fb!=fc:
+                s=(a*fb*fc)/((fa-fb)*(fa-fc))+(b*fa*fc)/((fb-fa)*(fb-fc))+(c*fa*fb)/((fc-fa)*(fc-fb))
+            else:
+                s=b-fb*(b-a)/(fb-fa)
+            cond1=not((3*a+b)/4<s<b) and not((3*b+a)/4>s>b)
+            cond2=abs(s-b)>=abs(b-c)/2
+            cond3=abs(b-c)<tol
+            if cond1 or cond2 or cond3:
+                s=(a+b)/2
+            fs=f(s)
+            d,c=c,b
+            fc=fb
+            if fa*fs<0:
+                b=s
+                fb=fs
+            else:
+                a=s
+                fa=fs
+            if abs(fa)<abs(fb):
+                a,b=b,a
+                fa,fb=fb,fa
+            error=abs(b-a)
+            yield b,error
+
 class Muller:
     """
     1d-solver generating pairs of approximative root and error.
@@ -686,7 +745,7 @@ class MDNewton:
 str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'halley':Halley, 'muller':Muller, 'bisect':Bisection,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
-              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton}
+              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton,'brent': Brent}
 
 def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""
