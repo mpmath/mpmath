@@ -1,6 +1,11 @@
-from importlib.metadata import version
+try:
+    from importlib.metadata import version
+    __version__ = version(__name__)
+except Exception:
+    # Fallback for frozen apps or when metadata unavailable
+    __version__ = "1.4.0"  # Update this string in each release
 
-__version__ = version(__name__)
+
 del version
 
 import functools
