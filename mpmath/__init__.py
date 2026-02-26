@@ -1,10 +1,10 @@
-try:
-    from importlib.metadata import version
-    __version__ = version(__name__)
-except Exception:
-    # Fallback for frozen apps or when metadata unavailable
-    __version__ = "1.4.0"  # Update this string in each release
+from importlib.metadata import version, PackageNotFoundError
 
+try:
+    __version__ = version(__name__)
+except PackageNotFoundError:
+    # Fallback when metadata unavailable
+    __version__ = "0.0.0"
 
 del version
 
