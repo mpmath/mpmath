@@ -8,7 +8,7 @@ def test_issue_metadata_fallback(monkeypatch):
     # Import mpmath normally first to get the expected version
     import mpmath
     expected_version = mpmath.__version__
-    
+
     # Save original version function
     original_version = importlib.metadata.version
 
@@ -23,7 +23,7 @@ def test_issue_metadata_fallback(monkeypatch):
 
     # Remove mpmath from sys.modules to force reload with mocked metadata
     sys.modules.pop("mpmath", None)
-    
+
     # Reload mpmath - should use fallback version
     #   also ensures the hardcoded __version__ attribute is updated correctly
     import mpmath
