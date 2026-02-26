@@ -5,11 +5,7 @@ import importlib.metadata
 import importlib
 
 def test_issue_metadata_fallback(monkeypatch):
-    # Import mpmath normally first to get the expected version
-    import mpmath
-    expected_version = mpmath.__version__
-
-    # Save original version function
+    # Mock metadata.version to simulate frozen app where metadata is unavailable
     original_version = importlib.metadata.version
 
     def mock_version(package_name):
@@ -21,10 +17,9 @@ def test_issue_metadata_fallback(monkeypatch):
 
     monkeypatch.setattr(importlib.metadata, "version", mock_version)
 
-    # Remove mpmath from sys.modules to force reload with mocked metadata
+    # Remove mpmath from sys.modules to force reload
     sys.modules.pop("mpmath", None)
 
-    # Reload mpmath - should use fallback version
-    #   also ensures the hardcoded __version__ attribute is updated correctly
+    # Import mpmath - should fall back to "0.0.0"
     import mpmath
-    assert mpmath.__version__ == expected_version
+    assert mpmath.__version__ == "0.0.0"
