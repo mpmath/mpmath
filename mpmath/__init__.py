@@ -1,7 +1,4 @@
-from importlib.metadata import version
-
-__version__ = version(__name__)
-del version
+from ._version import __version__
 
 import functools
 import sys
