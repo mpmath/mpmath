@@ -54,6 +54,7 @@ exclude = ['.eggs', '.git']
 max_line_length = 200
 
 [tool.setuptools_scm]
+version_file = "mpmath/_version.py"
 
 [tool.pytest.ini_options]
 testpaths = ['mpmath', 'docs']
@@ -66,7 +67,7 @@ timeout = 600
 
 [tool.coverage.run]
 branch = true
-omit = ['mpmath/tests/*']
+omit = ['mpmath/tests/*', 'mpmath/_version.py']
 patch = ["subprocess"]
 
 [tool.coverage.html]
