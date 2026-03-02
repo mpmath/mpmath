@@ -27,7 +27,7 @@ jobs:
         env:
           NO_COLOR: 1  # workaround for sphinx-contrib/autoprogram#76
           COLUMNS: 80  # also enable line wrapping for argparse
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: docs
           path: |
