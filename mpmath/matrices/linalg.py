@@ -311,10 +311,33 @@ class LinearAlgebraMethods:
             ctx.prec = prec
         return result
 
-    def pinv(ctx, A):
-        """Moore Penrose pseudoinverse of the matrix 'A'."""
+    def pinv(ctx, A, tol=None):
+        """
+        Moore Penrose pseudoinverse of the matrix 'A'.
+        
+        A generalization of the matrix inverse that provides a unique result
+        even for singular and non-square matrices. In the overdetermined case,
+        it provides the least squares solution. In the underdetermined case, it
+        provides the minimum norm solution.
+
+        Parameters:
+            A   : The array to compute the pseudoinverse for.
+            tol : Optional tolerance for singular values.
+                  (defaults to ctx.eps)
+
+        Returns:
+            Matrix representing the Moore-Penrose pseudoinverse of A.
+
+        References:
+        https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse
+        https://www.math.ucla.edu/~laub/33a.2.12s/mppseudoinverse.pdf
+        """
+        if not tol:
+            tol = ctx.eps
+        assert tol > 0, "tolerance must be a positive number"
+
         U, S, V = ctx.svd(A)
-        tolerance = max(A.rows, A.cols) * S[0] * ctx.eps
+        tolerance = max(A.rows, A.cols) * S[0] * tol
 
         Splus = ctx.zeros(V.cols, U.cols)
         for ind, val in enumerate(S):
