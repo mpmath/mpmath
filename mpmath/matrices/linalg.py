@@ -327,8 +327,8 @@ class LinearAlgebraMethods:
                 singular values of the matrix are found. Singular values below
                 the tolerance will result in zero values instead of their reciprocal.
                 The tolerance defaults to: max(A.rows, A.cols) * S[0] * ctx.eps
-        Returns:
-            Matrix representing the Moore-Penrose pseudoinverse of A.
+
+        Returns the Moore-Penrose pseudoinverse of A.
 
         **References**
 
