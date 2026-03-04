@@ -554,10 +554,6 @@ def test_isnan_etc():
     assert mp.isnpint(-1 + 0.1j) is False
     assert mp.isnpint(0 + 0.1j) is False
     assert mp.isnpint(inf) is False
-    with pytest.deprecated_call():
-        assert fp.is_special(1) is False
-    with pytest.deprecated_call():
-        assert fp.is_special(0.0) is True
 
 
 def test_isprime():
