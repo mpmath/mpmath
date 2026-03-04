@@ -572,9 +572,8 @@ def test_ctx_mag():
     assert mp.mag(MPQ(2)) == 2
     assert mp.mag(MPQ(0)) == mpf('-inf')
 
-def test_to_man_exp_deprecation():
-    with pytest.deprecated_call():
-        to_man_exp(fnone)
+def test_to_man_exp():
+    assert to_man_exp(fnone, signed=False) == (1, 0)
 
 def test_rand_precision():
     """

@@ -933,7 +933,7 @@ class PythonMPContext:
         """
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
-                return bool(to_man_exp(x._mpf_, signed=True)[0])
+                return bool(to_man_exp(x._mpf_)[0])
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
@@ -976,15 +976,15 @@ class PythonMPContext:
             return True
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
-                man, exp = to_man_exp(x._mpf_, signed=True)
+                man, exp = to_man_exp(x._mpf_)
                 return bool((man and exp >= 0) or x._mpf_ == fzero)
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
             if ctx.isfinite(x):
-                man, exp = to_man_exp(re, signed=True)
+                man, exp = to_man_exp(re)
                 re_isint = bool((man and exp >= 0) or re == fzero)
-                man, exp = to_man_exp(im, signed=True)
+                man, exp = to_man_exp(im)
                 im_isint = bool((man and exp >= 0) or im == fzero)
             else:
                 return False
@@ -1228,7 +1228,7 @@ class PythonMPContext:
                 v = x._mpf_
             else:
                 raise NotImplementedError
-        man, exp = to_man_exp(v, signed=True)
+        man, exp = to_man_exp(v)
         if man:
             if exp >= -4:
                 if exp >= 0:
@@ -1246,7 +1246,7 @@ class PythonMPContext:
             return ctx.ninf
         if x in (finf, fninf, fnan):
             return ctx.make_mpf(mpf_abs(x))
-        man, exp = to_man_exp(x, signed=True)
+        man, exp = to_man_exp(x)
         return exp+man.bit_length()
 
     def mag(ctx, x):
