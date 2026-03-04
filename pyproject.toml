@@ -12,7 +12,6 @@ classifiers = ['Topic :: Scientific/Engineering :: Mathematics',
                'Programming Language :: Python',
                'Programming Language :: Python :: 3',
                'Programming Language :: Python :: 3 :: Only',
-               'Programming Language :: Python :: 3.9',
                'Programming Language :: Python :: 3.10',
                'Programming Language :: Python :: 3.11',
                'Programming Language :: Python :: 3.12',
@@ -22,7 +21,7 @@ classifiers = ['Topic :: Scientific/Engineering :: Mathematics',
                'Programming Language :: Python :: Implementation :: CPython',
                'Programming Language :: Python :: Implementation :: PyPy']
 dynamic = ['version']
-requires-python = '>=3.9'
+requires-python = '>=3.10'
 readme = 'README.rst'
 
 [project.urls]
