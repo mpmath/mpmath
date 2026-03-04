@@ -339,7 +339,7 @@ class LinearAlgebraMethods:
 
         if not tolerance:
             tolerance = max(A.rows, A.cols) * S[0] * ctx.eps
-        assert tolerance > 0, "tolerance must be a positive number"
+        assert tolerance > 0
 
         Splus = ctx.zeros(V.cols, U.cols)
         for ind, val in enumerate(S):
