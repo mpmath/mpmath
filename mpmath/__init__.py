@@ -10,9 +10,6 @@ from .ctx_fp import FPContext
 from .ctx_mp import MPContext
 from .ctx_iv import MPIntervalContext
 
-# deprecated modules
-from . import rational
-
 fp = FPContext()
 mp = MPContext()
 iv = MPIntervalContext()
