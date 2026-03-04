@@ -2,23 +2,12 @@
 Test bit-level integer and mpf operations
 """
 
-import pytest
-
 from mpmath import eps, fadd, ldexp, mp, mpc, mpf
-from mpmath.libmp import (MPZ, bitcount, fone, from_float, from_man_exp, fzero,
-                          mpf_add, mpf_neg, mpf_perturb, mpf_sub,
-                          round_ceiling, round_down, round_floor,
-                          round_nearest, round_up, to_float, trailing)
+from mpmath.libmp import (MPZ, fone, from_float, from_man_exp, fzero, mpf_add,
+                          mpf_neg, mpf_perturb, mpf_sub, round_ceiling,
+                          round_down, round_floor, round_nearest, round_up,
+                          to_float, trailing)
 
-
-def test_bitcount():
-    with pytest.deprecated_call():
-        assert bitcount(0) == 0
-        assert bitcount(1) == 1
-        assert bitcount(7) == 3
-        assert bitcount(8) == 4
-        assert bitcount(2**100) == 101
-        assert bitcount(2**100-1) == 100
 
 def test_trailing():
     assert trailing(0) == 0
