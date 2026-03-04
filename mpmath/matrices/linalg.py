@@ -320,7 +320,8 @@ class LinearAlgebraMethods:
         it provides the least squares solution. In the underdetermined case, it
         provides the minimum norm solution.
 
-        Parameters:
+        **Parameters**
+
             A : The matrix to compute the pseudoinverse for.
             tolerance : Optional tolerance threshold for singular values.
                 During the operation of the algorithm, the reciprocals of the
