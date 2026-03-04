@@ -7,7 +7,7 @@ import mpmath
 
 
 collect_ignore = ['mpmath/__init__.py',
-                  'mpmath/rational.py', 'mpmath/math2.py']
+                  'mpmath/rational.py']
 
 
 def pytest_report_header(config):
