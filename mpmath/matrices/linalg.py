@@ -313,7 +313,7 @@ class LinearAlgebraMethods:
 
     def pinv(ctx, A, tolerance=None):
         """
-        Moore Penrose pseudoinverse of the matrix 'A'.
+        Returns Moore-Penrose pseudoinverse of the matrix 'A'.
         
         A generalization of the matrix inverse that provides a unique result
         even for singular and non-square matrices. In the overdetermined case,
