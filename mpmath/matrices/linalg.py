@@ -329,8 +329,6 @@ class LinearAlgebraMethods:
                 the tolerance will result in zero values instead of their reciprocal.
                 The tolerance defaults to: max(A.rows, A.cols) * S[0] * ctx.eps
 
-        Returns the Moore-Penrose pseudoinverse of A.
-
         **References**
 
         * [Wikipedia]_ https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse
