@@ -321,7 +321,7 @@ class LinearAlgebraMethods:
         provides the minimum norm solution.
 
         Parameters:
-            A   : The array to compute the pseudoinverse for.
+            A   : The matrix to compute the pseudoinverse for.
             tol : Optional tolerance for singular values.
                   (defaults to ctx.eps)
 
