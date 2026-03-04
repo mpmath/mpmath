@@ -124,6 +124,10 @@ def test_pinv():
     Aplus = matrix([[1, 0, 0], [0, 0.5, 0.5]])
     assert mnorm(pinv(A) - Aplus, 1) < 1.e-14
 
+    # Verify AssertionError if non-positive tolerance is given.
+    with pytest.raises((AssertionError, TypeError)):
+        pinv(A, tolerance="fail")
+
 def test_householder():
     A, b = A8, b8
     H, p, x, r = householder(extend(A, b))
