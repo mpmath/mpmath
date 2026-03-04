@@ -572,11 +572,6 @@ def test_ctx_mag():
     assert mp.mag(MPQ(2)) == 2
     assert mp.mag(MPQ(0)) == mpf('-inf')
 
-
-def test_ctx_mp_mpnumeric():
-    with pytest.deprecated_call():
-        from mpmath.ctx_mp import mpnumeric
-
 def test_to_man_exp_deprecation():
     with pytest.deprecated_call():
         to_man_exp(fnone)
