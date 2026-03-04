@@ -737,10 +737,7 @@ def mpf_ln(x, prec, rnd=round_fast):
         m -= n*ln2_fixed(wp)
     return from_man_exp(m, -wp, prec, rnd)
 
-def mpf_log(x, prec, rnd=round_fast):
-    warnings.warn("mpf_log is deprecated, use mpf_ln",
-                  DeprecationWarning)
-    return mpf_ln(x, prec, rnd)
+mpf_log = mpf_ln  # deprecated alias
 
 def mpf_log1p(x, prec, rnd=round_fast):
     """

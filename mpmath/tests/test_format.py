@@ -864,6 +864,7 @@ except OSError:
 def float_print(d, i):
     fmt = "%." + str(i) + "a\n"
     a = ctypes.create_string_buffer(256)
+    libc.sprintf.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
     libc.sprintf(a, bytes(fmt, 'utf-8'), ctypes.c_double(d))
     return a.raw.decode('utf-8').split("\n")[0]
 
