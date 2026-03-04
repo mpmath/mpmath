@@ -15,9 +15,9 @@ from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, nstr, pi, workprec)
 from mpmath.libmp import (MPQ, MPZ, finf, fnan, fninf, fnone, fone, from_float,
-                          from_int, from_pickable, from_str, isprime, mpf_add,
-                          mpf_mul, mpf_sub, round_down, round_nearest,
-                          round_up, to_int, to_man_exp, to_pickable)
+                          from_int, from_str, isprime, mpf_add, mpf_mul,
+                          mpf_sub, round_down, round_nearest, round_up, to_int,
+                          to_man_exp)
 
 
 def test_type_compare():
@@ -575,14 +575,6 @@ def test_ctx_mag():
 def test_to_man_exp_deprecation():
     with pytest.deprecated_call():
         to_man_exp(fnone)
-
-def test_to_from_pickable():
-    x = mpf(1.2)._mpf_
-    with pytest.deprecated_call():
-        assert to_pickable(x) == x
-    with pytest.deprecated_call():
-        assert from_pickable(x) == x
-
 
 def test_rand_precision():
     """
