@@ -328,9 +328,10 @@ class LinearAlgebraMethods:
         Returns:
             Matrix representing the Moore-Penrose pseudoinverse of A.
 
-        References:
-        https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse
-        https://www.math.ucla.edu/~laub/33a.2.12s/mppseudoinverse.pdf
+        **References**
+
+        * [Wikipedia]_ https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse
+
         """
         if not tol:
             tol = ctx.eps
