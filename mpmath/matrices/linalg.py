@@ -311,7 +311,7 @@ class LinearAlgebraMethods:
             ctx.prec = prec
         return result
 
-    def pinv(ctx, A, tolerance=None):
+    def pinv(ctx, A, tol=None):
         """
         Returns Moore-Penrose pseudoinverse of the matrix 'A'.
         
@@ -323,11 +323,12 @@ class LinearAlgebraMethods:
         **Arguments**
 
         A : The matrix to compute the pseudoinverse for.
-            tolerance : Optional tolerance threshold for singular values.
-                During the operation of the algorithm, the reciprocals of the
-                singular values of the matrix are found. Singular values below
-                the tolerance will result in zero values instead of their reciprocal.
-                The tolerance defaults to: max(A.rows, A.cols) * S[0] * ctx.eps
+        tol: Optional tolerance threshold for singular values.
+             During the operation of the algorithm, the reciprocals of the
+             singular values of the matrix are found. Singular values below
+             the tolerance will result in zero values instead of their reciprocal.
+             The tolerance defaults to:
+             max(A.rows, A.cols) * maximum_singular_value * ctx.eps
 
         **References**
 
@@ -335,13 +336,13 @@ class LinearAlgebraMethods:
         """
         U, S, V = ctx.svd(A)
 
-        if not tolerance:
-            tolerance = max(A.rows, A.cols) * S[0] * ctx.eps
-        assert tolerance > 0
+        if not tol:
+            tol = max(A.rows, A.cols) * S[0] * ctx.eps
+        assert tol > 0
 
         Splus = ctx.zeros(V.cols, U.cols)
         for ind, val in enumerate(S):
-            if val > tolerance:
+            if val > tol:
                 Splus[ind, ind] = 1/val
 
         v_conj_T = V.apply(lambda x: ctx.conj(x)).T
