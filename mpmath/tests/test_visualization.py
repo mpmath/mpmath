@@ -9,7 +9,6 @@ import pytest
 from mpmath import fp, mp
 
 
-@pytest.mark.filterwarnings("ignore:.*:DeprecationWarning")
 def test_axes():
     try:
         import matplotlib
