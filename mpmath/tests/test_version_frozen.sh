@@ -47,11 +47,8 @@ DIRECT_VERSION=$(python -m mpmath --version)
 echo "Building version_script with PyInstaller..."
 pyinstaller --onefile --clean version_script.py
 
-echo "Running frozen executable..."
-./dist/version_script 2>&1 | tee output.txt
-
-# Extract the version from the output
-FROZEN_VERSION=$(grep "mpmath version:" output.txt | awk '{print $3}')
+echo "Run frozen executable and extract the version from the output"
+FROZEN_VERSION=$(./dist/version_script 2>&1)
 
 # Return to the original repository directory
 cd "$MPMATH_DIR" 
