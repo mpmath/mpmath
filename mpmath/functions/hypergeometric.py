@@ -443,11 +443,7 @@ def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
     if ctx.isfinite(z) and (absz <= 0.8 or
                             (ctx.isnpint(a) and -1000 <= a) or
                             (ctx.isnpint(b) and -1000 <= b)):
-        try:
-            return ctx.hypsum(2, 1, (atype, btype, ctype), [a, b, c], z, **kwargs)
-        except ctx.NoConvergence:
-            if kwargs.get('force_series', False):
-                raise
+        return ctx.hypsum(2, 1, (atype, btype, ctype), [a, b, c], z, **kwargs)
 
     orig = ctx.prec
     try:
