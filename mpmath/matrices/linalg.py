@@ -323,7 +323,7 @@ class LinearAlgebraMethods:
         **Arguments**
 
         A : The matrix to compute the pseudoinverse for.
-        tol: Optional tolerance threshold for singular values.
+        rtol: Optional tolerance threshold for singular values.
              During the operation of the algorithm, the reciprocals of the
              singular values of the matrix are found. Singular values below
              the tolerance will result in zero values instead of their reciprocal.
@@ -336,13 +336,13 @@ class LinearAlgebraMethods:
         """
         U, S, V = ctx.svd(A)
 
-        if not tol:
-            tol = max(A.rows, A.cols) * S[0] * ctx.eps
-        assert tol > 0
+        if not rtol:
+            rtol = max(A.rows, A.cols) * S[0] * ctx.eps
+        assert rtol > 0
 
         Splus = ctx.zeros(V.cols, U.cols)
         for ind, val in enumerate(S):
-            if val > tol:
+            if val > rtol:
                 Splus[ind, ind] = 1/val
 
         v_conj_T = V.apply(lambda x: ctx.conj(x)).T

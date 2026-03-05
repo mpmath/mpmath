@@ -125,7 +125,7 @@ def test_pinv():
     assert mnorm(pinv(A) - Aplus, 1) < 1.e-14
 
     # Check with non-default tolerance.
-    assert mnorm(pinv(A, tol=1e-20) - Aplus, 1) < 1.e-14
+    assert mnorm(pinv(A, rtol=1e-20) - Aplus, 1) < 1.e-14
 
 def test_householder():
     A, b = A8, b8
