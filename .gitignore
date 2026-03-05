@@ -72,6 +72,3 @@ htmlcov/
 # per-project directories for virtual environments
 venv/
 .venv/
-
-# Temporary test directory
-test_local/
