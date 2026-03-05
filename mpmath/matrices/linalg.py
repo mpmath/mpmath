@@ -311,7 +311,7 @@ class LinearAlgebraMethods:
             ctx.prec = prec
         return result
 
-    def pinv(ctx, A, tol=None):
+    def pinv(ctx, A, *, rtol=None):
         """
         Returns Moore-Penrose pseudoinverse of the matrix 'A'.
         
