@@ -313,22 +313,24 @@ class LinearAlgebraMethods:
 
     def pinv(ctx, A, *, rtol=None):
         """
-        Returns Moore-Penrose pseudoinverse of the matrix 'A'.
+        Returns Moore-Penrose pseudoinverse of the matrix `A`.
         
-        A generalization of the matrix inverse that provides a unique result
-        even for singular and non-square matrices. In the overdetermined case,
-        it provides the least squares solution. In the underdetermined case, it
-        provides the minimum norm solution.
+        This is a generalization of the matrix inverse that provides a unique
+        result even for singular and non-square matrices. In the overdetermined
+        case, it provides the least squares solution. In the underdetermined
+        case, it provides the minimum norm solution.
+
+        The Moore-Penrose inverse of `A` is computed using its singular-value
+        decomposition. If `s` is the maximum singular value of `A`, then the
+        significance cut-off value is determined by `rtol * s`. Any singular
+        value below this value is assumed insignificant.
 
         **Arguments**
 
         A : The matrix to compute the pseudoinverse for.
-        rtol: Optional tolerance threshold for singular values.
-             During the operation of the algorithm, the reciprocals of the
-             singular values of the matrix are found. Singular values below
-             the tolerance will result in zero values instead of their reciprocal.
-             The tolerance defaults to:
-             max(A.rows, A.cols) * maximum_singular_value * ctx.eps
+        rtol: Optional relative threshold term.
+            The default value is max(A.rows, A.cols) * ctx.eps,
+            Where ctx.eps is the machine precision at the current working precision.
 
         **References**
 
@@ -342,7 +344,7 @@ class LinearAlgebraMethods:
 
         Splus = ctx.zeros(V.cols, U.cols)
         for ind, val in enumerate(S):
-            if val > rtol:
+            if val > rtol * max(S):
                 Splus[ind, ind] = 1/val
 
         v_conj_T = V.apply(lambda x: ctx.conj(x)).T
