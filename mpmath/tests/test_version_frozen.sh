@@ -38,7 +38,7 @@ cd "$TEMP_DIR" # Return to temporary folder to run the version script
 # Create version_script.py that imports mpmath and prints the package version
 cat << EOF > version_script.py
 import mpmath
-print("mpmath version:", mpmath.__version__)
+print(mpmath.__version__)
 EOF
 
 # Save local version for later comparison
