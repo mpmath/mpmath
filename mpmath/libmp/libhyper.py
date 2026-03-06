@@ -84,12 +84,12 @@ def make_hyp_summator(key):
         add("SIM = PIM = MPZ_ZERO")
 
     if have_complex_arg:
-        add("xsign, xm, xe, xbc = z[0]")
+        add("xsign, xm, xe = z[0]")
         add("if xsign: xm = -xm")
-        add("ysign, ym, ye, ybc = z[1]")
+        add("ysign, ym, ye = z[1]")
         add("if ysign: ym = -ym")
     else:
-        add("xsign, xm, xe, xbc = z")
+        add("xsign, xm, xe = z")
         add("if xsign: xm = -xm")
 
     add("offset = xe + wp")
@@ -114,7 +114,7 @@ def make_hyp_summator(key):
             add("%sP_%i, %sQ_%i = coeffs[%i].numerator, coeffs[%i].denominator" % (W, i, W, i, i, i))
         elif flag == 'R':
             ([areal,breal][i >= p]).append(i)
-            add("xsign, xm, xe, xbc = coeffs[%i]._mpf_" % i)
+            add("xsign, xm, xe = coeffs[%i]._mpf_" % i)
             add("if xsign: xm = -xm")
             add("offset = xe + wp")
             add("if offset >= 0:")
@@ -124,9 +124,9 @@ def make_hyp_summator(key):
         elif flag == 'C':
             ([acomplex,bcomplex][i >= p]).append(i)
             add("__re, __im = coeffs[%i]._mpc_" % i)
-            add("xsign, xm, xe, xbc = __re")
+            add("xsign, xm, xe = __re")
             add("if xsign: xm = -xm")
-            add("ysign, ym, ye, ybc = __im")
+            add("ysign, ym, ye = __im")
             add("if ysign: ym = -ym")
 
             add("offset = xe + wp")
@@ -261,11 +261,11 @@ def make_hyp_summator(key):
 
         add("if SRE:")
         add("    if SIM:")
-        add("        magn = max(a[2]+a[3], b[2]+b[3])")
+        add("        magn = max(a[2]+a[1].bit_length(), b[2]+b[1].bit_length())")
         add("    else:")
-        add("        magn = a[2]+a[3]")
+        add("        magn = a[2]+a[1].bit_length()")
         add("elif SIM:")
-        add("    magn = b[2]+b[3]")
+        add("    magn = b[2]+b[1].bit_length()")
         add("else:")
         add("    magn = -wp+1")
 
@@ -274,7 +274,7 @@ def make_hyp_summator(key):
         add("a = from_man_exp(SRE, -wp, prec, 'n')")
 
         add("if SRE:")
-        add("    magn = a[2]+a[3]")
+        add("    magn = a[2]+a[1].bit_length()")
         add("else:")
         add("    magn = -wp+1")
 
@@ -301,12 +301,13 @@ def make_hyp_summator(key):
 #    only the converse delegation is implemented)
 
 def mpf_erf(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if not man:
         if x == fzero: return fzero
         if x == finf: return fone
         if x== fninf: return fnone
         return fnan
+    bc = man.bit_length()
     size = exp + bc
     lg = math.log
     # The approximation erf(x) = 1 is accurate to > x^2 * log(e,2) bits
@@ -352,13 +353,14 @@ def erfc_check_series(x, prec):
     return False
 
 def mpf_erfc(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if not man:
         if x == fzero: return fone
         if x == finf: return fzero
         if x == fninf: return ftwo
         return fnan
     wp = prec + 20
+    bc = man.bit_length()
     mag = bc+exp
     # Preserve full accuracy when exponent grows huge
     wp += max(0, 2*mag)
@@ -452,13 +454,14 @@ def complex_ei_asymptotic(zre, zim, prec):
 def mpf_ei(x, prec, rnd=round_fast, e1=False):
     if e1:
         x = mpf_neg(x)
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if e1 and not sign:
         if x == fzero:
             return finf
         raise ComplexResult("E1(x) for x < 0")
     if man:
-        xabs = 0, man, exp, bc
+        xabs = 0, man, exp
+        bc = man.bit_length()
         xmag = exp+bc
         wp = prec + 20
         can_use_asymp = xmag > wp
@@ -495,8 +498,8 @@ def mpc_ei(z, prec, rnd=round_fast, e1=False):
     if e1:
         z = mpc_neg(z)
     a, b = z
-    asign, aman, aexp, abc = a
-    bsign, bman, bexp, bbc = b
+    asign, aman, aexp = a
+    bsign, bman, bexp = b
     if b == fzero:
         if e1:
             x = mpf_neg(mpf_ei(a, prec, rnd))
@@ -511,7 +514,9 @@ def mpc_ei(z, prec, rnd=round_fast, e1=False):
         if not aman or not bman:
             return (fnan, fnan)
     wp = prec + 40
+    abc = aman.bit_length()
     amag = aexp+abc
+    bbc = bman.bit_length()
     bmag = bexp+bbc
     zmag = max(amag, bmag)
     can_use_asymp = zmag > wp
@@ -572,7 +577,7 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
     The imaginary part is an optional branch cut term
 
     """
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if not man:
         if gamma:
             if x == fzero:
@@ -597,6 +602,7 @@ def mpf_expint(n, x, prec, rnd=round_fast, gamma=False):
     if gamma:
         n = 1-n
     wp = prec + 20
+    bc = man.bit_length()
     xmag = exp + bc
     # Beware of near-poles
     if xmag < -10:
@@ -701,11 +707,11 @@ def mpc_ci_si_taylor(re, im, wp, which=0):
     # The following code is only designed for small arguments,
     # and not too small arguments (for relative accuracy)
     if re[1]:
-        mag = re[2]+re[3]
+        mag = re[2]+re[1].bit_length()
     elif im[1]:
-        mag = im[2]+im[3]
+        mag = im[2]+im[1].bit_length()
     if im[1]:
-        mag = max(mag, im[2]+im[3])
+        mag = max(mag, im[2]+im[1].bit_length())
     if mag > 2 or mag < -wp:
         raise NotImplementedError
     wp += (2-mag)
@@ -739,7 +745,7 @@ def mpf_ci_si(x, prec, rnd=round_fast, which=2):
     Note: if x < 0, Ci(x) needs an additional imaginary term, pi*i.
     """
     wp = prec + 20
-    sign, man, exp, bc = x
+    sign, man, exp = x
     ci, si = None, None
     if not man:
         if x == fzero:
@@ -754,6 +760,7 @@ def mpf_ci_si(x, prec, rnd=round_fast, which=2):
                 si = mpf_neg(mpf_shift(mpf_pi(prec, negative_rnd[rnd]), -1))
         return (ci, si)
     # For small x: Ci(x) ~ euler + log(x), Si(x) ~ x
+    bc = man.bit_length()
     mag = exp+bc
     if mag < -wp:
         if which != 0:
@@ -885,7 +892,7 @@ def mpc_si(z, prec, rnd=round_fast):
 def mpf_besseljn(n, x, prec, rnd=round_fast):
     prec += 50
     negate = n < 0 and n & 1
-    mag = x[2]+x[3]
+    mag = x[2]+x[1].bit_length()
     n = abs(n)
     wp = prec + 20 + n*n.bit_length()
     if mag < 0:
@@ -910,7 +917,7 @@ def mpc_besseljn(n, z, prec, rnd=round_fast):
     n = abs(n)
     origprec = prec
     zre, zim = z
-    mag = max(zre[2]+zre[3], zim[2]+zim[3])
+    mag = max(zre[2]+zre[1].bit_length(), zim[2]+zim[1].bit_length())
     prec += 20 + n*n.bit_length() + abs(mag)
     if mag < 0:
         prec -= n * mag
@@ -946,8 +953,8 @@ def mpf_agm(a, b, prec, rnd=round_fast):
     Computes the arithmetic-geometric mean agm(a,b) for
     nonnegative mpf values a, b.
     """
-    asign, aman, aexp, abc = a
-    bsign, bman, bexp, bbc = b
+    asign, aman, aexp = a
+    bsign, bman, bexp = b
     if asign or bsign:
         raise ComplexResult("agm of a negative number")
     # Handle inf, nan or zero in either operand
@@ -965,7 +972,9 @@ def mpf_agm(a, b, prec, rnd=round_fast):
         # agm(0,x) = agm(x,0) = 0
         return fzero
     wp = prec + 20
+    abc = aman.bit_length()
     amag = aexp+abc
+    bbc = bman.bit_length()
     bmag = bexp+bbc
     mag_delta = amag - bmag
     # Reduce to roughly the same magnitude using floating-point AGM
@@ -975,9 +984,11 @@ def mpf_agm(a, b, prec, rnd=round_fast):
             a, b = mpf_shift(mpf_add(a,b,wp),-1), \
                 mpf_sqrt(mpf_mul(a,b,wp),wp)
             abs_mag_delta //= 2
-        asign, aman, aexp, abc = a
-        bsign, bman, bexp, bbc = b
+        asign, aman, aexp = a
+        bsign, bman, bexp = b
+        abc = aman.bit_length()
         amag = aexp+abc
+        bbc = bman.bit_length()
         bmag = bexp+bbc
         mag_delta = amag - bmag
     #print to_float(a), to_float(b)
@@ -1073,7 +1084,7 @@ def mpf_ellipe(x, prec, rnd=round_fast):
     # http://functions.wolfram.com/EllipticIntegrals/
     # EllipticK/20/01/0001/
     # E = (1-m)*(K'(m)*2*m + K(m))
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if not man:
         if x == fzero:
             return mpf_shift(mpf_pi(prec, rnd), -1)
@@ -1086,6 +1097,7 @@ def mpf_ellipe(x, prec, rnd=round_fast):
     if x == fone:
         return fone
     wp = prec+20
+    bc = man.bit_length()
     mag = exp+bc
     if mag < -wp:
         return mpf_shift(mpf_pi(prec, rnd), -1)
@@ -1108,7 +1120,7 @@ def mpc_ellipe(z, prec, rnd=round_fast):
             return mpf_ellipe(re, prec, rnd), fzero
     wp = prec + 15
     mag = mpc_abs(z, 1)
-    p = max(mag[2]+mag[3], 0) - wp
+    p = max(mag[2]+mag[1].bit_length(), 0) - wp
     h = mpf_shift(fone, p)
     K = mpc_ellipk(z, 2*wp)
     Kh = mpc_ellipk(mpc_add_mpf(z, h, 2*wp), 2*wp)

@@ -16,9 +16,9 @@ import warnings
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_TWO, MPZ_ZERO
 from .libintmath import (giant_steps, ifib, isqrt_fast, lshift, rshift,
                          sqrt_fixed)
-from .libmpf import (ComplexResult, bctable, finf, fnan, fninf, fnone, fone,
-                     from_int, from_man_exp, from_rational, fzero, mpf_abs,
-                     mpf_add, mpf_cmp, mpf_div, mpf_mul, mpf_mul_int, mpf_neg,
+from .libmpf import (ComplexResult, finf, fnan, fninf, fnone, fone, from_int,
+                     from_man_exp, from_rational, fzero, mpf_abs, mpf_add,
+                     mpf_cmp, mpf_div, mpf_mul, mpf_mul_int, mpf_neg,
                      mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
                      mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
                      normalize, reciprocal_rnd, round_ceiling, round_fast,
@@ -111,7 +111,7 @@ def def_mpf_constant(fixed):
         v = fixed(wp)
         if rnd in (round_up, round_ceiling):
             v += 1
-        return normalize(0, v, -wp, v.bit_length(), prec, rnd)
+        return normalize(0, v, -wp, prec, rnd)
     f.__doc__ = fixed.__doc__
     return f
 
@@ -315,8 +315,8 @@ def mpf_pow(s, t, prec, rnd=round_fast):
     Compute s**t. Raises ComplexResult if s is negative and t is
     fractional.
     """
-    ssign, sman, sexp, sbc = s
-    tsign, tman, texp, tbc = t
+    ssign, sman, sexp = s
+    tsign, tman, texp = t
     if ssign and texp < 0:
         raise ComplexResult("negative number raised to a fractional power")
     if texp >= 0:
@@ -348,31 +348,26 @@ def int_pow_fixed(y, n, prec):
     """
     if n == 2:
         return (y*y), 0
-    bc = y.bit_length()
     exp = 0
     workprec = 2 * (prec + 4*n.bit_length() + 4)
-    _, pm, pe, pbc = fone
+    _, pm, pe = fone
     while 1:
         if n & 1:
             pm = pm*y
             pe = pe+exp
-            pbc += bc - 2
-            pbc = pbc + bctable[int(pm >> pbc)]
+            pbc = pm.bit_length()
             if pbc > workprec:
                 pm = pm >> (pbc-workprec)
                 pe += pbc - workprec
-                pbc = workprec
             n -= 1
             if not n:
                 break
         y = y*y
         exp = exp+exp
-        bc = bc + bc - 2
-        bc = bc + bctable[int(y >> bc)]
+        bc = y.bit_length()
         if bc > workprec:
             y = y >> (bc-workprec)
             exp += bc - workprec
-            bc = workprec
         n = n // 2
     return pm, pe
 
@@ -421,7 +416,7 @@ def mpf_nthroot(s, n, prec, rnd=round_fast):
 
     Use the Newton method when faster, otherwise use x**(1/n)
     """
-    sign, man, exp, bc = s
+    sign, man, exp = s
     if sign:
         raise ComplexResult("nth root of a negative number")
     if not man:
@@ -458,7 +453,7 @@ def mpf_nthroot(s, n, prec, rnd=round_fast):
         fn = from_int(n)
         nth = mpf_rdiv_int(1, fn, prec2)
         r = mpf_pow(s, nth, prec2, rnd)
-        s = normalize(r[0], r[1], r[2], r[3], prec, rnd)
+        s = normalize(r[0], r[1], r[2], prec, rnd)
         if flag_inverse:
             return mpf_div(fone, s, prec-extra_inverse, rnd)
         else:
@@ -471,7 +466,7 @@ def mpf_nthroot(s, n, prec, rnd=round_fast):
         prec2 += prec2//10
         prec2 = prec2 - prec2%n
     # Mantissa may have more bits than we need. Trim it down.
-    shift = bc - prec2
+    shift = man.bit_length() - prec2
     # Adjust exponents to make prec2 and exp+shift multiples of n.
     sign1 = 0
     es = exp+shift
@@ -661,7 +656,8 @@ def mpf_ln(x, prec, rnd=round_fast):
     Compute the natural logarithm of the mpf value x. If x is negative,
     ComplexResult is raised.
     """
-    sign, man, exp, bc = x
+    sign, man, exp = x
+    bc = man.bit_length()
     #------------------------------------------------------------------
     # Handle special values
     if not man:
@@ -695,7 +691,7 @@ def mpf_ln(x, prec, rnd=round_fast):
         tbc = tman.bit_length()
         cancellation = bc - tbc
         if cancellation > wp:
-            t = normalize(tsign, tman, abs_mag-bc, tbc, tbc, 'n')
+            t = normalize(tsign, tman, abs_mag-bc, tbc, 'n')
             return mpf_perturb(t, tsign, prec, rnd)
         else:
             wp += cancellation
@@ -745,7 +741,8 @@ def mpf_log1p(x, prec, rnd=round_fast):
     """
     wp = prec + 20
     wp2 = wp*2
-    _, man, exp, bc = x
+    _, man, exp = x
+    bc = man.bit_length()
     if exp + bc < -wp and (man or exp):
         # x - x**2/2
         x2 = mpf_sub(fone, mpf_shift(x, -1), wp2, rnd)
@@ -783,7 +780,7 @@ def mpf_log_hypot(a, b, prec, rnd):
     # Not exact
     h2 = mpf_add(a2, b2, prec+extra)
     cancelled = mpf_add(h2, fnone, 10)
-    mag_cancelled = cancelled[2]+cancelled[3]
+    mag_cancelled = cancelled[2]+cancelled[1].bit_length()
     # Just redo the sum exactly if necessary (could be smarter
     # and avoid memory allocation when a or b is precisely 1
     # and the other is tiny...)
@@ -855,7 +852,8 @@ def atan_inf(sign, prec, rnd):
     return mpf_neg(mpf_shift(mpf_pi(prec, negative_rnd[rnd]), -1))
 
 def mpf_atan(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
+    sign, man, exp = x
+    bc = man.bit_length()
     if not man:
         if x == fzero: return fzero
         if x == finf: return atan_inf(0, prec, rnd)
@@ -890,8 +888,8 @@ def mpf_atan(x, prec, rnd=round_fast):
 
 # TODO: cleanup the special cases
 def mpf_atan2(y, x, prec, rnd=round_fast):
-    xsign, xman, xexp, xbc = x
-    ysign, yman, yexp, ybc = y
+    xsign, xman, xexp = x
+    ysign, yman, yexp = y
     if not yman:
         if y == fzero and x != fnan:
             if mpf_sign(x) >= 0:
@@ -935,7 +933,8 @@ def mpf_atan2(y, x, prec, rnd=round_fast):
         return mpf_pos(tquo, prec, rnd)
 
 def mpf_asin(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
+    sign, man, exp = x
+    bc = man.bit_length()
     if bc+exp > 0 and x not in (fone, fnone):
         raise ComplexResult("asin(x) is real only for -1 <= x <= 1")
     # asin(x) = 2*atan(x/(1+sqrt(1-x**2)))
@@ -947,7 +946,8 @@ def mpf_asin(x, prec, rnd=round_fast):
 
 def mpf_acos(x, prec, rnd=round_fast):
     # acos(x) = 2*atan(sqrt(1-x**2)/(1+x))
-    sign, man, exp, bc = x
+    sign, man, exp = x
+    bc = man.bit_length()
     if bc + exp > 0:
         if x not in (fone, fnone):
             raise ComplexResult("acos(x) is real only for -1 <= x <= 1")
@@ -961,7 +961,8 @@ def mpf_acos(x, prec, rnd=round_fast):
 
 def mpf_asinh(x, prec, rnd=round_fast):
     wp = prec + 20
-    sign, man, exp, bc = x
+    sign, man, exp = x
+    bc = man.bit_length()
     mag = exp+bc
     if mag < -8:
         if mag < -wp:
@@ -986,8 +987,9 @@ def mpf_acosh(x, prec, rnd=round_fast):
 
 def mpf_atanh(x, prec, rnd=round_fast):
     # atanh(x) = log((1+x)/(1-x))/2
-    sign, man, exp, bc = x
-    if (not man) and exp:
+    sign, man, exp = x
+    bc = man.bit_length()
+    if not man and exp:
         if x in (fzero, fnan):
             return x
         raise ComplexResult("atanh(x) is real only for -1 <= x <= 1")
@@ -1006,7 +1008,8 @@ def mpf_atanh(x, prec, rnd=round_fast):
     return mpf_shift(mpf_ln(mpf_div(a, b, wp), prec, rnd), -1)
 
 def mpf_fibonacci(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
+    sign, man, exp = x
+    bc = man.bit_length()
     if not man:
         if x == fninf:
             return fnan
@@ -1174,8 +1177,9 @@ def cos_sin_basecase(x, prec):
     return ((cos*cos_t-sin*sin_t) >> prec), ((sin*cos_t+cos*sin_t) >> prec)
 
 def mpf_exp(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if man:
+        bc = man.bit_length()
         mag = bc + exp
         wp = prec + 14
         if sign:
@@ -1220,8 +1224,8 @@ def mpf_exp(x, prec, rnd=round_fast):
 
 def mpf_cosh_sinh(x, prec, rnd=round_fast, tanh=0):
     """Simultaneously compute (cosh(x), sinh(x)) for real x"""
-    sign, man, exp, bc = x
-    if (not man) and exp:
+    sign, man, exp = x
+    if not man and exp:
         if tanh:
             if x == finf: return fone
             if x == fninf: return fnone
@@ -1229,6 +1233,7 @@ def mpf_cosh_sinh(x, prec, rnd=round_fast, tanh=0):
         if x == finf: return (finf, finf)
         if x == fninf: return (finf, fninf)
         return fnan, fnan
+    bc = man.bit_length()
     mag = exp+bc
     wp = prec+14
     if mag < -4:
@@ -1331,7 +1336,7 @@ def mpf_cos_sin(x, prec, rnd=round_fast, which=0, pi=False):
 
     if pi=True, compute for pi*x
     """
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if not man:
         if exp:
             c, s = fnan, fnan
@@ -1342,6 +1347,7 @@ def mpf_cos_sin(x, prec, rnd=round_fast, which=0, pi=False):
         if which == 2: return s
         if which == 3: return s
 
+    bc = man.bit_length()
     mag = bc + exp
     wp = prec + 10
 

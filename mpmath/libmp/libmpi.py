@@ -349,7 +349,8 @@ def MAX(x, y):
     return y
 
 def cos_sin_quadrant(x, wp):
-    sign, man, exp, bc = x
+    sign, man, exp = x
+    bc = man.bit_length()
     if x == fzero:
         return fone, fzero, 0
     # TODO: combine evaluation code to avoid duplicate modulo
@@ -399,7 +400,8 @@ def mpi_cos_sin(x, prec):
         else:
             p = less
         v = mpf_mul(v, p, prec, rounding)
-        sign, man, exp, bc = v
+        sign, man, exp = v
+        bc = man.bit_length()
         if exp+bc >= 1:
             if sign:
                 return fnone
@@ -750,7 +752,7 @@ def mpci_pow(x, y, prec):
     if yim == mpi_zero:
         ya, yb = yre
         if ya == yb:
-            sign, man, exp, bc = yb
+            sign, man, exp = yb
             if man and exp >= 0:
                 return mpci_pow_int(x, (-1)**sign * int(man<<exp), prec)
             # x^0
@@ -851,8 +853,8 @@ def mpci_gamma(z, prec, type=0):
     # Estimate precision
     wp = prec+20
     if type != 3:
-        amag = a2[2]+a2[3]
-        bmag = b2[2]+b2[3]
+        amag = a2[2]+a2[1].bit_length()
+        bmag = b2[2]+b2[1].bit_length()
         if a2 != fzero:
             mag = max(amag, bmag)
         else:

@@ -75,7 +75,6 @@ if gmpy and hasattr(MPZ, 'bit_scan1'):
 
 # Used to avoid slow function calls as far as possible
 trailtable = [trailing(n) for n in range(256)]
-bctable = [n.bit_length() for n in range(1024)]
 
 # TODO: speed up for bases 2, 4, 8, 16, ...
 

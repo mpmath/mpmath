@@ -341,7 +341,7 @@ class MPIntervalContext(StandardBaseContext):
         ctx.factorial = ctx._wrap_mpi_function(libmp.mpi_factorial, libmp.mpci_factorial)
         ctx.fac = ctx.factorial
 
-        ctx.eps = ctx._constant(lambda prec, rnd: (0, MPZ_ONE, 1-prec, 1))
+        ctx.eps = ctx._constant(lambda prec, rnd: (0, MPZ_ONE, 1-prec))
         ctx.pi = ctx._constant(libmp.mpf_pi)
         ctx.e = ctx._constant(libmp.mpf_e)
         ctx.ln2 = ctx._constant(libmp.mpf_ln2)

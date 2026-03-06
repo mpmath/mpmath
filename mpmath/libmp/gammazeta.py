@@ -431,7 +431,7 @@ def mpf_bernoulli(n, prec, rnd=round_fast, plus=False):
         else:
             a = bin1
         for j in range(1, m//6+1):
-            usign, uman, uexp, ubc = u = numbers[m-6*j]
+            usign, uman, uexp = u = numbers[m-6*j]
             if usign:
                 uman = -uman
             s += lshift(a*uman, uexp-sexp)
@@ -645,7 +645,7 @@ def mpf_psi0(x, prec, rnd=round_fast):
     Computation of the digamma function (psi function of order 0)
     of a real argument.
     """
-    sign, man, exp, bc = x
+    sign, man, exp = x
     wp = prec + 10
     if not man:
         if x == finf: return x
@@ -653,6 +653,7 @@ def mpf_psi0(x, prec, rnd=round_fast):
     if x == fzero or (exp >= 0 and sign):
         raise ValueError("polygamma pole")
     # Near 0 -- fixed-point arithmetic becomes bad
+    bc = man.bit_length()
     if exp+bc < -5:
         v = mpf_psi0(mpf_add(x, fone, prec, rnd), prec, rnd)
         return mpf_sub(v, mpf_div(fone, x, wp, rnd), prec, rnd)
@@ -687,7 +688,7 @@ def mpf_psi0(x, prec, rnd=round_fast):
     k = 1
     while 1:
         t = (t*x2) >> wp
-        bsign, bman, bexp, bbc = mpf_bernoulli(2*k, wp)
+        bsign, bman, bexp = mpf_bernoulli(2*k, wp)
         offset = (bexp + 2*wp)
         if offset >= 0: term = (bman << offset) // (t*(2*k))
         else:           term = (bman >> (-offset)) // (t*(2*k))
@@ -709,7 +710,8 @@ def mpc_psi0(z, prec, rnd=round_fast):
     if im == fzero:
         return (mpf_psi0(re, prec, rnd), fzero)
     wp = prec + 20
-    sign, man, exp, bc = re
+    sign, man, exp = re
+    bc = man.bit_length()
     # Reflection formula
     if sign and exp+bc > 3:
         c = mpc_cos_pi(z, wp)
@@ -771,7 +773,7 @@ def mpc_psi(m, z, prec, rnd=round_fast):
         return mpc_psi0(z, prec, rnd)
     re, im = z
     wp = prec + 20
-    sign, man, exp, bc = re
+    sign, man, exp = re
     if not im[1]:
         if im in (finf, fninf, fnan):
             return (fnan, fnan)
@@ -802,7 +804,7 @@ def mpc_psi(m, z, prec, rnd=round_fast):
     # Important: we want to sum up to the *relative* error,
     # not the absolute error, because psi^(m)(z) might be tiny
     magn = mpc_abs(s, 10)
-    magn = magn[2]+magn[3]
+    magn = magn[2]+magn[1].bit_length()
     eps = mpf_shift(fone, magn-wp+2)
     while 1:
         zm = mpc_mul(zm, z2, wp)
@@ -945,7 +947,7 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
     return from_man_exp(t, -wp-wp, prec, rnd)
 
 def mpf_zeta(s, prec, rnd=round_fast, alt=0):
-    sign, man, exp, bc = s
+    sign, man, exp = s
     if not man:
         if s == fzero:
             if alt:
@@ -956,6 +958,7 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
             return fone
         return fnan
     wp = prec + 20
+    bc = man.bit_length()
     # First term vanishes?
     if (not sign) and (exp + bc > (math.log(wp,2) + 2)):
         return mpf_perturb(fone, alt, prec, rnd)
@@ -990,7 +993,8 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
 
     # Near pole
     r = mpf_sub(fone, s, wp)
-    asign, aman, aexp, abc = mpf_abs(r)
+    asign, aman, aexp = mpf_abs(r)
+    abc = aman.bit_length()
     pole_dist = -2*(aexp+abc)
     if pole_dist > wp:
         if alt:
@@ -1044,7 +1048,8 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0, force=False):
 
     # Near pole
     r = mpc_sub(mpc_one, s, wp)
-    asign, aman, aexp, abc = mpc_abs(r, 10)
+    asign, aman, aexp = mpc_abs(r, 10)
+    abc = aman.bit_length()
     pole_dist = -2*(aexp+abc)
     if pole_dist > wp:
         if alt:
@@ -1076,8 +1081,10 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0, force=False):
         a = mpc_gamma(y, wp)
         b = mpc_zeta(y, wp)
         c = mpc_sin_pi(mpc_shift(s, -1), wp)
-        rsign, rman, rexp, rbc = re
-        isign, iman, iexp, ibc = im
+        rsign, rman, rexp = re
+        rbc = rman.bit_length()
+        isign, iman, iexp = im
+        ibc = iman.bit_length()
         mag = max(rexp+rbc, iexp+ibc)
         wp2 = wp + max(0, mag)
         pi = mpf_pi(wp+wp2)
@@ -1690,7 +1697,7 @@ def mpf_gamma(x, prec, rnd=round_fast, type=0):
     """
 
     # Specal values
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if not man:
         if x == fzero:
             if type == 1: return fone
@@ -1700,6 +1707,8 @@ def mpf_gamma(x, prec, rnd=round_fast, type=0):
             if type == 2: return fzero
             return finf
         return fnan
+
+    bc = man.bit_length()
 
     # First of all, for log gamma, numbers can be well beyond the fixed-point
     # range, so we must take care of huge numbers before e.g. trying
@@ -1804,8 +1813,8 @@ def mpf_gamma(x, prec, rnd=round_fast, type=0):
         if cancellation > 10:
             xsub1 = mpf_sub(fone, x)
             xsub2 = mpf_sub(ftwo, x)
-            xsub1mag = xsub1[2]+xsub1[3]
-            xsub2mag = xsub2[2]+xsub2[3]
+            xsub1mag = xsub1[2]+xsub1[1].bit_length()
+            xsub2mag = xsub2[2]+xsub2[1].bit_length()
             if xsub1mag < -wp:
                 return mpf_mul(mpf_euler(wp), mpf_sub(fone, x), prec, rnd)
             if xsub2mag < -wp:
@@ -1886,8 +1895,8 @@ def mpf_gamma(x, prec, rnd=round_fast, type=0):
 
 def mpc_gamma(z, prec, rnd=round_fast, type=0):
     a, b = z
-    asign, aman, aexp, abc = a
-    bsign, bman, bexp, bbc = b
+    asign, aman, aexp = a
+    bsign, bman, bexp = b
 
     if b == fzero:
         # Imaginary part on negative half-axis for log-gamma function
@@ -1905,7 +1914,9 @@ def mpc_gamma(z, prec, rnd=round_fast, type=0):
     # Initial working precision
     wp = prec + 20
 
+    abc = aman.bit_length()
     amag = aexp+abc
+    bbc = bman.bit_length()
     bmag = bexp+bbc
     if aman:
         mag = max(amag, bmag)
@@ -1952,8 +1963,8 @@ def mpc_gamma(z, prec, rnd=round_fast, type=0):
     zorig = z
     if need_reflection:
         z = mpc_neg(z)
-        asign, aman, aexp, abc = a = z[0]
-        bsign, bman, bexp, bbc = b = z[1]
+        asign, aman, aexp = a = z[0]
+        bsign, bman, bexp = b = z[1]
 
     # Imaginary part very small compared to real one?
     yfinal = 0
@@ -1965,7 +1976,7 @@ def mpc_gamma(z, prec, rnd=round_fast, type=0):
             if zsub1[0] == fzero:
                 cancel1 = -bmag
             else:
-                cancel1 = -max(zsub1[0][2]+zsub1[0][3], bmag)
+                cancel1 = -max(zsub1[0][2]+zsub1[0][1].bit_length(), bmag)
             if cancel1 > wp:
                 pi = mpf_pi(wp)
                 x = mpc_mul_mpf(zsub1, pi, wp)
@@ -1981,7 +1992,7 @@ def mpc_gamma(z, prec, rnd=round_fast, type=0):
             if zsub2[0] == fzero:
                 cancel2 = -bmag
             else:
-                cancel2 = -max(zsub2[0][2]+zsub2[0][3], bmag)
+                cancel2 = -max(zsub2[0][2]+zsub2[0][1].bit_length(), bmag)
             if cancel2 > wp:
                 pi = mpf_pi(wp)
                 t = mpf_sub(mpf_mul(pi, pi), from_int(6))
@@ -2131,15 +2142,15 @@ def mpc_rgamma(x, prec, rnd=round_fast):
     return mpc_gamma(x, prec, rnd, 2)
 
 def mpf_loggamma(x, prec, rnd=round_fast):
-    sign, man, exp, bc = x
+    sign, man, exp = x
     if sign:
         raise ComplexResult
     return mpf_gamma(x, prec, rnd, 3)
 
 def mpc_loggamma(z, prec, rnd=round_fast):
     a, b = z
-    asign, aman, aexp, abc = a
-    bsign, bman, bexp, bbc = b
+    asign, aman, aexp = a
+    bsign, bman, bexp = b
     if b == fzero and asign:
         re = mpf_gamma(a, prec, rnd, 3)
         n = (-aman) >> (-aexp)

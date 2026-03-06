@@ -231,7 +231,7 @@ def mpc_pow(z, w, prec, rnd=round_fast):
     return mpc_exp(mpc_mul(mpc_ln(z, prec+10), w, prec+10), prec, rnd)
 
 def mpc_pow_mpf(z, p, prec, rnd=round_fast):
-    psign, pman, pexp, pbc = p
+    psign, pman, pexp = p
     if pexp >= 0:
         return mpc_pow_int(z, (-1)**psign * (pman<<pexp), prec, rnd)
     if pexp == -1:
@@ -259,8 +259,10 @@ def mpc_pow_int(z, n, prec, rnd=round_fast):
     if n == 2: return mpc_square(z, prec, rnd)
     if n == -1: return mpc_reciprocal(z, prec, rnd)
     if n < 0: return mpc_reciprocal(mpc_pow_int(z, -n, prec+4), prec, rnd)
-    asign, aman, aexp, abc = a
-    bsign, bman, bexp, bbc = b
+    asign, aman, aexp = a
+    abc = aman.bit_length()
+    bsign, bman, bexp = b
+    bbc = bman.bit_length()
     if asign: aman = -aman
     if bsign: bman = -bman
     de = aexp - bexp
@@ -378,10 +380,11 @@ def mpc_nthroot(z, n, prec, rnd=round_fast):
         return mpc_div(mpc_one, inverse, prec, rnd)
     if n <= 20:
         prec2 = int(1.2 * (prec + 10))
-        asign, aman, aexp, abc = a
-        bsign, bman, bexp, bbc = b
-        pf = mpc_abs((a,b), prec)
-        if pf[-2] + pf[-1] > -10  and pf[-2] + pf[-1] < prec:
+        asign, aman, aexp = a
+        bsign, bman, bexp = b
+        _, man, exp = mpc_abs((a,b), prec)
+        bc = man.bit_length()
+        if exp + bc > -10  and exp + bc < prec:
             af = to_fixed(a, prec2)
             bf = to_fixed(b, prec2)
             re, im = mpc_nthroot_fixed(af, bf, n, prec2)
@@ -393,8 +396,8 @@ def mpc_nthroot(z, n, prec, rnd=round_fast):
     prec2 = prec+10 + 10
     nth = mpf_rdiv_int(1, fn, prec2)
     re, im = mpc_pow((a, b), (nth, fzero), prec2, rnd)
-    re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
-    im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
+    re = normalize(re[0], re[1], re[2], prec, rnd)
+    im = normalize(im[0], im[1], im[2], prec, rnd)
     return re, im
 
 def mpc_cbrt(z, prec, rnd=round_fast):
@@ -485,8 +488,8 @@ def mpc_tan(z, prec, rnd=round_fast):
         if b == fzero:
             return fnan, fzero
         return fnan, fnan
-    asign, aman, aexp, abc = a
-    bsign, bman, bexp, bbc = b
+    asign, aman, aexp = a
+    bsign, bman, bexp = b
     if b == fzero: return mpf_tan(a, prec, rnd), fzero
     if a == fzero: return fzero, mpf_tanh(b, prec, rnd)
     wp = prec + 15
@@ -735,10 +738,10 @@ def acos_asin(z, prec, rnd, n):
         im = mpf_neg(im)
     if bsign and n == 1:
         im = mpf_neg(im)
-    if re[3] >= 0:
-        re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
-    if im[3] >= 0:
-        im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
+    if re[1]:
+        re = normalize(re[0], re[1], re[2], prec, rnd)
+    if im[1]:
+        im = normalize(im[0], im[1], im[2], prec, rnd)
     # Correct real part for infinities and nan in imaginary component
     if re == fnan and mpc_is_inf(z):
         a, b = z
@@ -805,7 +808,7 @@ def mpc_fibonacci(z, prec, rnd=round_fast):
     re, im = z
     if im == fzero:
         return (mpf_fibonacci(re, prec, rnd), fzero)
-    size = max(abs(re[2]+re[3]), abs(im[2]+im[3]))
+    size = max(abs(re[2]+re[1].bit_length()), abs(im[2]+im[1].bit_length()))
     wp = prec + size + 20
     a = mpf_phi(wp)
     b = mpf_add(mpf_shift(a, 1), fnone, wp)
@@ -838,7 +841,8 @@ def mpc_expjpi(z, prec, rnd=round_floor):
     re, im = z
     if im == fzero:
         return mpf_cos_sin_pi(re, prec, rnd)
-    sign, man, exp, bc = im
+    sign, man, exp = im
+    bc = man.bit_length()
     wp = prec+10
     if man:
         wp += max(0, exp+bc)

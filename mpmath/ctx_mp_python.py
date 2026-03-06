@@ -58,8 +58,8 @@ class _mpf(mpnumeric):
         if type(val) is cls:
             val = val._mpf_
         elif type(val) is tuple:
-            if len(val) == 4:
-                val = val[0], MPZ(val[1]), *val[2:]
+            if len(val) >= 3:
+                val = val[0], MPZ(val[1]), val[2]
             elif len(val) == 2:
                 v._mpf_ = from_man_exp(val[0], val[1], prec, rounding)
                 return v
