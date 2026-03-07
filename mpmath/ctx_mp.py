@@ -6,7 +6,6 @@ operating with them.
 import functools
 import re
 import sys
-import warnings
 
 from . import function_docs, libmp
 from .ctx_base import StandardBaseContext
@@ -19,7 +18,7 @@ from .libmp import (MPQ, MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan,
                     mpf_khinchin, mpf_ln2, mpf_ln10, mpf_mertens, mpf_mul,
                     mpf_neg, mpf_phi, mpf_pi, mpf_rand, mpf_sub, mpf_twinprime,
                     repr_dps, round_nearest, to_man_exp, to_str)
-
+from .ctx_mp_python import PythonMPContext as BaseMPContext
 
 get_complex = re.compile(r"""
     \(?
@@ -27,16 +26,6 @@ get_complex = re.compile(r"""
     (?P<im>[+-]?(\d*(\.\d*)?(e[+-]?\d+)?|\d+/\d+)\*?[ji])?
     \)?$
 """, re.VERBOSE | re.IGNORECASE)
-
-
-def __getattr__(name):
-    if name == 'mpnumeric':
-        from .ctx_mp_python import mpnumeric
-        warnings.warn(f"{name} is deprecated", DeprecationWarning)
-        return mpnumeric
-    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
-
-from .ctx_mp_python import PythonMPContext as BaseMPContext
 
 
 class MPContext(BaseMPContext, StandardBaseContext):
@@ -343,7 +332,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
             return True
         if hasattr(x, '_mpf_'):
             if ctx.isfinite(x):
-                man, exp = to_man_exp(x._mpf_, signed=True)
+                man, exp = to_man_exp(x._mpf_)
                 return man < 0 and exp >= 0
             return False
         if hasattr(x, '_mpc_'):
@@ -1162,7 +1151,7 @@ maxterms, or set zeroprec."""
             im_dist = ctx.ninf
         elif hasattr(x, "_mpc_"):
             re, im = x._mpc_
-            iman, iexp = to_man_exp(im, signed=True)
+            iman, iexp = to_man_exp(im)
             if iman:
                 im_dist = iexp + iman.bit_length()
             else:
@@ -1173,7 +1162,7 @@ maxterms, or set zeroprec."""
                 return ctx.nint_distance(x)
             else:
                 raise TypeError("requires an mpf/mpc")
-        man, exp = to_man_exp(re, signed=True)
+        man, exp = to_man_exp(re)
         mag = exp+man.bit_length()
         # |x| < 0.5
         if mag < 0:

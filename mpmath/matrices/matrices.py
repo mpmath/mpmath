@@ -1,5 +1,3 @@
-import warnings
-
 # TODO: interpret list as vectors (for multiplication)
 
 # pickling helper
@@ -290,13 +288,6 @@ class _matrix:
         # multiple times, when calculating the inverse and when calculating the
         # determinant
         self._LU = None
-        if "force_type" in kwargs:
-            warnings.warn("The force_type argument was removed, it did not work"
-                " properly anyway. If you want to force floating-point or"
-                " interval computations, use the respective methods from `fp`"
-                " or `mp` instead, e.g., `fp.matrix()` or `iv.matrix()`."
-                " If you want to truncate values to integer, use .apply(int) instead.",
-                DeprecationWarning)
         if isinstance(args[0], (list, tuple)):
             if not args[0]:
                 self._rows = 0

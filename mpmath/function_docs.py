@@ -2189,7 +2189,7 @@ an entirely real-valued sum::
 
     >>> nsum(lambda k: 1/(k**2-2*k+3), [0, inf])
     1.694361433907061256154665
-    >>> nprint(polyroots([3,-2,1], asc=True))
+    >>> nprint(polyroots([3,-2,1]))
     [(1.0 - 1.41421j), (1.0 + 1.41421j)]
     >>> r1 = 1-sqrt(2)*j
     >>> r2 = r1.conjugate()
@@ -5676,7 +5676,7 @@ The roots of Legendre polynomials are located symmetrically
 on the interval `[-1, 1]`::
 
     >>> for n in range(5):
-    ...     nprint(polyroots(taylor(lambda x: legendre(n, x), 0, n), asc=True))
+    ...     nprint(polyroots(taylor(lambda x: legendre(n, x), 0, n)))
     ...
     []
     [0.0]
@@ -7760,7 +7760,7 @@ Up to permutation, the roots of a given cyclotomic polynomial
 can be checked to agree with the list of primitive roots::
 
     >>> p = taylor(lambda x: cyclotomic(6,x), 0, 6)[:3]
-    >>> for r in polyroots(p, asc=True):
+    >>> for r in polyroots(p):
     ...     print(r)
     ...
     (0.5 - 0.8660254037844386467637232j)

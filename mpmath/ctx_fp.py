@@ -2,7 +2,6 @@ import cmath
 import functools
 import inspect
 import math
-import warnings
 import sys
 
 from . import function_docs, libfp, libmp
@@ -87,11 +86,6 @@ class FPContext(StandardBaseContext):
     glaisher = 1.2824271291006226369
 
     absmin = absmax = abs
-
-    def is_special(ctx, x):
-        warnings.warn("the is_special() method is deprecated",
-                      DeprecationWarning)
-        return not ctx.isnormal(x)
 
     def isnan(ctx, x):
         return x != x

@@ -8,63 +8,48 @@ from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
 
 def test_approximation():
     f = lambda x: cos(2-2*x)/x
-    p, err = chebyfit(f, [2, 4], 8, error=True, asc=True)
+    p, err = chebyfit(f, [2, 4], 8, error=True)
     assert err < 1e-5
     for i in range(10):
         x = 2 + i/5.
-        assert abs(polyval(p, x, asc=True) - f(x)) < err
+        assert abs(polyval(p, x) - f(x)) < err
 
-def test_chebyfit_deprecated():
+def test_chebyfit():
     f = lambda x: cos(2-2*x)/x
-    with pytest.deprecated_call():
-        p, err = chebyfit(f, [2, 4], 8, error=True)
+    p, err = chebyfit(f, [2, 4], 8, error=True, asc=False)
     assert err < 1e-5
     p = p[::-1]
     for i in range(10):
         x = 2 + i/5.
-        assert abs(polyval(p, x, asc=True) - f(x)) < err
+        assert abs(polyval(p, x) - f(x)) < err
 
 def test_limits():
     assert limit(lambda x: (x-sin(x))/x**3, 0).ae(mpf(1)/6)
     assert limit(lambda n: (1+1/n)**n, inf).ae(e)
 
 def test_polyval():
-    assert polyval([], 3, asc=True) == 0
-    assert polyval([0], 3, asc=True) == 0
-    assert polyval([5], 3, asc=True) == 5
+    assert polyval([], 3) == 0
+    assert polyval([0], 3) == 0
+    assert polyval([5], 3) == 5
     # 4x^3 - 2x + 5
     p = [5, -2, 0, 4]
-    assert polyval(p,4,asc=True) == 253
-    assert polyval(p,4,derivative=True,asc=True) == (253, 190)
-
-def test_polyval_asc_false():
+    assert polyval(p, 4) == 253
+    assert polyval(p, 4, derivative=True) == (253, 190)
     assert polyval([1, 2, 3], 2, asc=False) == 11
-
-def test_polyval_deprecated():
-    with pytest.deprecated_call():
-        p = [4, 0, -2, 5]
-        assert polyval(p,4) == 253
+    assert polyval(list(reversed(p)), 4, asc=False) == 253
 
 def test_polyroots():
-    p = polyroots([-4,1], asc=True)
+    p = polyroots([-4,1])
     assert p[0].ae(4)
-    p, q = polyroots([3,2,1], asc=True)
+    p, q = polyroots([3,2,1])
     assert p.ae(-1 - sqrt(2)*j)
     assert q.ae(-1 + sqrt(2)*j)
     #this is not a real test, it only tests a specific case
-    assert polyroots([1], asc=True) == []
-    pytest.raises(ValueError, lambda: polyroots([0], asc=True))
-
-def test_polyroots_asc_false():
+    assert polyroots([1]) == []
+    pytest.raises(ValueError, lambda: polyroots([0]))
     p, q = polyroots([1,2,3], asc=False)
     assert p.ae(-1 - sqrt(2)*j)
     assert q.ae(-1 + sqrt(2)*j)
-
-def test_polyroots_deprecated():
-    with pytest.deprecated_call():
-        p, q = polyroots([1,2,3])
-        assert p.ae(-1 - sqrt(2)*j)
-        assert q.ae(-1 + sqrt(2)*j)
 
 def test_polyroots_legendre():
     n = 64
@@ -102,10 +87,10 @@ def test_polyroots_legendre():
     with mp.workdps(3):
         with pytest.raises(mp.NoConvergence):
             polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
-                      extraprec=n*10, asc=True)
+                      extraprec=n*10)
 
         roots = polyroots(coeffs, maxsteps=50, cleanup=True, error=False,
-                          extraprec=n*10, asc=True)
+                          extraprec=n*10)
         roots = [str(r) for r in roots]
         assert roots == \
             ['-0.999', '-0.996', '-0.991', '-0.983', '-0.973', '-0.961',
@@ -167,16 +152,15 @@ def test_polyroots_legendre_init():
                           '0.983',   '0.991',   '0.996',  '0.999',  '1.0'])
     with mp.workdps(2*mp.dps):
         roots_exact = polyroots(coeffs, maxsteps=50, cleanup=True, error=False,
-                                extraprec=2*extra_prec, asc=True)
+                                extraprec=2*extra_prec)
     with pytest.raises(mp.NoConvergence):
         polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
-                  extraprec=extra_prec, asc=True)
+                  extraprec=extra_prec)
     roots,err = polyroots(coeffs, maxsteps=5, cleanup=True, error=True,
-                          extraprec=extra_prec,roots_init=roots_init, asc=True)
+                          extraprec=extra_prec,roots_init=roots_init)
     assert max(matrix(roots_exact)-matrix(roots).apply(abs)) < err
     roots1,err1 = polyroots(coeffs, maxsteps=25, cleanup=True, error=True,
-                            extraprec=extra_prec,roots_init=roots_init[:60],
-                            asc=True)
+                            extraprec=extra_prec,roots_init=roots_init[:60])
     assert max(matrix(roots_exact)-matrix(roots1).apply(abs)) < err1
 
 def test_pade():
@@ -190,7 +174,7 @@ def test_pade():
         a.append(one/k)
     p, q = pade(a, N//2, N//2)
     for x in arange(0, 1, 0.1):
-        r = polyval(p, x, asc=True)/polyval(q, x, asc=True)
+        r = polyval(p, x)/polyval(q, x)
         assert r.ae(exp(x), 1.0e-10)
 
 def test_fourier():

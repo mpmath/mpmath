@@ -1,13 +1,8 @@
-import os
 import sys
 
 import pytest
 
 import mpmath
-
-
-collect_ignore = ['mpmath/__init__.py',
-                  'mpmath/rational.py', 'mpmath/math2.py']
 
 
 def pytest_report_header(config):
@@ -23,10 +18,9 @@ def pytest_configure(config):
 
 @pytest.fixture(autouse=True)
 def reset_mp_globals():
-    from mpmath import mp, iv
-    mp.prec = sys.float_info.mant_dig
-    mp.pretty = False
-    mp.rounding = 'n'
-    mp.pretty_dps = "str"
-    iv.prec = mp.prec
-    iv.pretty = False
+    mpmath.mp.prec = sys.float_info.mant_dig
+    mpmath.mp.pretty = False
+    mpmath.mp.rounding = 'n'
+    mpmath.mp.pretty_dps = "str"
+    mpmath.iv.prec = mpmath.mp.prec
+    mpmath.iv.pretty = False

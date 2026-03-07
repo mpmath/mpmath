@@ -3,7 +3,6 @@ Low-level functions for complex arithmetic.
 """
 
 import sys
-import warnings
 
 from .backend import MPZ
 from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
@@ -436,10 +435,7 @@ def mpc_ln(z, prec, rnd=round_fast):
     im = mpc_arg(z, prec, rnd)
     return re, im
 
-def mpc_log(x, prec, rnd=round_fast):
-    warnings.warn("mpc_log is deprecated, use mpc_ln",
-                  DeprecationWarning)
-    return mpc_ln(x, prec, rnd)
+mpc_log = mpc_ln  # deprecated alias
 
 def mpc_cos(z, prec, rnd=round_fast):
     """Complex cosine. The formula used is cos(a+bi) = cos(a)*cosh(b) -

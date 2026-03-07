@@ -6,23 +6,10 @@ import math
 import random
 import re
 import sys
-import warnings
 
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy, int_types
 from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
                          stddigits, trailtable)
-
-
-def to_pickable(x):
-    warnings.warn("to_pickable helper function is deprecated",
-                  DeprecationWarning)
-    return x
-
-
-def from_pickable(x):
-    warnings.warn("from_pickable helper function is deprecated",
-                  DeprecationWarning)
-    return x
 
 
 class ComplexResult(ValueError):
@@ -248,14 +235,8 @@ def from_int(n, prec=0, rnd=round_fast):
             return int_cache[n]
     return from_man_exp(MPZ(n), 0, prec, rnd)
 
-def to_man_exp(s, signed=None):
+def to_man_exp(s, signed=True):
     """Return (man, exp) of a raw mpf. Raise an error if inf/nan."""
-    if signed is None:
-        warnings.warn("Returning unsigned mantissa value per default "
-                      "is deprecated.  Please adapt your code to use "
-                      "signed=True (return a signed mantissa).",
-                      DeprecationWarning)
-        signed = False
     sign, man, exp, bc = s
     if (not man) and exp:
         raise ValueError("mantissa and exponent are defined "
