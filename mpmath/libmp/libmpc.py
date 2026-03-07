@@ -809,7 +809,7 @@ def mpc_fibonacci(z, prec, rnd=round_fast):
     re, im = z
     if im == fzero:
         return (mpf_fibonacci(re, prec, rnd), fzero)
-    size = max(abs(re[2]+re[3]), abs(re[2]+re[3]))
+    size = max(abs(re[2]+re[3]), abs(im[2]+im[3]))
     wp = prec + size + 20
     a = mpf_phi(wp)
     b = mpf_add(mpf_shift(a, 1), fnone, wp)
