@@ -1,3 +1,5 @@
+import platform
+
 import pytest
 
 from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
@@ -1470,7 +1472,13 @@ def test_issue_239():
     x = ldexp(2476979795053773,-52)
     assert betainc(206, 385, 0, 0.55, 1).ae('0.99999999999999999999996570910644857895771110649954')
     mp.dps = 15
-    pytest.raises(ValueError, lambda: hyp2f1(-5,5,0.5,0.5))
+    expected_exc = ValueError
+    if platform.machine() == 's390x':
+        # This case has recursion depth beyond platform capabilities, that
+        # could be controlled with sys.setrecursionlimit().  See issue #1046
+        # for details.
+        expected_exc = RecursionError
+    pytest.raises(expected_exc, lambda: hyp2f1(-5,5,0.5,0.5))
 
 # Extra stress testing for Bessel functions
 # Reference zeros generated with the aid of scipy.special
