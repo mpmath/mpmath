@@ -1,7 +1,6 @@
 import inspect
 import numbers
 import sys
-import warnings
 
 from . import function_docs
 from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
@@ -408,8 +407,7 @@ class mpf(mpnumeric):
             >>> f'{x:.15b}'
             '-1.001111000000110p+0'
 
-        Alternate form (``'#'`` option) adds ``0b`` prefix.
-
+        Alternate form (``'#'`` option) works like for ``'a'`` type.
         """
         ctx = self.context
         prec, rounding = ctx._prec_rounding
@@ -705,10 +703,10 @@ class mpc(mpnumeric):
         """
         ``mpc`` objects allow for formatting similar to Python
         :external:class:`complex`, specified in :external:ref:`formatspec`.
-        All of Python's format types are supported, with the exception of
-        ``'n'``.  Also available additional options and formating types,
-        accepted by :func:`mpmath.mpf.__format__`.
 
+        All ``mpf``'s format types and options are supported, with
+        the exception for ``'%'`` format type, ``'='`` alignment and
+        zero padding.
         """
         ctx = self.context
         prec, rounding = ctx._prec_rounding
@@ -863,11 +861,32 @@ class PythonMPContext:
         return ctx.isinf(x)
 
     def isnormal(ctx, x):
-        warnings.warn("the isnormal() method is deprecated",
-                      DeprecationWarning)
+        """
+        Determine whether *x* is "normal" in the sense of floating-point
+        representation; that is, return *False* if *x* is zero, an
+        infinity or NaN; otherwise return *True*. By extension, a
+        complex number *x* is considered "normal" if its magnitude is
+        normal::
+
+            >>> from mpmath import isnormal, inf, nan, mpc
+            >>> isnormal(3)
+            True
+            >>> isnormal(0)
+            False
+            >>> isnormal(inf); isnormal(-inf); isnormal(nan)
+            False
+            False
+            False
+            >>> isnormal(0+0j)
+            False
+            >>> isnormal(0+3j)
+            True
+            >>> isnormal(mpc(2,nan))
+            False
+        """
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
-                return bool(to_man_exp(x._mpf_, signed=True)[0])
+                return bool(to_man_exp(x._mpf_)[0])
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
@@ -880,48 +899,6 @@ class PythonMPContext:
             return bool(x)
         x = ctx.convert(x)
         return ctx.isnormal(x)
-
-    def isspecial(ctx, x):
-        """
-        Determine whether *x* is a "special" in the sense of floating-point
-        representation; that is, return *True* if *x* is zero, an
-        infinity or NaN; otherwise return *False*.  By extension, a
-        complex number *x* is considered "special" if its magnitude is
-        special::
-
-            >>> from mpmath import isspecial, inf, nan, mpc
-            >>> isspecial(3)
-            False
-            >>> isspecial(0)
-            True
-            >>> isspecial(inf)
-            True
-            >>> isspecial(-inf)
-            True
-            >>> isspecial(nan)
-            True
-            >>> isspecial(0+0j)
-            True
-            >>> isspecial(0+3j)
-            False
-            >>> isspecial(mpc(2,nan))
-            True
-        """
-        if hasattr(x, "_mpf_"):
-            if ctx.isfinite(x):
-                return not bool(to_man_exp(x._mpf_, signed=True)[0])
-            return True
-        if hasattr(x, "_mpc_"):
-            re, im = x._mpc_
-            re_special = not bool(re[1])
-            im_special = not bool(im[1])
-            if re == fzero: return im_special
-            if im == fzero: return re_special
-            return re_special or im_special
-        if isinstance(x, int_types) or isinstance(x, MPQ):
-            return not bool(x)
-        x = ctx.convert(x)
-        return ctx.isspecial(x)
 
     def isint(ctx, x, gaussian=False):
         """
@@ -952,15 +929,15 @@ class PythonMPContext:
             return True
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
-                man, exp = to_man_exp(x._mpf_, signed=True)
+                man, exp = to_man_exp(x._mpf_)
                 return bool((man and exp >= 0) or x._mpf_ == fzero)
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
             if ctx.isfinite(x):
-                man, exp = to_man_exp(re, signed=True)
+                man, exp = to_man_exp(re)
                 re_isint = bool((man and exp >= 0) or re == fzero)
-                man, exp = to_man_exp(im, signed=True)
+                man, exp = to_man_exp(im)
                 im_isint = bool((man and exp >= 0) or im == fzero)
             else:
                 return False
@@ -1150,6 +1127,7 @@ class PythonMPContext:
             raise NotImplementedError("%s of a %s" % (name, type(x)))
         name = mpf_f.__name__[4:]
         f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)
+        f.__name__ = name
         return f
 
     # Called by SpecialFunctions.__init__()
@@ -1203,7 +1181,7 @@ class PythonMPContext:
                 v = x._mpf_
             else:
                 raise NotImplementedError
-        man, exp = to_man_exp(v, signed=True)
+        man, exp = to_man_exp(v)
         if man:
             if exp >= -4:
                 if exp >= 0:
@@ -1221,7 +1199,7 @@ class PythonMPContext:
             return ctx.ninf
         if x in (finf, fninf, fnan):
             return ctx.make_mpf(mpf_abs(x))
-        man, exp = to_man_exp(x, signed=True)
+        man, exp = to_man_exp(x)
         return exp+man.bit_length()
 
     def mag(ctx, x):

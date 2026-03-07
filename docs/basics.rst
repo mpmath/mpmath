@@ -236,7 +236,7 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
 To use enough digits to be able recreate value exactly, set ``mp.pretty_dps``
 to ``"repr"`` (default value is ``"str"``).  Same option is used to control
 default number of digits in the new-style string formatting *without format
-specifier*, i.e. `format(exp(mpf(1)))`.
+specifier*, i.e. ``format(exp(mpf(1)))``.
 
 The number of digits with which numbers are printed by default is determined by
 the working precision.  To specify the number of digits to show without

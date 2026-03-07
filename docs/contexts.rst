@@ -4,7 +4,6 @@ Contexts
 High-level code in mpmath is implemented as methods on a "context object". The context implements arithmetic, type conversions and other fundamental operations. The context also holds settings such as precision, and stores cache data. A few different contexts (with a mostly compatible interface) are provided so that the high-level algorithms can be used with different implementations of the underlying arithmetic, allowing different features and speed-accuracy tradeoffs. Currently, mpmath provides the following contexts:
 
   * Arbitrary-precision arithmetic (``mp``)
-  * A faster Cython-based version of ``mp`` (used by default in Sage, and currently only available there)
   * Arbitrary-precision interval arithmetic (``iv``)
   * Double-precision arithmetic using Python's builtin ``float`` and ``complex`` types (``fp``)
 

@@ -1,5 +1,5 @@
 [build-system]
-requires = ['setuptools>=77', 'setuptools_scm[toml]>=6.0']
+requires = ['setuptools>=77', 'setuptools-scm>=8']
 build-backend = 'setuptools.build_meta'
 
 [project]
@@ -12,7 +12,6 @@ classifiers = ['Topic :: Scientific/Engineering :: Mathematics',
                'Programming Language :: Python',
                'Programming Language :: Python :: 3',
                'Programming Language :: Python :: 3 :: Only',
-               'Programming Language :: Python :: 3.9',
                'Programming Language :: Python :: 3.10',
                'Programming Language :: Python :: 3.11',
                'Programming Language :: Python :: 3.12',
@@ -22,7 +21,7 @@ classifiers = ['Topic :: Scientific/Engineering :: Mathematics',
                'Programming Language :: Python :: Implementation :: CPython',
                'Programming Language :: Python :: Implementation :: PyPy']
 dynamic = ['version']
-requires-python = '>=3.9'
+requires-python = '>=3.10'
 readme = 'README.rst'
 
 [project.urls]
@@ -32,16 +31,13 @@ Homepage = 'https://mpmath.org/'
 Documentation = 'http://mpmath.org/doc/current/'
 
 [project.optional-dependencies]
-tests = ['pytest>=6', 'numpy; python_version<"3.14"', 'packaging', 'pytest-timeout',
-         'matplotlib; platform_python_implementation!="PyPy" and python_version<"3.14"',
-         'pexpect', 'ipython', 'hypothesis']
-develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov', 'wheel', 'build']
-gmpy2 = ['gmpy2>=2.3.0a1; platform_python_implementation!="PyPy"']
+tests = ['pytest>=6', 'numpy', 'packaging', 'pytest-timeout',
+         'matplotlib', 'pexpect', 'ipython', 'hypothesis']
+develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov>=7', 'wheel', 'build']
+gmpy2 = ['gmpy2>=2.3']
 gmpy = ['mpmath[gmpy2]']
-gmp = ['python-gmp>=0.4; platform_python_implementation!="PyPy"']
-docs = ['sphinx',
-        'matplotlib; platform_python_implementation!="PyPy" and python_version<"3.14"',
-        'sphinxcontrib-autoprogram']
+gmp = ['python-gmp']
+docs = ['sphinx', 'matplotlib', 'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist', 'diff_cover']
 
 [tool.setuptools]
@@ -57,6 +53,7 @@ exclude = ['.eggs', '.git']
 max_line_length = 200
 
 [tool.setuptools_scm]
+version_file = "mpmath/_version.py"
 
 [tool.pytest.ini_options]
 testpaths = ['mpmath', 'docs']
@@ -69,7 +66,8 @@ timeout = 600
 
 [tool.coverage.run]
 branch = true
-omit = ['mpmath/tests/*']
+omit = ['mpmath/tests/*', 'mpmath/_version.py']
+patch = ["subprocess"]
 
 [tool.coverage.html]
 directory = 'build/coverage/html'

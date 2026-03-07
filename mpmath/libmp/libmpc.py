@@ -3,7 +3,6 @@ Low-level functions for complex arithmetic.
 """
 
 import sys
-import warnings
 
 from .backend import MPZ
 from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
@@ -267,7 +266,7 @@ def mpc_pow_int(z, n, prec, rnd=round_fast):
     de = aexp - bexp
     abs_de = abs(de)
     exact_size = n*(abs_de + max(abc, bbc))
-    if exact_size < 10000 and min(abc, bbc) >= 0:
+    if exact_size < 10000 and min(abc, bbc) > 0:
         if de > 0:
             aman <<= de
             aexp = bexp
@@ -436,10 +435,7 @@ def mpc_ln(z, prec, rnd=round_fast):
     im = mpc_arg(z, prec, rnd)
     return re, im
 
-def mpc_log(x, prec, rnd=round_fast):
-    warnings.warn("mpc_log is deprecated, use mpc_ln",
-                  DeprecationWarning)
-    return mpc_ln(x, prec, rnd)
+mpc_log = mpc_ln  # deprecated alias
 
 def mpc_cos(z, prec, rnd=round_fast):
     """Complex cosine. The formula used is cos(a+bi) = cos(a)*cosh(b) -
@@ -809,7 +805,7 @@ def mpc_fibonacci(z, prec, rnd=round_fast):
     re, im = z
     if im == fzero:
         return (mpf_fibonacci(re, prec, rnd), fzero)
-    size = max(abs(re[2]+re[3]), abs(re[2]+re[3]))
+    size = max(abs(re[2]+re[3]), abs(im[2]+im[3]))
     wp = prec + size + 20
     a = mpf_phi(wp)
     b = mpf_add(mpf_shift(a, 1), fnone, wp)

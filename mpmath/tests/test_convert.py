@@ -137,10 +137,10 @@ def test_str_prec0():
     assert to_str(from_float(-1e+15), 0) == '-.0e+15'
 
 def test_convert_rational():
-    assert from_rational(30, 5, 53, round_nearest) == (0, 3, 1, 2)
-    assert from_rational(-7, 4, 53, round_nearest) == (1, 7, -2, 3)
-    assert to_rational((0, 1, -1, 1)) == (1, 2)
-    assert to_rational((0, 1, 0, 1)) == (1, 1)
+    assert from_rational(30, 5, 53, round_nearest)[:3] == (0, 3, 1)
+    assert from_rational(-7, 4, 53, round_nearest)[:3] == (1, 7, -2)
+    assert to_rational(mpf('0.5')._mpf_) == (1, 2)
+    assert to_rational(mpf('1')._mpf_) == (1, 1)
     pytest.raises(ValueError, lambda: to_rational(mpf('nan')._mpf_))
     pytest.raises(OverflowError, lambda: to_rational(mpf('inf')._mpf_))
     pytest.raises(OverflowError, lambda: to_rational(mpf('-inf')._mpf_))

@@ -395,9 +395,8 @@ def _lambertw_special(ctx, z, k):
     # Some kind of nan or complex inf/nan?
     return ctx.ln(z)
 
-import cmath
 import math
-
+import cmath
 
 def _lambertw_approx_hybrid(z, k):
     imag_sign = 0
@@ -515,7 +514,7 @@ def _lambertw_series(ctx, z, k, tol):
 def lambertw(ctx, z, k=0):
     z = ctx.convert(z)
     k = int(k)
-    if ctx.isspecial(z):
+    if not ctx.isnormal(z):
         return _lambertw_special(ctx, z, k)
     prec = ctx.prec
     ctx.prec += 20 + ctx.mag(k or 1)

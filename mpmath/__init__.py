@@ -1,7 +1,4 @@
-from importlib.metadata import version
-
-__version__ = version(__name__)
-del version
+from ._version import __version__
 
 import functools
 import sys
@@ -12,10 +9,6 @@ from .usertools import monitor, timing
 from .ctx_fp import FPContext
 from .ctx_mp import MPContext
 from .ctx_iv import MPIntervalContext
-
-# deprecated modules
-from . import rational
-from . import math2
 
 fp = FPContext()
 mp = MPContext()
@@ -75,7 +68,6 @@ multiplicity = mp.multiplicity
 isinf = mp.isinf
 isnan = mp.isnan
 isnormal = mp.isnormal
-isspecial = mp.isspecial
 isint = mp.isint
 isfinite = mp.isfinite
 almosteq = mp.almosteq

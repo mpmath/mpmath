@@ -2,17 +2,17 @@ import pytest
 
 from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     besseljzero, besselk, bessely, besselyzero, betainc,
-                    chebyt, chebyu, chi, ci, convert, coulombg, e, e1, ei,
-                    ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp, expint,
-                    fadd, fmul, foxh, fp, fraction, fresnelc, fresnels, fsub, fsum,
-                    gamma, gammainc, gegenbauer, hankel1, hankel2, hermite,
-                    hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2, hyp2f3,
-                    hyper, hypercomb, hyperu, inf, isnan, j, j0, j1, jacobi,
-                    kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
-                    legenq, lerchphi, li, log, lower_gamma, meijerg, mp, mpc,
-                    mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
-                    spherharm, spherical_jn, spherical_yn, sqrt, struveh,
-                    struvel, upper_gamma, whitm, whitw, zeta)
+                    chebyt, chebyu, chi, ci, clsin, convert, coulombg, e, e1,
+                    ei, ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp,
+                    expint, fadd, fmul, foxh, fp, fraction, fresnelc, fresnels,
+                    fsub, fsum, gamma, gammainc, gegenbauer, hankel1, hankel2,
+                    hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2,
+                    hyp2f3, hyper, hypercomb, hyperu, inf, isnan, j, j0, j1,
+                    jacobi, kei, ker, laguerre, lambertw, ldexp, legendre,
+                    legenp, legenq, lerchphi, li, log, lower_gamma, meijerg,
+                    mp, mpc, mpf, nan, ncdf, npdf, nthroot, pi, polylog, qp,
+                    quadts, shi, si, spherharm, spherical_jn, spherical_yn,
+                    sqrt, struveh, struvel, upper_gamma, whitm, whitw, zeta)
 from mpmath.ctx_mp_python import mpc as mpc_type
 from mpmath.ctx_mp_python import mpf as mpf_type
 from mpmath.libmp import BACKEND, NoConvergence
@@ -2393,7 +2393,6 @@ ynp_small_zeros = \
 def test_bessel_zeros_extra():
     for v in range(V):
         for m in range(1,M+1):
-            print(v, m, "of", V, M)
             # Twice to test cache (if used)
             assert besseljzero(v,m).ae(jn_small_zeros[v][m-1])
             assert besseljzero(v,m).ae(jn_small_zeros[v][m-1])
@@ -2447,6 +2446,12 @@ def test_issue_473():
     assert mp.polylog(4, -mp.inf) == -mp.inf
     assert mp.polylog(5, -mp.inf) == -mp.inf
 
+def test_issue_1033():
+    assert isnan(mp.polylog(2, mp.inf))
+    assert isnan(mp.polylog(3, mp.inf))
+    assert mp.polylog(2, mp.inf).real == -mp.inf
+    assert mp.polylog(3, mp.inf).real == -mp.inf
+
 def test_issue_634():
     assert mp.polylog(1+1e-15, -2).ae(mp.mpf('-1.09861228866811'))
 
@@ -2460,3 +2465,20 @@ def test_issue_637():
 def test_issue_991():
     assert spherical_jn(0, 1.3).ae(0.74119860416707)
     assert spherical_yn(0, 1.3).ae(-0.20576832971122)
+
+def test_issue_545():
+    x = 100+j
+    assert erfc(x).ae(mpc('8.634691205220881e-4346',
+                          '1.5120569745187501e-4345'))
+    assert erfc(-x).ae(mpc(2, '-1.5120569745187501e-4345'),
+                       rel_eps=mpf('1e-4346'))
+    assert erf(x).ae(mpc(1, '-1.5120569745187501e-4345'),
+                     rel_eps=mpf('1e-4346'))
+    assert erf(-x).ae(mpc(-1, '1.5120569745187501e-4345'),
+                      rel_eps=mpf('1e-4346'))
+
+def test_issue_459():
+    assert isnan(clsin(1, mp.inf))
+    assert isnan(clsin(2, mp.inf))
+    assert isnan(clsin(2, mp.nan))
+    assert isnan(polylog(-2, mp.nan))

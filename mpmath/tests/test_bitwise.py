@@ -2,23 +2,12 @@
 Test bit-level integer and mpf operations
 """
 
-import pytest
-
 from mpmath import eps, fadd, ldexp, mp, mpc, mpf
-from mpmath.libmp import (MPZ, bitcount, fone, from_float, from_man_exp, fzero,
-                          mpf_add, mpf_neg, mpf_perturb, mpf_sub,
-                          round_ceiling, round_down, round_floor,
-                          round_nearest, round_up, to_float, trailing)
+from mpmath.libmp import (MPZ, fone, from_float, from_man_exp, fzero, mpf_add,
+                          mpf_neg, mpf_perturb, mpf_sub, round_ceiling,
+                          round_down, round_floor, round_nearest, round_up,
+                          to_float, trailing)
 
-
-def test_bitcount():
-    with pytest.deprecated_call():
-        assert bitcount(0) == 0
-        assert bitcount(1) == 1
-        assert bitcount(7) == 3
-        assert bitcount(8) == 4
-        assert bitcount(2**100) == 101
-        assert bitcount(2**100-1) == 100
 
 def test_trailing():
     assert trailing(0) == 0
@@ -82,22 +71,22 @@ def test_round_nearest():
 
 def test_rounding_bugs():
     # 1 less than power-of-two cases
-    assert from_man_exp(MPZ(72057594037927935), -56, 53, round_up) == (0, 1, 0, 1)
-    assert from_man_exp(MPZ(73786976294838205979), -65, 53, round_nearest) == (0, 1, 1, 1)
-    assert from_man_exp(MPZ(31), 0, 4, round_up) == (0, 1, 5, 1)
-    assert from_man_exp(MPZ(-31), 0, 4, round_floor) == (1, 1, 5, 1)
-    assert from_man_exp(MPZ(255), 0, 7, round_up) == (0, 1, 8, 1)
-    assert from_man_exp(MPZ(-255), 0, 7, round_floor) == (1, 1, 8, 1)
+    assert from_man_exp(MPZ(72057594037927935), -56, 53, round_up)[:3] == (0, 1, 0)
+    assert from_man_exp(MPZ(73786976294838205979), -65, 53, round_nearest)[:3] == (0, 1, 1)
+    assert from_man_exp(MPZ(31), 0, 4, round_up)[:3] == (0, 1, 5)
+    assert from_man_exp(MPZ(-31), 0, 4, round_floor)[:3] == (1, 1, 5)
+    assert from_man_exp(MPZ(255), 0, 7, round_up)[:3] == (0, 1, 8)
+    assert from_man_exp(MPZ(-255), 0, 7, round_floor)[:3] == (1, 1, 8)
 
 def test_rounding_issue_200():
     a = from_man_exp(MPZ(9867),-100)
     b = from_man_exp(MPZ(9867),-200)
     c = from_man_exp(MPZ(-1),0)
-    z = (1, 1023, -10, 10)
-    assert mpf_add(a, c, 10, 'd') == z
-    assert mpf_add(b, c, 10, 'd') == z
-    assert mpf_add(c, a, 10, 'd') == z
-    assert mpf_add(c, b, 10, 'd') == z
+    z = (1, 1023, -10)
+    assert mpf_add(a, c, 10, 'd')[:3] == z
+    assert mpf_add(b, c, 10, 'd')[:3] == z
+    assert mpf_add(c, a, 10, 'd')[:3] == z
+    assert mpf_add(c, b, 10, 'd')[:3] == z
 
 def test_perturb():
     a = fone

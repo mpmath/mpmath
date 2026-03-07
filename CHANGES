@@ -1,5 +1,5 @@
 --1.4.0--
-Released TBD
+Released February 23, 2026
 
 Features:
 
@@ -12,7 +12,7 @@ Features:
   Kirpichev)
 * Support randmatrix() for mp.iv and mp contexts, see #527 (Maximilian
   Gaukler)
-* Added rand() function for matrices, see #610 (Jan-Philipp Hoffmann)
+* Added rank() function for matrices, see #610 (Jan-Philipp Hoffmann)
 * Add plus flag to select the B_1 sign convention for bernoulli/bernfrac, see
   #724 (Jeremy Tan Jie Rui, Sergey B Kirpichev)
 * Add mpf.as_integer_ratio() method, support construction of mpf from Decimal
@@ -58,14 +58,14 @@ Features:
   #936 (Sergey B Kirpichev)
 * Use PyREPL, as fallback (no IPython), see #941 (Sergey B Kirpichev)
 * Add exp2() and log2(), see #948 (Sergey B Kirpichev)
-* Add isspecial() method for contexts, see #949 (Sergey B Kirpichev)
 * Support rounding property for the mp context, see #963 (Sergey B Kirpichev)
 * Add Fox H-function with rational A/B parameters (foxh()), see #982 (Hongren Zheng)
+* Provide experimental support for free-threading builds, see #993 (Sergey B Kirpichev)
 
 Compatibility:
 
 * Drop Python 2 support, see #629 (Fangchen Li)
-* Drop support for Python versions < 3.8, see #675 (Sergey B Kirpichev)
+* Drop support for Python versions < 3.9, see #675 and #911 (Sergey B Kirpichev)
 * Drop private mpq class, use Rational's, provided by backend, see #691 and
   #769 (Sergey B Kirpichev)
 * Drop to_pickable()/from_pickable() helpers, see #667 and #769 (Sergey B
@@ -78,12 +78,13 @@ Compatibility:
 * Deprecate current (descending) order of coefficients in polyval(), etc, see
   #779, #844 and #845 (Sergey B Kirpichev, Warren Weckesser)
 * Deprecate mpmath.math2, see #769 (Sergey B Kirpichev)
-* Drop support for CPython 3.8, see #911 (Sergey B Kirpichev)
-* Deprecate isnormal() method of contexts, see #949 (Sergey B Kirpichev)
 * Importing from the mpmath.libmp submodules is deprecated, use instead ``from
-  mpmath.libmp import mpf_foo``, see issue #704 (Sergey B Kirpichev)
+  mpmath.libmp import foo``, see
+  issue https://github.com/mpmath/mpmath/issues/704#issuecomment-2953536980
+  for available functions (Sergey B Kirpichev)
 * Deprecate bitcount function, see #721 and #955 (Sergey B Kirpichev)
 * Deprecate mpf/mpc_log, see #989 (Sergey B Kirpichev)
+* Deprecate fp.is_special(), see #1042 (Sergey B Kirpichev)
 
 Bug fixes:
 
@@ -144,8 +145,8 @@ Bug fixes:
 * Special case in ctx.hypsum for infinite z, see #902 (Sergey B Kirpichev)
 * Raise an exception if iv's comparison can't be decided, see #903 (Sergey B
   Kirpichev)
-* Add special case for ±inf in polylog_continuation(), see #904 (Sergey B
-  Kirpichev)
+* Add special case for ±inf in polylog_continuation(), see #904, #1034
+  and #1037 (Sergey B Kirpichev, Colin B. Macdonald)
 * Increase working precision in polylog_general() for negative s, see #898
   (Sergey B Kirpichev)
 * Correct case for integer n in besselj/besseli, see #909 (Sergey B Kirpichev)
@@ -153,9 +154,20 @@ Bug fixes:
 * Ensure mpf_bernoulli() returns normalized answer, see #939 (Sergey B
   Kirpichev)
 * Use mpf_log1p in acos_asin() helper (implementing Hull et al algorithm), see
-  #948 (Sergey B Kirpichev)
+  #948 and #1036 (Sergey B Kirpichev)
 * Fix kwargs passing in the nstr() for mpc, see #964 (David Walker)
 * Fix exception type for int(inf), see #966 (Sergey B Kirpichev)
+* Ensure exp, sin, tan, etc have a correct __name__ attribute, see #997
+  (Warren Weckesser)
+* Matrix raise ValueError in case of negative dimensions, see #1004 (Ayush
+  Baranwal)
+* Support lists in sinm() and cosm(), see #1003 (Ayush Baranwal)
+* Properly handle nan's elliprj(), see #1038 (Sergey B Kirpichev)
+* Raise ValueError for logm(0), see #1017 (Ayush Baranwal)
+* Fix erf(z) with re(z) of large magnitude, see #1039 (Sergey B Kirpichev)
+* Return nan's for polylog(s, nan) or polylog(s, nan+nanj),
+  see #1041 (Sergey B Kirpichev)
+* Fix fp.isnormal() for subnormals, see #1042 (Sergey B Kirpichev)
 
 Maintenance:
 
@@ -187,12 +199,13 @@ Maintenance:
 * Simplify ctx_mp_python.py, see #806 (Sergey B Kirpichev)
 * Update gmpy2 deps, see #808 and #813 (Sergey B Kirpichev)
 * Enable testing on 3.14, see #851 (Sergey B Kirpichev)
-* Refactor Github Actions, see 905 (Sergey B Kirpichev)
+* Refactor Github Actions, see #905 (Sergey B Kirpichev)
 * Build and publish wheel, see #913 (David Hotham)
 * Use the intended setuptools_scm integration pattern, see #940 (Ronny
   Pfannschmidt)
+* Add backport action, see #1042 (Sergey B Kirpichev)
 
-See the release milestone (1.4) for complete list of issues and pull requests
+See the release milestone (1.4) for a complete list of issues and pull requests
 involved in this release.
 
 

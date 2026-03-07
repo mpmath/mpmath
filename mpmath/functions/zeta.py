@@ -403,7 +403,7 @@ def polylog_continuation(ctx, n, z):
     if n < 0:
         return z*0
     if ctx._is_real_type(z) and ctx.isinf(z) and n > 0:
-        return ctx.ninf
+        return ctx.ninf if z < 0 else ctx.mpc(ctx.ninf, ctx.nan)
     twopij = 2j * ctx.pi
     a = -twopij**n/ctx.fac(n) * ctx.bernpoly(n, ctx.ln(z)/twopij)
     if ctx._is_real_type(z) and z < 0:
@@ -493,6 +493,10 @@ def polylog(ctx, s, z):
         return polylog_series(ctx, s, z)
     if abs(z) >= 1.4 and ctx.isint(s):
         return (-1)**(s+1)*polylog_series(ctx, s, 1/z) + polylog_continuation(ctx, int(ctx.re(s)), z)
+    if ctx.isnan(z):
+        if ctx._is_real_type(z) and ctx.isnpint(s):
+            return ctx.nan
+        return ctx.mpc(ctx.nan, ctx.nan)
     if ctx.isint(s):
         return polylog_unitcircle(ctx, int(ctx.re(s)), z)
     return polylog_general(ctx, s, z)
@@ -871,7 +875,7 @@ def secondzeta_prime_term(ctx, s, a, **kwargs):
     return +totsum, err, n
 
 def secondzeta_exp_term(ctx, s, a):
-    if ctx.isint(s) and ctx.re(s) <= 0:
+    if ctx.isnpint(s):
         m = int(round(ctx.re(s)))
         if not m & 1:
             return ctx.mpf('-0.25')**(-m//2)
@@ -1018,7 +1022,7 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
     s = ctx.convert(s)
     a = ctx.convert(a)
     tol = ctx.eps
-    if ctx.isint(s) and ctx.re(s) <= 1:
+    if ctx.isnpint(s-1):
         if abs(s-1) < tol*1000:
             return ctx.inf
         m = int(round(ctx.re(s)))

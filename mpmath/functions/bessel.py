@@ -1,7 +1,6 @@
 from ..libmp.backend import MPQ
 from .functions import defun, defun_wrapped
 
-
 @defun
 def j0(ctx, x):
     """Computes the Bessel function `J_0(x)`. See :func:`~mpmath.besselj`."""
@@ -513,7 +512,7 @@ def airyai(ctx, z, derivative=0, **kwargs):
     else:
         n = 0
     # Values at infinities
-    if ctx.isspecial(z) and z:
+    if not ctx.isnormal(z) and z:
         if n and ntype == 'Z':
             if n == -1:
                 if z == ctx.inf:
@@ -605,7 +604,7 @@ def airybi(ctx, z, derivative=0, **kwargs):
     else:
         n = 0
     # Values at infinities
-    if ctx.isspecial(z) and z:
+    if not ctx.isnormal(z) and z:
         if n and ntype == 'Z':
             if z == ctx.inf:
                 return z

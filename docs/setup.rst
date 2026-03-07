@@ -1,7 +1,7 @@
 Setting up mpmath
 =================
 
-Mpmath requires at least Python 3.9.  It has been tested with CPython 3.9
+Mpmath requires at least Python 3.10.  It has been tested with CPython 3.10
 through 3.14 and for PyPy 3.11.
 
 Download and installation
@@ -40,17 +40,6 @@ See `debian <http://packages.debian.org/stable/python/python3-mpmath>`_ and
 `ubuntu <https://launchpad.net/ubuntu/+source/mpmath>`_ package information;
 please verify that you are getting the latest version.
 
-OpenSUSE
-........
-
-Mpmath is provided in the "Science" repository for all recent versions of
-`openSUSE <https://www.opensuse.org/>`_. To add this repository to the YAST
-software management tool, see
-https://en.opensuse.org/SDB:Add_package_repositories
-
-Look up https://download.opensuse.org/repositories/science/ for a list
-of supported OpenSUSE versions.
-
 Current development version
 ...........................
 
@@ -84,7 +73,7 @@ Python interpreter and do the following::
 Using gmpy2 (optional)
 ----------------------
 
-If `gmpy2 <https://github.com/aleaxit/gmpy>`_ version 2.2.0 or later is
+If `gmpy2 <https://github.com/gmpy2/gmpy2>`_ version 2.3.0 or later is
 installed on your system, mpmath will automatically detect it and transparently
 use gmpy2 integers instead of Python integers.  This makes mpmath much faster,
 especially at high precision (approximately above 100 digits).
@@ -95,6 +84,11 @@ equal to 'gmpy'.
 Using the gmpy2 backend can be disabled by setting the ``MPMATH_NOGMPY``
 environment variable.  Note that the mode cannot be switched during runtime;
 mpmath must be re-imported for this change to take effect.
+
+Alternatively, you can use `python-gmp
+<https://github.com/diofant/python-gmp>`_ extension.  The ``BACKEND`` value
+will be equal to 'gmp' in this case.  If both extensions are installed on your
+system, the gmpy2 will be preferred.
 
 Running tests
 -------------
