@@ -163,11 +163,6 @@ def _normalize(sign, man, exp, prec, rnd):
 
 _exp_types = (int,)
 
-if gmpy:
-    def _normalize(sign, man, exp, prec, rnd):
-        return gmpy._mpmath_normalize(sign, man, exp, man.bit_length(), prec,
-                                      rnd)[:-1]
-
 def normalize(sign, man, exp, prec, rnd):
     assert type(man) == MPZ
     assert type(exp) in _exp_types
@@ -209,8 +204,13 @@ def from_man_exp(man, exp, prec=0, rnd=round_fast):
 
 int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 
-#if gmpy:
-#    from_man_exp = gmpy._mpmath_create
+if gmpy:
+    def _normalize(sign, man, exp, prec, rnd):
+        return gmpy._mpmath_normalize(sign, man, exp, man.bit_length(), prec,
+                                      rnd)[:-1]
+
+    def from_man_exp(man, exp, prec=0, rnd=round_fast):
+        return gmpy._mpmath_create(man, exp, prec, rnd)[:-1]
 
 def from_int(n, prec=0, rnd=round_fast):
     """Create a raw mpf from an integer. If no precision is specified,
