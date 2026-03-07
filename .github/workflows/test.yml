@@ -13,8 +13,6 @@ jobs:
   docs:
     uses: ./.github/workflows/docs.yml
   frozen-version:
-    needs:
-      - tests
     runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v6
@@ -29,6 +27,7 @@ jobs:
     needs:
       - linter
       - coverage
+      - frozen-version
     runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
