@@ -102,7 +102,6 @@ def test_brent_comprehensive():
     assert final_error<mpf("0.5")
     assert abs(f(final_b))<mp.eps
 
-
 def test_multidimensional(capsys):
     def f(*x):
         return [3*x[0]**2-2*x[1]**2-1, x[0]**2-2*x[0]+x[1]**2+2*x[1]-8]
