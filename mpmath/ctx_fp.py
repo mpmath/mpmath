@@ -194,11 +194,13 @@ class FPContext(StandardBaseContext):
     def _convert_param(ctx, z):
         if type(z) is tuple:
             p, q = z
-            return ctx.mpf(p) / q, 'R'
+            return ctx.mpf(p / q), 'R'
         intz = int(z.real)
         if z == intz:
             return intz, 'Z'
-        return z, 'R'
+        if not z.imag:
+            return ctx.mpf(z), 'R'
+        return ctx.mpc(z), 'C'
 
     def _is_real_type(ctx, z):
         return isinstance(z, float) or isinstance(z, int_types)

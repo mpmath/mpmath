@@ -56,6 +56,7 @@ def main():
         sys.set_int_max_str_digits(0)
 
     lines = ['from mpmath import *',
+             'import mpmath',
              'from fractions import Fraction']
 
     if args.prec:
