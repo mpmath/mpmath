@@ -329,8 +329,7 @@ class LinearAlgebraMethods:
 
         A : The matrix to compute the pseudoinverse for.
         rtol: Optional relative threshold term.
-            The default value is max(A.rows, A.cols) * ctx.eps,
-            Where ctx.eps is the machine precision at the current working precision.
+            The default value is ctx.eps * max(A.rows, A.cols).
 
         **References**
 
