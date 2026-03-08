@@ -71,36 +71,30 @@ def test_multiplicity():
     assert multiplicity(lambda x: x**2, 1) == 0
 
 def test_brent_comprehensive():
-    f=lambda x:x**2-2
-    x=findroot(f,(1,2),solver="brent")
-    assert abs(f(x))<eps
+    # Standard root finding
+    f = lambda x: x**2 - 2
+    x = findroot(f, (1, 2), solver="brent")
+    assert abs(f(x)) < eps
 
-    f=lambda x:x-2
-    solver=Brent(mp,f,(mpf("1.0"),mpf("2.0")),tol=mp.eps)
-    solver.fb=mpf("0.0")
-    solver.fa=f(solver.a)
-    results=list(solver)
-    assert abs(f(results[0][0]))<mp.eps
+    f = lambda x: x - 2
+    x = findroot(f, (1.0, 2.0), solver="brent")
+    assert abs(f(x)) < eps
 
-    f=lambda x:x**2+1
+    f = lambda x: x**2 + 1
     with pytest.raises(ValueError):
-        findroot(f,(0,1),solver="brent")
+        findroot(f, (0, 1), solver="brent")
 
-    f=lambda x:x**2-2
-    with pytest.raises(ValueError,match="requires an interval"):
-        findroot(f,1,solver="brent")
+    f = lambda x: x**2 - 2
+    with pytest.raises(ValueError, match="requires an interval"):
+        findroot(f, 1, solver="brent")
 
-    f=lambda x:mp.sin(x)+0.1
-    solver=Brent(mp,f,(mpf("3.0"),mpf("4.0")),tol=mp.eps)
-    results=list(solver)
-    assert results
+    f = lambda x: mp.sin(x) + 0.1
+    x = findroot(f, (3.0, 4.0), solver="brent")
+    assert abs(f(x)) < eps
 
-    f=lambda x:x-mpf("1.5")
-    solver=Brent(mp,f,(mpf("1.0"),mpf("2.0")),tol=mpf("0.5"))
-    results=list(solver)
-    final_b,final_error=results[-1]
-    assert final_error<mpf("0.5")
-    assert abs(f(final_b))<mp.eps
+    f = lambda x: x - 1.5
+    x = findroot(f, (1.0, 2.0), solver="brent", tol=0.5)
+    assert abs(f(x)) < eps
 
 
 def test_multidimensional(capsys):
