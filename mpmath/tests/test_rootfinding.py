@@ -21,7 +21,7 @@ def test_findroot():
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
     for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
-                   Ridder,Brent]:
+                   Ridder, Brent]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
     # test types
@@ -95,7 +95,6 @@ def test_brent_comprehensive():
     f = lambda x: x - 1.5
     x = findroot(f, (1.0, 2.0), solver="brent", tol=0.5)
     assert abs(f(x)) < eps
-
 
 def test_multidimensional(capsys):
     def f(*x):
