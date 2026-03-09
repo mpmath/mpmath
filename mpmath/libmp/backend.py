@@ -21,6 +21,7 @@ gmpy = None
 BACKEND = 'python'
 MPZ = int
 MPQ = fractions.Fraction
+_gmpy_no_bc = None
 
 if 'MPMATH_NOGMPY' not in os.environ:
     try:
@@ -36,6 +37,7 @@ if 'MPMATH_NOGMPY' not in os.environ:
 
     if gmpy:
         MPZ = gmpy.mpz
+        _gmpy_no_bc = len(gmpy._mpmath_create(0, 0)) == 3
 
 MPZ_ZERO = MPZ(0)
 MPZ_ONE = MPZ(1)
