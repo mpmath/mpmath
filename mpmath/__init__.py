@@ -154,6 +154,7 @@ lu = mp.lu
 qr = mp.qr
 unitvector = mp.unitvector
 inverse = mp.inverse
+pinv = mp.pinv
 residual = mp.residual
 qr_solve = mp.qr_solve
 cholesky = mp.cholesky

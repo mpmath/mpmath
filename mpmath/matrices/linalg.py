@@ -311,6 +311,45 @@ class LinearAlgebraMethods:
             ctx.prec = prec
         return result
 
+    def pinv(ctx, A, *, rtol=None):
+        """
+        Returns Moore-Penrose pseudoinverse of the matrix `A`.
+
+        This is a generalization of the matrix inverse that provides a unique
+        result even for singular and non-square matrices. In the overdetermined
+        case, it provides the least squares solution. In the underdetermined
+        case, it provides the minimum norm solution.
+
+        The Moore-Penrose inverse of `A` is computed using its singular-value
+        decomposition. If `s` is the maximum singular value of `A`, then the
+        significance cut-off value is determined by `rtol * s`. Any singular
+        value below this value is assumed insignificant.
+
+        **Arguments**
+
+        A : The matrix to compute the pseudoinverse for.
+        rtol: Optional relative threshold term.
+            The default value is ctx.eps * max(A.rows, A.cols).
+
+        **References**
+
+        * [Wikipedia]_ https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse
+        """
+        U, S, V = ctx.svd(A)
+
+        if not rtol:
+            rtol = max(A.rows, A.cols) * S[0] * ctx.eps
+        assert rtol > 0
+
+        Splus = ctx.zeros(V.cols, U.cols)
+        for ind, val in enumerate(S):
+            if val > rtol * max(S):
+                Splus[ind, ind] = 1/val
+
+        v_conj_T = V.apply(lambda x: ctx.conj(x)).T
+        u_conj_T = U.apply(lambda x: ctx.conj(x)).T
+        return v_conj_T * Splus * u_conj_T
+
     def householder(ctx, A):
         """
         (A|b) -> H, p, x, res
