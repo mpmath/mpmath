@@ -3,7 +3,7 @@
 import pytest
 
 from mpmath import (cond, det, diag, exp, expm, extend, extradps, eye, fp,
-                    hilbert, inf, inverse, iv, j, lu, lu_solve, matrix, mnorm,
+                    hilbert, inf, inverse, iv, j, ldlt, lu, lu_solve, matrix, mnorm,
                     mp, mpc, mpf, nint, norm, pi, pinv, qr, qr_solve, rand, rank,
                     randmatrix, residual, zeros, absmin, eps)
 
@@ -126,6 +126,18 @@ def test_pinv():
 
     # Check with non-default tolerance.
     assert mnorm(pinv(A, rtol=1e-20) - Aplus, 1) < 1.e-14
+
+def test_ldlt():
+    # Test the LDL.T decomposition.
+    AL1 = matrix(((1, 0), (2, 1)))
+    AD1 = matrix(((5, 0), (0, 3)))
+    T1 = matrix((('5.0', '10.0'), ('10.0', '23.0')))
+
+    AL2 = matrix(((1, 0, 0), (2, 1, 0), (5, 2, 1)))
+    AD2 = matrix(((2, 0, 0), (0, 1, 0), (0, 0, 3)))
+    T2 = matrix((('2.0', '4.0', '10.0'), ('4.0', '9.0', '22.0'), ('10.0', '22.0', '57.0')))
+
+    import pdb; pdb.set_trace() # FIXME
 
 def test_householder():
     A, b = A8, b8
