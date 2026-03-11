@@ -374,23 +374,23 @@ class LinearAlgebraMethods:
         * [Wikipedia]_ https://en.wikipedia.org/wiki/Cholesky_decomposition#LDL_decomposition
         """
 
-        if not A == A.T:
-            raise ValueError("requires a matrix that is square and symmetric")
+        is_symmetric = A == A.T
+        if not is_symmetric:
+            raise ValueError("requires a symmetric real matrix")
 
         N = A.rows
+        A = A.copy()
         L = ctx.eye(N)
         D = ctx.zeros(N)
 
-        for i in range(N):
-            d = A[i, i] - sum(L[i, k]**2 * D[k, k] for k in range(0, i - 1))
-            if d > 0:
-                D[i, i] = d
-            else:
-                raise ValueError("encountered nonpositive pivot")
+        for k in range(N):
+            d = A[k, k]
+            D[k, k] = d
 
-            for j in range(i, N):
-                L[j, i] = A[j, i] - sum(L[j, k] * L[i, k] * D[k, k] for k in range(0, i))
-                L[j, i] /= D[i, i]
+            for i in range(k + 1, N):
+                L[i, k] = A[i, k]/d
+                for j in range(k + 1, N):
+                    A[i, j] -= d * L[i, k] * L[j, k]
 
         return L, D
 
