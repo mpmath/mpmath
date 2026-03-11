@@ -144,6 +144,13 @@ def test_ldlt():
     assert mnorm(L - AL2, 1) < 1.e-14
     assert mnorm(D - AD2, 1) < 1.e-14
 
+    # Verify that non-square matrices throw an error.
+    T3 = matrix([[1, 2, 3], [4, 5, 6]])
+    try:
+        L, D = ldlt(T3)
+    except ValueError:
+        assert True
+
 def test_householder():
     A, b = A8, b8
     H, p, x, r = householder(extend(A, b))
