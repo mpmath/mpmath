@@ -128,16 +128,21 @@ def test_pinv():
     assert mnorm(pinv(A, rtol=1e-20) - Aplus, 1) < 1.e-14
 
 def test_ldlt():
-    # Test the LDL.T decomposition.
-    AL1 = matrix(((1, 0), (2, 1)))
-    AD1 = matrix(((5, 0), (0, 3)))
-    T1 = matrix((('5.0', '10.0'), ('10.0', '23.0')))
+    # Test the LDL.T decomposition for 2x2 symmetric real.
+    AL1 = matrix([[1, 0], [2, 1]])
+    AD1 = matrix([[5, 0], [0, 3]])
+    T1 = matrix([['5.0', '10.0'], ['10.0', '23.0']])
+    L, D = ldlt(T1)
+    assert mnorm(L - AL1, 1) < 1.e-14    
+    assert mnorm(D - AD1, 1) < 1.e-14    
 
-    AL2 = matrix(((1, 0, 0), (2, 1, 0), (5, 2, 1)))
-    AD2 = matrix(((2, 0, 0), (0, 1, 0), (0, 0, 3)))
-    T2 = matrix((('2.0', '4.0', '10.0'), ('4.0', '9.0', '22.0'), ('10.0', '22.0', '57.0')))
-
-    import pdb; pdb.set_trace() # FIXME
+    # Test the LDL.T decomposition for 3x3 symmetric real.
+    AL2 = matrix([[1, 0, 0], [2, 1, 0], [5, 2, 1]])
+    AD2 = matrix([[2, 0, 0], [0, 1, 0], [0, 0, 3]])
+    T2 = matrix([['2.0', '4.0', '10.0'], ['4.0', '9.0', '22.0'], ['10.0', '22.0', '57.0']])
+    L, D = ldlt(T2)
+    assert mnorm(L - AL2, 1) < 1.e-14    
+    assert mnorm(D - AD2, 1) < 1.e-14    
 
 def test_householder():
     A, b = A8, b8
