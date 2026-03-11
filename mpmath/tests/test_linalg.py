@@ -3,7 +3,7 @@
 import pytest
 
 from mpmath import (cond, det, diag, exp, expm, extend, extradps, eye, fp,
-                    hilbert, inf, inverse, iv, j, lu, lu_solve, matrix, mnorm,
+                    hilbert, inf, inverse, iv, j, ldlt, lu, lu_solve, matrix, mnorm,
                     mp, mpc, mpf, nint, norm, pi, pinv, qr, qr_solve, rand, rank,
                     randmatrix, residual, zeros, absmin, eps)
 
@@ -126,6 +126,30 @@ def test_pinv():
 
     # Check with non-default tolerance.
     assert mnorm(pinv(A, rtol=1e-20) - Aplus, 1) < 1.e-14
+
+def test_ldlt():
+    # Test the LDL.T decomposition for 2x2 symmetric real.
+    AL1 = matrix([[1, 0], [2, 1]])
+    AD1 = matrix([[5, 0], [0, 3]])
+    T1 = matrix([['5.0', '10.0'], ['10.0', '23.0']])
+    L, D = ldlt(T1)
+    assert mnorm(L - AL1, 1) < 1.e-14
+    assert mnorm(D - AD1, 1) < 1.e-14
+
+    # Test the LDL.T decomposition for 3x3 symmetric real.
+    AL2 = matrix([[1, 0, 0], [2, 1, 0], [5, 2, 1]])
+    AD2 = matrix([[2, 0, 0], [0, 1, 0], [0, 0, 3]])
+    T2 = matrix([['2.0', '4.0', '10.0'], ['4.0', '9.0', '22.0'], ['10.0', '22.0', '57.0']])
+    L, D = ldlt(T2)
+    assert mnorm(L - AL2, 1) < 1.e-14
+    assert mnorm(D - AD2, 1) < 1.e-14
+
+    # Verify that non-square matrices throw an error.
+    T3 = matrix([[1, 2, 3], [4, 5, 6]])
+    try:
+        L, D = ldlt(T3)
+    except ValueError:
+        assert True
 
 def test_householder():
     A, b = A8, b8

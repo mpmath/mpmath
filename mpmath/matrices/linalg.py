@@ -350,6 +350,50 @@ class LinearAlgebraMethods:
         u_conj_T = U.apply(lambda x: ctx.conj(x)).T
         return v_conj_T * Splus * u_conj_T
 
+    def ldlt(ctx, A):
+        """
+        ldlt(A) => L, D
+        Computes the L * D * L.T decomposition of the matrix A.
+
+        L * D * L.T decomposition of the matrix 'A', where L is a
+        lower-triangular matrix, and D is a diagonal matrix. This decomposition
+        is related to the L*U decomposition of a matrix. This decomposition
+        requires that 'A' be symmetric and positive semi-definite.
+
+        Given A, this function returns L, the lower triangular matrix, and D,
+        the diagonal matrix for this decomposition. This decomposition can be
+        used to more efficiently implement the LU decomposition for symmetric,
+        positive-definite matrices.
+
+        **Arguments**
+
+        A : The matrix to compute the L*D*L.T decomposition for.
+
+        **References**
+
+        * [Wikipedia]_ https://en.wikipedia.org/wiki/Cholesky_decomposition#LDL_decomposition
+        """
+
+        is_symmetric = A == A.T
+        if not is_symmetric:
+            raise ValueError("requires a symmetric real matrix")
+
+        N = A.rows
+        A = A.copy()
+        L = ctx.eye(N)
+        D = ctx.zeros(N)
+
+        for k in range(N):
+            d = A[k, k]
+            D[k, k] = d
+
+            for i in range(k + 1, N):
+                L[i, k] = A[i, k]/d
+                for j in range(k + 1, N):
+                    A[i, j] -= d * L[i, k] * L[j, k]
+
+        return L, D
+
     def householder(ctx, A):
         """
         (A|b) -> H, p, x, res
