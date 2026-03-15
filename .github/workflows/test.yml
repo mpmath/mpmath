@@ -22,7 +22,7 @@ jobs:
       with:
         python-version: "3.x"
     - name: Run frozen version test
-      run: bash mpmath/tests/test_version_frozen.sh
+      run: ./mpmath/tests/test_version_frozen.sh
   tests:
     needs:
       - linter
