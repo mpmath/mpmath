@@ -101,10 +101,10 @@ def test_brent_exact_root_generator():
     f = lambda x: x - 2.0
     # Manually initialize the solver with an interval that will quickly hit exactly 2.0
     solver = Brent(mp, f, (1.0, 3.0))
-    
+
     # Casting to a list forces the generator to keep unpausing until it hits 'return'
     results = list(solver)
-    
+
     # The last yielded value should be our exact root (2.0) with an error of 0
     final_root, final_error = results[-1]
     assert final_root == 2.0
