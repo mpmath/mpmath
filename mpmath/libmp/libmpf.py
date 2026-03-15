@@ -1102,12 +1102,10 @@ def to_digits_exp(s, dps, base=10):
     return sign, digits, exponent
 
 def round_digits(sign, digits, dps, base, rnd=round_nearest, fixed=False):
-    '''
+    """
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
-
-    Supports three kinds of rounding: up, down, or nearest.
-    '''
+    """
 
     assert len(digits) > dps
     assert rnd in (round_nearest, round_up, round_down, round_ceiling,

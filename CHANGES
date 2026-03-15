@@ -1,3 +1,14 @@
+--1.4.1--
+Released March 15, 2026
+
+Bug fixes:
+
+* Fix test_hexadecimal_with_libc_bulk(), see #1049 (Doug Torrance)
+* Keep available deprecated aliases for mpc/mpf_log() (Sergey B Kirpichev)
+* Use version_file option of setuptools-scm to keep version info, see #1048
+  (Sergey B Kirpichev)
+* Add workaround for test on s390x, see #1061 (Sergey B Kirpichev)
+
 --1.4.0--
 Released February 23, 2026
 
