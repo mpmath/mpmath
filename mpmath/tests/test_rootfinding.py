@@ -5,7 +5,7 @@ from mpmath import (cos, eps, findroot, fp, inf, iv, jacobian, matrix, mnorm,
                     workprec)
 from mpmath.calculus.optimization import (Anderson, ANewton, Bisection,
                                           Illinois, MDNewton, MNewton, Muller,
-                                          Newton, Pegasus, Ridder, Secant)
+                                          Newton, Pegasus, Ridder, Secant, Brent)
 
 
 def test_findroot():
@@ -21,7 +21,7 @@ def test_findroot():
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
     for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
-                   Ridder]:
+                   Ridder, Brent]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
     # test types
@@ -69,6 +69,46 @@ def test_multiplicity():
     for i in range(1, 5):
         assert multiplicity(lambda x: (x - 1)**i, 1) == i
     assert multiplicity(lambda x: x**2, 1) == 0
+
+def test_brent_comprehensive():
+    # Standard root finding
+    f = lambda x: x**2 - 2
+    x = findroot(f, (1, 2), solver="brent")
+    assert abs(f(x)) < eps
+
+    f = lambda x: x - 2
+    x = findroot(f, (1.0, 2.0), solver="brent")
+    assert abs(f(x)) < eps
+
+    f = lambda x: x**2 + 1
+    with pytest.raises(ValueError):
+        findroot(f, (0, 1), solver="brent")
+
+    f = lambda x: x**2 - 2
+    with pytest.raises(ValueError, match="requires an interval"):
+        findroot(f, 1, solver="brent")
+
+    f = lambda x: mp.sin(x) + 0.1
+    x = findroot(f, (3.0, 4.0), solver="brent")
+    assert abs(f(x)) < eps
+
+    f = lambda x: x - 1.5
+    x = findroot(f, (1.0, 2.0), solver="brent", tol=0.5)
+    assert abs(f(x)) < eps
+
+def test_brent_exact_root_generator():
+    """Forces the Brent generator to exhaust, hitting the exact root return statement."""
+    f = lambda x: x - 2.0
+    # Manually initialize the solver with an interval that will quickly hit exactly 2.0
+    solver = Brent(mp, f, (1.0, 3.0))
+
+    # Casting to a list forces the generator to keep unpausing until it hits 'return'
+    results = list(solver)
+
+    # The last yielded value should be our exact root (2.0) with an error of 0
+    final_root, final_error = results[-1]
+    assert final_root == 2.0
+    assert final_error == 0
 
 def test_multidimensional(capsys):
     def f(*x):
