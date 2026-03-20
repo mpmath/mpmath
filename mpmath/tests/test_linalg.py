@@ -139,7 +139,7 @@ def test_ldlt():
     # Test the LDL.T decomposition for 3x3 symmetric real.
     AL2 = matrix([[1, 0, 0], [2, 1, 0], [5, 2, 1]])
     AD2 = matrix([[2, 0, 0], [0, 1, 0], [0, 0, 3]])
-    T2 = matrix([['2.0', '4.0', '10.0'], ['4.0', '9.0', '22.0'], ['10.0', '22.0', '57.0']])
+    T2 = matrix([[2, 4, 10], [4, 9, 22], [10, 22, 57]])
     L, D = ldlt(T2)
     assert mnorm(L - AL2, 1) < 1.e-14
     assert mnorm(D - AD2, 1) < 1.e-14
