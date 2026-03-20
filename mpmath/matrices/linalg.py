@@ -375,7 +375,7 @@ class LinearAlgebraMethods:
         """
 
         is_symmetric = A == A.T
-        if not is_symmetric:
+        if A != A.T:
             raise ValueError("requires a symmetric real matrix")
 
         N = A.rows
