@@ -146,10 +146,8 @@ def test_ldlt():
 
     # Verify that non-square matrices throw an error.
     T3 = matrix([[1, 2, 3], [4, 5, 6]])
-    try:
-        L, D = ldlt(T3)
-    except ValueError:
-        assert True
+    with pytest.raises(ValueError):
+        ldlt(T3)
 
 def test_householder():
     A, b = A8, b8
