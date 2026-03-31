@@ -1,4 +1,5 @@
 import platform
+import sys
 
 import pytest
 
@@ -1473,7 +1474,7 @@ def test_issue_239():
     assert betainc(206, 385, 0, 0.55, 1).ae('0.99999999999999999999996570910644857895771110649954')
     mp.dps = 15
     expected_exc = ValueError
-    if platform.machine() == 's390x':
+    if platform.machine() == 's390x' and sys.version_info < (3, 14):
         # This case has recursion depth beyond platform capabilities, that
         # could be controlled with sys.setrecursionlimit().  See issue #1046
         # for details.
