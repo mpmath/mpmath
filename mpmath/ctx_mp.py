@@ -31,6 +31,16 @@ get_complex = re.compile(r"""
 class MPContext(BaseMPContext, StandardBaseContext):
     """
     Context for multiple precision floatng-point arithmetic.
+
+    **Arguments**
+
+    *prec*
+         precision in bits, default is 53
+    *rounding*
+         rounding mode, default is round to nearest
+    *trap_complex*
+         enable complex answers, where real aren't possible, default is False
+
     """
 
     def __init__(ctx, prec=sys.float_info.mant_dig,
