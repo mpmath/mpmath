@@ -123,7 +123,7 @@ The (binary) exponent is stored exactly and is independent of the precision.
 
 The ``rounding`` property control default rounding mode for the context:
 
-    >>> mp.rounding  # round to nearest
+    >>> mp.rounding  # round to nearest is the default
     'n'
     >>> sin(1)
     mpf('0.8414709848078965')

@@ -116,11 +116,11 @@ shifts_down = {round_floor:(1,0), round_ceiling:(0,1),
 # This function is called almost every time an mpf is created.
 # It has been optimized accordingly.
 
-def _normalize(sign, man, exp, bc, prec, rnd):
+def normalize(sign, man, exp, bc, prec, rnd):
     """
     Create a raw mpf tuple with value (-1)**sign * man * 2**exp and
-    normalized mantissa. The mantissa is rounded in the specified
-    direction if its size exceeds the precision. Trailing zero bits
+    normalized mantissa.  The mantissa is rounded according to the specified
+    rounding mode if its size exceeds the precision. Trailing zero bits
     are also stripped from the mantissa to ensure that the
     representation is canonical.
 
@@ -134,6 +134,12 @@ def _normalize(sign, man, exp, bc, prec, rnd):
     If these conditions are not met, use from_man_exp, mpf_pos, or any
     of the conversion functions to create normalized raw mpf tuples.
     """
+    assert type(man) == MPZ
+    assert type(bc) in _exp_types
+    assert type(exp) in _exp_types
+    assert bc == man.bit_length()
+    assert man >= 0
+
     if not man:
         return fzero
     # Cut mantissa down to size if larger than target precision
@@ -168,15 +174,7 @@ def _normalize(sign, man, exp, bc, prec, rnd):
 _exp_types = (int,)
 
 if gmpy:
-    _normalize = gmpy._mpmath_normalize
-
-def normalize(sign, man, exp, bc, prec, rnd):
-    assert type(man) == MPZ
-    assert type(bc) in _exp_types
-    assert type(exp) in _exp_types
-    assert bc == man.bit_length()
-    assert man >= 0
-    return _normalize(sign, man, exp, bc, prec, rnd)
+    normalize = gmpy._mpmath_normalize
 
 #----------------------------------------------------------------------------#
 #                            Conversion functions                            #
