@@ -546,6 +546,10 @@ def test_frexp():
     assert frexp(1) == (0.5, 1)
     assert frexp(0.2) == (0.8, -2)
     assert frexp(1000) == (0.9765625, 10)
+    assert frexp(inf) == (inf, 0)
+    assert frexp(-inf) == (-inf, 0)
+    r = frexp(nan)
+    assert isnan(r[0]) and r[1] == 0
 
 def test_aliases():
     assert ln(7) == log(7)
