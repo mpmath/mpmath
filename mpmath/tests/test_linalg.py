@@ -201,6 +201,18 @@ def test_solve_overdet_complex():
     b = matrix([1 + j, 2, -j])
     assert norm(residual(A, lu_solve(A, b), b)) < 1.0208
 
+def test_qr_solve_issue_983():
+    A = matrix([[mp.one, -mp.pi / 20, (-mp.pi / 20) ** 2, (-mp.pi / 20) ** 3],
+                [mp.one, mp.zero, mp.zero, mp.zero],
+                [mp.one, mp.pi / 20, (mp.pi / 20) ** 2, (mp.pi / 20) ** 3],
+                [mp.one, mp.pi / 10, (mp.pi / 10) ** 2, (mp.pi / 10) ** 3]])
+    b = matrix([[mp.sin(-mp.pi / 20)],
+                [mp.zero],
+                [mp.sin(mp.pi / 20)],
+                [mp.sin(mp.pi / 20)]])
+    x, _ = qr_solve(A, b)
+    assert norm(residual(A, x, b), inf) < 1e-14
+
 def test_singular():
     A = [[5.6, 1.2], [7./15, .1]]
     B = repr(zeros(2))
