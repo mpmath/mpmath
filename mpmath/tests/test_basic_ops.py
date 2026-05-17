@@ -16,8 +16,8 @@ from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     mpi, nan, ninf, nint, nint_distance, nstr, pi, workprec)
 from mpmath.libmp import (MPQ, MPZ, finf, fnan, fninf, fnone, fone, from_float,
                           from_int, from_str, isprime, mpf_add, mpf_mul,
-                          mpf_sub, round_down, round_nearest, round_up, to_int,
-                          to_man_exp)
+                          mpf_sub, round_down, round_nearest, round_up,
+                          to_float, to_int, to_man_exp)
 
 
 def test_type_compare():
@@ -634,6 +634,7 @@ def test_issue_260():
 @example(2.675, 2)
 @example(math.inf, 3)
 @example(-math.inf, 1)
+@example(8.9884656743115795e+307, 0)
 def test_round_bulk(x, n):
     mp.prec = fp.prec
     m = mpf(x)
@@ -692,3 +693,46 @@ def test_issue_975():
     for i in range(sz):
         futures[i] = tpe.submit(worker)
     assert len(collections.Counter(f.result() for f in futures))
+
+
+def test_to_float():
+    # coverage tests
+    mp.dps = 1000
+
+    x = mpf('0b1.1111111111111111111111111111111111111'
+            '11111111111111011p-1023')
+    assert float(x).hex() == '0x0.fffffffffffffp-1022'
+    x = mpf('0b1.1111111111111111111111111111111111111'
+            '11111111111111111p-1023')
+    assert float(x).hex() == '0x1.0000000000000p-1022'
+
+    assert math.isnan(float(mpf('nan')))
+    assert float(-mpf('0x1.1p-1075')) == float.fromhex('-0x0.0000000000001p-1022')
+    assert float(mpf('0x1.1p-1075')) == float.fromhex('0x0.0000000000001p-1022')
+
+    assert to_float(mpf('0x1p3000')._mpf_) == sys.float_info.max
+    assert to_float((-mpf('0x1p3000'))._mpf_) == -sys.float_info.max
+    pytest.raises(OverflowError, lambda: to_float(mpf('0x1p3000')._mpf_,
+                                                  strict=True,
+                                                  rnd=round_nearest))
+    pytest.raises(OverflowError, lambda: to_float((-mpf('0x1p3000'))._mpf_,
+                                                  strict=True,
+                                                  rnd=round_nearest))
+
+def test_issue_1078():
+    mp.dps = 5000  # way too large
+
+    # These are adjacent denormals (in 64-bit doubles)
+    lo = mpf("0x0.0000000000001p-1022")
+    hi = mpf("0x0.0000000000002p-1022")
+
+    # Take a value that's a tiny bit below the
+    # midpoint (i.e. closer to `lo`):
+    mid = (lo + hi) / 2
+
+    # Offset of 2^-52 ULP: correctly rounds to lo
+    val_ok = mid - mpf(2) ** -(1074 + 52)
+    # Offset of 2^-53 ULP: was incorrectly rounded to hi (even)
+    val_bad = mid - mpf(2) ** -(1074 + 53)
+
+    assert float(val_ok) == float(val_bad) == float(lo)
