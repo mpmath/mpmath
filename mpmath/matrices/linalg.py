@@ -371,7 +371,10 @@ class LinearAlgebraMethods:
             s = ctx.fsum(abs(A[i,j])**2 for i in range(j, m))
             if not abs(s) > ctx.eps:
                 raise ValueError('matrix is numerically singular')
-            p.append(-ctx.sign(ctx.re(A[j,j])) * ctx.sqrt(s))
+            sign = ctx.sign(ctx.re(A[j,j]))
+            if sign == 0:
+                sign = ctx.one
+            p.append(-sign * ctx.sqrt(s))
             kappa = ctx.one / (s - p[j] * A[j,j])
             A[j,j] -= p[j]
             for k in range(j+1, n):
