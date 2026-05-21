@@ -124,6 +124,7 @@ Operations that are correctly rounded:
 * Division and square roots of real numbers.
 * Powers of real numbers, assuming sufficiently small integer exponents (huge powers are rounded in the right direction, but possibly farther than necessary).
 * Conversion from decimal to binary, for reasonably sized numbers (roughly between `10^{-100}` and `10^{100}`).
+* Conversion from/to machine floating-point numbers.
 * Typically, transcendental functions for exact input-output pairs.
 
 Operations that should be fully accurate (however, the current implementation may be based on a heuristic error analysis):

@@ -61,7 +61,16 @@ finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
 math_float_inf = math.inf
+math_float_nan = math.nan
 blog2_10 = 3.3219280948873626
+
+float_mant_dig = sys.float_info.mant_dig
+float_min_exp = sys.float_info.min_exp
+float_max_exp = sys.float_info.max_exp
+float_eps = sys.float_info.epsilon
+float_max = sys.float_info.max
+float_min = sys.float_info.min
+float_min_subnormal_exp = float_min_exp - float_mant_dig
 
 
 #----------------------------------------------------------------------------#
@@ -330,40 +339,65 @@ def from_Decimal(x, prec=0, rnd=round_fast):
 
 def to_float(s, strict=False, rnd=round_fast):
     """
-    Convert a raw mpf to a Python float. The result is exact if
-    s.bit_length() <= 53 and no underflow/overflow occurs.
+    Convert a raw mpf to a Python float.  The result is
+    exact if s.bit_length() <= sys.float_info.mant_dig
+    and no underflow/overflow occurs.  Else result is
+    correctly rounded.
 
-    If the number is too large or too small to represent as a regular
-    float, it will be converted to inf or 0.0. Setting strict=True
-    forces an OverflowError to be raised instead.
-
-    Warning: with a directed rounding mode, the correct nearest representable
-    floating-point number in the specified direction might not be computed
-    in case of overflow or (gradual) underflow.
+    If the magnitude of number is too large to represent as
+    a regular float, it will be converted to infinity.
+    Setting strict=True forces an OverflowError to be
+    raised instead.
     """
     sign, man, exp, bc = s
+
     if not man:
         if s == fzero: return 0.0
         if s == finf: return math_float_inf
         if s == fninf: return -math_float_inf
-        return math_float_inf/math_float_inf
-    if bc > 53:
-        sign, man, exp, bc = normalize(sign, man, exp, bc, 53, rnd)
+        return math_float_nan
+
+    exp2 = exp + bc
+    # The smallest normal number is 2^(-1022)=0.1p-1021, and the smallest
+    # subnormal is 2^(-1074)=0.1p-1073
+    if exp2 <= float_min_subnormal_exp:
+        if sign:
+            if rnd == round_floor or (rnd == round_nearest
+                                      and mpf_cmp(s, (1, MPZ(1), float_min_subnormal_exp
+                                                      - 1, 1)) < 0):
+                return -float_min * float_eps
+            return 0.0
+        if rnd == round_ceiling or (rnd == round_nearest
+                                    and mpf_cmp(s, (0, MPZ(1), float_min_subnormal_exp
+                                                    - 1, 1)) > 0):
+            return float_min * float_eps
+        return 0.0
+
+    # The largest normal number is 2^1024*(1-2^(-53))=0.111...111p1024
+    if exp2 > float_max_exp:
+        if sign:
+            if rnd == round_down or rnd == round_ceiling:
+                return -float_max
+            if strict:
+                raise OverflowError("math range error")
+            return -math_float_inf
+        if rnd == round_down or rnd == round_floor:
+            return float_max
+        if strict:
+            raise OverflowError("math range error")
+        return math_float_inf
+
+    nbits = float_mant_dig
+    if exp2 < float_min_exp:
+        # In the subnormal case, compute the exact number of significant bits.
+        nbits += exp2 - float_min_exp
+        assert 1 <= nbits < float_mant_dig
+    if bc > nbits:
+        sign, man, exp, bc = normalize(sign, man, exp, bc, nbits, rnd)
     if sign:
         man = -man
-    try:
-        return math.ldexp(man, exp)
-    except OverflowError:
-        if strict:
-            raise
-        # Overflow to infinity
-        if exp + bc > 0:
-            if sign:
-                return -math_float_inf
-            else:
-                return math_float_inf
-        # Underflow to zero
-        return 0.0
+    # Should be exact:
+    return math.ldexp(man, exp)
 
 def from_rational(p, q, prec, rnd=round_fast):
     """Create a raw mpf from a rational number p/q, round if
