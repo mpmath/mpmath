@@ -844,7 +844,7 @@ maxterms, or set zeroprec."""
         specifies the direction of rounding.  Valid options are:
 
             * ``'f'`` (alias ``'D'``) for floor, towards minus infinity
-            * ``'c'`` (alias ``'U'``) )for ceiling, towards plus infinity
+            * ``'c'`` (alias ``'U'``) for ceiling, towards plus infinity
             * ``'d'`` (alias ``'Z'``) for down, towards zero
             * ``'u'`` (alias ``'Y'``) for up, away from zero
             * ``'n'`` (alias ``'N'``) for rounding to nearest (default)
