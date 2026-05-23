@@ -1,3 +1,61 @@
+--1.5.0--
+Released TBD
+
+Features:
+
+* Support special numbers in mpf_frexp() like math.frexp(),
+  see #1081 (Sergey B Kirpichev)
+
+Compatibility:
+
+* Drop support for CPython 3.9, see #1058 (Sergey B Kirpichev)
+* Remove deprecated math2 and rational modules, see #1057 (Sergey B Kirpichev)
+* Remove deprecated mp.mpnumeric alias, see #1057 (Sergey B Kirpichev)
+* Remove deprecated bitcount(), fp.is_special() and  to/from_pickable()
+  functions, see #1057 (Sergey B Kirpichev)
+* Drop DeprecationWarning for force_type kwarg for matrix(),
+  see #1057 (Sergey B Kirpichev)
+* Use signed=True per default in to_man_exp(), see #1057 (Sergey B Kirpichev)
+* Use asc=True per default for polynomial functions, see
+  #1057 (Sergey B Kirpichev)
+
+Bug fixes:
+
+* Fix test_hexadecimal_with_libc_bulk(), see #1049 (Doug Torrance)
+* Keep available deprecated aliases for mpc/mpf_log() (Sergey B Kirpichev)
+* Use version_file option of setuptools-scm to keep version info, see #1048
+  (Sergey B Kirpichev)
+* Add workaround for test on s390x, see #1061 (Sergey B Kirpichev)
+* Fix signature of root(), see #1072 (Sergey B Kirpichev)
+* Speedup removal trailing zeros in _normalize/from_man_exp(), see #1074
+  (Fredrik Johansson and Sergey B Kirpichev)
+* Improve documentation about rounding in the mp context,
+  see #1079 (Sergey B Kirpichev)
+* Correct to_float() conversion for double-rounding cases (e.g. subnormals),
+  see #1082 (Sergey B Kirpichev)
+* Fix qr_solve() failure on well-conditioned matrices with zero pivot, see
+  #1083 (Jam Balaya)
+
+Maintenance:
+
+* Add bash script to test package version in a frozen application version
+  and a separate CI job to run it, see #1055 (flurin4)
+* Revert "Add backport action", see #1063 (Sergey B Kirpichev)
+* Test on CPython 3.15 (no GMP), see #1071 (Sergey B Kirpichev)
+
+
+--1.4.1--
+Released March 15, 2026
+
+Bug fixes:
+
+* Fix test_hexadecimal_with_libc_bulk(), see #1049 (Doug Torrance)
+* Keep available deprecated aliases for mpc/mpf_log() (Sergey B Kirpichev)
+* Use version_file option of setuptools-scm to keep version info, see #1048
+  (Sergey B Kirpichev)
+* Add workaround for test on s390x, see #1061 (Sergey B Kirpichev)
+
+
 --1.4.0--
 Released February 23, 2026
 
