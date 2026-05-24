@@ -339,15 +339,13 @@ def from_Decimal(x, prec=0, rnd=round_fast):
 
 def to_float(s, strict=False, rnd=round_fast):
     """
-    Convert a raw mpf to a Python float.  The result is
-    exact if s.bit_length() <= sys.float_info.mant_dig
-    and no underflow/overflow occurs.  Else result is
-    correctly rounded.
+    Convert a raw mpf to a Python float.  The result is exact
+    if s.bit_length() <= sys.float_info.mant_dig and no
+    underflow/overflow occurs.  Else result is correctly rounded.
 
-    If the magnitude of number is too large to represent as
-    a regular float, it will be converted to infinity.
-    Setting strict=True forces an OverflowError to be
-    raised instead.
+    If the magnitude of rounded number is too large to represent as
+    a regular float, it will be converted to infinity.  Setting
+    strict=True forces an OverflowError to be raised instead.
     """
     sign, man, exp, bc = s
 
