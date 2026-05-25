@@ -156,6 +156,9 @@ def test_hypot():
     assert hypot(0.33, 0) == mpf(0.33)
     assert hypot(-0.33, 0) == mpf(0.33)
     assert hypot(3, 4) == mpf(5)
+    # issue 1011
+    assert hypot(1.0000044432326138,
+                 1.0068578402095993) == mpf('1.4190742041473763')
 
 def test_exact_cbrt():
     for i in range(0, 20000, 200):
