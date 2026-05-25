@@ -816,10 +816,10 @@ def mpc_fibonacci(z, prec, rnd=round_fast):
     u = mpc_div_mpf(u, b, prec, rnd)
     return u
 
-def mpf_expj(x, prec, rnd=round_floor):
+def mpf_expj(x, prec, rnd=round_fast):
     raise ComplexResult
 
-def mpc_expj(z, prec, rnd=round_floor):
+def mpc_expj(z, prec, rnd=round_fast):
     re, im = z
     if im == fzero:
         return mpf_cos_sin(re, prec, rnd)
@@ -831,10 +831,10 @@ def mpc_expj(z, prec, rnd=round_floor):
     im = mpf_mul(ey, s, prec, rnd)
     return re, im
 
-def mpf_expjpi(x, prec, rnd=round_floor):
+def mpf_expjpi(x, prec, rnd=round_fast):
     raise ComplexResult
 
-def mpc_expjpi(z, prec, rnd=round_floor):
+def mpc_expjpi(z, prec, rnd=round_fast):
     re, im = z
     if im == fzero:
         return mpf_cos_sin_pi(re, prec, rnd)
