@@ -1805,5 +1805,5 @@ def mpf_hypot(x, y, prec, rnd=round_fast):
     x and y."""
     if y == fzero: return mpf_abs(x, prec, rnd)
     if x == fzero: return mpf_abs(y, prec, rnd)
-    hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+4)
+    hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+10, rnd)
     return mpf_sqrt(hypot2, prec, rnd)
