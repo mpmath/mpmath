@@ -1089,7 +1089,7 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rnd=round_nearest, fixed=False):
+def round_digits(sign, digits, dps, base, rnd=round_fast, fixed=False):
     """
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1477,7 +1477,7 @@ def read_format_spec(format_spec):
     return format_dict
 
 
-def format_fixed(s, dps, rnd=round_nearest):
+def format_fixed(s, dps, rnd=round_fast):
     # First, get the exponent to know how many digits we will need
     base = 10
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1518,7 +1518,7 @@ def format_fixed(s, dps, rnd=round_nearest):
     return int_part, frac_part
 
 
-def format_scientific(s, dps, rnd=round_nearest):
+def format_scientific(s, dps, rnd=round_fast):
     base = 10
 
     # First, get the exponent to know how many digits we will need
@@ -1532,7 +1532,7 @@ def format_scientific(s, dps, rnd=round_nearest):
     return digits[0], digits[1:], f'e{exponent:+03d}'
 
 
-def format_hexadecimal(s, dps, rnd=round_nearest):
+def format_hexadecimal(s, dps, rnd=round_fast):
     prec = 4*dps + 1 if dps >= 0 else s[1].bit_length()
 
     if s[1]:
@@ -1559,7 +1559,7 @@ def format_hexadecimal(s, dps, rnd=round_nearest):
     return digits, frac_digits, f'p{exponent:+01d}'
 
 
-def format_binary(s, dps, rnd=round_nearest):
+def format_binary(s, dps, rnd=round_fast):
     prec = dps + 1 if dps >= 0 else s[1].bit_length()
     s = mpf_pos(s, prec, rnd)
 
