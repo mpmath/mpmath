@@ -8,9 +8,11 @@ Run with:
     python manydigits.py
 
 """
-from mpmath import (mp, sin, tan, cos, sqrt, e, pi, exp, atanh, mpf, tanh,
-                    zeta, catalan, findroot, quadts, atan, asin, asinh)
-from mpmath.libmp import to_fixed, bin_to_radix
+from mpmath import (asin, asinh, atan, atanh, catalan, cos, e, exp, findroot,
+                    mp, mpf, pi, quadts, sin, sqrt, tan, tanh, zeta)
+from mpmath.libmp.libintmath import bin_to_radix
+from mpmath.libmp.libmpf import to_fixed
+
 
 dps = 100
 mp.dps = dps + 10

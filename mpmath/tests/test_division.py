@@ -1,10 +1,10 @@
 from random import choice, randint, seed
 
 from mpmath import mpf
-from mpmath.libmp import (from_int, from_str, mpf_div, mpf_mul, mpf_rdiv_int,
-                          round_ceiling, round_down, round_floor,
-                          round_nearest, round_up)
+from mpmath.libmp import (from_int, from_str, mpf_div, mpf_mul, round_ceiling,
+                          round_down, round_floor, round_nearest, round_up)
 from mpmath.libmp.libintmath import trailing
+from mpmath.libmp.libmpf import mpf_rdiv_int
 
 
 def test_div_1_3():
