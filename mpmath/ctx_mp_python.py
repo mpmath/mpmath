@@ -3,19 +3,21 @@ import numbers
 import sys
 
 from . import function_docs
-from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
-                    format_mpc, format_mpf, from_Decimal, from_float, from_int,
-                    from_man_exp, from_npfloat, from_rational, from_str, fzero,
-                    int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
-                    mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
-                    mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
-                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
-                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
-                    mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_neg, mpf_pos, mpf_pow, mpf_sub, mpf_sum, prec_to_dps,
-                    round_nearest, to_fixed, to_float, to_int, to_man_exp,
-                    to_rational, to_str)
+from .libmp import (MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
+                    from_float, from_int, from_man_exp, from_rational,
+                    from_str, fzero, int_types, mpc_abs, mpc_pow, mpc_pow_int,
+                    mpc_pow_mpf, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
+                    mpf_gt, mpf_le, mpf_lt, mpf_mod, mpf_mul, mpf_neg, mpf_pow,
+                    mpf_sub, prec_to_dps, round_nearest, to_float, to_int,
+                    to_man_exp, to_rational, to_str)
+from .libmp.backend import MPQ
+from .libmp.libmpc import (mpc_add, mpc_add_mpf, mpc_conjugate, mpc_div,
+                           mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
+                           mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
+                           mpc_mul_mpf, mpc_neg, mpc_pos, mpc_sub, mpc_sub_mpf,
+                           mpc_to_complex, mpc_to_str)
+from .libmp.libmpf import (format_mpc, format_mpf, from_Decimal, from_npfloat,
+                           mpf_hash, mpf_pos, mpf_sum, to_fixed)
 
 
 new = object.__new__

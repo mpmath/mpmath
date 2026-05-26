@@ -16,8 +16,9 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     sec, sech, sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan,
                     tanh, twinprime, unitroots)
 from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
-                          mpf_mul, mpf_pow_int, mpf_rand, mpf_sqrt,
-                          round_ceiling, round_down, round_nearest, round_up)
+                          mpf_mul, mpf_pow_int, mpf_sqrt, round_ceiling,
+                          round_down, round_nearest, round_up)
+from mpmath.libmp.libmpf import mpf_rand
 
 
 def mpc_ae(a, b, eps=eps):

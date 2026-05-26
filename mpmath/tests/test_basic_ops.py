@@ -14,10 +14,12 @@ import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
                     mpi, nan, ninf, nint, nint_distance, nstr, pi, workprec)
-from mpmath.libmp import (MPQ, MPZ, finf, fnan, fninf, fnone, fone, from_float,
-                          from_int, from_str, isprime, mpf_add, mpf_mul,
-                          mpf_sub, round_down, round_nearest, round_up,
-                          to_float, to_int, to_man_exp)
+from mpmath.libmp import (MPZ, finf, fnan, fninf, fnone, fone, from_float,
+                          from_int, from_str, mpf_add, mpf_mul, mpf_sub,
+                          round_down, round_nearest, round_up, to_float,
+                          to_int, to_man_exp)
+from mpmath.libmp.backend import MPQ
+from mpmath.libmp.libintmath import isprime
 
 
 def test_type_compare():
