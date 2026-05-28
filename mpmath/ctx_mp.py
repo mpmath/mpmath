@@ -71,8 +71,10 @@ class MPContext(BaseMPContext, StandardBaseContext):
         ctx.atan2.__func__.__doc__ = function_docs.atan2
 
         ctx.digamma.__doc__ = function_docs.digamma
-        ctx.cospi.__doc_ = function_docs.cospi
-        ctx.sinpi.__doc_ = function_docs.sinpi
+        ctx.cospi.__doc__ = function_docs.cospi
+        ctx.sinpi.__doc__ = function_docs.sinpi
+        ctx.sinpi.__name__ = 'sinpi'
+        ctx.cospi.__name__ = 'cospi'
 
     def init_builtins(ctx):
         # Exact constants
