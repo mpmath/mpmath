@@ -320,7 +320,7 @@ class Bisection:
 
         if ctx.sign(fa) == ctx.sign(fb):
             raise ValueError("Function must have opposite signs at interval boundaries.")
-        
+
         while True:
             m = ctx.ldexp(a + b, -1)
             fm = f(m)

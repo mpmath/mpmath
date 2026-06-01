@@ -7092,9 +7092,10 @@ Since the Z-function is real-valued on the critical line
 investigating the zeros of the Riemann zeta function.
 For example, one can use a root-finding algorithm based
 on sign changes::
-
-    >>> findroot(siegelz, [100, 200], solver='bisect')
-    176.4414342977104188888926
+    >>> g10 = grampoint(10)
+    >>> g11 = grampoint(11)
+    >>> findroot(siegelz, [g10, g11], solver='bisect')
+    56.44624769706339480436776
 
 To locate roots, Gram points `g_n` which can be computed
 by :func:`~mpmath.grampoint` are useful. If `(-1)^n Z(g_n)` is
