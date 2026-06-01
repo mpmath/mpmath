@@ -283,7 +283,6 @@ class Muller:
             error = abs(x2 - x1)
             yield x2, error
 
-# TODO: consider raising a ValueError when there's no sign change in a and b
 class Bisection:
     """
     1d-solver generating pairs of approximative root and error.
@@ -311,13 +310,19 @@ class Bisection:
         self.b = x0[1]
 
     def __iter__(self):
+        ctx = self.ctx
         f = self.f
         a = self.a
         b = self.b
         l = b - a
+        fa = f(a)
         fb = f(b)
+
+        if ctx.sign(fa) == ctx.sign(fb):
+            raise ValueError("Function must have opposite signs at interval boundaries.")
+        
         while True:
-            m = self.ctx.ldexp(a + b, -1)
+            m = ctx.ldexp(a + b, -1)
             fm = f(m)
             sign = fm * fb
             if sign < 0:
@@ -326,7 +331,7 @@ class Bisection:
                 b = m
                 fb = fm
             else:
-                yield m, self.ctx.zero
+                yield m, ctx.zero
             l /= 2
             yield (a + b)/2, abs(l)
 
