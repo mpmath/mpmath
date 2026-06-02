@@ -573,8 +573,8 @@ class ModAB:
     """
     1d-solver generating pairs of approximative root and error.
 
-    Uses the Modified Anderson-Björck (modAB) hybrid method to find 
-    a root of f in [a, b]. It dynamically switches between Bisection 
+    Uses the Modified Anderson-Björck (modAB) hybrid method to find
+    a root of f in [a, b]. It dynamically switches between Bisection
     and False Position (Secant) while correcting for stagnant endpoints.
 
     Pro:
@@ -632,7 +632,7 @@ class ModAB:
             # Evaluate function or handle out-of-bounds secant calculations
             if bisection:
                 fx3 = f(x3)
-                ym = ctx.ldexp(fa + fb, -1) 
+                ym = ctx.ldexp(fa + fb, -1)
 
                 # Check linearity to see if we can switch to secant
                 r = ctx.one - ctx.fabs(ym / (fb - fa)) # Symmetry factor
@@ -659,14 +659,14 @@ class ModAB:
 
             # Update the interval and apply Anderson-Björck adjustments
             if fa*fx3 > 0:
-                if side == 1: 
+                if side == 1:
                     m = ctx.one - (fx3 / fa)
                     fb *= ctx.ldexp(ctx.one, -1) if m <= 0 else m
                 elif not bisection:
                     side = 1
                 a, fa = x3, fx3
             else:
-                if side == -1: 
+                if side == -1:
                     m = ctx.one - (fx3 / fb)
                     fa *= ctx.ldexp(ctx.one, -1) if m <= 0 else m
                 elif not bisection:

@@ -65,6 +65,21 @@ def test_muller():
     x = findroot(f, 1., solver=Muller)
     assert abs(f(x)) < eps
 
+def test_modAB():
+    assert findroot(lambda x: x**2-1, (0, 2),solver='modAB') == 1
+    assert findroot(lambda x: x**2-1, (2, 0),solver='modAB') == 1
+
+    with pytest.raises(ValueError, match="expected interval of 2 points"):
+        findroot(lambda x: x**2-1, (0,), solver='modAB')
+
+    with pytest.raises(ValueError, match="Function must have opposite signs"):
+        findroot(lambda x: x**2-1, (2, 4), solver='modAB')
+
+    assert findroot(lambda x: x, (-1, 1), solver='modAB') == 0.0
+
+    f_linear = lambda x: 2 * x - 4
+    assert mp.almosteq(findroot(f_linear, (0, 5), solver='modAB'), 2.0)
+
 def test_multiplicity():
     for i in range(1, 5):
         assert multiplicity(lambda x: (x - 1)**i, 1) == i
