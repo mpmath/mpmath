@@ -318,7 +318,7 @@ class Bisection:
         fa = f(a)
         fb = f(b)
 
-        if ctx.sign(fa) == ctx.sign(fb):
+        if fa*fb > 0:
             raise ValueError("Function must have opposite signs at interval boundaries.")
 
         while True:
