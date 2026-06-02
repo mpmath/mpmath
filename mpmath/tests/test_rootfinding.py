@@ -50,6 +50,9 @@ def test_bisection():
     # issue 273
     assert findroot(lambda x: x**2-1,(0,2),solver='bisect') == 1
 
+    with pytest.raises(ValueError):
+        findroot(lambda x: x**2-1, (4, 2), solver='bisect') == 1
+
 def test_mnewton():
     f = lambda x: polyval([1, 3, 3, 1], x)
     x = findroot(f, -0.9, solver='mnewton')

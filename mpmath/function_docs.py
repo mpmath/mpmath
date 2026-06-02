@@ -7093,7 +7093,7 @@ investigating the zeros of the Riemann zeta function.
 For example, one can use a root-finding algorithm based
 on sign changes::
 
-    >>> findroot(siegelz, [100, 200], solver='bisect')
+    >>> findroot(siegelz, [176, 177], solver='bisect')
     176.4414342977104188888926
 
 To locate roots, Gram points `g_n` which can be computed
