@@ -187,3 +187,6 @@ to the `mpmath mailinglist <https://groups.google.com/g/mpmath>`_.
 
 You can also report bugs and send patches to the mpmath issue tracker,
 https://github.com/mpmath/mpmath/issues
+
+See also our `contributing guidelines
+<https://github.com/mpmath/mpmath/blob/master/.github/CONTRIBUTING.rst>`_.
