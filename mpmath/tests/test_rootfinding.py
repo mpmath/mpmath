@@ -5,7 +5,7 @@ from mpmath import (cos, eps, findroot, fp, inf, iv, jacobian, matrix, mnorm,
                     workprec)
 from mpmath.calculus.optimization import (Anderson, ANewton, Bisection,
                                           Illinois, MDNewton, MNewton, Muller,
-                                          Newton, Pegasus, Ridder, Secant)
+                                          Newton, Pegasus, Ridder, Secant, ModAB)
 
 
 def test_findroot():
@@ -21,7 +21,7 @@ def test_findroot():
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
     for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
-                   Ridder]:
+                   Ridder, ModAB]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
     # test types

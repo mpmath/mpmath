@@ -569,6 +569,115 @@ class ANewton:
 
 # TODO: add Brent
 
+class ModAB:
+    """
+    1d-solver generating pairs of approximative root and error.
+
+    Uses the Modified Anderson-Björck (modAB) hybrid method to find 
+    a root of f in [a, b]. It dynamically switches between Bisection 
+    and False Position (Secant) while correcting for stagnant endpoints.
+
+    Pro:
+    * Robust and guaranteed to converge (like Bisection)
+    * Fast convergence on smooth functions (like Secant)
+
+    Contra:
+    * Needs an initial sign change bracket
+
+    https://www.mdpi.com/1999-4893/19/5/332
+    """
+    maxsteps = 200
+
+    def __init__(self, ctx, f, x0, **kwargs):
+        self.ctx = ctx
+        if len(x0) != 2:
+            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+
+        self.f = f
+
+        # Enforce ordering: self.a as lower bound, self.b as upper bound
+        x1, x2 = x0[0], x0[1]
+        if x1 > x2:
+            self.a, self.b = x2, x1
+        else:
+            self.a, self.b = x1, x2
+
+    def __iter__(self):
+        ctx = self.ctx
+        f = self.f
+
+        a = self.a
+        b = self.b
+        fa = f(a)
+        fb = f(b)
+
+        # Check for initial bracketing
+        if fa*fb > 0:
+            raise ValueError("Function must have opposite signs at interval boundaries.")
+
+        bisection = True
+        side = 0 # -1 for left moved last, 1 for right, 0 for none
+        threshold = b - a
+        C = ctx.mpf(16) # Safety factor threshold scaling constant
+
+        while True:
+            if bisection:
+                x3 = ctx.ldexp(a + b, -1)
+            else:
+                x3 = (a * fb - b * fa) / (fb - fa)
+
+            # Yield the current best guess and the remaining interval length (error)
+            yield x3, abs(b - a)
+
+            # Evaluate function or handle out-of-bounds secant calculations
+            if bisection:
+                fx3 = f(x3)
+                ym = ctx.ldexp(fa + fb, -1) 
+
+                # Check linearity to see if we can switch to secant
+                r = ctx.one - ctx.fabs(ym / (fb - fa)) # Symmetry factor
+                k = r * r                              # Deviation factor
+
+                if ctx.fabs(ym - fx3) < k * (ctx.fabs(fx3) + ctx.fabs(ym)):
+                    bisection = False
+                    threshold = (b - a) * C
+            else:
+                # Clamp secant point safely within the bounds to handle floating-point rounding
+                if x3 <= a:
+                    x3, fx3 = a, fa
+                elif x3 >= b:
+                    x3, fx3 = b, fb
+                else:
+                    fx3 = f(x3)
+
+                threshold *= 0.5
+
+            # Check for exact root convergence
+            if fx3 == ctx.zero:
+                yield x3, ctx.zero
+                return
+
+            # Update the interval and apply Anderson-Björck adjustments
+            if fa*fx3 > 0:
+                if side == 1: 
+                    m = ctx.one - (fx3 / fa)
+                    fb *= ctx.ldexp(ctx.one, -1) if m <= 0 else m
+                elif not bisection:
+                    side = 1
+                a, fa = x3, fx3
+            else:
+                if side == -1: 
+                    m = ctx.one - (fx3 / fb)
+                    fa *= ctx.ldexp(ctx.one, -1) if m <= 0 else m
+                elif not bisection:
+                    side = -1
+                b, fb = x3, fx3
+
+            # Fallback check: If progress is too slow, force a bisection step next time
+            if (b - a) > threshold:
+                bisection = True
+                side = 0
+
 ############################
 # MULTIDIMENSIONAL SOLVERS #
 ############################
@@ -686,7 +795,7 @@ class MDNewton:
 str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'halley':Halley, 'muller':Muller, 'bisect':Bisection,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
-              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton}
+              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton, 'modAB':ModAB}
 
 def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""
@@ -739,7 +848,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     expected to be positive).
     You can use the following string aliases:
     'secant', 'mnewton', 'halley', 'muller', 'illinois', 'pegasus', 'anderson',
-    'ridder', 'anewton', 'bisect'
+    'ridder', 'anewton', 'bisect', 'modAB'
 
     See mpmath.calculus.optimization for their documentation.
 
