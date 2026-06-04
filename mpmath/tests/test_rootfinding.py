@@ -67,6 +67,8 @@ def test_muller():
 
 def test_modAB():
     assert findroot(lambda x: x**2-1, (0, 2),solver='modAB') == 1
+
+    # test ordering
     assert findroot(lambda x: x**2-1, (2, 0),solver='modAB') == 1
 
     with pytest.raises(ValueError, match="expected interval of 2 points"):
@@ -75,10 +77,26 @@ def test_modAB():
     with pytest.raises(ValueError, match="Function must have opposite signs"):
         findroot(lambda x: x**2-1, (2, 4), solver='modAB')
 
+    # test exact zero hit
     assert findroot(lambda x: x, (-1, 1), solver='modAB') == 0.0
 
+    # test bisection to secant switch for a purely linear function
     f_linear = lambda x: 2 * x - 4
     assert mp.almosteq(findroot(f_linear, (0, 5), solver='modAB'), 2.0)
+
+    f_convex = lambda x: x**10 - 1
+    assert mp.almosteq(findroot(f_convex, (0.1, 2.0), solver='modAB'), 1.0)
+
+    f_concave = lambda x: 1 - x**10
+    assert mp.almosteq(findroot(f_concave, (2.0, 0.1), solver='modAB'), 1.0)
+
+    f_cubic_inflection = lambda x: x**3 - 3*x + 3
+    root = findroot(f_cubic_inflection, (-3, 2), solver='modAB')
+    assert abs(f_cubic_inflection(root)) < eps
+
+    # test reset to Bisection if the interval width exceeds the threshold
+    f_step = lambda x: mp.sin(x) if x > 1 else x - 1
+    assert mp.almosteq(findroot(f_step, (0.4, 3.0), solver='modAB'), 1.0)
 
 def test_multiplicity():
     for i in range(1, 5):

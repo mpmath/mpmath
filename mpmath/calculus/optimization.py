@@ -655,7 +655,6 @@ class ModAB:
             # Check for exact root convergence
             if fx3 == ctx.zero:
                 yield x3, ctx.zero
-                return
 
             # Update the interval and apply Anderson-Björck adjustments
             if fa*fx3 > 0:
