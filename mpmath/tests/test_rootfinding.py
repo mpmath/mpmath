@@ -66,22 +66,22 @@ def test_muller():
     assert abs(f(x)) < eps
 
 def test_modAB():
-    assert findroot(lambda x: x**2-1, (0, 2),solver='modAB') == 1
+    assert findroot(lambda x: x**2 - 1, (0, 2), solver='modAB') == 1
 
     # test ordering
-    assert findroot(lambda x: x**2-1, (2, 0),solver='modAB') == 1
+    assert findroot(lambda x: x**2 - 1, (2, 0), solver='modAB') == 1
 
     with pytest.raises(ValueError, match="expected interval of 2 points"):
-        findroot(lambda x: x**2-1, (0,), solver='modAB')
+        findroot(lambda x: x**2 - 1, (0,), solver='modAB')
 
     with pytest.raises(ValueError, match="Function must have opposite signs"):
-        findroot(lambda x: x**2-1, (2, 4), solver='modAB')
+        findroot(lambda x: x**2 - 1, (2, 4), solver='modAB')
 
     # test exact zero hit
     assert findroot(lambda x: x, (-1, 1), solver='modAB') == 0.0
 
     # test bisection to secant switch for a purely linear function
-    f_linear = lambda x: 2 * x - 4
+    f_linear = lambda x: 2*x - 4
     assert mp.almosteq(findroot(f_linear, (0, 5), solver='modAB'), 2.0)
 
     f_convex = lambda x: x**10 - 1

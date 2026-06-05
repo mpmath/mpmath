@@ -596,11 +596,9 @@ class ModAB:
         self.f = f
 
         # Enforce ordering: self.a as lower bound, self.b as upper bound
-        x1, x2 = x0[0], x0[1]
-        if x1 > x2:
-            self.a, self.b = x2, x1
-        else:
-            self.a, self.b = x1, x2
+        self.a, self.b = x0[0], x0[1]
+        if self.a > self.b:
+            self.a, self.b = self.b, self.a
 
     def __iter__(self):
         ctx = self.ctx
