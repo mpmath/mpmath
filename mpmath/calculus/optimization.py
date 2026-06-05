@@ -596,7 +596,7 @@ class ModAB:
         self.f = f
 
         # Enforce ordering: self.a as lower bound, self.b as upper bound
-        self.a, self.b = x0[0], x0[1]
+        self.a, self.b = x0
         if self.a > self.b:
             self.a, self.b = self.b, self.a
 
