@@ -68,6 +68,11 @@ def test_muller():
     x = findroot(f, 1., solver=Muller)
     assert abs(f(x)) < eps
 
+def test_ridder():
+    f = lambda x: cos(x)/x
+    x = findroot(f, (1, 2), solver='ridder')
+    assert abs(f(x)) < eps
+
 def test_modAB():
     assert findroot(lambda x: x**2 - 1, (0, 2), solver='modAB') == 1
 

@@ -507,12 +507,15 @@ class Ridder:
                     print('canceled with f(x4) =', fx4)
                 yield x4, abs(x1 - x2)
                 break
-            if fx4 * fx2 < 0: # root in [x4, x2]
-                x1 = x4
-                fx1 = fx4
-            else: # root in [x1, x4]
+            if fx3 * fx4 < 0:  # root in [x4, x3]
+                x1, x2 = x4, x3
+                fx1, fx2 = fx4, fx3
+            elif fx4 * fx1 < 0:  # in [x1, x4]
                 x2 = x4
                 fx2 = fx4
+            else:  # in [x4, x2]
+                x1 = x4
+                fx1 = fx4
             error = abs(x1 - x2)
             yield (x1 + x2)/2, error
 
