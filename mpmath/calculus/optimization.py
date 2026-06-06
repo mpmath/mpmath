@@ -584,7 +584,7 @@ class ModAB:
     Contra:
     * Needs an initial sign change bracket
 
-    https://www.mdpi.com/1999-4893/19/5/332
+    https://doi.org/10.3390/a19050332
     """
     maxsteps = 200
 
