@@ -985,9 +985,12 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     **Intersection methods**
 
     When you need to find a root in a known interval, it's highly recommended to
-    use an intersection-based solver like ``'anderson'`` or ``'ridder'``.
+    use an intersection-based solver like ```'modAB'``` or ``'anderson'`` or ``'ridder'``.
     Usually they converge faster and more reliable. They have however problems
     with multiple roots and usually need a sign change to find a root::
+
+        >>> findroot(lambda x:x**2 - 1, (0, 3), solver='modAB')
+        1.0
 
         >>> findroot(lambda x: x**3, (-1, 1), solver='anderson')
         0.0
