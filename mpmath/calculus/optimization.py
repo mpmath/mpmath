@@ -306,8 +306,8 @@ class Bisection:
         if len(x0) != 2:
             raise ValueError('expected interval of 2 points, got %i' % len(x0))
         self.f = f
-        self.a = x0[0]
-        self.b = x0[1]
+        self.a, self.b = x0
+        self.maxsteps = 2*ctx.prec + ctx.ceil(ctx.log2(abs(self.a - self.b)))
 
     def __iter__(self):
         ctx = self.ctx

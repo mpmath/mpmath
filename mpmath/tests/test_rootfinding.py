@@ -53,6 +53,21 @@ def test_bisection():
     with pytest.raises(ValueError):
         findroot(lambda x: x**2-1, (4, 2), solver='bisect') == 1
 
+    # issue 285
+    mp.dps = 240
+    sol = -mp.ceil(mp.log(abs(findroot(lambda x: mp.sign(x - 3), (1, 4),
+                                       solver='bisect', verify=False,
+                                       tol=1e-200) - 3))/mp.log(10))
+    assert sol.ae(200)
+
+    # issue 339
+    mp.dps = 15
+    res = mpf('0.73908513321516064')
+    for dps in [100, 200, 300, 1000]:
+        with mp.workdps(dps):
+            sol = findroot(lambda x: cos(x) - x, [0, 1], solver='bisect')
+        assert (+sol).ae(res)
+
 def test_mnewton():
     f = lambda x: polyval([1, 3, 3, 1], x)
     x = findroot(f, -0.9, solver='mnewton')
