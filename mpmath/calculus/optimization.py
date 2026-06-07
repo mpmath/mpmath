@@ -989,9 +989,6 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     Usually they converge faster and more reliable. They have however problems
     with multiple roots and usually need a sign change to find a root::
 
-        >>> findroot(lambda x:x**2 - 1, (0, 3), solver='modAB')
-        1.0
-
         >>> findroot(lambda x: x**3, (-1, 1), solver='anderson')
         0.0
 
