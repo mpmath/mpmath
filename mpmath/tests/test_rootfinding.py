@@ -12,7 +12,7 @@ def test_findroot():
     # old tests, assuming secant
     assert findroot(lambda x: 4*x-3, mpf(5)).ae(0.75)
     assert findroot(sin, mpf(3)).ae(pi)
-    assert findroot(sin, (mpf(3), mpf(3.14))).ae(pi)
+    assert findroot(sin, (mpf(3), mpf(3.14)), solver='secant').ae(pi)
     assert findroot(lambda x: x*x+1, mpc(2+2j)).ae(1j)
     # test all solvers with 1 starting point
     f = lambda x: cos(x)
