@@ -12,7 +12,7 @@ def test_findroot():
     # old tests, assuming secant
     assert findroot(lambda x: 4*x-3, mpf(5)).ae(0.75)
     assert findroot(sin, mpf(3)).ae(pi)
-    assert findroot(sin, (mpf(3), mpf(3.14))).ae(pi)
+    assert findroot(sin, (mpf(3), mpf(3.14)), solver='secant').ae(pi)
     assert findroot(lambda x: x*x+1, mpc(2+2j)).ae(1j)
     # test all solvers with 1 starting point
     f = lambda x: cos(x)
@@ -53,6 +53,21 @@ def test_bisection():
     with pytest.raises(ValueError):
         findroot(lambda x: x**2-1, (4, 2), solver='bisect') == 1
 
+    # issue 285
+    mp.dps = 240
+    sol = -mp.ceil(mp.log(abs(findroot(lambda x: mp.sign(x - 3), (1, 4),
+                                       solver='bisect', verify=False,
+                                       tol=1e-200) - 3))/mp.log(10))
+    assert sol.ae(200)
+
+    # issue 339
+    mp.dps = 15
+    res = mpf('0.73908513321516064')
+    for dps in [100, 200, 300, 1000]:
+        with mp.workdps(dps):
+            sol = findroot(lambda x: cos(x) - x, [0, 1], solver='bisect')
+        assert (+sol).ae(res)
+
 def test_mnewton():
     f = lambda x: polyval([1, 3, 3, 1], x)
     x = findroot(f, -0.9, solver='mnewton')
@@ -66,6 +81,11 @@ def test_anewton():
 def test_muller():
     f = lambda x: (2 + x)**3 + 2
     x = findroot(f, 1., solver=Muller)
+    assert abs(f(x)) < eps
+
+def test_ridder():
+    f = lambda x: cos(x)/x
+    x = findroot(f, (1, 2), solver='ridder')
     assert abs(f(x)) < eps
 
 def test_modAB():

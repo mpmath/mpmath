@@ -306,8 +306,8 @@ class Bisection:
         if len(x0) != 2:
             raise ValueError('expected interval of 2 points, got %i' % len(x0))
         self.f = f
-        self.a = x0[0]
-        self.b = x0[1]
+        self.a, self.b = x0
+        self.maxsteps = 2*ctx.prec + ctx.ceil(ctx.log2(abs(self.a - self.b)))
 
     def __iter__(self):
         ctx = self.ctx
@@ -507,12 +507,15 @@ class Ridder:
                     print('canceled with f(x4) =', fx4)
                 yield x4, abs(x1 - x2)
                 break
-            if fx4 * fx2 < 0: # root in [x4, x2]
-                x1 = x4
-                fx1 = fx4
-            else: # root in [x1, x4]
+            if fx3 * fx4 < 0:  # root in [x4, x3]
+                x1, x2 = x4, x3
+                fx1, fx2 = fx4, fx3
+            elif fx4 * fx1 < 0:  # in [x1, x4]
                 x2 = x4
                 fx2 = fx4
+            else:  # in [x4, x2]
+                x1 = x4
+                fx1 = fx4
             error = abs(x1 - x2)
             yield (x1 + x2)/2, error
 
@@ -799,7 +802,7 @@ str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
               'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton, 'modAB':ModAB}
 
-def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
+def findroot(ctx, f, x0, solver=None, tol=None, verbose=False, verify=True, **kwargs):
     r"""
     Find an approximate solution to `f(x) = 0`, using *x0* as starting point or
     interval for *x*.
@@ -1065,6 +1068,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
                 norm = kwargs['norm']
             ctx.trap_complex = True  # MDNewton assume real input
         else:
+            if solver is None:
+                solver = ModAB if len(x0) > 1 else Secant
             norm = abs
 
         # happily return starting point if it's a root
