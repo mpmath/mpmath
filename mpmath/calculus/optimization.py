@@ -802,7 +802,7 @@ str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
               'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton, 'modAB':ModAB}
 
-def findroot(ctx, f, x0, solver=None, tol=None, verbose=False, verify=True, **kwargs):
+def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""
     Find an approximate solution to `f(x) = 0`, using *x0* as starting point or
     interval for *x*.
@@ -1068,8 +1068,6 @@ def findroot(ctx, f, x0, solver=None, tol=None, verbose=False, verify=True, **kw
                 norm = kwargs['norm']
             ctx.trap_complex = True  # MDNewton assume real input
         else:
-            if solver is None:
-                solver = ModAB if len(x0) > 1 else Secant
             norm = abs
 
         # happily return starting point if it's a root
