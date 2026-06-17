@@ -909,11 +909,15 @@ def _djacobi_theta3a(ctx, z, q, nd):
 
 @defun
 def jtheta(ctx, n, z, q, derivative=0):
-    if derivative:
-        return ctx._djtheta(n, z, q, derivative)
-
     z = ctx.convert(z)
     q = ctx.convert(q)
+    nd = int(derivative)
+
+    if abs(q) > ctx.THETA_Q_LIM:
+        raise ValueError(f"abs(q) > THETA_Q_LIM = {ctx.THETA_Q_LIM}")
+
+    if derivative:
+        return ctx._djtheta(n, z, q, nd)
 
     # Implementation note
     # If ctx._im(z) is close to zero, _jacobi_theta2 and _jacobi_theta3
@@ -924,9 +928,6 @@ def jtheta(ctx, n, z, q, derivative=0):
     # the series starting from n=n0, which is the largest term.
 
     # TODO: write _jacobi_theta2a and _jacobi_theta3a using fixed-point
-
-    if abs(q) > ctx.THETA_Q_LIM:
-        raise ValueError('abs(q) > THETA_Q_LIM = %f' % ctx.THETA_Q_LIM)
 
     extra = 10
     if z:
@@ -985,13 +986,7 @@ def jtheta(ctx, n, z, q, derivative=0):
     return res
 
 @defun
-def _djtheta(ctx, n, z, q, derivative=1):
-    z = ctx.convert(z)
-    q = ctx.convert(q)
-    nd = int(derivative)
-
-    if abs(q) > ctx.THETA_Q_LIM:
-        raise ValueError('abs(q) > THETA_Q_LIM = %f' % ctx.THETA_Q_LIM)
+def _djtheta(ctx, n, z, q, nd=1):
     extra = 10 + ctx.prec * nd // 10
     if z:
         M = ctx.mag(z)
