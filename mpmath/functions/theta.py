@@ -754,87 +754,15 @@ def _djacobi_theta3(ctx, z, q, nd):
         return (-1)**(1 + nd//2) * s
 
 @defun
-def _jacobi_theta2a(ctx, z, q):
-    """
-    case ctx._im(z) != 0
-    theta(2, z, q) =
-    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n=-inf, inf)
-    max term for minimum (2*n+1)*log(q).real - 2* ctx._im(z)
-    n0 = int(ctx._im(z)/log(q).real - 1/2)
-    theta(2, z, q) =
-    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n=n0, inf) +
-    q**1/4 * Sum(q**(n*n + n) * exp(j*(2*n + 1)*z), n, n0-1, -inf)
-    """
-    n = n0 = int(ctx._im(z)/ctx._re(ctx.log(q)) - 1/2)
-    e2 = ctx.expj(2*z)
-    e = e0 = ctx.expj((2*n+1)*z)
-    a = q**(n*n + n)
-    # leading term
-    term = a * e
-    s = term
-    eps1 = ctx.eps*abs(term)
-    while 1:
-        n += 1
-        e = e * e2
-        term = q**(n*n + n) * e
-        if abs(term) < eps1:
-            break
-        s += term
-    e = e0
-    e2 = ctx.expj(-2*z)
-    n = n0
-    while 1:
-        n -= 1
-        e = e * e2
-        term = q**(n*n + n) * e
-        if abs(term) < eps1:
-            break
-        s += term
-    s = s * ctx.nthroot(q, 4)
-    return s
-
-@defun
-def _jacobi_theta3a(ctx, z, q):
-    """
-    case ctx._im(z) != 0
-    theta3(z, q) = Sum(q**(n*n) * exp(j*2*n*z), n, -inf, inf)
-    max term for n*abs(log(q).real) + ctx._im(z) ~= 0
-    n0 = int(- ctx._im(z)/abs(log(q).real))
-    """
-    n = n0 = int(-ctx._im(z)/abs(ctx._re(ctx.log(q))))
-    e2 = ctx.expj(2*z)
-    e = e0 = ctx.expj(2*n*z)
-    s = term = q**(n*n) * e
-    eps1 = ctx.eps*abs(term)
-    while 1:
-        n += 1
-        e = e * e2
-        term = q**(n*n) * e
-        if abs(term) < eps1:
-            break
-        s += term
-    e = e0
-    e2 = ctx.expj(-2*z)
-    n = n0
-    while 1:
-        n -= 1
-        e = e * e2
-        term = q**(n*n) * e
-        if abs(term) < eps1:
-            break
-        s += term
-    return s
-
-@defun
 def _djacobi_theta2a(ctx, z, q, nd):
     """
     case ctx._im(z) != 0
     dtheta(2, z, q, nd) =
-    j* q**1/4 * Sum(q**(n*n + n) * (2*n+1)*exp(j*(2*n + 1)*z), n=-inf, inf)
+    j*nd q**1/4 * Sum(q**(n*n + n) * (2*n+1)*nd * exp(j*(2*n + 1)*z), n=-inf, inf)
     max term for (2*n0+1)*log(q).real - 2* ctx._im(z) ~= 0
     n0 = int(ctx._im(z)/log(q).real - 1/2)
     """
-    n = n0 = int(ctx._im(z)/ctx._re(ctx.log(q)) - 1/2)
+    n = n0 = int(z.imag/ctx.log(q).real - 1/2)
     e2 = ctx.expj(2*z)
     e = e0 = ctx.expj((2*n + 1)*z)
     a = q**(n*n + n)
@@ -869,24 +797,18 @@ def _djacobi_theta3a(ctx, z, q, nd):
       Sum(q**(n*n) * n**nd * exp(j*2*n*z), n, -inf, inf)
     max term for minimum n*abs(log(q).real) + ctx._im(z)
     """
-    n = n0 = int(-ctx._im(z)/abs(ctx._re(ctx.log(q))))
+    n = n0 = int(-z.imag/abs(ctx.log(q).real))
     e2 = ctx.expj(2*z)
     e = e0 = ctx.expj(2*n*z)
     a = q**(n*n) * e
     s = term = n**nd * a
-    if n != 0:
-        eps1 = ctx.eps*abs(term)
-    else:
-        eps1 = ctx.eps*abs(a)
+    eps1 = ctx.eps*abs(term if term else a)
     while 1:
         n += 1
         e = e * e2
         a = q**(n*n) * e
         term = n**nd * a
-        if n != 0:
-            aterm = abs(term)
-        else:
-            aterm = abs(a)
+        aterm = abs(term if term else a)
         if aterm < eps1:
             break
         s += term
@@ -898,10 +820,7 @@ def _djacobi_theta3a(ctx, z, q, nd):
         e = e * e2
         a = q**(n*n) * e
         term = n**nd * a
-        if n != 0:
-            aterm = abs(term)
-        else:
-            aterm = abs(a)
+        aterm = abs(term if term else a)
         if aterm < eps1:
             break
         s += term
@@ -947,7 +866,7 @@ def jtheta(ctx, n, z, q, derivative=0):
                     res = ctx._jacobi_theta2(z_inner, q)
                 else:
                     ctx.dps += 10
-                    res = ctx._jacobi_theta2a(z_inner, q)
+                    res = ctx._djacobi_theta2a(z_inner, q, nd)
             else:
                 res = ctx._jacobi_theta2(z_inner, q)
         elif n in [3, 4]:
@@ -958,7 +877,7 @@ def jtheta(ctx, n, z, q, derivative=0):
                     res = ctx._jacobi_theta3(z, q_inner)
                 else:
                     ctx.dps += 10
-                    res = ctx._jacobi_theta3a(z, q_inner)
+                    res = ctx._djacobi_theta3a(z, q_inner, nd)
             else:
                 res = ctx._jacobi_theta3(z, q_inner)
         else:
