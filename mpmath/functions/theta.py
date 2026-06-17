@@ -939,46 +939,28 @@ def jtheta(ctx, n, z, q, derivative=0):
     prec0 = ctx.prec
     try:
         ctx.prec += extra
-        if n == 1:
-            if ctx._im(z):
-                if abs(ctx._im(z)) < cz * abs(ctx._re(ctx.log(q))):
+        if n in [1, 2]:
+            z_inner = z - ctx.pi/2 if n == 1 else z
+            if z.imag:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
-                    res = ctx._jacobi_theta2(z - ctx.pi/2, q)
+                    res = ctx._jacobi_theta2(z_inner, q)
                 else:
                     ctx.dps += 10
-                    res = ctx._jacobi_theta2a(z - ctx.pi/2, q)
+                    res = ctx._jacobi_theta2a(z_inner, q)
             else:
-                res = ctx._jacobi_theta2(z - ctx.pi/2, q)
-        elif n == 2:
-            if ctx._im(z):
-                if abs(ctx._im(z)) < cz * abs(ctx._re(ctx.log(q))):
+                res = ctx._jacobi_theta2(z_inner, q)
+        elif n in [3, 4]:
+            q_inner = -q if n == 4 else q
+            if z.imag:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
-                    res = ctx._jacobi_theta2(z, q)
+                    res = ctx._jacobi_theta3(z, q_inner)
                 else:
                     ctx.dps += 10
-                    res = ctx._jacobi_theta2a(z, q)
+                    res = ctx._jacobi_theta3a(z, q_inner)
             else:
-                res = ctx._jacobi_theta2(z, q)
-        elif n == 3:
-            if ctx._im(z):
-                if abs(ctx._im(z)) < cz * abs(ctx._re(ctx.log(q))):
-                    ctx.dps += extra2
-                    res = ctx._jacobi_theta3(z, q)
-                else:
-                    ctx.dps += 10
-                    res = ctx._jacobi_theta3a(z, q)
-            else:
-                res = ctx._jacobi_theta3(z, q)
-        elif n == 4:
-            if ctx._im(z):
-                if abs(ctx._im(z)) < cz * abs(ctx._re(ctx.log(q))):
-                    ctx.dps += extra2
-                    res = ctx._jacobi_theta3(z, -q)
-                else:
-                    ctx.dps += 10
-                    res = ctx._jacobi_theta3a(z, -q)
-            else:
-                res = ctx._jacobi_theta3(z, -q)
+                res = ctx._jacobi_theta3(z, q_inner)
         else:
             raise ValueError
     finally:
@@ -997,46 +979,28 @@ def _djtheta(ctx, n, z, q, nd=1):
     prec0 = ctx.prec
     try:
         ctx.prec += extra
-        if n == 1:
-            if ctx._im(z):
-                if abs(ctx._im(z)) < cz * abs(ctx._re(ctx.log(q))):
+        if n in [1, 2]:
+            z_inner = z - ctx.pi/2 if n == 1 else z
+            if z.imag:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
-                    res = ctx._djacobi_theta2(z - ctx.pi/2, q, nd)
+                    res = ctx._djacobi_theta2(z_inner, q, nd)
                 else:
                     ctx.dps += 10
-                    res = ctx._djacobi_theta2a(z - ctx.pi/2, q, nd)
+                    res = ctx._djacobi_theta2a(z_inner, q, nd)
             else:
-                res = ctx._djacobi_theta2(z - ctx.pi/2, q, nd)
-        elif n == 2:
-            if ctx._im(z):
-                if abs(ctx._im(z)) < cz * abs(ctx._re(ctx.log(q))):
+                res = ctx._djacobi_theta2(z_inner, q, nd)
+        elif n in [3, 4]:
+            q_inner = -q if n == 4 else q
+            if z.imag:
+                if abs(z.imag) < cz * abs(ctx.log(q).real):
                     ctx.dps += extra2
-                    res = ctx._djacobi_theta2(z, q, nd)
+                    res = ctx._djacobi_theta3(z, q_inner, nd)
                 else:
                     ctx.dps += 10
-                    res = ctx._djacobi_theta2a(z, q, nd)
+                    res = ctx._djacobi_theta3a(z, q_inner, nd)
             else:
-                res = ctx._djacobi_theta2(z, q, nd)
-        elif n == 3:
-            if ctx._im(z):
-                if abs(ctx._im(z)) < cz * abs(ctx._re(ctx.log(q))):
-                    ctx.dps += extra2
-                    res = ctx._djacobi_theta3(z, q, nd)
-                else:
-                    ctx.dps += 10
-                    res = ctx._djacobi_theta3a(z, q, nd)
-            else:
-                res = ctx._djacobi_theta3(z, q, nd)
-        elif n == 4:
-            if ctx._im(z):
-                if abs(ctx._im(z)) < cz * abs(ctx._re(ctx.log(q))):
-                    ctx.dps += extra2
-                    res = ctx._djacobi_theta3(z, -q, nd)
-                else:
-                    ctx.dps += 10
-                    res = ctx._djacobi_theta3a(z, -q, nd)
-            else:
-                res = ctx._djacobi_theta3(z, -q, nd)
+                res = ctx._djacobi_theta3(z, q_inner, nd)
         else:
             raise ValueError
     finally:
