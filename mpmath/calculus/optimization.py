@@ -575,7 +575,113 @@ class ANewton:
                     print('accelerating convergence')
             yield x0, error
 
-# TODO: add Brent
+class Brent:
+    """
+    1d-solver generating pairs of approximative root and error.
+
+    Uses Brent's method to find a root of f in [a, b]. It combines
+    Bisection, the Secant method, and Inverse Quadratic Interpolation (IQI)
+    for robust and superlinear convergence.
+
+    Pro:
+    * Guaranteed to converge if a root is bracketed (like Bisection).
+    * Can converge much faster than Bisection on smooth functions.
+
+    Contra:
+    * Needs an initial sign-changing bracket.
+
+    http://en.wikipedia.org/wiki/Brent%27s_method
+    """
+    maxsteps = 100
+
+    def __init__(self, ctx, f, x0, **kwargs):
+        self.ctx = ctx
+        if len(x0) != 2:
+            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+
+        self.f = f
+        self.a, self.b = x0
+        self.verbose = kwargs['verbose']
+        self.tol = kwargs['tol']
+
+    def __iter__(self):
+        ctx = self.ctx
+        f = self.f
+
+        a = self.a
+        b = self.b
+        fa = f(a)
+        fb = f(b)
+
+        # Check for initial bracketing
+        if fa*fb > 0:
+            raise ValueError("Function must have opposite signs at interval boundaries.")
+
+        # Enforce that b holds the closest estimate to the root
+        if abs(fa) < abs(fb):
+            a, b = b, a
+            fa, fb = fb, fa
+
+        c = a
+        fc = fa
+        d = c # will be assigned properly on the first interation
+        mflag = True
+
+        while True:
+            # Yield current best guess (b) and interval error boundary
+            yield b, abs(b - a)
+
+            # Check if Inverse Quadratic Interpolation can be used
+            if fa != fc and fb != fc:
+                # Inverse Quadratic Interpolation formula
+                s = (a * fb * fc) / ((fa - fb) * (fa - fc)) + \
+                    (b * fa * fc) / ((fb - fa) * (fb - fc)) + \
+                    (c * fa * fb) / ((fc - fa) * (fc - fb))
+            else:
+                # standard Secant
+                s = b - fb * (b - a) / (fb - fa)
+
+            # Define conditions matching Brent's bounds
+            bound_lower = (3 * a + b) / 4
+            is_between = (bound_lower <= s <= b) or (b <= s <= bound_lower)
+
+            delta = ctx.eps * max(ctx.one, ctx.fabs(b))
+
+            cond1 = not is_between
+            cond2 = mflag and (abs(s - b) >= abs(b - c) / 2)
+            cond3 = (not mflag) and (abs(s - b) >= abs(c - d) / 2)
+            cond4 = mflag and (abs(b - c) < delta)
+            cond5 = (not mflag) and (abs(c - d) < delta)
+
+            if cond1 or cond2 or cond3 or cond4 or cond5:
+                s = ctx.ldexp(a + b, -1)
+                mflag = True
+            else:
+                mflag = False
+
+            fs = f(s)
+
+            # Update tracking states
+            d = c
+            c = b
+            fc = fb
+
+            # Retain bracketing properties
+            if fa*fs < 0:
+                b = s
+                fb = fs
+            else:
+                a = s
+                fa = fs
+
+            # Enforce that b holds the closest estimate to the root
+            if abs(fa) < abs(fb):
+                a, b = b, a
+                fa, fb = fb, fa
+
+            # Check for exact root hit
+            if fb == ctx.zero:
+                yield b, ctx.zero
 
 class ModAB:
     """
@@ -800,7 +906,7 @@ class MDNewton:
 str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'halley':Halley, 'muller':Muller, 'bisect':Bisection,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
-              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton, 'modAB':ModAB}
+              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton, 'modAB':ModAB, 'brent':Brent}
 
 def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""

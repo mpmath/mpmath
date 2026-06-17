@@ -5,7 +5,7 @@ from mpmath import (cos, eps, findroot, fp, inf, iv, jacobian, matrix, mnorm,
                     workprec)
 from mpmath.calculus.optimization import (Anderson, ANewton, Bisection,
                                           Illinois, MDNewton, MNewton, Muller,
-                                          Newton, Pegasus, Ridder, Secant, ModAB)
+                                          Newton, Pegasus, Ridder, Secant, ModAB, Brent)
 
 
 def test_findroot():
@@ -21,7 +21,7 @@ def test_findroot():
         assert abs(f(x)) < eps
     # test all solvers with interval of 2 points
     for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
-                   Ridder, ModAB]:
+                   Ridder, ModAB, Brent]:
         x = findroot(f, (1., 2.), solver=solver)
         assert abs(f(x)) < eps
     # test types
@@ -87,6 +87,21 @@ def test_ridder():
     f = lambda x: cos(x)/x
     x = findroot(f, (1, 2), solver='ridder')
     assert abs(f(x)) < eps
+
+def test_brent():
+    f = lambda x: cos(x)/x
+    x = findroot(f, (1, 2), solver='brent')
+    assert abs(f(x)) < eps
+
+    with pytest.raises(ValueError, match="expected interval of 2 points"):
+        findroot(lambda x: x**2 - 1, (0,), solver='brent')
+
+    with pytest.raises(ValueError, match="Function must have opposite signs"):
+        findroot(lambda x: x**2 - 1, (2, 4), solver='brent')
+
+    assert findroot(lambda x: x, (-1, 2), solver='brent') == 0.0
+
+    assert findroot(lambda x: x, (-1, 1), solver='brent') == 0.0
 
 def test_modAB():
     assert findroot(lambda x: x**2 - 1, (0, 2), solver='modAB') == 1
