@@ -474,7 +474,6 @@ def test_mpf_fmt_cpython():
     assert f'{mp.pi}' == '3.1415926535897931'
 
 
-@settings(max_examples=20000)
 @given(fmt_str(types=list('fFeEgG%') + ['']),
        st.floats(allow_nan=True,
                  allow_infinity=True,
@@ -512,7 +511,6 @@ def test_mpf_floats_bulk(fmt, x):
         assert format(x, fmt) == format(mp.mpf(x), fmt)
 
 
-@settings(max_examples=20000)
 @given(fmt_str(types=list('gGfFeE') + [''], for_complex=True),
        st.complex_numbers(allow_nan=True,
                           allow_infinity=True,
@@ -840,7 +838,6 @@ def test_errors():
         f"{mp.mpf(1):._6f}"
 
 
-@settings(max_examples=10000)
 @given(st.floats(allow_nan=True, allow_infinity=True,
                  allow_subnormal=False))
 @example(float('nan'))
@@ -867,7 +864,6 @@ def float_print(d, i):
 
 
 @pytest.mark.skipif(libc is None, reason='requires libc')
-@settings(max_examples=10000)
 @given(st.floats(allow_nan=False, allow_infinity=False,
                  allow_subnormal=False),
        st.integers(min_value=0, max_value=15))
@@ -878,7 +874,6 @@ def test_hexadecimal_with_libc_bulk(x, p):
     assert mp.mpf(m_hex) == mp.mpf(x_hex)
 
 
-@settings(max_examples=10000)
 @given(st.floats(allow_nan=False, allow_infinity=False,
                  allow_subnormal=False),
        st.integers(min_value=-3, max_value=15))
