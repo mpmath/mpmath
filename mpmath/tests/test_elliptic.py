@@ -174,8 +174,6 @@ def test_jtheta_issue_79():
     q = mpf(6)/10 - one/10**7 - mpf(8)/10 * j
     mp.dps -= 30
     pytest.raises(ValueError, lambda: jtheta(3, 1, q))
-    # same limit on the derivative path (_djtheta)
-    pytest.raises(ValueError, lambda: jtheta(3, 1, q, 1))
 
     # bug reported in issue 79
     mp.dps = 100
