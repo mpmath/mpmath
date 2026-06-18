@@ -35,6 +35,7 @@ Bug fixes:
   see #1082 (Sergey B Kirpichev)
 * Fix qr_solve() failure on well-conditioned matrices with zero pivot, see
   #1083 (Jam Balaya)
+
 Maintenance:
 
 * Add bash script to test package version in a frozen application version
