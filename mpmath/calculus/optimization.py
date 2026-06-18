@@ -613,11 +613,9 @@ class Brent:
         fa = f(a)
         fb = f(b)
 
-        # Check for initial bracketing
         if fa*fb > 0:
             raise ValueError("Function must have opposite signs at interval boundaries.")
 
-        # Enforce that b holds the closest estimate to the root
         if abs(fa) < abs(fb):
             a, b = b, a
             fa, fb = fb, fa
@@ -628,10 +626,9 @@ class Brent:
         mflag = True
 
         while True:
-            # Yield current best guess (b) and interval error boundary
+
             yield b, abs(b - a)
 
-            # Check if Inverse Quadratic Interpolation can be used
             if fa != fc and fb != fc:
                 # Inverse Quadratic Interpolation formula
                 s = (a * fb * fc) / ((fa - fb) * (fa - fc)) + \
@@ -661,12 +658,10 @@ class Brent:
 
             fs = f(s)
 
-            # Update tracking states
             d = c
             c = b
             fc = fb
 
-            # Retain bracketing properties
             if fa*fs < 0:
                 b = s
                 fb = fs
@@ -674,14 +669,13 @@ class Brent:
                 a = s
                 fa = fs
 
-            # Enforce that b holds the closest estimate to the root
             if abs(fa) < abs(fb):
                 a, b = b, a
                 fa, fb = fb, fa
 
             # Check for exact root hit
-            if fb == ctx.zero:
-                yield b, ctx.zero
+            if abs(fb) < self.tol:
+                yield b, abs(fb)
 
 class ModAB:
     """
