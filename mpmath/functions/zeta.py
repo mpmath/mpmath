@@ -1162,6 +1162,8 @@ def lerchphi(ctx, z, s, a):
             v += zpow / (a+n)**s
             zpow *= z
         return zpow * ctx.lerchphi(z,s, a+m) + v
+    if abs(z) < 0.5:
+        return ctx.nsum(lambda k: z**k/(a+k)**s, [0, ctx.inf])
     g = ctx.ln(z)
     v = 1/(2*a**s) + ctx.gammainc(1-s, -a*g) * (-g)**(s-1) / z**a
     h = s / 2
