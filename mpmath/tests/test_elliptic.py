@@ -17,8 +17,9 @@ import pytest
 
 from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
                     ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
-                    elliprj, eps, exp, isnan, j, jtheta, ldexp, ln2, mp, mpc,
-                    mpf, nan, pi, qfrom, sec, sech, sin, sinh, sqrt, tan, tanh)
+                    elliprj, eps, exp, inf, isnan, j, jtheta, ldexp, ln2, mp,
+                    mpc, mpf, nan, nsum, pi, qfrom, sec, sech, sin, sinh, sqrt,
+                    tan, tanh)
 
 
 def mpc_ae(a, b, eps=eps):
@@ -173,6 +174,8 @@ def test_jtheta_issue_79():
     q = mpf(6)/10 - one/10**7 - mpf(8)/10 * j
     mp.dps -= 30
     pytest.raises(ValueError, lambda: jtheta(3, 1, q))
+    # same limit on the derivative path (_djtheta)
+    pytest.raises(ValueError, lambda: jtheta(3, 1, q, 1))
 
     # bug reported in issue 79
     mp.dps = 100
@@ -212,6 +215,103 @@ def test_jtheta_issue_79():
     assert r.ae('1359.048926806828939547859396600218966947753213803')
     r = jtheta(3, 4.5, 0.25, 50)
     assert r.ae('-6148327726309051673317975084654262.4119215720343656')
+
+def jtheta_defining_series(n, z, q, nd, dps):
+    # Sum at working precision dps of the defining series (DLMF 20.2.1-20.2.4)
+    # for the n-th Jacobi theta function, differentiated nd times term by term
+    # in z.  Independent of jtheta (no shared code), so it is a real cross-check;
+    # the big dps is needed because the series cancels by ~100-250 digits when
+    # |q| is near 1 with complex z.  method='direct' converges quickly here
+    # (the q^(k^2) terms decay super-geometrically) while the default
+    # extrapolation is much slower.  theta_3/theta_4 sum from k=1 (the k=0 term
+    # is the standalone constant 1); theta_1/theta_2 sum from k=0.
+    with mp.workdps(dps):
+        z = mpc(z)
+        q = mpc(q)
+        shift = nd*pi/2
+        if n == 1:
+            f = lambda k: ((-1)**k * q**((2*k+1)**2/4)
+                           * (2*k+1)**nd * sin((2*k+1)*z + shift))
+        elif n == 2:
+            f = lambda k: (q**((2*k+1)**2/4)
+                           * (2*k+1)**nd * cos((2*k+1)*z + shift))
+        elif n == 3:
+            f = lambda k: q**(k*k) * (2*k)**nd * cos(2*k*z + shift)
+        elif n == 4:
+            f = lambda k: (-1)**k * q**(k*k) * (2*k)**nd * cos(2*k*z + shift)
+        else:
+            raise ValueError
+        k0 = 0 if n in (1, 2) else 1
+        return (0 if nd else (n in (3, 4))) + 2*nsum(f, [k0, inf], method='direct')
+
+def test_issue_930():
+    # gh-930: for |q| close to 1 with complex z, jtheta's direct nome series
+    # suffered catastrophic cancellation and lost all precision -- e.g.
+    # jtheta(2, mpc(99, 1), mpf(99)/100) returned ~ -1.7e9 instead of the
+    # correct ~ -1.5e-57.  The PSL(2,Z) modular-reduction path fixes it.
+    # References come from jtheta_defining_series (independent of jtheta).
+    q = mpf(99)/100
+    z = mpc(99, 1)
+    for n_ in range(1, 5):
+        for nd in (0, 1, 2, 7, 10):
+            mp.dps = 50
+            got = jtheta(n_, z, q, derivative=nd)
+            ref = jtheta_defining_series(n_, z, q, nd, 400)
+            assert mpc_ae(got, ref), (n_, nd)
+
+    # a larger Im(z) = 2 (deeper cancellation) and small Im(z) = 1/100, 1/1000
+    for z in (mpc(99, 2), mpc(99, mpf(1)/100), mpc(99, mpf(1)/1000)):
+        for n_ in (2, 3):
+            mp.dps = 50
+            got = jtheta(n_, z, q)
+            ref = jtheta_defining_series(n_, z, q, 0, 400)
+            assert mpc_ae(got, ref), (n_, z)
+
+    mp.dps = 60
+    r1 = jtheta(3, 0.25+0.25j, 0.5)
+    mp.dps = 15
+    assert mpc_ae(jtheta(3, 0.25+0.25j, 0.5), +r1)
+
+def test_issue_930_random():
+    # random data in the modular-reduction regime (|q| close to 1 and
+    # complex z): check jtheta against itself at two precisions, like
+    # the |q| -> 1 checks in test_jtheta_issue_79 above
+    for i in range(10):
+        q = mpf(str(random.random()*mpf('0.0999') + mpf('0.9')))
+        if i % 2:
+            q = -q   # exercise the tau -> tau - k translation
+        z = mpc(str(10*random.random()), str(4*random.random() - 2))
+        for n_ in range(1, 5):
+            for nd in (0, 1):
+                mp.dps = 60
+                r1 = jtheta(n_, z, q, nd)
+                mp.dps = 15
+                r2 = jtheta(n_, z, q, nd)
+                assert mpc_ae(r1, r2)
+
+def test_jtheta_invalid_n():
+    pytest.raises(ValueError, jtheta, 5, mpf('0.5'), mpf('0.3'))
+    pytest.raises(ValueError, jtheta, 0, mpf('0.5'), mpf('0.3'))
+    pytest.raises(ValueError, jtheta, 5, mpf('0.5'), mpf('0.3'), 1)
+    pytest.raises(ValueError, jtheta, 5, mpc(1, 5), mpf('0.3'))
+    pytest.raises(ValueError, jtheta, 0, mpc(1, 5), mpf('0.3'))
+    pytest.raises(ValueError, jtheta, 5, mpc(1, 5), mpf('0.3'), 1)
+
+def test_jtheta_modular_translation():
+    mp.dps = 25
+    q = -0.5
+    z = 1+2j
+    assert mpc_ae(jtheta(3, z, q), jtheta(4, z, -q))
+    assert mpc_ae(jtheta(4, z, q), jtheta(3, z, -q))
+    for nd in (1, 2):
+        assert mpc_ae(jtheta(3, z, q, derivative=nd),
+                      jtheta(4, z, -q, derivative=nd))
+        assert mpc_ae(jtheta(4, z, q, derivative=nd),
+                      jtheta(3, z, -q, derivative=nd))
+    for n_ in (1, 2):
+        assert jtheta(n_, z, q).ae(exp(j*pi/4)*jtheta(n_, z, -q))
+    assert mpc_ae(jtheta(3, z, q), jtheta(3, -z, q))
+    assert mpc_ae(jtheta(4, z, q), jtheta(4, -z, q))
 
 def test_jtheta_identities():
     """

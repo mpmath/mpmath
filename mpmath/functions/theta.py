@@ -826,6 +826,118 @@ def _djacobi_theta3a(ctx, z, q, nd):
         s += term
     return (2*ctx.j)**nd * s
 
+
+def _theta_modular_reduce(ctx, n, z, q):
+    """Apply PSL(2,Z) reduction so that tau = log(q)/(i*pi) lies in the
+    fundamental domain |Re tau| <= 1/2, |tau| >= 1, and reduce z modulo the
+    quasi-period pi*tau, so that |Im(z_inner)| <= Im(pi*tau)/2.
+
+    Returns (n_new, z_inner, q_new, C, alpha, beta, T) such that
+
+        theta_n(z, q) = C * exp(alpha*z^2 + beta*z)
+                        * theta_{n_new}(z_inner, q_new)
+
+    where z_inner is an affine function of z with dz_inner/dz = 1/T.
+    """
+    pi = ctx.pi
+    j = ctx.j
+
+    n_cur = int(n)
+    tau = ctx.log(q) / (j * pi)
+
+    # Constant scalar accumulator
+    C = ctx.one
+    # coefficient of z^2 in the prefix exponent
+    alpha = ctx.zero
+    # coefficient of z in the prefix exponent
+    beta = ctx.zero
+    # cumulative scale from the inversions; z_inner = z/T
+    T = ctx.one
+
+    # Classical reduction to the fundamental domain.  It terminates: each
+    # inversion strictly increases Im(tau), and the SL(2,Z) orbit of tau
+    # has only finitely many points with Im above any given bound.
+    while True:
+        # Step 1: bring Re(tau) into [-1/2, 1/2] (DLMF 20.7.26-20.7.29).
+        # theta_1, theta_2 gain e^(i*pi/4) per unit shift, theta_3 <-> theta_4.
+        re_tau = ctx._re(tau)
+        k = ctx.nint(re_tau)
+        if k:
+            tau -= k
+            re_tau = ctx._re(tau)
+            if n_cur in (3, 4) and (int(k) & 1):
+                n_cur = 7 - n_cur
+            if n_cur in (1, 2):
+                C *= ctx.expjpi(k / 4)
+        # Step 2: if |tau| < 1, invert via tau' = -1/tau (DLMF 20.7.30-20.7.33):
+        #   theta_n(z|tau) = (-i*tau)^(-1/2) * exp(-i*z^2/(pi*tau))
+        #                    * theta_m(z*tau' | tau'),   z*tau' = -z/tau,
+        # index map 1->1 (extra factor -i), 2<->4, 3->3.  So C gains
+        # (-i*tau)^(-1/2) (and -i for theta_1), alpha gains -i/(pi*tau) (scaled
+        # by 1/T^2), and T accumulates -tau (z_inner = z/T = -z/tau = z*tau').
+        im_tau = ctx._im(tau)
+        if re_tau * re_tau + im_tau * im_tau < 1:
+            C /= ctx.sqrt(-j * tau)
+            if n_cur == 1:
+                C *= -j
+            elif n_cur in (2, 4):
+                n_cur = 6 - n_cur
+            alpha -= j / (pi * tau * T * T)
+            T *= -tau
+            tau = -1 / tau
+        else:
+            break
+
+    q_new = ctx.expjpi(tau)
+
+    # Step 3: subtract one quasi-period pi*tau in z (DLMF 20.2.6-20.2.9).
+    # In the fundamental domain Im(pi*tau) >= pi*sqrt(3)/2, so one step
+    # brings |Im(z_inner)| within Im(pi*tau)/2.  The e^(-2i*k_z*z_inner)
+    # factor (z_inner = z/T) adds -2i*k_z/T to beta.
+    pi_tau = pi * tau
+    z_inner = z / T
+    k_z = ctx.nint(ctx._im(z_inner) / ctx._im(pi_tau))
+    if k_z:
+        if n_cur in (1, 4) and (int(k_z) & 1):
+            C = -C
+        C *= q_new ** (k_z * k_z)
+        beta -= 2 * j * k_z / T
+        z_inner -= k_z * pi_tau
+
+    return n_cur, z_inner, q_new, C, alpha, beta, T
+
+
+def _theta_need_modular(ctx, z, q):
+    # jtheta by direct series loses precision when tau = log(q)/(i*pi) lies
+    # outside the PSL(2,Z) fundamental domain (|Re tau| <= 1/2 and
+    # |tau| >= 1).  Only route through modular reduction in that regime;
+    # otherwise fall through to the standard dispatcher.
+    if not ctx._im(z):
+        return False
+    tau = ctx.log(q) / (ctx.j * ctx.pi)
+    re = ctx._re(tau)
+    im = ctx._im(tau)
+    if abs(re) > ctx.mpf(0.5):
+        return True
+    if re*re + im*im < 1:
+        return True
+    return False
+
+
+def _theta_inner_a(ctx, n, z, q, nd=0):
+    """Dispatch to the shifted-series helpers, used inside the modular
+    path after reduction (Im(z) may be non-negligible)."""
+    if n == 1:
+        return ctx._djacobi_theta2a(z - ctx.pi/2, q, nd)
+    if n == 2:
+        return ctx._djacobi_theta2a(z, q, nd)
+    if n == 3:
+        return ctx._djacobi_theta3a(z, q, nd)
+    if n == 4:
+        return ctx._djacobi_theta3a(z, -q, nd)
+    raise ValueError
+
+
 @defun
 def jtheta(ctx, n, z, q, derivative=0):
     z = ctx.convert(z)
@@ -858,7 +970,21 @@ def jtheta(ctx, n, z, q, derivative=0):
     prec0 = ctx.prec
     try:
         ctx.prec += extra
-        if n in [1, 2]:
+        if _theta_need_modular(ctx, z, q):
+            ctx.prec += 30
+            n_new, z_inner, q_new, C, alpha, beta, T = \
+                _theta_modular_reduce(ctx, n, z, q)
+            # exp(X) loses ~mag(X) bits when |q| -> 1; add that many and redo.
+            X = alpha * z * z + beta * z
+            mag_X = ctx.mag(X)
+            if mag_X > 0:
+                ctx.prec += mag_X + 10
+                n_new, z_inner, q_new, C, alpha, beta, T = \
+                    _theta_modular_reduce(ctx, n, z, q)
+                X = alpha * z * z + beta * z
+            prefix = C * ctx.exp(X)
+            res = prefix * _theta_inner_a(ctx, n_new, z_inner, q_new)
+        elif n in [1, 2]:
             z_inner = z - ctx.pi/2 if n == 1 else z
             if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
@@ -884,7 +1010,7 @@ def jtheta(ctx, n, z, q, derivative=0):
             raise ValueError
     finally:
         ctx.prec = prec0
-    return res
+    return +res
 
 @defun
 def _djtheta(ctx, n, z, q, nd=1):
@@ -898,7 +1024,33 @@ def _djtheta(ctx, n, z, q, nd=1):
     prec0 = ctx.prec
     try:
         ctx.prec += extra
-        if n in [1, 2]:
+        if _theta_need_modular(ctx, z, q):
+            # nd-th derivative by Leibniz over prefix(z) = exp(alpha*z^2 +
+            # beta*z) and theta_inner(z_inner), z_inner = (z - k_z*pi*tau)/T.
+            # prefix^(i) = prefix * H_i, where H_i = H_i(z) follows the
+            # Hermite-type recurrence H_{i+1} = (2*alpha*z+beta)*H_i +
+            # 2*alpha*i*H_{i-1} (H_0 = 1).
+            ctx.prec += 30 + 10 * nd
+            n_new, z_inner, q_new, C, alpha, beta, T = \
+                _theta_modular_reduce(ctx, n, z, q)
+            X = alpha * z * z + beta * z
+            mag_X = ctx.mag(X)
+            if mag_X > 0:
+                ctx.prec += mag_X + 10
+                n_new, z_inner, q_new, C, alpha, beta, T = \
+                    _theta_modular_reduce(ctx, n, z, q)
+                X = alpha * z * z + beta * z
+            prefix = C * ctx.exp(X)
+            gp = 2 * alpha * z + beta
+            T_inv = 1 / T
+            def terms():
+                Hm1, Hi = ctx.zero, ctx.one     # H_{-1} (unused), H_0
+                for i in range(nd + 1):
+                    yield (ctx.binomial(nd, i) * Hi * T_inv**(nd - i)
+                           * _theta_inner_a(ctx, n_new, z_inner, q_new, nd - i))
+                    Hm1, Hi = Hi, gp * Hi + 2 * alpha * i * Hm1
+            res = prefix * ctx.fsum(terms())
+        elif n in [1, 2]:
             z_inner = z - ctx.pi/2 if n == 1 else z
             if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
