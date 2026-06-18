@@ -672,10 +672,6 @@ class Brent:
                 a, b = b, a
                 fa, fb = fb, fa
 
-            # Check for exact root hit
-            if abs(fb) < self.tol:
-                yield b, abs(fb)
-
 class ModAB:
     """
     1d-solver generating pairs of approximative root and error.
