@@ -774,7 +774,7 @@ def test_gegenbauer():
     assert gegenbauer(0, 4, 2.2) == 1
     assert gegenbauer(0, 0, 1.8) == 0
     assert gegenbauer(0, 1, 1.8) == 1
-    # issue 1077: odd integer n at z=0 vanishes; used to fail to converge
+    # issue 1077: odd integer n at z=0 vanishes
     assert gegenbauer(1, 1, 0) == 0
     assert gegenbauer(5, 1.5, 0) == 0
     assert gegenbauer(3, 2, 0) == 0

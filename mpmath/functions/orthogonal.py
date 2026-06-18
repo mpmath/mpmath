@@ -318,11 +318,9 @@ def gegenbauer(ctx, n, a, z, **kwargs):
     # Special cases: a+0.5, a*2 poles
     if ctx.isnpint(a):
         return 0*(z+n)
-    if (not z) and ctx.isint(n) and int(ctx._re(n)) % 2 == 1:
-        # C_n^a(z) is an odd polynomial in z for odd integer n, so it
-        # vanishes at z=0.  The 2F1 representation below does not detect
-        # this exact cancellation and fails to converge (issue #1077).
-        return z * 0
+    if not z and ctx.isint(n) and int(n.real) % 2 == 1:
+        # odd Gegenbauer polynomials vanish at z=0 (issue #1077)
+        return ctx.zero
     if ctx.isnpint(a+0.5):
         # TODO: something else is required here
         # E.g.: gegenbauer(-2, -0.5, 3) == -12

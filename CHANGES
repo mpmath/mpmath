@@ -35,8 +35,6 @@ Bug fixes:
   see #1082 (Sergey B Kirpichev)
 * Fix qr_solve() failure on well-conditioned matrices with zero pivot, see
   #1083 (Jam Balaya)
-* Fix gegenbauer() failing to converge for odd integer n at z=0, see #1077
-
 Maintenance:
 
 * Add bash script to test package version in a frozen application version
