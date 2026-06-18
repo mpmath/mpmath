@@ -318,6 +318,8 @@ def gegenbauer(ctx, n, a, z, **kwargs):
     # Special cases: a+0.5, a*2 poles
     if ctx.isnpint(a):
         return 0*(z+n)
+    if not z and ctx.isint(n) and int(n.real) % 2:
+        return ctx.zero
     if ctx.isnpint(a+0.5):
         # TODO: something else is required here
         # E.g.: gegenbauer(-2, -0.5, 3) == -12

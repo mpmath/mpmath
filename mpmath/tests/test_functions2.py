@@ -775,6 +775,15 @@ def test_gegenbauer():
     assert gegenbauer(0, 4, 2.2) == 1
     assert gegenbauer(0, 0, 1.8) == 0
     assert gegenbauer(0, 1, 1.8) == 1
+    # issue 1077: odd integer n at z=0 vanishes
+    assert gegenbauer(1, 1, 0) == 0
+    assert gegenbauer(5, 1.5, 0) == 0
+    assert gegenbauer(3, 2, 0) == 0
+    assert gegenbauer(3, 1, mpc(0)) == 0
+    # adjacent cases must keep going through the general path
+    assert gegenbauer(2, 1, 0).ae(-1)
+    assert gegenbauer(4, 1.5, 0).ae(1.875)
+    assert gegenbauer(2.5, 1, 0).ae(-0.70710678118654752440)
     mp.dps = 200
     assert gegenbauer(2,-1.0, 27397079.00297188) == 0  # issue 461
 
