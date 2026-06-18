@@ -601,7 +601,6 @@ class Brent:
 
         self.f = f
         self.a, self.b = x0
-        self.verbose = kwargs['verbose']
         self.tol = kwargs['tol']
 
     def __iter__(self):
