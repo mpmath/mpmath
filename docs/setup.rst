@@ -2,7 +2,7 @@ Setting up mpmath
 =================
 
 Mpmath requires at least Python 3.10.  It has been tested with CPython 3.10
-through 3.14 and for PyPy 3.11.
+through 3.15 and for PyPy 3.11.
 
 Download and installation
 -------------------------
