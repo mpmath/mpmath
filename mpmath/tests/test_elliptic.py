@@ -513,7 +513,7 @@ def test_sn_cn_dn_identities():
     for i in range(N):
         mstring = str(random.random())
         m = mpf(mstring)
-        k = m.sqrt()
+        k = mp.extraprec(10)(sqrt)(m)
         zstring = str(random.random())
         z = mpf(zstring)
 
