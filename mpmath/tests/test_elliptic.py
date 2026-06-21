@@ -666,3 +666,18 @@ def test_issue_604():
 
 def test_issue_486():
     assert isnan(elliprj(1, 2, 3, nan))
+
+def test_issue_1104():
+    z, q = mpc(2479 + 1020j), mpf('1e-2141')
+
+    # N[Im[EllipticTheta[4, 2479 + 1020 I, 10^-2141]], 15]
+    ref_im = mpf('4.90523636450946e-1256')
+    ans = jtheta(4, z, q)
+    assert mpc_ae(ans, 1 + ref_im*1j)
+    assert mpc_ae(ans, mp.extraprec(10000)(jtheta)(4, z, q))
+
+    # N[Derivative[0, 3, 0][EllipticTheta][4, 2479 + 1020 I, 10^-2141], 15]
+    ref = mpc('-3.92418909160757e-1255-6.16571954074132e-1255j')
+    ans = jtheta(4, z, q, 3)
+    assert mpc_ae(ans, ref)
+    assert mpc_ae(ans, mp.extraprec(10000)(jtheta)(4, z, q, 3))
