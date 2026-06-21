@@ -213,6 +213,12 @@ def test_jtheta_issue_79():
     r = jtheta(3, 4.5, 0.25, 50)
     assert r.ae('-6148327726309051673317975084654262.4119215720343656')
 
+def test_jtheta_invalid_n():
+    pytest.raises(ValueError, jtheta, 5, 0.5, 0.3)
+    pytest.raises(ValueError, jtheta, 0, 0.5, 0.3)
+    pytest.raises(ValueError, jtheta, 5, 0.5, 0.3)
+    pytest.raises(ValueError, jtheta, 0, 0.5, 0.3)
+
 def test_jtheta_identities():
     """
     Tests the some of the jacobi identidies found in Abramowitz,

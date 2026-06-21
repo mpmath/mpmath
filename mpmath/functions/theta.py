@@ -856,9 +856,7 @@ def jtheta(ctx, n, z, q, derivative=0):
             extra += 2*abs(M)
     cz = 0.5
     extra2 = 50
-    prec0 = ctx.prec
-    try:
-        ctx.prec += extra
+    with ctx.extraprec(extra):
         if n in [1, 2]:
             z_inner = z - ctx.pi/2 if n == 1 else z
             if z.imag:
@@ -882,7 +880,5 @@ def jtheta(ctx, n, z, q, derivative=0):
             else:
                 res = ctx._djacobi_theta3(z, q_inner, nd)
         else:
-            raise ValueError
-    finally:
-        ctx.prec = prec0
-    return res
+            raise ValueError("First argument expected to be 1, 2, 3 or 4")
+    return +res
