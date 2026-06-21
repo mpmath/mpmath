@@ -17,6 +17,7 @@ classifiers = ['Topic :: Scientific/Engineering :: Mathematics',
                'Programming Language :: Python :: 3.12',
                'Programming Language :: Python :: 3.13',
                'Programming Language :: Python :: 3.14',
+               'Programming Language :: Python :: 3.15',
                'Programming Language :: Python :: Free Threading :: 2 - Beta',
                'Programming Language :: Python :: Implementation :: CPython',
                'Programming Language :: Python :: Implementation :: PyPy']
@@ -36,7 +37,7 @@ tests = ['pytest>=6', 'numpy; python_version<"3.15"', 'packaging', 'pytest-timeo
 develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov>=7', 'wheel', 'build']
 gmpy2 = ['gmpy2>=2.3; python_version<"3.15"']
 gmpy = ['mpmath[gmpy2]']
-gmp = ['python-gmp; python_version<"3.15"']
+gmp = ['python-gmp']
 docs = ['sphinx', 'matplotlib', 'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist', 'diff_cover']
 
@@ -58,7 +59,7 @@ version_file = "mpmath/_version.py"
 [tool.pytest.ini_options]
 testpaths = ['mpmath', 'docs']
 doctest_optionflags = ['IGNORE_EXCEPTION_DETAIL', 'ELLIPSIS']
-addopts = "--durations=20 --doctest-modules --doctest-glob='*.rst'"
+addopts = "--doctest-modules --doctest-glob='*.rst'"
 norecursedirs = ['docs/plots', 'demo', '.eggs', '.git', '.hypothesis']
 filterwarnings = ['error::DeprecationWarning']
 xfail_strict = true

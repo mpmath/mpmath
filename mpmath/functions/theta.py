@@ -215,6 +215,8 @@ def _jacobi_theta2(ctx, z, q):
 
 @defun
 def _djacobi_theta2(ctx, z, q, nd):
+    if not nd:
+        return ctx._jacobi_theta2(z, q)
     MIN = 2
     extra1 = 10
     extra2 = 20
@@ -585,6 +587,8 @@ def _jacobi_theta3(ctx, z, q):
 @defun
 def _djacobi_theta3(ctx, z, q, nd):
     """nd=1,2,3 order of the derivative with respect to z"""
+    if not nd:
+        return ctx._jacobi_theta3(z, q)
     MIN = 2
     extra1 = 10
     extra2 = 20
@@ -835,9 +839,6 @@ def jtheta(ctx, n, z, q, derivative=0):
     if abs(q) > ctx.THETA_Q_LIM:
         raise ValueError(f"abs(q) > THETA_Q_LIM = {ctx.THETA_Q_LIM}")
 
-    if derivative:
-        return ctx._djtheta(n, z, q, nd)
-
     # Implementation note
     # If ctx._im(z) is close to zero, _jacobi_theta2 and _jacobi_theta3
     # are used,
@@ -848,56 +849,14 @@ def jtheta(ctx, n, z, q, derivative=0):
 
     # TODO: write _jacobi_theta2a and _jacobi_theta3a using fixed-point
 
-    extra = 10
-    if z:
-        M = ctx.mag(z)
-        if M > 5 or (n == 1 and M < -5):
-            extra += 2*abs(M)
-    cz = 0.5
-    extra2 = 50
-    prec0 = ctx.prec
-    try:
-        ctx.prec += extra
-        if n in [1, 2]:
-            z_inner = z - ctx.pi/2 if n == 1 else z
-            if z.imag:
-                if abs(z.imag) < cz * abs(ctx.log(q).real):
-                    ctx.dps += extra2
-                    res = ctx._jacobi_theta2(z_inner, q)
-                else:
-                    ctx.dps += 10
-                    res = ctx._djacobi_theta2a(z_inner, q, nd)
-            else:
-                res = ctx._jacobi_theta2(z_inner, q)
-        elif n in [3, 4]:
-            q_inner = -q if n == 4 else q
-            if z.imag:
-                if abs(z.imag) < cz * abs(ctx.log(q).real):
-                    ctx.dps += extra2
-                    res = ctx._jacobi_theta3(z, q_inner)
-                else:
-                    ctx.dps += 10
-                    res = ctx._djacobi_theta3a(z, q_inner, nd)
-            else:
-                res = ctx._jacobi_theta3(z, q_inner)
-        else:
-            raise ValueError
-    finally:
-        ctx.prec = prec0
-    return res
-
-@defun
-def _djtheta(ctx, n, z, q, nd=1):
     extra = 10 + ctx.prec * nd // 10
     if z:
         M = ctx.mag(z)
-        if M > 5 or (n != 1 and M < -5):
+        if M > 5 or ((n != 1 if nd else n == 1) and M < -5):
             extra += 2*abs(M)
     cz = 0.5
     extra2 = 50
-    prec0 = ctx.prec
-    try:
-        ctx.prec += extra
+    with ctx.extraprec(extra):
         if n in [1, 2]:
             z_inner = z - ctx.pi/2 if n == 1 else z
             if z.imag:
@@ -921,7 +880,5 @@ def _djtheta(ctx, n, z, q, nd=1):
             else:
                 res = ctx._djacobi_theta3(z, q_inner, nd)
         else:
-            raise ValueError
-    finally:
-        ctx.prec = prec0
+            raise ValueError("First argument expected to be 1, 2, 3 or 4")
     return +res

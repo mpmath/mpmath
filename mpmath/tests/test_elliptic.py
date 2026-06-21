@@ -85,7 +85,7 @@ def test_calculate_nome():
     mp.dps = 100
 
     q = calculate_nome(zero)
-    assert(q == zero)
+    assert q == zero
 
     mp.dps = 25
     # used Mathematica's EllipticNomeQ[m]
@@ -113,7 +113,7 @@ def test_jtheta():
     z = q = zero
     for n in range(1,5):
         value = jtheta(n, z, q)
-        assert(value == (n-1)//2)
+        assert value == (n-1)//2
 
     for q in [one, mpf(2)]:
         for n in range(1,5):
@@ -125,22 +125,22 @@ def test_jtheta():
     # Mathematical N[EllipticTheta[1, 1/10, 1/11], 25]
     res = mpf('0.1069552990104042681962096')
     result = jtheta(1, z, q)
-    assert(result.ae(res))
+    assert result.ae(res)
 
     # Mathematica N[EllipticTheta[2, 1/10, 1/11], 25]
     res = mpf('1.101385760258855791140606')
     result = jtheta(2, z, q)
-    assert(result.ae(res))
+    assert result.ae(res)
 
     # Mathematica N[EllipticTheta[3, 1/10, 1/11], 25]
     res = mpf('1.178319743354331061795905')
     result = jtheta(3, z, q)
-    assert(result.ae(res))
+    assert result.ae(res)
 
     # Mathematica N[EllipticTheta[4, 1/10, 1/11], 25]
     res = mpf('0.8219318954665153577314573')
     result = jtheta(4, z, q)
-    assert(result.ae(res))
+    assert result.ae(res)
 
     # test for sin zeros for jtheta(1, z, q)
     # test for cos zeros for jtheta(2, z, q)
@@ -150,9 +150,9 @@ def test_jtheta():
         qstring = str(random.random())
         q = mpf(qstring)
         result = jtheta(1, z1, q)
-        assert(result.ae(0))
+        assert result.ae(0), q
         result = jtheta(2, z2, q)
-        assert(result.ae(0))
+        assert result.ae(0), q
 
 def test_jtheta_issue_79():
     # near the circle of covergence |q| = 1 the convergence slows
@@ -183,7 +183,7 @@ def test_jtheta_issue_79():
           mpf('0.5446453005688226915290954851851490') *j
     mp.dps = 30
     result = jtheta(1, z, q)
-    assert(result.ae(res))
+    assert result.ae(res)
     mp.dps = 80
     z = 3 + 4*j
     q = 0.5 + 0.5*j
@@ -213,6 +213,12 @@ def test_jtheta_issue_79():
     r = jtheta(3, 4.5, 0.25, 50)
     assert r.ae('-6148327726309051673317975084654262.4119215720343656')
 
+def test_jtheta_invalid_n():
+    pytest.raises(ValueError, jtheta, 5, 0.5, 0.3)
+    pytest.raises(ValueError, jtheta, 0, 0.5, 0.3)
+    pytest.raises(ValueError, jtheta, 5, 0.5, 0.3)
+    pytest.raises(ValueError, jtheta, 0, 0.5, 0.3)
+
 def test_jtheta_identities():
     """
     Tests the some of the jacobi identidies found in Abramowitz,
@@ -234,7 +240,7 @@ def test_jtheta_identities():
         term2 = (jtheta(3, z, q)**2) * (jtheta(2, zero, q)**2)
         term3 = (jtheta(2, z, q)**2) * (jtheta(3, zero, q)**2)
         equality = term1 - term2 + term3
-        assert(equality.ae(0, eps1))
+        assert equality.ae(0, eps1), (z, q)
 
         zstring = str(100*random.random())
         z = mpf(zstring)
@@ -245,7 +251,7 @@ def test_jtheta_identities():
         term2 = (jtheta(4, z, q)**2) * (jtheta(2, zero, q)**2)
         term3 = (jtheta(1, z, q)**2) * (jtheta(3, zero, q)**2)
         equality = term1 - term2 + term3
-        assert(equality.ae(0, eps1))
+        assert equality.ae(0, eps1), (z, q)
 
         # Abramowitz 16.28.3
         # v_3(z, q)**2 * v_4(0, q)**2 =   v_4(z, q)**2 * v_3(0, q)**2
@@ -254,7 +260,7 @@ def test_jtheta_identities():
         term2 = (jtheta(4, z, q)**2) * (jtheta(3, zero, q)**2)
         term3 = (jtheta(1, z, q)**2) * (jtheta(2, zero, q)**2)
         equality = term1 - term2 + term3
-        assert(equality.ae(0, eps1))
+        assert equality.ae(0, eps1), (z, q)
 
         # Abramowitz 16.28.4
         # v_4(z, q)**2 * v_4(0, q)**2 =   v_3(z, q)**2 * v_3(0, q)**2
@@ -263,7 +269,7 @@ def test_jtheta_identities():
         term2 = (jtheta(3, z, q)**2) * (jtheta(3, zero, q)**2)
         term3 = (jtheta(2, z, q)**2) * (jtheta(2, zero, q)**2)
         equality = term1 - term2 + term3
-        assert(equality.ae(0, eps1))
+        assert equality.ae(0, eps1), (z, q)
 
         # Abramowitz 16.28.5
         # v_2(0, q)**4 + v_4(0, q)**4 == v_3(0, q)**4
@@ -271,7 +277,7 @@ def test_jtheta_identities():
         term2 = (jtheta(4, zero, q))**4
         term3 = (jtheta(3, zero, q))**4
         equality = term1 + term2 - term3
-        assert(equality.ae(0, eps1))
+        assert equality.ae(0, eps1), (z, q)
 
 def test_jtheta_complex():
     mp.dps = 30
@@ -281,25 +287,25 @@ def test_jtheta_complex():
     res = mpf('0.31618034835986160705729105731678285') + \
           mpf('0.07542013825835103435142515194358975') * j
     r = jtheta(1, z, q)
-    assert(mpc_ae(r, res))
+    assert mpc_ae(r, res)
 
     # Mathematica N[EllipticTheta[2, 1/4 + I/8, 1/3 + I/7], 35]
     res = mpf('1.6530986428239765928634711417951828') + \
           mpf('0.2015344864707197230526742145361455') * j
     r = jtheta(2, z, q)
-    assert(mpc_ae(r, res))
+    assert mpc_ae(r, res)
 
     # Mathematica N[EllipticTheta[3, 1/4 + I/8, 1/3 + I/7], 35]
     res = mpf('1.6520564411784228184326012700348340') + \
           mpf('0.1998129119671271328684690067401823') * j
     r = jtheta(3, z, q)
-    assert(mpc_ae(r, res))
+    assert mpc_ae(r, res)
 
     # Mathematica N[EllipticTheta[4, 1/4 + I/8, 1/3 + I/7], 35]
     res = mpf('0.37619082382228348252047624089973824') - \
           mpf('0.15623022130983652972686227200681074') * j
     r = jtheta(4, z, q)
-    assert(mpc_ae(r, res))
+    assert mpc_ae(r, res)
 
     # check some theta function identities
     mp.dos = 100
@@ -315,7 +321,7 @@ def test_jtheta_complex():
         a[2]**4 + a[4]**4 - a[3]**4]
     mp.dps -= 10
     for x in r:
-        assert(mpc_ae(x, mpc(0)))
+        assert mpc_ae(x, mpc(0))
 
 def test_djtheta():
     mp.dps = 30
@@ -326,32 +332,32 @@ def test_djtheta():
     res = mpf('1.5555195883277196036090928995803201') - \
           mpf('0.02439761276895463494054149673076275') * j
     result = jtheta(1, z, q, 1)
-    assert(mpc_ae(result, res))
+    assert mpc_ae(result, res)
 
     # Mathematica N[EllipticThetaPrime[2, 1/7 + I/3, 1/8 + I/5], 35]
     res = mpf('0.19825296689470982332701283509685662') - \
           mpf('0.46038135182282106983251742935250009') * j
     result = jtheta(2, z, q, 1)
-    assert(mpc_ae(result, res))
+    assert mpc_ae(result, res)
 
     # Mathematica N[EllipticThetaPrime[3, 1/7 + I/3, 1/8 + I/5], 35]
     res = mpf('0.36492498415476212680896699407390026') - \
           mpf('0.57743812698666990209897034525640369') * j
     result = jtheta(3, z, q, 1)
-    assert(mpc_ae(result, res))
+    assert mpc_ae(result, res)
 
     # Mathematica N[EllipticThetaPrime[4, 1/7 + I/3, 1/8 + I/5], 35]
     res = mpf('-0.38936892528126996010818803742007352') + \
           mpf('0.66549886179739128256269617407313625') * j
     result = jtheta(4, z, q, 1)
-    assert(mpc_ae(result, res))
+    assert mpc_ae(result, res)
 
     for i in range(10):
         q = (one*random.random() + j*random.random())/2
         # identity in Wittaker, Watson &21.41
         a = jtheta(1, 0, q, 1)
         b = jtheta(2, 0, q)*jtheta(3, 0, q)*jtheta(4, 0, q)
-        assert(a.ae(b))
+        assert a.ae(b), q
 
     # test higher derivatives
     mp.dps = 20
@@ -373,7 +379,7 @@ def test_djtheta():
     for n in [2,3,4]:
         a[n] = jtheta(n, z, q, 2)/jtheta(n, z, q)
     equality = a[2] + a[3] + a[4] - a[1]
-    assert(equality.ae(0))
+    assert equality.ae(0)
 
 def test_jsn():
     """
@@ -383,7 +389,7 @@ def test_jsn():
 
     # trival case
     result = jsn(zero, zero)
-    assert(result == zero)
+    assert result == zero
 
     # Abramowitz Table 16.5
     #
@@ -394,7 +400,7 @@ def test_jsn():
         q = mpf(qstring)
 
         equality = jsn(zero, q)
-        assert(equality.ae(0))
+        assert equality.ae(0), q
 
     # Abramowitz Table 16.6.1
     #
@@ -408,16 +414,16 @@ def test_jsn():
 
     mp.dps = 25
     arg = one/10
-    #N[JacobiSN[1/10, 2^-100], 25]
+    # N[JacobiSN[1/10, 2^-100], 25]
     res = mpf('0.09983341664682815230681420')
     m = ldexp(one, -100)
     result = jsn(arg, m)
-    assert(result.ae(res))
+    assert result.ae(res)
 
     # N[JacobiSN[1/10, 1/10], 25]
     res = mpf('0.09981686718599080096451168')
     result = jsn(arg, arg)
-    assert(result.ae(res))
+    assert result.ae(res)
 
 def test_jcn():
     """
@@ -430,7 +436,7 @@ def test_jcn():
     qstring = str(random.random())
     q = mpf(qstring)
     cn = jcn(zero, q)
-    assert(cn.ae(one))
+    assert cn.ae(one), q
 
     # Abramowitz Table 16.6.2
     #
@@ -445,15 +451,15 @@ def test_jcn():
     mp.dps = 25
     arg = one/10
     m = ldexp(one, -100)
-    #N[JacobiCN[1/10, 2^-100], 25]
+    # N[JacobiCN[1/10, 2^-100], 25]
     res = mpf('0.9950041652780257660955620')
     result = jcn(arg, m)
-    assert(result.ae(res))
+    assert result.ae(res)
 
     # N[JacobiCN[1/10, 1/10], 25]
     res = mpf('0.9950058256237368748520459')
     result = jcn(arg, arg)
-    assert(result.ae(res))
+    assert result.ae(res)
 
 def test_jdn():
     """
@@ -467,14 +473,14 @@ def test_jdn():
     m = mpf(mstring)
 
     dn = jdn(zero, m)
-    assert(dn.ae(one))
+    assert dn.ae(one), m
 
     mp.dps = 25
     # N[JacobiDN[1/10, 1/10], 25]
     res = mpf('0.9995017055025556219713297')
     arg = one/10
     result = jdn(arg, arg)
-    assert(result.ae(res))
+    assert result.ae(res)
 
 def test_sn_cn_dn_identities():
     """
@@ -494,7 +500,7 @@ def test_sn_cn_dn_identities():
         term1 = jsn(z, q)**2
         term2 = jcn(z, q)**2
         equality = one - term1 - term2
-        assert(equality.ae(0))
+        assert equality.ae(0), (z, q)
 
     # MathWorld
     # k**2 * sn(z, m)**2 + dn(z, m)**2 == 1
@@ -507,13 +513,13 @@ def test_sn_cn_dn_identities():
         term1 = k**2 * jsn(z, m)**2
         term2 = jdn(z, m)**2
         equality = one - term1 - term2
-        assert(equality.ae(0))
+        assert equality.ae(0), (z, m)
 
 
     for i in range(N):
         mstring = str(random.random())
         m = mpf(mstring)
-        k = m.sqrt()
+        k = mp.extraprec(10)(sqrt)(m)
         zstring = str(random.random())
         z = mpf(zstring)
 
@@ -523,24 +529,24 @@ def test_sn_cn_dn_identities():
         term2 = 1 - k**2
         term3 = jdn(z, m)**2
         equality = term3 - term1 - term2
-        assert(equality.ae(0))
+        assert equality.ae(0), (z, m)
 
         K = ellipk(k**2)
         # Abramowitz Table 16.5
         # sn(K, m) = 1; K is K(k), first complete elliptic integral
         r = jsn(K, m)
-        assert(r.ae(one))
+        assert r.ae(one), (K, m)
 
         # Abramowitz Table 16.5
         # cn(K, q) = 0; K is K(k), first complete elliptic integral
         equality = jcn(K, m)
-        assert(equality.ae(0))
+        assert equality.ae(0), (K, m)
 
         # Abramowitz Table 16.6.3
         # dn(z, 0) = 1, m == 0
         z = m
         value = jdn(z, zero)
-        assert(value.ae(one))
+        assert value.ae(one), z
 
 def test_sn_cn_dn_complex():
     mp.dps = 30
@@ -550,21 +556,19 @@ def test_sn_cn_dn_complex():
     u = mpf(1)/4 + j/8
     m = mpf(1)/3 + j/7
     r = jsn(u, m)
-    assert(mpc_ae(r, res))
+    assert mpc_ae(r, res)
 
-    #N[JacobiCN[1/4 + I/8, 1/3 + I/7], 35]
+    # N[JacobiCN[1/4 + I/8, 1/3 + I/7], 35]
     res = mpf('0.9762691700944007312693721148331') - \
           mpf('0.0307203994181623243583169154824')*j
     r = jcn(u, m)
-    #assert r.real.ae(res.real)
-    #assert r.imag.ae(res.imag)
-    assert(mpc_ae(r, res))
+    assert mpc_ae(r, res)
 
-    #N[JacobiDN[1/4 + I/8, 1/3 + I/7], 35]
+    # N[JacobiDN[1/4 + I/8, 1/3 + I/7], 35]
     res = mpf('0.99639490163039577560547478589753039') - \
           mpf('0.01346296520008176393432491077244994')*j
     r = jdn(u, m)
-    assert(mpc_ae(r, res))
+    assert mpc_ae(r, res)
 
 def test_elliptic_integrals():
     # Test cases from Carlson's paper
@@ -645,7 +649,7 @@ def test_elliptic_integrals():
     # these require accurate integration
     assert elliprj(0.3068, -4.037-0.0632j, 1.654, -0.9609).ae(1.77940452391261626 + 0.0388711305592447234j)
     assert elliprj(0.3068, -4.037-0.00632j, 1.654, -0.9609).ae(1.77806722756403055 + 0.0592749824572262329j)
-    # issue #571
+    # issue 571
     assert ellippi(2.1 + 0.94j, 2.3 + 0.98j, 2.5 + 0.01j).ae(-0.40652414240811963438 + 2.1547659461404749309j)
 
     assert ellippi(2.0-1.0j, 2.0+1.0j).ae(1.8578723151271115 - 1.18642180609983531j)
