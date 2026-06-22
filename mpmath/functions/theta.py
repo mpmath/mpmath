@@ -102,10 +102,7 @@ def _jacobi_theta2(ctx, z, q):
             x = ctx.to_fixed(ctx._re(q), wp)
             x2 = (x*x) >> wp
             a = b = x2
-            prec0 = ctx.prec
-            ctx.prec = wp
-            c1, s1 = ctx.cos_sin(z)
-            ctx.prec = prec0
+            c1, s1 = ctx.cos_sin(z, prec=wp)
             cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
             cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
             snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
@@ -154,11 +151,8 @@ def _jacobi_theta2(ctx, z, q):
             x2im = (xre*xim) >> (wp - 1)
             are = bre = x2re
             aim = bim = x2im
-            prec0 = ctx.prec
-            ctx.prec = wp
             # cos(z), sin(z) with z complex
-            c1, s1 = ctx.cos_sin(z)
-            ctx.prec = prec0
+            c1, s1 = ctx.cos_sin(z, prec=wp)
             cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
             cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
             snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
@@ -294,10 +288,7 @@ def _djacobi_theta2(ctx, z, q, nd):
         x = ctx.to_fixed(ctx._re(q), wp)
         x2 = (x*x) >> wp
         a = b = x2
-        prec0 = ctx.prec
-        ctx.prec = wp
-        c1, s1 = ctx.cos_sin(z)
-        ctx.prec = prec0
+        c1, s1 = ctx.cos_sin(z, prec=wp)
         cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
         cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
         snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
@@ -356,11 +347,8 @@ def _djacobi_theta2(ctx, z, q, nd):
         x2im = (xre*xim) >> (wp - 1)
         are = bre = x2re
         aim = bim = x2im
-        prec0 = ctx.prec
-        ctx.prec = wp
         # cos(2*z), sin(2*z) with z complex
-        c1, s1 = ctx.cos_sin(z)
-        ctx.prec = prec0
+        c1, s1 = ctx.cos_sin(z, prec=wp)
         cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
         cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
         snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
@@ -521,10 +509,7 @@ def _jacobi_theta3(ctx, z, q):
             a = (1 << wp)
             b = x
             x2 = (x*x) >> wp
-            prec0 = ctx.prec
-            ctx.prec = wp
-            c1, s1 = ctx.cos_sin(2*z)
-            ctx.prec = prec0
+            c1, s1 = ctx.cos_sin(2*z, prec=wp)
             cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
             cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
             snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
@@ -565,11 +550,8 @@ def _jacobi_theta3(ctx, z, q):
             aim = 0
             bre = xre
             bim = xim
-            prec0 = ctx.prec
-            ctx.prec = wp
             # cos(2*z), sin(2*z) with z complex
-            c1, s1 = ctx.cos_sin(2*z)
-            ctx.prec = prec0
+            c1, s1 = ctx.cos_sin(2*z, prec=wp)
             cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
             cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
             snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
@@ -688,10 +670,7 @@ def _djacobi_theta3(ctx, z, q, nd):
         a = (1 << wp)
         b = x
         x2 = (x*x) >> wp
-        prec0 = ctx.prec
-        ctx.prec = wp
-        c1, s1 = ctx.cos_sin(2*z)
-        ctx.prec = prec0
+        c1, s1 = ctx.cos_sin(2*z, prec=wp)
         cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
         cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
         snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
