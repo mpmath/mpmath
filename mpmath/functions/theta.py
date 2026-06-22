@@ -858,10 +858,13 @@ def _djacobi_theta3a(ctx, z, q, nd):
 
 @defun
 def jtheta(ctx, n, z, q, derivative=0):
+    n = int(n)
     z = ctx.convert(z)
     q = ctx.convert(q)
     nd = int(derivative)
 
+    if n not in range(1, 5):
+        raise ValueError("First argument expected to be 1, 2, 3 or 4")
     if abs(q) > ctx.THETA_Q_LIM:
         raise ValueError(f"abs(q) > THETA_Q_LIM = {ctx.THETA_Q_LIM}")
 
@@ -894,7 +897,7 @@ def jtheta(ctx, n, z, q, derivative=0):
                     res = ctx._djacobi_theta2a(z_inner, q, nd)
             else:
                 res = ctx._djacobi_theta2(z_inner, q, nd)
-        elif n in [3, 4]:
+        else:
             q_inner = -q if n == 4 else q
             if z.imag:
                 if abs(z.imag) < cz * abs(ctx.log(q).real):
@@ -905,6 +908,4 @@ def jtheta(ctx, n, z, q, derivative=0):
                     res = ctx._djacobi_theta3a(z, q_inner, nd)
             else:
                 res = ctx._djacobi_theta3(z, q_inner, nd)
-        else:
-            raise ValueError("First argument expected to be 1, 2, 3 or 4")
     return +res
