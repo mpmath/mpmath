@@ -483,3 +483,41 @@ def stirling2(n, k):
             s += t * MPZ(j)**n
         t = t * (k - j) // (j + 1)
     return s // ifac(k)
+
+def jacobi_symbol(m, n):
+    """Returns the Jacobi symbol (m / n)."""
+    m, n = MPZ(m), MPZ(n)
+    if not n % 2:
+        raise ValueError('n should be an odd integer')
+    if n < 0:
+        return jacobi_symbol(m, -n)*(MPZ(-1) if m < 0 else MPZ_ONE)
+    if m < 0 or m > n:
+        m = m % n
+    if not m:
+        return MPZ(n == 1)
+    if n == 1 or m == 1:
+        return MPZ_ONE
+    if math.gcd(m, n) != 1:
+        return MPZ_ZERO
+
+    j = MPZ_ONE
+    s = trailing(m)
+    m = m >> s
+    if s % 2 and n % 8 in [3, 5]:
+        j *= -1
+
+    while m != 1:
+        if m % 4 == 3 and n % 4 == 3:
+            j *= -1
+        m, n = n % m, m
+        s = trailing(m)
+        m = m >> s
+        if s % 2 and n % 8 in [3, 5]:
+            j *= -1
+    return j
+
+if gmpy and hasattr(gmpy, 'jacobi'):
+    def jacobi_symbol(m, n):
+        if n < 0:
+            return gmpy.jacobi(m, -n)*(MPZ(-1) if m < 0 else MPZ_ONE)
+        return gmpy.jacobi(m, n)
