@@ -235,7 +235,8 @@ class FPContext(StandardBaseContext):
             try:
                 for i in den: t /= (coeffs[i]+k)
             except ZeroDivisionError:
-                raise NotImplementedError
+                assert not t  # poles are handled above
+                return s
             k += 1; t /= k; t *= z; s += t
             if abs(t) < tol:
                 return s
