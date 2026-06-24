@@ -19,7 +19,7 @@ from mpmath.libmp import (MPZ, finf, fnan, fninf, fnone, fone, from_float,
                           round_down, round_nearest, round_up, to_float,
                           to_int, to_man_exp)
 from mpmath.libmp.backend import MPQ
-from mpmath.libmp.libintmath import isprime
+from mpmath.libmp.libintmath import isprime, jacobi_symbol
 
 
 def test_type_compare():
@@ -738,3 +738,25 @@ def test_issue_1078():
     val_bad = mid - mpf(2) ** -(1074 + 53)
 
     assert float(val_ok) == float(val_bad) == float(lo)
+
+
+def test_jacobi_symbol():
+    assert jacobi_symbol(25, 41) == 1
+    assert jacobi_symbol(-23, 83) == -1
+    assert jacobi_symbol(3, 9) == 0
+    assert jacobi_symbol(42, 97) == -1
+    assert jacobi_symbol(3, 5) == -1
+    assert jacobi_symbol(7, 9) == 1
+    assert jacobi_symbol(0, 3) == 0
+    assert jacobi_symbol(0, 1) == 1
+    assert jacobi_symbol(2, 1) == 1
+    assert jacobi_symbol(1, 3) == 1
+    pytest.raises(ValueError, lambda: jacobi_symbol(3, 8))
+    assert jacobi_symbol(10, 3) == 1
+    assert jacobi_symbol(10, -3) == 1
+    assert jacobi_symbol(-10, 3) == -1
+    assert jacobi_symbol(-10, -3) == 1
+    assert jacobi_symbol(11, 3) == -1
+    assert jacobi_symbol(11, -3) == -1
+    assert jacobi_symbol(-11, 3) == 1
+    assert jacobi_symbol(-11, -3) == -1

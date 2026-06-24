@@ -5,6 +5,10 @@ Features:
 
 * Support special numbers in mpf_frexp() like math.frexp(),
   see #1081 (Sergey B Kirpichev)
+* Add ModAB rootfinding algorithm, see #1093 (Ayush Baranwal)
+* Add Brent root-finding algorithm, see #1103 (Ayush Baranwal)
+* Correct integral path of the lerchphi() to use Laplace transform
+  integral, see #1109 (Sergey B Kirpichev)
 
 Compatibility:
 
@@ -18,6 +22,7 @@ Compatibility:
 * Use signed=True per default in to_man_exp(), see #1057 (Sergey B Kirpichev)
 * Use asc=True per default for polynomial functions, see
   #1057 (Sergey B Kirpichev)
+* Restrict libmp exports to public API, see #1089 (Sergey B Kirpichev)
 
 Bug fixes:
 
@@ -35,13 +40,34 @@ Bug fixes:
   see #1082 (Sergey B Kirpichev)
 * Fix qr_solve() failure on well-conditioned matrices with zero pivot, see
   #1083 (Jam Balaya)
+* Clarify to_float() docstring, see #1087 (Sergey B Kirpichev)
+* Add extra precision for summation in mpf_hypot(), see
+  #1088 (Sergey B Kirpichev)
+* Fix typo and function names for sin/cospi(), see #1091 (Sergey B Kirpichev)
+* Raise ValueError when same sign at interval boundaries in bisection
+  rootfinding algorithm, see #1092 (Ayush Baranwal)
+* Correct interval update for Ridder's method, see #1096 (Sergey B Kirpichev)
+* Set dynamic maxsteps value for the bisect method, see
+  #1096 (Sergey B Kirpichev)
+* Implement direct series for lerchphi() base case with |z| < 1,
+  see #1100 (Sergey B Kirpichev)
+* Correct exception message for THETA_Q_LIM, see #1102
+  (Sergey B Kirpichev and Jam Balaya)
+* Fix gegenbauer() failing to converge for odd integer n at z=0,
+  see #1101 (Vincent Gao)
+* Reorganize fixed-precision computations for theta3 to avoid
+  severe cancellation, see #1107 (Sergey B Kirpichev)
 
 Maintenance:
 
 * Add bash script to test package version in a frozen application version
   and a separate CI job to run it, see #1055 (flurin4)
 * Revert "Add backport action", see #1063 (Sergey B Kirpichev)
-* Test on CPython 3.15 (no GMP), see #1071 (Sergey B Kirpichev)
+* Test on CPython 3.15, see #1071, #1106 and #1110 (Sergey B Kirpichev)
+* Add AI-related policy, see #1098 (Sergey B Kirpichev)
+* Fix test_sn_cn_dn_identities(), see #1106 (Sergey B Kirpichev)
+* Fix test_compatibility(): avoid using of private numpy
+  API (Sergey B Kirpichev)
 
 
 --1.4.1--

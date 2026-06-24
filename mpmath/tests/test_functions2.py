@@ -7,15 +7,16 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     besseljzero, besselk, bessely, besselyzero, betainc,
                     chebyt, chebyu, chi, ci, clsin, convert, coulombg, e, e1,
                     ei, ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp,
-                    expint, fadd, fmul, foxh, fp, fraction, fresnelc, fresnels,
-                    fsub, fsum, gamma, gammainc, gegenbauer, hankel1, hankel2,
-                    hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2,
-                    hyp2f3, hyper, hypercomb, hyperu, inf, isnan, j, j0, j1,
-                    jacobi, kei, ker, laguerre, lambertw, ldexp, legendre,
-                    legenp, legenq, lerchphi, li, log, lower_gamma, meijerg,
-                    mp, mpc, mpf, nan, ncdf, npdf, nthroot, pi, polylog, qp,
-                    quadts, shi, si, spherharm, spherical_jn, spherical_yn,
-                    sqrt, struveh, struvel, upper_gamma, whitm, whitw, zeta)
+                    expint, extradps, fadd, fmul, foxh, fp, fraction, fresnelc,
+                    fresnels, fsub, fsum, gamma, gammainc, gegenbauer, hankel1,
+                    hankel2, hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1,
+                    hyp2f2, hyp2f3, hyper, hypercomb, hyperu, inf, isnan, j,
+                    j0, j1, jacobi, kei, ker, laguerre, lambertw, ldexp,
+                    legendre, legenp, legenq, lerchphi, li, log, lower_gamma,
+                    meijerg, mp, mpc, mpf, nan, ncdf, npdf, nthroot, pi,
+                    polylog, qp, quadts, shi, si, spherharm, spherical_jn,
+                    spherical_yn, sqrt, struveh, struvel, upper_gamma, whitm,
+                    whitw, zeta)
 from mpmath.libmp import BACKEND, NoConvergence
 
 
@@ -774,6 +775,15 @@ def test_gegenbauer():
     assert gegenbauer(0, 4, 2.2) == 1
     assert gegenbauer(0, 0, 1.8) == 0
     assert gegenbauer(0, 1, 1.8) == 1
+    # issue 1077: odd integer n at z=0 vanishes
+    assert gegenbauer(1, 1, 0) == 0
+    assert gegenbauer(5, 1.5, 0) == 0
+    assert gegenbauer(3, 2, 0) == 0
+    assert gegenbauer(3, 1, mpc(0)) == 0
+    # adjacent cases must keep going through the general path
+    assert gegenbauer(2, 1, 0).ae(-1)
+    assert gegenbauer(4, 1.5, 0).ae(1.875)
+    assert gegenbauer(2.5, 1, 0).ae(-0.70710678118654752440)
     mp.dps = 200
     assert gegenbauer(2,-1.0, 27397079.00297188) == 0  # issue 461
 
@@ -2489,3 +2499,33 @@ def test_issue_459():
     assert isnan(clsin(2, mp.inf))
     assert isnan(clsin(2, mp.nan))
     assert isnan(polylog(-2, mp.nan))
+
+def test_issue_1099():
+    mp.dps = 200
+    z = mpf(1)/2809
+    a = mpc(mpf(1)/4, pi*32/log(53))
+    r1 = lerchphi(z, 2, a)
+    r2 = extradps(100)(lerchphi)(z, 2, a)
+    assert r1.ae(r2)
+
+
+def test_issue_252():
+    z, s, a = 2.5, 1.5, 4
+    e = 1/mpf(10**10)
+    # N[LerchPhi[5/2, 3/2, 4-10^-10], 17]
+    assert lerchphi(z, s,
+                    a - e).ae(mpc('-0.16723817353102306-0.08686834435129020j'))
+    # N[LerchPhi[5/2, 3/2, 4+10^-10], 17]
+    assert lerchphi(z, s,
+                    a + e).ae(mpc('-0.16723817351940769-0.08686834433537087j'))
+    # N[LerchPhi[5/2, 3/2, 4], 17]
+    assert lerchphi(z, s,
+                    a).ae(mpc('-0.16723817352521537-0.08686834434333054j'))
+    # N[LerchPhi[5/2+I/4, 2, 4], 17]
+    assert lerchphi(2.5+0.25j, 2,
+                    4).ae(mpc('-0.066397419699793568+0.076201248010951803j'))
+    # N[LerchPhi[1/4+I/2, 5/2, 4], 17]
+    assert lerchphi(0.25+0.5j, 2.5,
+                    4).ae(mpc('0.032357329026949928+0.010945877309574764j'))
+    # N[LerchPhi[3/4, 5/2, 4], 17]
+    assert lerchphi(0.75, 2.5, 4).ae(mpf('0.058457869546642472'))

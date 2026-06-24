@@ -250,12 +250,11 @@ def test_issue548():
 def test_compatibility():
     from packaging.version import Version, parse
     np = pytest.importorskip("numpy")
-    if parse(np.__version__) < Version('2.0.0b1'):
-        npcore = np.core
-    else:
-        npcore = np._core
     # numpy types
-    for nptype in npcore.numerictypes.typeDict.values():
+    for typecode in (np.typecodes['AllInteger']
+                   + np.typecodes['Float']
+                   + np.typecodes['Complex']):
+        nptype = np.dtype(typecode).type
         if issubclass(nptype, np.complexfloating):
             x = nptype(complex(0.5, -0.5))
         elif issubclass(nptype, np.floating):
