@@ -63,7 +63,7 @@ Maintenance:
 * Add bash script to test package version in a frozen application version
   and a separate CI job to run it, see #1055 (flurin4)
 * Revert "Add backport action", see #1063 (Sergey B Kirpichev)
-* Test on CPython 3.15, see #1071 and #1106 (Sergey B Kirpichev)
+* Test on CPython 3.15, see #1071, #1106 and #1110 (Sergey B Kirpichev)
 * Add AI-related policy, see #1098 (Sergey B Kirpichev)
 * Fix test_sn_cn_dn_identities(), see #1106 (Sergey B Kirpichev)
 * Fix test_compatibility(): avoid using of private numpy
