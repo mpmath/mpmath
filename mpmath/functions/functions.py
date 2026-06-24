@@ -8,11 +8,6 @@ class SpecialFunctions:
     """
     defined_functions = {}
 
-    # The series for the Jacobi theta functions converge for |q| < 1;
-    # in the current implementation they throw a ValueError for
-    # abs(q) > THETA_Q_LIM
-    THETA_Q_LIM = 1 - 10**-7
-
     def __init__(self):
         cls = self.__class__
         for name in cls.defined_functions:

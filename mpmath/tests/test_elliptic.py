@@ -169,11 +169,19 @@ def test_jtheta_issue_79():
     res = mpf('32.0031009628901652627099524264') + \
           mpf('16.6153027998236087899308935624') * j
     result = jtheta(3, 1, q)
-    # check that for abs(q) > Q_LIM a ValueError exception is raised
     mp.dps += 30
     q = mpf(6)/10 - one/10**7 - mpf(8)/10 * j
     mp.dps -= 30
-    pytest.raises(ValueError, lambda: jtheta(3, 1, q))
+    # N[EllipticTheta[3, 1, 6/10 - 10^-7 - 8/10 I], 30]
+    # with $MaxExtraPrecision = 10000
+    assert mpc_ae(jtheta(3, 1, q),
+                  mpc('1.19143507322246897676014934229'
+                      '+1.07603569085504321033898492583j'),
+                  100*eps)
+
+    # check that for abs(q) >= 1 a ValueError exception is raised
+    pytest.raises(ValueError, lambda: jtheta(3, 1, 1))
+    pytest.raises(ValueError, lambda: jtheta(3, 1, 2))
 
     # bug reported in issue 79
     mp.dps = 100

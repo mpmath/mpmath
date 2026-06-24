@@ -568,8 +568,8 @@ def jtheta(ctx, n, z, q, derivative=0):
 
     if n not in range(1, 5):
         raise ValueError("First argument expected to be 1, 2, 3 or 4")
-    if abs(q) > ctx.THETA_Q_LIM:
-        raise ValueError(f"abs(q) > THETA_Q_LIM = {ctx.THETA_Q_LIM}")
+    if abs(q) >= 1:
+        raise ValueError(f"abs(q) >= 1")
 
     if ctx._jtheta_needs_modular(z, q):
         tau = ctx.taufrom(q=q)
