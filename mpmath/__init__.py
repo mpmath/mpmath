@@ -48,6 +48,15 @@ jtheta = mp.jtheta
 kleinj = mp.kleinj
 eta = mp.eta
 
+# Weierstrass elliptic functions
+w_invariants = mp.w_invariants
+w_half_periods = mp.w_half_periods
+wp = mp.wp
+wpprime = mp.wpprime
+wsigma = mp.wsigma
+wzeta = mp.wzeta
+invwp = mp.invwp
+
 qp = mp.qp
 qhyper = mp.qhyper
 qgamma = mp.qgamma

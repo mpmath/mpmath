@@ -17,8 +17,10 @@ import pytest
 
 from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
                     ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
-                    elliprj, eps, exp, isnan, j, jtheta, ldexp, ln2, mp, mpc,
-                    mpf, nan, pi, qfrom, sec, sech, sin, sinh, sqrt, tan, tanh)
+                    elliprj, eps, exp, gamma, invwp, isnan, j, jtheta, kleinj,
+                    ldexp, ln2, mp, mpc, mpf, nan, pi, polyroots, qfrom, sec,
+                    sech, sin, sinh, sqrt, tan, tanh, w_half_periods,
+                    w_invariants, wp, wpprime, wsigma, wzeta)
 
 
 def mpc_ae(a, b, eps=eps):
@@ -681,3 +683,192 @@ def test_issue_1104():
     ans = jtheta(4, z, q, 3)
     assert mpc_ae(ans, ref)
     assert mpc_ae(ans, mp.extraprec(10000)(jtheta)(4, z, q, 3))
+
+# Weierstrass Elliptic Functions
+# ============================================================================
+
+def test_weierstrass_tau_values():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    tau = j/2
+    assert mpc_ae(wp(z, tau=tau),
+                  mpf('11.6229960825738115058320196726'),
+                  eps=eps*1000)
+    assert mpc_ae(wpprime(z, tau=tau),
+                  mpf('-71.0936078666012624540338225975'),
+                  eps=eps*1000)
+    assert mpc_ae(wsigma(z, tau=tau),
+                  mpf('0.298755877985088643871228805199'),
+                  eps=eps*1000)
+    assert mpc_ae(wzeta(z, tau=tau),
+                  mpf('3.27937075406163200565491131581'),
+                  eps=eps*1000)
+
+def test_weierstrass_g2g3_differential_equation():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    for g2, g3 in [(mpf(60), mpf(140)), (mpf(0), mpf(140)),
+                   (mpf(60), mpf(0))]:
+        p = wp(z, g2=g2, g3=g3)
+        pp = wpprime(z, g2=g2, g3=g3)
+        assert mpc_ae(pp**2, 4*p**3 - g2*p - g3, eps=eps*1000)
+
+def test_weierstrass_parameter_conversions():
+    mp.dps = 30
+
+    omega = (mpf(1), j/2)
+    g2, g3 = w_invariants(*omega)
+    g2_pair, g3_pair = w_invariants(omega)
+    assert mpc_ae(g2, g2_pair)
+    assert mpc_ae(g3, g3_pair)
+    assert mpc_ae(g2, mpf('129.987495088848273451479710118'),
+                  eps=eps*1000)
+    assert mpc_ae(g3, mpf('-284.355330876540799400227179397'),
+                  eps=eps*1000)
+
+    omega1, omega2 = w_half_periods(g2, g3)
+    omega1_pair, omega2_pair = w_half_periods((g2, g3))
+    assert mpc_ae(omega1, omega1_pair)
+    assert mpc_ae(omega2, omega2_pair)
+
+    g2_roundtrip, g3_roundtrip = w_invariants(omega1, omega2)
+    assert mpc_ae(g2, g2_roundtrip, eps=eps*10000)
+    assert mpc_ae(g3, g3_roundtrip, eps=eps*10000)
+    assert (omega2/omega1).imag > 0
+
+def test_weierstrass_special_half_periods():
+    mp.dps = 30
+
+    lemniscatic = gamma(mpf(1)/4)**2/(4*sqrt(pi))
+    omega1, omega2 = w_half_periods(mpf(1), mpf(0))
+    lattice_points = [
+        m*omega1 + n*omega2
+        for m in [-1, 0, 1]
+        for n in [-1, 0, 1]
+        if m or n
+    ]
+    assert min(abs(point - lemniscatic) for point in lattice_points) < eps*1000
+    assert min(abs(point - j*lemniscatic) for point in lattice_points) < eps*1000
+
+    equianharmonic = gamma(mpf(1)/3)**3/(4*pi)
+    tau = mpf(1)/2 + sqrt(3)*j/2
+    omega1, omega2 = w_half_periods(mpf(0), mpf(1))
+    assert mpc_ae(omega1, equianharmonic, eps=eps*1000)
+    assert mpc_ae(omega2, equianharmonic*tau, eps=eps*1000)
+
+def test_weierstrass_half_periods_convergence_failure():
+    old_dps = mp.dps
+    try:
+        mp.dps = 5
+        pytest.raises(ValueError,
+                      lambda: w_half_periods(mpf('1e-100'), mpf('1e-50')))
+    finally:
+        mp.dps = old_dps
+
+def test_weierstrass_parameter_conversions_with_kleinj():
+    mp.dps = 30
+
+    tau = mpf('0.625') + mpf('0.75')*j
+    g2, g3 = w_invariants(mpf(1), tau)
+    recovered_omega1, recovered_omega2 = w_half_periods(g2, g3)
+    recovered_tau = recovered_omega2/recovered_omega1
+    j_from_invariants = g2**3/(g2**3 - mpf(27)*g3**2)
+
+    assert mpc_ae(kleinj(tau), j_from_invariants, eps=eps*1000)
+    assert mpc_ae(kleinj(recovered_tau), kleinj(tau), eps=eps*1000)
+
+def test_weierstrass_half_period_values_are_cubic_roots():
+    mp.dps = 30
+
+    omega1 = mpf(1)
+    omega2 = j/2
+    omega = (omega1, omega2)
+    g2, g3 = w_invariants(omega)
+
+    roots = polyroots([-g3, -g2, mpf(0), mpf(4)], maxsteps=50)
+    half_period_values = [
+        wp(omega1, omega=omega),
+        wp(omega2, omega=omega),
+        wp(omega1 + omega2, omega=omega),
+    ]
+
+    for value in half_period_values:
+        assert min(abs(value - root) for root in roots) < eps*1000
+    for root in roots:
+        assert min(abs(value - root) for value in half_period_values) < eps*1000
+
+def test_weierstrass_conversions_with_wp():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    g2, g3 = mpf(60), mpf(140)
+    omega = w_half_periods(g2, g3)
+    assert mpc_ae(wp(z, g2=g2, g3=g3), wp(z, omega=omega),
+                  eps=eps*1000)
+
+def test_weierstrass_periodicity():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    omega1 = mpf(1)
+    omega2 = j/2
+    omega = (omega1, omega2)
+    p = wp(z, omega=omega)
+    pp = wpprime(z, omega=omega)
+
+    assert mpc_ae(wp(z + 2*omega1, omega=omega), p, eps=eps*1000)
+    assert mpc_ae(wp(z + 2*omega2, omega=omega), p, eps=eps*1000)
+    assert mpc_ae(wpprime(z + 2*omega1, omega=omega), pp, eps=eps*1000)
+    assert mpc_ae(wpprime(z + 2*omega2, omega=omega), pp, eps=eps*1000)
+
+def test_weierstrass_tau_omega_parameterizations():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    tau = j/2
+    omega = (mpf(1), tau)
+    for f in [wp, wpprime, wsigma, wzeta]:
+        assert mpc_ae(f(z, tau=tau), f(z, omega=omega))
+
+def test_weierstrass_sigma_zeta_identities():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    tau = j/2
+    assert mpc_ae(diff(lambda t: wsigma(t, tau=tau), z) /
+                  wsigma(z, tau=tau), wzeta(z, tau=tau), eps=eps*1000)
+    assert mpc_ae(diff(lambda t: wzeta(t, tau=tau), z),
+                  -wp(z, tau=tau), eps=eps*1000)
+
+def test_weierstrass_invwp():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    g2, g3 = mpf(60), mpf(140)
+    p = wp(z, g2=g2, g3=g3)
+    pp = wpprime(z, g2=g2, g3=g3)
+    z2 = invwp(p, g2=g2, g3=g3)
+    assert mpc_ae(z2, z, eps=eps*1000)
+    assert mpc_ae(wp(z2, g2=g2, g3=g3), p, eps=eps*1000)
+
+    z2 = invwp(p, g2=g2, g3=g3, w_prime=pp)
+    assert mpc_ae(z2, z, eps=eps*1000)
+    assert mpc_ae(wpprime(z2, g2=g2, g3=g3), pp, eps=eps*1000)
+
+    z2 = invwp(p, g2=g2, g3=g3, w_prime=-pp)
+    assert mpc_ae(z2, -z, eps=eps*1000)
+    assert mpc_ae(wpprime(z2, g2=g2, g3=g3), -pp, eps=eps*1000)
+
+def test_weierstrass_invalid_parameterization():
+    z = mpf('0.3')
+    pytest.raises(ValueError, lambda: wp(z))
+    pytest.raises(ValueError, lambda: wp(z, g2=mpf(1)))
+    pytest.raises(ValueError, lambda: wp(z, tau=-j))
+    pytest.raises(ValueError, lambda: wp(z, omega=(mpf(1), -j)))
+    pytest.raises(ValueError,
+                  lambda: wp(z, g2=mpf(60), g3=mpf(140), tau=j/2))
+    pytest.raises(ValueError, lambda: w_invariants(mpf(1), -j))
+    pytest.raises(ValueError, lambda: w_invariants(mpf(1)))
+    pytest.raises(ValueError, lambda: w_half_periods(mpf(1)))
