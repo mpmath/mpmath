@@ -548,9 +548,7 @@ def _theta_inner_a(ctx, n, z, q, nd=0):
         return ctx._djacobi_theta2a(z, q, nd)
     if n == 3:
         return ctx._djacobi_theta3a(z, q, nd)
-    if n == 4:
-        return ctx._djacobi_theta3a(z, -q, nd)
-    raise ValueError
+    return ctx._djacobi_theta3a(z, -q, nd)
 
 
 @defun
