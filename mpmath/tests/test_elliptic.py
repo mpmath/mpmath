@@ -17,8 +17,9 @@ import pytest
 
 from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
                     ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
-                    elliprj, eps, exp, isnan, j, jtheta, ldexp, ln2, mp, mpc,
-                    mpf, nan, pi, qfrom, sec, sech, sin, sinh, sqrt, tan, tanh)
+                    elliprj, eps, exp, inf, isnan, j, jtheta, ldexp, ln2, mp,
+                    mpc, mpf, nan, nsum, pi, qfrom, sec, sech, sin, sinh, sqrt,
+                    tan, tanh)
 
 
 def mpc_ae(a, b, eps=eps):
@@ -218,6 +219,106 @@ def test_jtheta_invalid_n():
     pytest.raises(ValueError, jtheta, 0, 0.5, 0.3)
     pytest.raises(ValueError, jtheta, 5, 0.5, 0.3)
     pytest.raises(ValueError, jtheta, 0, 0.5, 0.3)
+
+def test_issue_930():
+    # for |q| close to 1 with complex z, jtheta's direct nome series
+    # suffered catastrophic cancellation and lost all precision.
+    # The PSL(2, Z) modular-reduction path fixes it.
+    #
+    mp.dps = 70
+    q = mpf(99)/100
+    z = 99+1j
+    mp.dps = 50
+    eps1 = 100*eps
+    # Reference values computed with:
+    # N[N[Derivative[0, nd, 0][EllipticTheta][n, 99+I, 99/100], 300], 50].
+    ref = {  # jtheta(n, 99+I, q, derivative=nd)
+        (1, 0): mpc('1.779258740399125063008605585919688748246270941962e43+2.4531552106585761829132327656277889232764080000082e44j'),
+        (2, 0): mpc('-1.4988039420376218477379546959304839688561560327952e-57+1.126724649309213092636325219160375156534138267338e-58j'),
+        (3, 0): mpc('-1.4988039419916629783968527738038480059854883969519e-57+1.126724649277094787663809804454822463406493776515e-58j'),
+        (4, 0): mpc('-1.779258740399125063008605585919688748246270941962e43-2.4531552106585761829132327656277889232764080000082e44j'),
+        (1, 1): mpc('4.8676346890955099082032405931623721782101881475052e46-5.485160172971341958206637770436412266629883709382e45j'),
+        (2, 1): mpc('-4.3420315824972909797400114725699377626910985932552e-55+3.3258620549120325016554512103625432300841517973459e-55j'),
+        (3, 1): mpc('-4.3420315826509862620149131749487142244793486272826e-55+3.3258620548308694307995377047445340481881823181686e-55j'),
+        (4, 1): mpc('-4.8676346890955099082032405931623721782101881475052e46+5.485160172971341958206637770436412266629883709382e45j'),
+        (1, 2): mpc('-1.4809058110492439979937435179858838426773452717825e48-9.6918513863888705669477095057488664706217962565546e48j'),
+        (2, 2): mpc('-6.580173968678905306210609222130658781889044450531e-53+1.8770881118790176343351463096530497188645552821989e-52j'),
+        (3, 2): mpc('-6.5801739683487208669817955792020573096817453981375e-53+1.8770881119356228857428818901066687299013630001154e-53j'),
+        (4, 2): mpc('1.4809058110492439979937435179858838426773452717825e48+9.6918513863888705669477095057488664706217962565546e48j'),
+    }
+    for (n_, nd), r in ref.items():
+        assert mpc_ae(jtheta(n_, z, q, derivative=nd), r, eps1), (n_, nd)
+
+    # larger Im(z): N[EllipticTheta[n, 99+2I, 99/100], 300], 50]
+    ref_z2 = {
+        2: mpc('6.4249758037350518725606864570348600840795103250997e72'
+               '-9.714841891170799887220046736000777198237616535325e71j'),
+        3: mpc('6.4249758039322926903898883193670191561073076453307e72'
+               '-9.714841891447835957536206094692144086296486157276e71j'),
+    }
+    for n_, r in ref_z2.items():
+        assert mpc_ae(jtheta(n_, 99 + 2j, q), r, eps1)
+
+    # small Im(z):
+    mp.dps = 70
+    z1 = 99 + j/100
+    z2 = 99 + j/1000
+    mp.dps = 50
+    # N[EllipticTheta[n, 99+I/100, 99/100], 300], 50]
+    assert mpc_ae(jtheta(2, z1, q),
+                  mpc('-9.2766223348824196728753370062221747173794042129425e-101'
+                      '+8.839222869333177347710982216539973334987056177494e-102j'))
+    # N[EllipticTheta[n, 99+2I, 99/1000], 300], 50]
+    assert mpc_ae(jtheta(2, z2, q),
+                  mpc('8.8023727531603529839604538627814233285505151260344e-101'
+                      '+2.7678970233217267414786149238410133410022311980703e-101j'))
+
+    mp.dps = 15
+    r1 = mp.extradps(45)(jtheta)(3, 0.25+0.25j, 0.5)
+    assert mpc_ae(jtheta(3, 0.25+0.25j, 0.5), +r1)
+
+    z = 1+0.5j
+    # N[EllipticTheta[1, 1 + I/2, 99*Exp[Pi*I/4]/100], 17]
+    with mp.extraprec(10):
+        q = 99*mp.nthroot(1, 8, 1)/100
+    assert mpc_ae(jtheta(1, z, q),
+                  mpc('2.0519200161807602e10-1.2299274570292357e10j'))
+    # N[EllipticTheta[1, 1 + I/2, 99*Exp[3*Pi*I/4]/100], 17]
+    with mp.extraprec(10):
+        q = 99*mp.nthroot(1, 8, 3)/100
+    assert mpc_ae(jtheta(1, z, q),
+                  mpc('1.4250540444836117e10-1.9215405987536610e10j'))
+
+def test_issue_930_random():
+    # random data in the modular-reduction regime (|q| close to 1 and
+    # complex z): check jtheta against itself at two precisions, like
+    # the |q| -> 1 checks in test_jtheta_issue_79 above
+    for i in range(10):
+        q = mpf(str(random.random()*mpf('0.0999') + mpf('0.9')))
+        if i % 2:
+            q = -q   # exercise the tau -> tau - k translation
+        z = mpc(str(10*random.random()), str(4*random.random() - 2))
+        for n_ in range(1, 5):
+            for nd in (0, 1, 2, 5, 8, 10):
+                r1 = mp.extradps(45)(jtheta)(n_, z, q, nd)
+                r2 = jtheta(n_, z, q, nd)
+                assert mpc_ae(r1, r2), (n_, z, q, nd)
+
+def test_jtheta_modular_translation():
+    mp.dps = 25
+    q = -0.5
+    z = 1+2j
+    assert mpc_ae(jtheta(3, z, q), jtheta(4, z, -q))
+    assert mpc_ae(jtheta(4, z, q), jtheta(3, z, -q))
+    for nd in (1, 2):
+        assert mpc_ae(jtheta(3, z, q, derivative=nd),
+                      jtheta(4, z, -q, derivative=nd))
+        assert mpc_ae(jtheta(4, z, q, derivative=nd),
+                      jtheta(3, z, -q, derivative=nd))
+    for n_ in (1, 2):
+        assert jtheta(n_, z, q).ae(exp(j*pi/4)*jtheta(n_, z, -q))
+    assert mpc_ae(jtheta(3, z, q), jtheta(3, -z, q))
+    assert mpc_ae(jtheta(4, z, q), jtheta(4, -z, q))
 
 def test_jtheta_identities():
     """

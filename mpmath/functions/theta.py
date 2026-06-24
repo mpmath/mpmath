@@ -1,4 +1,7 @@
+from mpmath.libmp.libintmath import jacobi_symbol
+
 from .functions import defun, defun_wrapped
+
 
 @defun
 def _djacobi_theta2(ctx, z, q, nd):
@@ -442,6 +445,121 @@ def _djacobi_theta3a(ctx, z, q, nd):
     return (2*ctx.j)**nd * s
 
 @defun
+def _reduce_psl2z(ctx, z):
+    """
+    Returns the cumulative transformation matrix, that reduces a complex
+    number z to the fundamental domain of PSL(2, Z), chosen to be
+    |Re(z)| ≤ 0.5 and |z| ≥ 1.
+    """
+    z = ctx.convert(z)
+    assert z.imag > 0, f"Expected point from upper half-plane, got {ctx.mpc(z)}"
+
+    a = d = 1
+    b = c = 0
+
+    z_orig = z
+    with ctx.extraprec(30):
+        while True:
+            # Translate to center in |Re(z)| ≤ 1/2
+            n = round(z.real)
+            if n:
+                z -= n
+                a -= n*c
+                b -= n*d
+
+            # Maybe apply an inversion
+            if z.real**2 + z.imag**2 < 1:
+                z = -1/z
+                a, c = -c, a
+                b, d = -d, b
+                if abs(z.real) <= 0.5:
+                    break
+            else:
+                break
+
+        # Canonicalize matrix
+        if c < 0 or (c == 0 and d < 0):
+            a, b, c, d = -a, -b, -c, -d
+
+    return a, b, c, d
+
+#
+# General modular transformations for jtheta()
+#
+# References:
+# * Hans Rademacher (1973), "Topics in Analytic Number Theory",
+#   Springer. Section 81.
+# * [DLMF]_, §20.7(viii).
+#
+
+_T_map = {(0, 0): 1, (0, 1): 2, (1, 0): 4, (1, 1): 3}
+
+def _jtheta_permutation(n, a, b, c, d):
+    if n == 2:
+        return _T_map[(c%2, d%2)]
+    if n == 3:
+        return _T_map[((a + c)%2, (b + d)%2)]
+    if n == 4:
+        return _T_map[(a%2, b%2)]
+    return 1
+
+@defun
+def _jtheta_eps(ctx, n, a, b, c, d):
+    if n != 1:
+        if n == 2:
+            phi = (c - 2)*d - 2 + 2*(1 - c)*((d + 1)%2)
+        elif n == 3:
+            phi = (a + c - 2)*(b + d) - 3 + 2*(1 - a - c)*((b + d + 1)%2)
+        else:
+            phi = (a - 2)*b - 4 + 2*(1 - a)*((b + 1)%2)
+        k = ctx._jtheta_eps(1, -d, b, c, -a)
+    else:
+        if c % 2 == 0:
+            phi = d*(b - c - 1) + 2
+            k = jacobi_symbol(c, d)
+        else:
+            phi = c*(a + d + 1) - 3
+            k = jacobi_symbol(d, c)
+    return ctx.expjpi(ctx.convert(phi)/4)/k
+
+@defun
+def _jtheta_needs_modular(ctx, z, q):
+    if not z.imag:
+        return False
+    tau = ctx.taufrom(q=q)
+    assert abs(q) < 1 and tau.imag > 0
+    return abs(tau.real) > 0.5 or tau.real**2 + tau.imag**2 < 1
+
+@defun
+def _jtheta_modular(ctx, g, n, z, q, nd):
+    a, b, c, d = g
+    tau = ctx.taufrom(q=q)
+    v = -1/(c*tau + d)
+    alpha = 1j*v*c/ctx.pi
+
+    assert abs(q) < 1 and tau.imag > 0
+
+    new_n = _jtheta_permutation(n, -d, b, c, -a)
+    new_z = z*v
+    new_tau = (a*tau + b)/(c*tau + d)
+    new_q = ctx.qfrom(tau=new_tau)
+
+    assert abs(new_tau.real) <= 0.5 and new_tau.real**2 + new_tau.imag**2 >= 1
+
+    def terms():
+        Him1, Hi = ctx.zero, ctx.one
+        a2 = alpha*2
+        a2z = a2*z
+        for i in range(nd + 1):
+            yield (ctx.binomial(nd, i) * Hi * v**(nd - i)
+                   * ctx.jtheta(new_n, new_z, new_q, nd - i))
+            Him1, Hi = Hi, a2z*Hi + a2*i*Him1
+
+    C = ctx._jtheta_eps(n, -d, b, c, -a)*ctx.sqrt(v/1j)
+    X = alpha*z**2
+    return C*ctx.exp(X)*sum(terms())
+
+@defun
 def jtheta(ctx, n, z, q, derivative=0):
     n = int(n)
     z = ctx.convert(z)
@@ -452,6 +570,16 @@ def jtheta(ctx, n, z, q, derivative=0):
         raise ValueError("First argument expected to be 1, 2, 3 or 4")
     if abs(q) > ctx.THETA_Q_LIM:
         raise ValueError(f"abs(q) > THETA_Q_LIM = {ctx.THETA_Q_LIM}")
+
+    if ctx._jtheta_needs_modular(z, q):
+        tau = ctx.taufrom(q=q)
+        g = ctx._reduce_psl2z(tau)
+
+        # Estimate exponential factor
+        c, d = g[2:]
+        extra = 10*(nd + 1) + max(0, ctx.mag(c/(c*tau + d)*z**2))
+
+        return ctx.extraprec(extra, True)(ctx._jtheta_modular)(g, n, z, q, nd)
 
     # Implementation note
     # If ctx._im(z) is close to zero, _jacobi_theta2 and _jacobi_theta3
