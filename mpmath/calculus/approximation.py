@@ -115,6 +115,8 @@ def chebyfit(ctx, f, interval, N, error=False, asc=True):
     nonsmooth features, or by dividing the interval into several
     segments.
     """
+    if N <= 0:
+        raise ValueError("chebyfit requires N >= 1")
     a, b = ctx._as_points(interval)
     orig = ctx.prec
     try:
