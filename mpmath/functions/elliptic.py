@@ -1860,9 +1860,13 @@ def wp(ctx, z, g2=None, g3=None, tau=None, omega=None):
         (\wp')^2 = 4\wp^3 - g_2 \wp - g_3
 
     The function can be parameterized in multiple ways:
-    - via `g_2, g_3` (elliptic invariants) - recommended
+    - via `g_2, g_3` (elliptic invariants)
     - via `\omega_1, \omega_2` (half-periods)
     - via `\tau` (half-period ratio)
+
+    For repeated evaluation with the same invariants, it is faster to compute
+    the half-periods once with :func:`~mpmath.w_half_periods` and pass them
+    using the `omega` keyword.
 
     **Examples**
 
@@ -1983,7 +1987,7 @@ def invwp(ctx, p, g2=None, g3=None, tau=None, omega=None, w_prime=None):
     **Parameters**
 
     - `p`: the target value
-    - `g2, g3`: elliptic invariants (recommended)
+    - `g2, g3`: elliptic invariants
     - `tau` or `omega`: alternative parameterizations
     - `w_prime` (optional): if provided, attempts to select the correct sign
       of `z`
