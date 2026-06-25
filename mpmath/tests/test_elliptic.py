@@ -712,17 +712,11 @@ def test_weierstrass_parameter_conversions():
     mp.dps = 30
 
     omega = (mpf(1), j/2)
-    g2, g3 = weierinvariants(*omega)
-    g2_pair, g3_pair = weierinvariants(omega)
-    assert mpc_ae(g2, g2_pair)
-    assert mpc_ae(g3, g3_pair)
+    g2, g3 = weierinvariants(omega)
 
-    omega1, omega2 = weierhalfperiods(g2, g3)
-    omega1_pair, omega2_pair = weierhalfperiods((g2, g3))
-    assert mpc_ae(omega1, omega1_pair)
-    assert mpc_ae(omega2, omega2_pair)
+    omega1, omega2 = weierhalfperiods((g2, g3))
 
-    g2_roundtrip, g3_roundtrip = weierinvariants(omega1, omega2)
+    g2_roundtrip, g3_roundtrip = weierinvariants((omega1, omega2))
     assert mpc_ae(g2, g2_roundtrip, eps=eps*10000)
     assert mpc_ae(g3, g3_roundtrip, eps=eps*10000)
     assert (omega2/omega1).imag > 0
@@ -731,7 +725,7 @@ def test_weierstrass_special_half_periods():
     mp.dps = 30
 
     lemniscatic = gamma(mpf(1)/4)**2/(4*sqrt(pi))
-    omega1, omega2 = weierhalfperiods(mpf(1), mpf(0))
+    omega1, omega2 = weierhalfperiods((mpf(1), mpf(0)))
     lattice_points = [
         m*omega1 + n*omega2
         for m in [-1, 0, 1]
@@ -743,7 +737,7 @@ def test_weierstrass_special_half_periods():
 
     equianharmonic = gamma(mpf(1)/3)**3/(4*pi)
     tau = mpf(1)/2 + sqrt(3)*j/2
-    omega1, omega2 = weierhalfperiods(mpf(0), mpf(1))
+    omega1, omega2 = weierhalfperiods((mpf(0), mpf(1)))
     assert mpc_ae(omega1, equianharmonic, eps=eps*1000)
     assert mpc_ae(omega2, equianharmonic*tau, eps=eps*1000)
 
@@ -752,8 +746,8 @@ def test_weierstrass_half_periods_convergence_failure():
     try:
         mp.dps = 5
         pytest.raises(ValueError,
-                      lambda: weierhalfperiods(mpf('1e-100'),
-                                               mpf('1e-50')))
+                      lambda: weierhalfperiods((mpf('1e-100'),
+                                                mpf('1e-50'))))
     finally:
         mp.dps = old_dps
 
@@ -761,8 +755,8 @@ def test_weierstrass_parameter_conversions_with_kleinj():
     mp.dps = 30
 
     tau = mpf('0.625') + mpf('0.75')*j
-    g2, g3 = weierinvariants(mpf(1)/2, tau/2)
-    recovered_omega1, recovered_omega2 = weierhalfperiods(g2, g3)
+    g2, g3 = weierinvariants((mpf(1)/2, tau/2))
+    recovered_omega1, recovered_omega2 = weierhalfperiods((g2, g3))
     recovered_tau = recovered_omega2/recovered_omega1
     j_from_invariants = g2**3/(g2**3 - mpf(27)*g3**2)
 
@@ -796,7 +790,7 @@ def test_weierstrass_conversions_with_weierp():
 
     z = mpf('0.3')
     g2, g3 = mpf(60), mpf(140)
-    omega = weierhalfperiods(g2, g3)
+    omega = weierhalfperiods((g2, g3))
     assert mpc_ae(weierp(z, g2=g2, g3=g3), weierp(z, omega=omega),
                   eps=eps*1000)
 
@@ -941,6 +935,81 @@ def test_weierstrass_p_agrees_with_jacobi_sn():
         expected = e3 + (e1 - e3)/sn**2
         assert mpc_ae(weierp(z, g2=g2, g3=g3), expected, eps=eps*1000)
 
+def test_weierstrass_degenerate_sinh_case():
+    mp.dps = 30
+
+    z = mpf('2.3456')
+    g2 = mpf(1)/12
+    g3 = -mpf(1)/216
+
+    expected = mpf(1)/12 + 1/(4*sinh(z/2)**2)
+    actual = weierp(z, g2=g2, g3=g3)
+
+    assert mpc_ae(actual, expected, eps=eps*1000)
+
+def test_weierstrass_values_from_wolfram_engine():
+    """
+    Test values computed with Wolfram Engine at 50 decimal digits.
+    """
+    mp.dps = 30
+
+    z = mpf(1)/5 + j/10
+    g2 = mpf(23)
+    g3 = -mpf(6)
+
+    # Wolfram Engine N[WeierstrassP[1/5 + I/10, {23, -6}], 50]
+    res = (mpf('12.034598774562061614120425445264439480909180451987') -
+           mpf('15.954494688453814173909097100149572873560659025384')*j)
+    result = weierp(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassZeta[1/5 + I/10, {23, -6}], 50]
+    res = (mpf('3.9992187928039781633477175010941910299674720024081') -
+           mpf('2.0041989210825396679692243492987154755001509689191')*j)
+    result = weierzeta(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassPPrime[1/5 + I/10, {23, -6}], 50]
+    res = (-mpf('31.54270502882344156819611453200111232882467293381') +
+           mpf('176.22165647344596777337677909680659880143827576854')*j)
+    result = weierpprime(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassSigma[1/5 + I/10, {23, -6}], 50]
+    res = (mpf('0.20003622045198197835660834749697373254229661740043') +
+           mpf('0.09996069154774003218065176170970294010303412640179')*j)
+    result = weiersigma(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    z = mpf(23)/7 + j/19
+    g2 = mpf(4)
+    g3 = j/7
+
+    # Wolfram Engine N[WeierstrassP[23/7 + I/19, {4, I/7}], 50]
+    res = (mpf('2.2404307465194869190166863785647513208647609853834') -
+           mpf('0.5325343281547884762112232120255440012711106470188')*j)
+    result = weierp(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassZeta[23/7 + I/19, {4, I/7}], 50]
+    res = (mpf('2.6598023545241487676259152806188261775361664938905') -
+           mpf('0.1724953898440469052904087998933282167782688769615')*j)
+    result = weierzeta(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassPPrime[23/7 + I/19, {4, I/7}], 50]
+    res = (-mpf('5.8878748476527295086161128667469618082615948921289') +
+           mpf('2.5039163494781823494565528962139346083786451647413')*j)
+    result = weierpprime(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassSigma[23/7 + I/19, {4, I/7}], 50]
+    res = (-mpf('6.9051546244372935099218335621773818059877316069834') -
+           mpf('1.7875281795111006668737717361366903871401611117693')*j)
+    result = weiersigma(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+
 def test_weierstrass_invalid_parameterization():
     z = mpf('0.3')
     pytest.raises(ValueError, lambda: weierp(z))
@@ -949,6 +1018,8 @@ def test_weierstrass_invalid_parameterization():
     pytest.raises(ValueError, lambda: weierp(z, omega=(mpf(1), -j)))
     pytest.raises(ValueError,
                   lambda: weierp(z, g2=mpf(60), g3=mpf(140), tau=j/2))
-    pytest.raises(ValueError, lambda: weierinvariants(mpf(1), -j))
+    pytest.raises(TypeError, lambda: weierinvariants(mpf(1), -j))
+    pytest.raises(ValueError, lambda: weierinvariants((mpf(1), -j)))
     pytest.raises(ValueError, lambda: weierinvariants(mpf(1)))
+    pytest.raises(TypeError, lambda: weierhalfperiods(mpf(1), mpf(0)))
     pytest.raises(ValueError, lambda: weierhalfperiods(mpf(1)))

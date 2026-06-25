@@ -1767,7 +1767,7 @@ def _wzeta_from_tau_omega(ctx, z, omega1, tau_or_omega2):
 # ============================================================================
 
 @defun
-def weierinvariants(ctx, omega1, omega2=None):
+def weierinvariants(ctx, omega):
     r"""
     Returns the Weierstrass invariants `(g_2, g_3)` corresponding to
     the half-periods `(\omega_1, \omega_2)`::
@@ -1775,24 +1775,17 @@ def weierinvariants(ctx, omega1, omega2=None):
         >>> from mpmath import mp, chop, weierinvariants
         >>> mp.dps = 15
         >>> mp.pretty = True
-        >>> g2, g3 = weierinvariants(1, 0.5j)
+        >>> g2, g3 = weierinvariants((1, 0.5j))
         >>> chop(g2)
         129.987495088848
         >>> chop(g3)
         -284.355330876541
 
-    The half-periods may also be passed as a single pair::
-
-        >>> weierinvariants((1, 0.5j))[1]
-        (-284.355330876541 + 0.0j)
-
     """
-    if omega2 is None:
-        try:
-            omega1, omega2 = omega1
-        except (TypeError, ValueError):
-            raise ValueError("weierinvariants: expected "
-                             "omega1, omega2 or a pair of half-periods")
+    try:
+        omega1, omega2 = omega
+    except (TypeError, ValueError):
+        raise ValueError("weierinvariants: expected a pair of half-periods")
     prec = ctx.prec
     try:
         ctx.prec += 10
@@ -1807,7 +1800,7 @@ def weierinvariants(ctx, omega1, omega2=None):
     return +g2, +g3
 
 @defun
-def weierhalfperiods(ctx, g2, g3=None):
+def weierhalfperiods(ctx, g):
     r"""
     Returns a pair of fundamental half-periods `(\omega_1, \omega_2)`
     corresponding to the Weierstrass invariants `(g_2, g_3)`::
@@ -1816,24 +1809,18 @@ def weierhalfperiods(ctx, g2, g3=None):
         >>> from mpmath import weierhalfperiods, weierinvariants
         >>> mp.dps = 15
         >>> mp.pretty = True
-        >>> omega1, omega2 = weierhalfperiods(60, 140)
-        >>> g2, g3 = weierinvariants(omega1, omega2)
+        >>> omega1, omega2 = weierhalfperiods((60, 140))
+        >>> g2, g3 = weierinvariants((omega1, omega2))
         >>> chop(g2), chop(g3)
         (60.0, 140.0)
-
-    The invariants may also be passed as a single pair::
-
-        >>> omega1, omega2 = weierhalfperiods((60, 140))
         >>> chop(omega2/omega1)
         (0.5 + 0.209032224450873j)
 
     """
-    if g3 is None:
-        try:
-            g2, g3 = g2
-        except (TypeError, ValueError):
-            raise ValueError("weierhalfperiods: expected "
-                             "g2, g3 or a pair of invariants")
+    try:
+        g2, g3 = g
+    except (TypeError, ValueError):
+        raise ValueError("weierhalfperiods: expected a pair of invariants")
     prec = ctx.prec
     try:
         ctx.prec += 10
