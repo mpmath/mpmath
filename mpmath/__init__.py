@@ -49,13 +49,13 @@ kleinj = mp.kleinj
 eta = mp.eta
 
 # Weierstrass elliptic functions
-w_invariants = mp.w_invariants
-w_half_periods = mp.w_half_periods
-wp = mp.wp
-wpprime = mp.wpprime
-wsigma = mp.wsigma
-wzeta = mp.wzeta
-invwp = mp.invwp
+weierinvariants = mp.weierinvariants
+weierhalfperiods = mp.weierhalfperiods
+weierp = mp.weierp
+weierpprime = mp.weierpprime
+weiersigma = mp.weiersigma
+weierzeta = mp.weierzeta
+weierpinv = mp.weierpinv
 
 qp = mp.qp
 qhyper = mp.qhyper

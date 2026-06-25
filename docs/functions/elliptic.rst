@@ -49,13 +49,13 @@ Jacobi elliptic functions
 Weierstrass elliptic functions
 ..............................
 
-.. autofunction:: mpmath.w_invariants
-.. autofunction:: mpmath.w_half_periods
-.. autofunction:: mpmath.wp
-.. autofunction:: mpmath.wpprime
-.. autofunction:: mpmath.wsigma
-.. autofunction:: mpmath.wzeta
-.. autofunction:: mpmath.invwp
+.. autofunction:: mpmath.weierinvariants
+.. autofunction:: mpmath.weierhalfperiods
+.. autofunction:: mpmath.weierp
+.. autofunction:: mpmath.weierpprime
+.. autofunction:: mpmath.weiersigma
+.. autofunction:: mpmath.weierzeta
+.. autofunction:: mpmath.weierpinv
 
 
 Modular functions

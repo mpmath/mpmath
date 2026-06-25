@@ -1612,7 +1612,7 @@ def _omega_from_g(ctx, g2, g3, tolerance=None):
     min_index = maes.index(mae)
 
     if mae > tolerance:
-        raise ValueError("omega_from_g: convergence tolerance not met")
+        raise ValueError("weierhalfperiods: convergence tolerance not met")
 
     omega1, omega2, omega3 = [omegas[k] for k in index_combos[min_index]]
 
@@ -1664,13 +1664,13 @@ def _weierstrass_omega_tau(ctx, funcname, g2=None, g3=None,
         tau = ctx.convert(tau)
         if ctx.im(tau) <= 0:
             raise ValueError("%s: tau must be in upper half-plane" % funcname)
-        return ctx.one, tau
+        return ctx.one/2, tau
     omega1, omega2 = _omega_from_g(ctx, g2, g3)[:2]
     return omega1, omega2 / omega1
 
 def _wp_from_tau_omega(ctx, z, omega1, tau_or_omega2):
     """
-    Internal: Weierstrass P function using tau or omega.
+    Weierstrass P function using tau or omega.
     Computes wp(z; omega1, tau or omega2)
 
     Following the convention:
@@ -1698,7 +1698,7 @@ def _wp_from_tau_omega(ctx, z, omega1, tau_or_omega2):
 
 def _wpprime_from_tau_omega(ctx, z, omega1, tau_or_omega2):
     """
-    Internal: Weierstrass P' function using tau or omega.
+    Weierstrass P' function using tau or omega.
     Computes wp'(z; omega1, tau or omega2)
     """
     z = ctx.convert(z)
@@ -1727,7 +1727,7 @@ def _wpprime_from_tau_omega(ctx, z, omega1, tau_or_omega2):
 
 def _wsigma_from_tau_omega(ctx, z, omega1, tau_or_omega2):
     """
-    Internal: Weierstrass sigma function.
+    Weierstrass sigma function.
     """
     z = ctx.convert(z)
     omega1 = ctx.convert(omega1)
@@ -1745,7 +1745,7 @@ def _wsigma_from_tau_omega(ctx, z, omega1, tau_or_omega2):
 
 def _wzeta_from_tau_omega(ctx, z, omega1, tau_or_omega2):
     """
-    Internal: Weierstrass zeta function.
+    Weierstrass zeta function.
     """
     z = ctx.convert(z)
     omega1 = ctx.convert(omega1)
@@ -1767,15 +1767,15 @@ def _wzeta_from_tau_omega(ctx, z, omega1, tau_or_omega2):
 # ============================================================================
 
 @defun
-def w_invariants(ctx, omega1, omega2=None):
+def weierinvariants(ctx, omega1, omega2=None):
     r"""
     Returns the Weierstrass invariants `(g_2, g_3)` corresponding to
     the half-periods `(\omega_1, \omega_2)`::
 
-        >>> from mpmath import mp, chop, w_invariants
+        >>> from mpmath import mp, chop, weierinvariants
         >>> mp.dps = 15
         >>> mp.pretty = True
-        >>> g2, g3 = w_invariants(1, 0.5j)
+        >>> g2, g3 = weierinvariants(1, 0.5j)
         >>> chop(g2)
         129.987495088848
         >>> chop(g3)
@@ -1783,7 +1783,7 @@ def w_invariants(ctx, omega1, omega2=None):
 
     The half-periods may also be passed as a single pair::
 
-        >>> w_invariants((1, 0.5j))[1]
+        >>> weierinvariants((1, 0.5j))[1]
         (-284.355330876541 + 0.0j)
 
     """
@@ -1791,7 +1791,7 @@ def w_invariants(ctx, omega1, omega2=None):
         try:
             omega1, omega2 = omega1
         except (TypeError, ValueError):
-            raise ValueError("w_invariants: expected "
+            raise ValueError("weierinvariants: expected "
                              "omega1, omega2 or a pair of half-periods")
     prec = ctx.prec
     try:
@@ -1799,7 +1799,7 @@ def w_invariants(ctx, omega1, omega2=None):
         omega1 = ctx.convert(omega1)
         omega2 = ctx.convert(omega2)
         if ctx.im(omega2/omega1) <= 0:
-            raise ValueError("w_invariants: omega ratio must be "
+            raise ValueError("weierinvariants: omega ratio must be "
                              "in upper half-plane")
         g2, g3 = _g_from_omega(ctx, omega1, omega2)
     finally:
@@ -1807,23 +1807,23 @@ def w_invariants(ctx, omega1, omega2=None):
     return +g2, +g3
 
 @defun
-def w_half_periods(ctx, g2, g3=None):
+def weierhalfperiods(ctx, g2, g3=None):
     r"""
     Returns a pair of fundamental half-periods `(\omega_1, \omega_2)`
     corresponding to the Weierstrass invariants `(g_2, g_3)`::
 
         >>> from mpmath import mp, chop
-        >>> from mpmath import w_half_periods, w_invariants
+        >>> from mpmath import weierhalfperiods, weierinvariants
         >>> mp.dps = 15
         >>> mp.pretty = True
-        >>> omega1, omega2 = w_half_periods(60, 140)
-        >>> g2, g3 = w_invariants(omega1, omega2)
+        >>> omega1, omega2 = weierhalfperiods(60, 140)
+        >>> g2, g3 = weierinvariants(omega1, omega2)
         >>> chop(g2), chop(g3)
         (60.0, 140.0)
 
     The invariants may also be passed as a single pair::
 
-        >>> omega1, omega2 = w_half_periods((60, 140))
+        >>> omega1, omega2 = weierhalfperiods((60, 140))
         >>> chop(omega2/omega1)
         (0.5 + 0.209032224450873j)
 
@@ -1832,7 +1832,7 @@ def w_half_periods(ctx, g2, g3=None):
         try:
             g2, g3 = g2
         except (TypeError, ValueError):
-            raise ValueError("w_half_periods: expected "
+            raise ValueError("weierhalfperiods: expected "
                              "g2, g3 or a pair of invariants")
     prec = ctx.prec
     try:
@@ -1848,7 +1848,7 @@ def w_half_periods(ctx, g2, g3=None):
 # ============================================================================
 
 @defun_wrapped
-def wp(ctx, z, g2=None, g3=None, tau=None, omega=None):
+def weierp(ctx, z, g2=None, g3=None, tau=None, omega=None):
     r"""
     Weierstrass elliptic function `\wp(z; g_2, g_3)`.
 
@@ -1862,26 +1862,26 @@ def wp(ctx, z, g2=None, g3=None, tau=None, omega=None):
     The function can be parameterized in multiple ways:
     - via `g_2, g_3` (elliptic invariants)
     - via `\omega_1, \omega_2` (half-periods)
-    - via `\tau` (half-period ratio)
+    - via `\tau`, using normalized periods `(1, \tau)`
 
     For repeated evaluation with the same invariants, it is faster to compute
-    the half-periods once with :func:`~mpmath.w_half_periods` and pass them
+    the half-periods once with :func:`~mpmath.weierhalfperiods` and pass them
     using the `omega` keyword.
 
     **Examples**
 
     Direct computation with invariants::
 
-        >>> from mpmath import mp, wp, chop
+        >>> from mpmath import mp, weierp, chop
         >>> mp.dps = 15
         >>> mp.pretty = True
-        >>> chop(wp(0.5, g2=60, g3=140))
+        >>> chop(weierp(0.5, g2=60, g3=140))
         5.12943876105856
 
     Using tau parameterization::
 
-        >>> chop(wp(0.5, tau=0.5j))
-        5.15638936351528
+        >>> chop(weierp(0.5, tau=0.5j))
+        13.7503716360407
 
     **References**
 
@@ -1890,11 +1890,11 @@ def wp(ctx, z, g2=None, g3=None, tau=None, omega=None):
 
     """
     z = ctx.convert(z)
-    omega1, tau = _weierstrass_omega_tau(ctx, "wp", g2, g3, tau, omega)
+    omega1, tau = _weierstrass_omega_tau(ctx, "weierp", g2, g3, tau, omega)
     return _wp_from_tau_omega(ctx, z, omega1, tau)
 
 @defun_wrapped
-def wpprime(ctx, z, g2=None, g3=None, tau=None, omega=None):
+def weierpprime(ctx, z, g2=None, g3=None, tau=None, omega=None):
     r"""
     Derivative of Weierstrass elliptic function `\wp'(z; g_2, g_3)`.
 
@@ -1904,31 +1904,32 @@ def wpprime(ctx, z, g2=None, g3=None, tau=None, omega=None):
 
     Compute derivative::
 
-        >>> from mpmath import mp, wpprime, chop
+        >>> from mpmath import mp, weierpprime, chop
         >>> mp.dps = 15
         >>> mp.pretty = True
-        >>> chop(wpprime(0.5, g2=60, g3=140))
+        >>> chop(weierpprime(0.5, g2=60, g3=140))
         -9.5957928748663
 
     Verify differential equation::
 
-        >>> from mpmath import mp, wp, wpprime
+        >>> from mpmath import mp, weierp, weierpprime
         >>> mp.dps = 15
         >>> z = 0.5
         >>> g2, g3 = 60, 140
-        >>> # Should satisfy: (wp')^2 = 4*wp^3 - g2*wp - g3
-        >>> lhs = wpprime(z, g2=g2, g3=g3)**2
-        >>> rhs = 4*wp(z, g2=g2, g3=g3)**3 - g2*wp(z, g2=g2, g3=g3) - g3
+        >>> lhs = weierpprime(z, g2=g2, g3=g3)**2
+        >>> rhs = 4*weierp(z, g2=g2, g3=g3)**3
+        >>> rhs -= g2*weierp(z, g2=g2, g3=g3) + g3
         >>> mp.almosteq(lhs, rhs)
         True
 
     """
     z = ctx.convert(z)
-    omega1, tau = _weierstrass_omega_tau(ctx, "wpprime", g2, g3, tau, omega)
+    omega1, tau = _weierstrass_omega_tau(ctx, "weierpprime",
+                                         g2, g3, tau, omega)
     return _wpprime_from_tau_omega(ctx, z, omega1, tau)
 
 @defun_wrapped
-def wsigma(ctx, z, g2=None, g3=None, tau=None, omega=None):
+def weiersigma(ctx, z, g2=None, g3=None, tau=None, omega=None):
     r"""
     Weierstrass sigma function `\sigma(z; g_2, g_3)`.
 
@@ -1942,19 +1943,20 @@ def wsigma(ctx, z, g2=None, g3=None, tau=None, omega=None):
 
     Compute sigma function::
 
-        >>> from mpmath import mp, wsigma, chop
+        >>> from mpmath import mp, weiersigma, chop
         >>> mp.dps = 15
         >>> mp.pretty = True
-        >>> chop(wsigma(0.5, g2=60, g3=140))
+        >>> chop(weiersigma(0.5, g2=60, g3=140))
         0.490839927387142
 
     """
     z = ctx.convert(z)
-    omega1, tau = _weierstrass_omega_tau(ctx, "wsigma", g2, g3, tau, omega)
+    omega1, tau = _weierstrass_omega_tau(ctx, "weiersigma",
+                                         g2, g3, tau, omega)
     return _wsigma_from_tau_omega(ctx, z, omega1, tau)
 
 @defun_wrapped
-def wzeta(ctx, z, g2=None, g3=None, tau=None, omega=None):
+def weierzeta(ctx, z, g2=None, g3=None, tau=None, omega=None):
     r"""
     Weierstrass zeta function `\zeta(z; g_2, g_3)`.
 
@@ -1965,19 +1967,21 @@ def wzeta(ctx, z, g2=None, g3=None, tau=None, omega=None):
 
     Compute zeta function::
 
-        >>> from mpmath import mp, wzeta, chop
+        >>> from mpmath import mp, weierzeta, chop
         >>> mp.dps = 15
         >>> mp.pretty = True
-        >>> chop(wzeta(0.5, g2=60, g3=140))
+        >>> chop(weierzeta(0.5, g2=60, g3=140))
         1.83933548687454
 
     """
     z = ctx.convert(z)
-    omega1, tau = _weierstrass_omega_tau(ctx, "wzeta", g2, g3, tau, omega)
+    omega1, tau = _weierstrass_omega_tau(ctx, "weierzeta",
+                                         g2, g3, tau, omega)
     return _wzeta_from_tau_omega(ctx, z, omega1, tau)
 
 @defun_wrapped
-def invwp(ctx, p, g2=None, g3=None, tau=None, omega=None, w_prime=None):
+def weierpinv(ctx, p, g2=None, g3=None, tau=None, omega=None,
+              weierp_prime=None):
     r"""
     Inverse Weierstrass elliptic function.
 
@@ -1989,25 +1993,26 @@ def invwp(ctx, p, g2=None, g3=None, tau=None, omega=None, w_prime=None):
     - `p`: the target value
     - `g2, g3`: elliptic invariants
     - `tau` or `omega`: alternative parameterizations
-    - `w_prime` (optional): if provided, attempts to select the correct sign
-      of `z`
+    - `weierp_prime` (optional): if provided, attempts to select the correct
+      sign of `z`
 
     **Examples**
 
     Find preimage under Weierstrass P::
 
-        >>> from mpmath import mp, wp, invwp
+        >>> from mpmath import mp, weierp, weierpinv
         >>> mp.dps = 25
         >>> z0 = 0.5
         >>> g2, g3 = 60, 140
-        >>> p_val = wp(z0, g2=g2, g3=g3)
-        >>> z_recovered = invwp(p_val, g2=g2, g3=g3)
+        >>> p_val = weierp(z0, g2=g2, g3=g3)
+        >>> z_recovered = weierpinv(p_val, g2=g2, g3=g3)
         >>> mp.almosteq(z0, z_recovered)  # May differ by periods
         True
 
     """
     p = ctx.convert(p)
-    omega1, tau = _weierstrass_omega_tau(ctx, "invwp", g2, g3, tau, omega)
+    omega1, tau = _weierstrass_omega_tau(ctx, "weierpinv",
+                                         g2, g3, tau, omega)
     omega2 = omega1 * tau
     e1, e2, e3 = _roots_from_omega(ctx, omega1, omega2)
 
@@ -2015,13 +2020,13 @@ def invwp(ctx, p, g2=None, g3=None, tau=None, omega=None, w_prime=None):
     z = ctx.elliprf(p - e1, p - e2, p - e3)
 
     # Optionally select sign based on derivative
-    if w_prime is not None:
-        w_prime = ctx.convert(w_prime)
+    if weierp_prime is not None:
+        weierp_prime = ctx.convert(weierp_prime)
         wpprime_neg_z = _wpprime_from_tau_omega(ctx, -z, omega1, tau)
         wpprime_pos_z = _wpprime_from_tau_omega(ctx, z, omega1, tau)
 
-        if (ctx.fabs(wpprime_neg_z - w_prime) <
-                ctx.fabs(wpprime_pos_z - w_prime)):
+        if (ctx.fabs(wpprime_neg_z - weierp_prime) <
+                ctx.fabs(wpprime_pos_z - weierp_prime)):
             return -z
 
     return z
