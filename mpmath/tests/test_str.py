@@ -1,4 +1,11 @@
-from mpmath import inf, matrix, mpc, nstr
+import math
+import random
+
+import hypothesis.strategies as st
+from hypothesis import example, given
+
+import mpmath
+from mpmath import inf, matrix, mp, mpc, mpf, nstr
 
 
 A1 = matrix([])
@@ -50,3 +57,51 @@ def test_matrix_str():
 '''[1.0]
 [2.0]
 [3.0]'''
+
+
+@given(st.floats(allow_subnormal=False,
+                 allow_nan=False,
+                 allow_infinity=False))
+@example(1.0)
+@example(-10.0)
+@example(3.411330784663857e+16)
+@example(5.960464477539063e-08)
+def test_float_short_repr(f):
+    if not f and math.copysign(1, f) == -1:
+        return
+    s = str(f)
+    mp._legacy = False
+    m = mpf(f)
+    sm = str(m)
+    assert s == sm
+    assert m == mpf(sm)
+
+
+def test_short_repr_specials():
+    mp._legacy = False
+    assert str(mpf(0)) == '0.0'
+    assert str(mpf('inf')) == 'inf'
+    assert str(mpf('-inf')) == '-inf'
+    assert str(mpf('nan')) == 'nan'
+
+
+def test_short_repr_roundtrip():
+    mp._legacy = False
+    for dps in [15, 20, 30, 50, 100, 300]:
+        with mp.workdps(dps):
+            for _ in range(10000):
+                f = random.choice([(mpmath.rand()-0.5)*2]*10
+                                  + [(mpmath.rand()-0.5)*2*10**5]*5
+                                  + [(mpmath.rand()-0.5)*2*10**100]*2)
+                s = str(f)
+                b = mpf(s)
+                assert f == b  # round-trip
+                if '.' not in s or len(s) < 2 or s[-2:] == '.0':
+                    continue
+                # test that short repr is really minimal
+                integer, frac = s.split('.')
+                frac, *exponent = frac.split('e')
+                exponent = 'e' + exponent[0] if exponent else ''
+                assert f == mpf(str(integer + '.' + frac + exponent))
+                frac = frac[:-random.randint(1,len(frac))]
+                assert f != mpf(str(integer + '.' + frac + exponent))

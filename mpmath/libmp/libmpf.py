@@ -3,6 +3,7 @@ Low-level functions for arbitrary-precision floating-point arithmetic.
 """
 
 import math
+import operator
 import random
 import re
 import sys
@@ -1027,6 +1028,78 @@ def mpf_perturb(x, eps_sign, prec, rnd):
 #----------------------------------------------------------------------------#
 #                              Radix conversion                              #
 #----------------------------------------------------------------------------#
+
+def fpp2(f, e, p, B=10):
+    # (FPP)² algorithm from "How to Print Floating-Point Numbers Accurately"
+    # by Steele & White.  b=2 case.
+    assert 0 < f < 2**p
+    cmp = operator.lt if f & 1 else operator.le
+    ep = e - p
+    R = f << max(+ep, 0)
+    S = 1 << max(-ep, 0)
+    Mminus = Mplus = 1 << max(ep, 0)
+    if f == 1 << (p - 1):
+        Mplus <<= 1
+        R <<= 1
+        S <<= 1
+    k = 0
+    while R < (S + B - 1)//B:
+        k -= 1
+        R *= B
+        Mplus *= B
+        Mminus *= B
+    while 2*R + Mplus >= 2*S:
+        k += 1
+        S *= B
+    e = k - 1
+    D = []
+    while True:
+        k -= 1
+        U, R = divmod(R * B, S)
+        Mminus *= B
+        Mplus *= B
+        low = cmp(2*R, Mminus)
+        high = cmp(2*S - Mplus, 2*R)
+        D.append(U)
+        if low or high:
+            break
+    round_up = not low
+    if low and high:
+        round_up = 2*R >= S
+        if round_up and 2*R == S:
+            round_up = U & 1
+    if round_up:
+        D[-1] += 1
+    return D, e
+
+def dragon4(f, prec, base=10):
+    # Here be dragons.
+    if f in (fzero, fnan, finf, fninf):
+        return to_str(f, 1)
+    sign, mantissa, exponent, bc = f
+    mantissa <<= prec - bc
+    D, e = fpp2(mantissa, exponent + bc, prec, base)
+    digits = list(map(lambda i: stddigits[i], D))
+    # Hardcode Python rules for str/repr:
+    if -4 <= e < repr_dps(prec) - 1:  # XXX base!=10
+        # fixed format
+        p = len(D)
+        if e >= p:
+            digits += ['0']*(e-p+1)
+        if e < 0:
+            digits = ['0.'] + ['0']*(-e-1) + digits
+        else:
+            digits = digits[0:e+1] + ['.'] + digits[e+1:]
+            if digits[-1] == '.':
+                digits += ['0']
+        res = ''.join(digits)
+    else:
+        # scientific
+        res = digits[0]
+        if len(D) > 1:
+            res += '.' + ''.join(digits[1:])
+        res += f"e{e:+03d}"
+    return '-' + res if sign else res
 
 def to_digits_exp(s, dps, base=10):
     """Helper function for representing the floating-point number s as

@@ -31,5 +31,6 @@ def reset_mp_globals():
     mpmath.mp.pretty = False
     mpmath.mp.rounding = 'n'
     mpmath.mp.pretty_dps = "str"
+    mpmath.mp._legacy = True
     mpmath.iv.prec = mpmath.mp.prec
     mpmath.iv.pretty = False
