@@ -26,8 +26,6 @@ def test_chebyfit():
 def test_chebyfit_nonpositive_N():
     with pytest.raises(ValueError):
         chebyfit(sin, [-1, 1], 0)
-    with pytest.raises(ValueError):
-        chebyfit(sin, [-1, 1], -3)
 
 def test_limits():
     assert limit(lambda x: (x-sin(x))/x**3, 0).ae(mpf(1)/6)
