@@ -23,6 +23,10 @@ def test_chebyfit():
         x = 2 + i/5.
         assert abs(polyval(p, x) - f(x)) < err
 
+def test_chebyfit_nonpositive_N():
+    with pytest.raises(ValueError):
+        chebyfit(sin, [-1, 1], 0)
+
 def test_limits():
     assert limit(lambda x: (x-sin(x))/x**3, 0).ae(mpf(1)/6)
     assert limit(lambda n: (1+1/n)**n, inf).ae(e)
