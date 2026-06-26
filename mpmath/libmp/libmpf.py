@@ -1029,10 +1029,16 @@ def mpf_perturb(x, eps_sign, prec, rnd):
 #                              Radix conversion                              #
 #----------------------------------------------------------------------------#
 
+stddigits_as_bytes = bytearray(stddigits.encode('ascii'))
+
 def fpp2(f, e, p, B=10):
     # (FPP)² algorithm from "How to Print Floating-Point Numbers Accurately"
-    # by Steele & White.  b=2 case.
+    # by Steele & White.  b=2 case.  Assume round_nearest mode.
     assert 0 < f < 2**p
+    # Original version doesn't implement unbiased rounding, we take this
+    # into account, using strict inequatities for low/high conditions,
+    # following the Burger & Dybvig Scheme code from "Printing Floating-Point
+    # Numbers Quickly and Accurately".
     cmp = operator.lt if f & 1 else operator.le
     ep = e - p
     R = f << max(+ep, 0)
@@ -1052,25 +1058,26 @@ def fpp2(f, e, p, B=10):
         k += 1
         S *= B
     e = k - 1
-    D = []
+    D = bytearray()
     while True:
         k -= 1
         U, R = divmod(R * B, S)
         Mminus *= B
         Mplus *= B
-        low = cmp(2*R, Mminus)
-        high = cmp(2*S - Mplus, 2*R)
-        D.append(U)
+        R2 = R << 1
+        low = cmp(R2, Mminus)
+        high = cmp((S << 1) - Mplus, R2)
+        D.append(stddigits_as_bytes[U])
         if low or high:
+            round_up = not low
+            if low and high:
+                round_up = R2 >= S
+                if round_up and R2 == S:
+                    round_up = U & 1
+            if round_up:
+                D[-1] += 1
             break
-    round_up = not low
-    if low and high:
-        round_up = 2*R >= S
-        if round_up and 2*R == S:
-            round_up = U & 1
-    if round_up:
-        D[-1] += 1
-    return D, e
+    return D.decode(), e
 
 def dragon4(f, prec, base=10):
     # Here be dragons.
@@ -1078,25 +1085,24 @@ def dragon4(f, prec, base=10):
         return to_str(f, 1)
     sign, mantissa, exponent, bc = f
     mantissa <<= prec - bc
-    D, e = fpp2(mantissa, exponent + bc, prec, base)
-    digits = list(map(lambda i: stddigits[i], D))
+    digits, e = fpp2(mantissa, exponent + bc, prec, base)
+    p = len(digits)
     # Hardcode Python rules for str/repr:
     if -4 <= e < repr_dps(prec) - 1:  # XXX base!=10
         # fixed format
-        p = len(D)
         if e >= p:
-            digits += ['0']*(e-p+1)
+            digits += '0'*(e-p+1)
         if e < 0:
-            digits = ['0.'] + ['0']*(-e-1) + digits
+            digits = '0.' + '0'*(-e-1) + digits
         else:
-            digits = digits[0:e+1] + ['.'] + digits[e+1:]
+            digits = digits[0:e+1] + '.' + digits[e+1:]
             if digits[-1] == '.':
-                digits += ['0']
+                digits += '0'
         res = ''.join(digits)
     else:
         # scientific
         res = digits[0]
-        if len(D) > 1:
+        if p > 1:
             res += '.' + ''.join(digits[1:])
         res += f"e{e:+03d}"
     return '-' + res if sign else res
