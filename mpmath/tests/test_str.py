@@ -1,5 +1,6 @@
 import math
 import random
+import re
 
 import hypothesis.strategies as st
 from hypothesis import example, given
@@ -70,6 +71,13 @@ def test_float_short_repr(f):
     if not f and math.copysign(1, f) == -1:
         return
     s = str(f)
+    # Fixup float repr
+    # 1. remove leading 0's in the exponent
+    # 2. add trailing 0's for scientific notation
+    #    if one has no dot.
+    s = s.replace("e+0", "e+").replace("e-0", "e-")
+    if '.' not in s:
+        s = re.sub(r'(\d)e', r'\1.0e', s)
     mp._legacy = False
     m = mpf(f)
     sm = str(m)
@@ -84,6 +92,12 @@ def test_short_repr_specials():
     assert str(mpf('-inf')) == '-inf'
     assert str(mpf('nan')) == 'nan'
 
+
+def test_short_repr_mpc():
+    mp._legacy = False
+    mp.pretty = True
+    z = mpc(1+0.1j)
+    assert str(z) == repr(z) == '(1.0 + 0.1j)'
 
 def test_short_repr_roundtrip():
     mp._legacy = False

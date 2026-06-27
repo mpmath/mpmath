@@ -16,8 +16,8 @@ from .libmp.libmpc import (mpc_add, mpc_add_mpf, mpc_conjugate, mpc_div,
                            mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
                            mpc_mul_mpf, mpc_neg, mpc_pos, mpc_sub, mpc_sub_mpf,
                            mpc_to_complex, mpc_to_str)
-from .libmp.libmpf import (dragon4, format_mpc, format_mpf, from_Decimal,
-                           from_npfloat, mpf_hash, mpf_pos, mpf_sum, to_fixed)
+from .libmp.libmpf import (format_mpc, format_mpf, from_Decimal, from_npfloat,
+                           mpf_hash, mpf_pos, mpf_sum, to_fixed)
 
 
 new = object.__new__
@@ -139,7 +139,7 @@ class _mpf(mpnumeric):
                 ndigits = (ctx._repr_digits
                            if ctx._pretty_repr_dps else ctx._str_digits)
                 return to_str(self._mpf_, ndigits, rnd=rounding)
-            return dragon4(self._mpf_, prec)
+            return to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)
         return f"mpf({to_str(self._mpf_, ctx._repr_digits, rnd=rounding)!r})"
 
     def __str__(self):
@@ -147,7 +147,7 @@ class _mpf(mpnumeric):
         prec, rounding = ctx._prec_rounding
         if ctx._legacy:
             return to_str(self._mpf_, ctx._str_digits, rnd=rounding)
-        return dragon4(self._mpf_, prec)
+        return to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)
 
     def __hash__(self): return mpf_hash(self._mpf_)
     def __int__(self): return int(to_int(self._mpf_))
@@ -551,16 +551,20 @@ class _mpc(mpnumeric):
     def __repr__(self):
         ctx = self.context
         if ctx.pretty:
-            ndigits = (ctx._repr_digits
-                       if ctx._pretty_repr_dps else ctx._str_digits)
-            return f"({mpc_to_str(self._mpc_, ndigits)})"
+            if ctx._legacy:
+                ndigits = (ctx._repr_digits
+                           if ctx._pretty_repr_dps else ctx._str_digits)
+                return f"({mpc_to_str(self._mpc_, ndigits)})"
+            return f"({mpc_to_str(self._mpc_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)})"
         r = repr(self.real)[4:-1]
         i = repr(self.imag)[4:-1]
         return f"{type(self).__name__}(real={r}, imag={i})"
 
     def __str__(self):
         ctx = self.context
-        return f"({mpc_to_str(self._mpc_, ctx._str_digits)})"
+        if ctx._legacy:
+            return f"({mpc_to_str(self._mpc_, ctx._str_digits)})"
+        return f"({mpc_to_str(self._mpc_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)})"
 
     def __complex__(self):
         ctx = self.context

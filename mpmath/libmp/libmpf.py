@@ -1079,35 +1079,7 @@ def fpp2(f, e, p, B=10):
             break
     return D.decode(), e
 
-def dragon4(f, prec, base=10):
-    # Here be dragons.
-    if f in (fzero, fnan, finf, fninf):
-        return to_str(f, 1)
-    sign, mantissa, exponent, bc = f
-    mantissa <<= prec - bc
-    digits, e = fpp2(mantissa, exponent + bc, prec, base)
-    p = len(digits)
-    # Hardcode Python rules for str/repr:
-    if -4 <= e < repr_dps(prec) - 1:  # XXX base!=10
-        # fixed format
-        if e >= p:
-            digits += '0'*(e-p+1)
-        if e < 0:
-            digits = '0.' + '0'*(-e-1) + digits
-        else:
-            digits = digits[0:e+1] + '.' + digits[e+1:]
-            if digits[-1] == '.':
-                digits += '0'
-        res = ''.join(digits)
-    else:
-        # scientific
-        res = digits[0]
-        if p > 1:
-            res += '.' + ''.join(digits[1:])
-        res += f"e{e:+03d}"
-    return '-' + res if sign else res
-
-def to_digits_exp(s, dps, base=10):
+def to_digits_exp(s, dps, base=10, unique=False):
     """Helper function for representing the floating-point number s as
     a string with dps digits. Returns (sign, string, exponent) where
     sign is '' or '-', string is the digit string in the given base,
@@ -1125,6 +1097,22 @@ def to_digits_exp(s, dps, base=10):
 
     if not man:
         return '', '0'*int(dps), 0
+
+    if unique:
+        # assume it's repr_dps
+        orig_dps = dps
+        if dps == 17:
+            dps -= 2
+        else:
+            dps -= 3
+        prec = dps_to_prec(dps)
+        man <<= prec - bc
+        exp += bc
+        # Here be dragons.
+        digits, exponent = fpp2(man, exp, prec, base)
+        if len(digits) < orig_dps:
+            digits += '0'*(orig_dps - len(digits))
+        return sign, digits, exponent
 
     if base == 10:
         blog2 = blog2_10
@@ -1246,7 +1234,7 @@ def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
 
 def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
            show_zero_exponent=False, base=10, binary_exp=False,
-           rnd=round_nearest):
+           rnd=round_nearest, unique=False):
     """
     Convert a raw mpf to a floating-point literal in the given base
     with at most `dps` digits in the mantissa (not counting extra zeros
@@ -1309,7 +1297,10 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 
     # to_digits_exp rounds to floor.
     # This sometimes kills some instances of "...00001"
-    sign, digits, exponent = to_digits_exp(s, dps+10, base)
+    if unique:
+        sign, digits, exponent = to_digits_exp(s, dps, base, True)
+    else:
+        sign, digits, exponent = to_digits_exp(s, dps+10, base)
 
     rnd_digs = stddigits[(base//2 + base%2):base]
 
@@ -1329,8 +1320,9 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 n = int(digits, 16) >> shift
                 digits = hex(n)[2:]
 
-        digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
-        exponent += exp_add
+        if len(digits) > dps:
+            digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
+            exponent += exp_add
 
         # Prettify numbers close to unit magnitude
         if not binary_exp and min_fixed < exponent < max_fixed:
