@@ -1715,43 +1715,6 @@ def _wpprime_from_tau_omega(ctx, z, omega1, tau_or_omega2):
     wpprime_val = -ctx.pi**3 / (4 * omega1**3) * k0 * kz
     return wpprime_val
 
-def _wsigma_from_tau_omega(ctx, z, omega1, tau_or_omega2):
-    """
-    Weierstrass sigma function.
-    """
-    z = ctx.convert(z)
-    omega1 = ctx.convert(omega1)
-    tau = ctx.convert(tau_or_omega2)
-
-    z1 = ctx.pi * z / (2 * omega1)
-    q = ctx.qfrom(tau=tau)
-    j10p = ctx.jtheta(1, 0, q, 1)
-    j10ppp = ctx.jtheta(1, 0, q, 3)
-    j1z1 = ctx.jtheta(1, z1, q)
-
-    w_sigma = (2 * omega1 / (ctx.pi * j10p) *
-               ctx.exp(-z1**2 * j10ppp / (6 * j10p)) * j1z1)
-    return w_sigma
-
-def _wzeta_from_tau_omega(ctx, z, omega1, tau_or_omega2):
-    """
-    Weierstrass zeta function.
-    """
-    z = ctx.convert(z)
-    omega1 = ctx.convert(omega1)
-    tau = ctx.convert(tau_or_omega2)
-
-    w1 = -omega1 / ctx.pi
-    q = ctx.qfrom(tau=tau)
-    p = 1 / 2 / w1
-    eta1 = p / 6 / w1 * ctx.jtheta(1, 0, q, 3) / ctx.jtheta(1, 0, q, 1)
-
-    j1pz = ctx.jtheta(1, p*z, q, 1)
-    j1z = ctx.jtheta(1, p*z, q)
-
-    return -eta1 * z + p * j1pz / j1z
-
-
 # ============================================================================
 # Weierstrass parameter conversion functions
 # ============================================================================
@@ -1771,18 +1734,14 @@ def weierinvariants(ctx, omega1, omega2):
         -284.355330876541
 
     """
-    prec = ctx.prec
-    try:
-        ctx.prec += 10
+    with ctx.extraprec(10):
         omega1 = ctx.convert(omega1)
         omega2 = ctx.convert(omega2)
         if ctx.im(omega2/omega1) <= 0:
             raise ValueError("weierinvariants: omega ratio must be "
                              "in upper half-plane")
         g2, g3 = _g_from_omega(ctx, omega1, omega2)
-    finally:
-        ctx.prec = prec
-    return +g2, +g3
+        return +g2, +g3
 
 @defun
 def weierhalfperiods(ctx, g2, g3):
@@ -1801,13 +1760,9 @@ def weierhalfperiods(ctx, g2, g3):
         (0.5 + 0.209032224450873j)
 
     """
-    prec = ctx.prec
-    try:
-        ctx.prec += 10
+    with ctx.extraprec(10):
         omega1, omega2 = _omega_from_g(ctx, g2, g3)[:2]
-    finally:
-        ctx.prec = prec
-    return +omega1, +omega2
+        return +omega1, +omega2
 
 
 # ============================================================================
@@ -1950,7 +1905,13 @@ def weiersigma(ctx, z, g2=None, g3=None, tau=None,
     z = ctx.convert(z)
     omega1, tau = _weierstrass_omega_tau(ctx, "weiersigma",
                                          g2, g3, tau, omega1, omega2)
-    return _wsigma_from_tau_omega(ctx, z, omega1, tau)
+    z1 = ctx.pi * z / (2 * omega1)
+    q = ctx.qfrom(tau=tau)
+    j10p = ctx.jtheta(1, 0, q, 1)
+    j10ppp = ctx.jtheta(1, 0, q, 3)
+    j1z1 = ctx.jtheta(1, z1, q)
+    return (2 * omega1 / (ctx.pi * j10p) *
+            ctx.exp(-z1**2 * j10ppp / (6 * j10p)) * j1z1)
 
 @defun_wrapped
 def weierzeta(ctx, z, g2=None, g3=None, tau=None,
@@ -1995,7 +1956,13 @@ def weierzeta(ctx, z, g2=None, g3=None, tau=None,
     z = ctx.convert(z)
     omega1, tau = _weierstrass_omega_tau(ctx, "weierzeta",
                                          g2, g3, tau, omega1, omega2)
-    return _wzeta_from_tau_omega(ctx, z, omega1, tau)
+    w1 = -omega1 / ctx.pi
+    q = ctx.qfrom(tau=tau)
+    p = 1 / 2 / w1
+    eta1 = p / 6 / w1 * ctx.jtheta(1, 0, q, 3) / ctx.jtheta(1, 0, q, 1)
+    j1pz = ctx.jtheta(1, p*z, q, 1)
+    j1z = ctx.jtheta(1, p*z, q)
+    return -eta1 * z + p * j1pz / j1z
 
 @defun_wrapped
 def weierpinv(ctx, p, g2=None, g3=None, tau=None, omega1=None, omega2=None,
