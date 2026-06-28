@@ -1518,12 +1518,13 @@ def _eisenstein_G4_G6(ctx, tau):
     G6 = 2 * ctx.zeta(6) * E6
     return G4, G6
 
-def _inverse_kleinj(ctx, _j):
+def _inverse_kleinj(ctx, J):
     """
-    Compute tau from j-invariant using the inverse j-function.
+    Compute tau from Klein's J-invariant using the inverse j-function.
     See: https://en.wikipedia.org/wiki/J-invariant
     """
-    _j = ctx.convert(_j)
+    J = ctx.convert(J)
+    _j = 1728 * J
     sqrt_arg = 3*(1728*_j**2 - _j**3)
     exponent = ctx.mpf(1) / ctx.mpf(3)
     t = (-_j**3 + 2304*_j**2 - 884736*_j +
@@ -1536,12 +1537,12 @@ def _inverse_kleinj(ctx, _j):
 
 def _kleinj_from_g2g3(ctx, g2, g3):
     """
-    Klein-j invariant from g2, g3 (the 1728-normalized version).
+    Klein J-invariant from g2, g3.
     See: https://en.wikipedia.org/wiki/J-invariant
     """
     g2 = ctx.convert(g2)
     g3 = ctx.convert(g3)
-    return 1728 / (1 - 27*g3**2/g2**3)
+    return 1 / (1 - 27*g3**2/g2**3)
 
 def _tau_from_g(ctx, g2, g3):
     """
@@ -1549,8 +1550,8 @@ def _tau_from_g(ctx, g2, g3):
     """
     g2 = ctx.convert(g2)
     g3 = ctx.convert(g3)
-    j = _kleinj_from_g2g3(ctx, g2, g3)
-    tau = _inverse_kleinj(ctx, j)
+    J = _kleinj_from_g2g3(ctx, g2, g3)
+    tau = _inverse_kleinj(ctx, J)
     return tau
 
 def _weierstrass_omega_tau(ctx, funcname, g2=None, g3=None, tau=None,
