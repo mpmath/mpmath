@@ -82,6 +82,7 @@ def test_float_short_repr(f):
     m = mpf(f)
     sm = str(m)
     assert s == sm
+    assert f"mpf('{s}')" == repr(m)
     assert m == mpf(sm)
 
 

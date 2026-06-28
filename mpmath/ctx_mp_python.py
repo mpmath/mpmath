@@ -140,7 +140,9 @@ class _mpf(mpnumeric):
                            if ctx._pretty_repr_dps else ctx._str_digits)
                 return to_str(self._mpf_, ndigits, rnd=rounding)
             return to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)
-        return f"mpf({to_str(self._mpf_, ctx._repr_digits, rnd=rounding)!r})"
+        if ctx._legacy:
+            return f"mpf({to_str(self._mpf_, ctx._repr_digits, rnd=rounding)!r})"
+        return f"mpf({to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)!r})"
 
     def __str__(self):
         ctx = self.context
