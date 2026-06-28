@@ -1537,8 +1537,9 @@ def _inverse_kleinj(ctx, J):
 
 def _kleinj_from_g2g3(ctx, g2, g3):
     """
-    Klein J-invariant from g2, g3.
-    See: https://en.wikipedia.org/wiki/J-invariant
+    Klein's absolute invariant J from g2, g3.
+    (Not the j one with 1728 factor)
+    https://mathworld.wolfram.com/KleinsAbsoluteInvariant.html
     """
     g2 = ctx.convert(g2)
     g3 = ctx.convert(g3)
