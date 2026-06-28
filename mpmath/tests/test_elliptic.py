@@ -728,7 +728,7 @@ def test_weierstrass_special_half_periods():
     mp.dps = 30
 
     # Scaled version of http://dlmf.nist.gov/23.5.E5
-    lemniscatic = gamma(mpf(1)/4)**2/(4*sqrt(pi))
+    lemniscatic = gamma(1/4)**2/(4*sqrt(pi))
     omega1, omega2 = weierhalfperiods(1, 0)
     lattice_points = [
         m*omega1 + n*omega2
@@ -749,22 +749,22 @@ def test_weierstrass_special_half_periods():
 def test_weierstrass_half_periods_high_precision():
     mp.dps = 80
 
-    g2 = mpf(60)
-    g3 = mpf(140)
+    g2 = 60
+    g3 = 140
     omega1, omega2 = weierhalfperiods(g2, g3)
     g2_roundtrip, g3_roundtrip = weierinvariants(omega1, omega2)
 
-    assert mpc_ae(g2, g2_roundtrip, eps=eps*10000)
-    assert mpc_ae(g3, g3_roundtrip, eps=eps*10000)
+    assert mpc_ae(g2_roundtrip, g2, eps=eps*10000)
+    assert mpc_ae(g3_roundtrip, g3, eps=eps*10000)
 
 def test_weierstrass_parameter_conversions_with_kleinj():
     mp.dps = 30
 
-    tau = mpf('0.625') + mpf('0.75')*j
+    tau = 0.625 + 0.75j
     g2, g3 = weierinvariants(0.5, tau/2)
     recovered_omega1, recovered_omega2 = weierhalfperiods(g2, g3)
     recovered_tau = recovered_omega2/recovered_omega1
-    j_from_invariants = g2**3/(g2**3 - mpf(27)*g3**2)
+    j_from_invariants = g2**3/(g2**3 - 27*g3**2)
 
     assert mpc_ae(kleinj(tau), j_from_invariants, eps=eps*1000)
     assert mpc_ae(kleinj(recovered_tau), kleinj(tau), eps=eps*1000)
