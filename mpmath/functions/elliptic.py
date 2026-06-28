@@ -1553,81 +1553,6 @@ def _tau_from_g(ctx, g2, g3):
     tau = _inverse_kleinj(ctx, j)
     return tau
 
-def _omega_from_g(ctx, g2, g3):
-    """
-    Compute half-periods (omega1, omega2) from invariants g2, g3.
-    """
-    g2 = ctx.convert(g2)
-    g3 = ctx.convert(g3)
-
-    # Special cases
-    if g2 == 0:
-        omegaA = (g3 ** (ctx.mpf(-1)/ctx.mpf(6)) *
-                  ctx.gamma(ctx.mpf(1)/ctx.mpf(3))**3 / (4*ctx.pi))
-        tau = ctx.mpc(ctx.mpf(1)/ctx.mpf(2), ctx.sqrt(3)/2)
-    elif g3 == 0:
-        tau = _tau_from_g(ctx, g2, g3)
-        G4, G6 = _eisenstein_G4_G6(ctx, tau)
-        omegaA = ctx.j * (ctx.mpf(15)/(4*g2) * G4) ** (ctx.mpf(1)/ctx.mpf(4))
-    else:
-        tau = _tau_from_g(ctx, g2, g3)
-        G4, G6 = _eisenstein_G4_G6(ctx, tau)
-        _sqrt_arg = g2/g3 * G6/G4 * ctx.mpf(7)/ctx.mpf(12)
-        omegaA = ctx.sqrt(_sqrt_arg)
-
-    omegaB = tau * omegaA
-    omegaC = omegaA + omegaB
-
-    # Match omegas to roots using Weierstrass P function
-    omegas = [omegaA, omegaB, omegaC]
-    index_combos = [(0,1,2), (0,2,1), (1,0,2), (1,2,0), (2,0,1), (2,1,0)]
-
-    e1, e2, e3 = _roots_from_omega(ctx, omegaA, omegaB)
-
-    # Compute wp at each omega to match with roots
-    wps = []
-    for omegaN in omegas:
-        wp_val = _wp_from_tau_omega(ctx, omegaN, omegaA, tau)
-        wps.append(wp_val)
-
-    maes = []
-    for ic in index_combos:
-        mae = (abs(e1 - wps[ic[0]]) + abs(e2 - wps[ic[1]]) +
-               abs(e3 - wps[ic[2]])) / 3
-        maes.append(mae)
-
-    mae = min(maes)
-    min_index = maes.index(mae)
-
-    scale = max([ctx.one] + [abs(x) for x in [e1, e2, e3] + wps])
-    tolerance = ctx.sqrt(ctx.eps) * scale
-    if mae > tolerance: raise ValueError("weierhalfperiods: no convergence")
-
-    omega1, omega2, omega3 = [omegas[k] for k in index_combos[min_index]]
-
-    # Ensure Im(tau) > 0
-    if ctx.im(omega2/omega1) <= 0:
-        omega2 = -omega2
-
-    return omega1, omega2, omega3
-
-def _g_from_omega(ctx, omega1, omega2):
-    """
-    Compute g2, g3 from half-periods omega1, omega2.
-    """
-    omega1 = ctx.convert(omega1)
-    omega2 = ctx.convert(omega2)
-    tau = omega2 / omega1
-    q = ctx.qfrom(tau=tau)
-    j2 = ctx.jtheta(2, 0, q)
-    j3 = ctx.jtheta(3, 0, q)
-    g2 = (ctx.mpf(4)/3) * (ctx.pi/(2*omega1))**4 * (j2**8 - (j2*j3)**4 + j3**8)
-    g3 = ((ctx.mpf(8)/27) * (ctx.pi/(2*omega1))**6 *
-          (j2**12 - (ctx.mpf(3)/2*j2**8*j3**4 +
-                     ctx.mpf(3)/2*j2**4*j3**8) +
-           j3**12))
-    return g2, g3
-
 def _weierstrass_omega_tau(ctx, funcname, g2=None, g3=None, tau=None,
                            omega1=None, omega2=None):
     """
@@ -1655,65 +1580,8 @@ def _weierstrass_omega_tau(ctx, funcname, g2=None, g3=None, tau=None,
         if ctx.im(tau) <= 0:
             raise ValueError("%s: tau must be in upper half-plane" % funcname)
         return ctx.one/2, tau
-    omega1, omega2 = _omega_from_g(ctx, g2, g3)[:2]
+    omega1, omega2 = ctx.weierhalfperiods(g2, g3)
     return omega1, omega2 / omega1
-
-def _wp_from_tau_omega(ctx, z, omega1, tau_or_omega2):
-    """
-    Weierstrass P function using tau or omega.
-    Computes wp(z; omega1, tau or omega2)
-
-    Following the convention:
-    wp(z, omega1, omega2) = wp_theta(z/(2*omega1), tau) / (omega1^2/4)
-    """
-    z = ctx.convert(z)
-    omega1 = ctx.convert(omega1)
-    tau = ctx.convert(tau_or_omega2)
-
-    # Normalize z by the period: z_norm = z / (2 * omega1)
-    z_norm = z / (2 * omega1)
-
-    q = ctx.qfrom(tau=tau)
-    j1z = ctx.jtheta(1, ctx.pi*z_norm, q)
-    j2 = ctx.jtheta(2, 0, q)
-    j3 = ctx.jtheta(3, 0, q)
-    j4z = ctx.jtheta(4, ctx.pi*z_norm, q)
-
-    # Theta-based Weierstrass P (no omega normalization)
-    wp_theta = ((ctx.pi*j2*j3*j4z/j1z)**2 -
-                ctx.pi**2 * (j2**4 + j3**4) / 3)
-
-    # Apply omega normalization
-    return wp_theta / omega1**2 / 4
-
-def _wpprime_from_tau_omega(ctx, z, omega1, tau_or_omega2):
-    """
-    Weierstrass P' function using tau or omega.
-    Computes wp'(z; omega1, tau or omega2)
-    """
-    z = ctx.convert(z)
-    omega1 = ctx.convert(omega1)
-    tau = ctx.convert(tau_or_omega2)
-
-    # Normalize z by the period
-    z_norm = z / (2 * omega1)
-
-    q = ctx.qfrom(tau=tau)
-    z1 = ctx.pi * z_norm
-    j10p = ctx.jtheta(1, 0, q, 1)
-    j20 = ctx.jtheta(2, 0, q)
-    j30 = ctx.jtheta(3, 0, q)
-    j40 = ctx.jtheta(4, 0, q)
-    k0 = j10p**3 / (j20 * j30 * j40)
-
-    j1z1 = ctx.jtheta(1, z1, q)
-    j2z1 = ctx.jtheta(2, z1, q)
-    j3z1 = ctx.jtheta(3, z1, q)
-    j4z1 = ctx.jtheta(4, z1, q)
-    kz = j2z1 * j3z1 * j4z1 / j1z1**3
-
-    wpprime_val = -ctx.pi**3 / (4 * omega1**3) * k0 * kz
-    return wpprime_val
 
 # ============================================================================
 # Weierstrass parameter conversion functions
@@ -1740,7 +1608,16 @@ def weierinvariants(ctx, omega1, omega2):
         if ctx.im(omega2/omega1) <= 0:
             raise ValueError("weierinvariants: omega ratio must be "
                              "in upper half-plane")
-        g2, g3 = _g_from_omega(ctx, omega1, omega2)
+        tau = omega2 / omega1
+        q = ctx.qfrom(tau=tau)
+        j2 = ctx.jtheta(2, 0, q)
+        j3 = ctx.jtheta(3, 0, q)
+        factor = ctx.pi / (2 * omega1)
+        g2 = (ctx.mpf(4)/3) * factor**4 * (j2**8 - (j2*j3)**4 + j3**8)
+        g3 = ((ctx.mpf(8)/27) * factor**6 *
+              (j2**12 - (ctx.mpf(3)/2*j2**8*j3**4 +
+                         ctx.mpf(3)/2*j2**4*j3**8) +
+               j3**12))
         return +g2, +g3
 
 @defun
@@ -1761,7 +1638,50 @@ def weierhalfperiods(ctx, g2, g3):
 
     """
     with ctx.extraprec(10):
-        omega1, omega2 = _omega_from_g(ctx, g2, g3)[:2]
+        g2 = ctx.convert(g2)
+        g3 = ctx.convert(g3)
+
+        if g2 == 0:
+            omegaA = (g3 ** (ctx.mpf(-1)/ctx.mpf(6)) *
+                      ctx.gamma(ctx.mpf(1)/ctx.mpf(3))**3 / (4*ctx.pi))
+            tau = ctx.mpc(ctx.mpf(1)/ctx.mpf(2), ctx.sqrt(3)/2)
+        elif g3 == 0:
+            tau = _tau_from_g(ctx, g2, g3)
+            G4, G6 = _eisenstein_G4_G6(ctx, tau)
+            omegaA = (ctx.j * (ctx.mpf(15)/(4*g2) * G4) **
+                      (ctx.mpf(1)/ctx.mpf(4)))
+        else:
+            tau = _tau_from_g(ctx, g2, g3)
+            G4, G6 = _eisenstein_G4_G6(ctx, tau)
+            omegaA = ctx.sqrt(g2/g3 * G6/G4 * ctx.mpf(7)/ctx.mpf(12))
+
+        omegaB = tau * omegaA
+        omegaC = omegaA + omegaB
+        omegas = [omegaA, omegaB, omegaC]
+        index_combos = [(0,1,2), (0,2,1), (1,0,2),
+                        (1,2,0), (2,0,1), (2,1,0)]
+
+        e1, e2, e3 = _roots_from_omega(ctx, omegaA, omegaB)
+        wps = []
+        for omegaN in omegas:
+            wps.append(ctx.weierp(omegaN, omega1=omegaA, omega2=omegaB))
+
+        maes = []
+        for ic in index_combos:
+            mae = (abs(e1 - wps[ic[0]]) + abs(e2 - wps[ic[1]]) +
+                   abs(e3 - wps[ic[2]])) / 3
+            maes.append(mae)
+
+        mae = min(maes)
+        min_index = maes.index(mae)
+
+        scale = max([ctx.one] + [abs(x) for x in [e1, e2, e3] + wps])
+        tolerance = ctx.sqrt(ctx.eps) * scale
+        if mae > tolerance: raise ValueError("weierhalfperiods: no convergence")
+
+        omega1, omega2 = [omegas[k] for k in index_combos[min_index]][:2]
+        if ctx.im(omega2/omega1) <= 0:
+            omega2 = -omega2
         return +omega1, +omega2
 
 
@@ -1817,7 +1737,15 @@ def weierp(ctx, z, g2=None, g3=None, tau=None, omega1=None, omega2=None):
     z = ctx.convert(z)
     omega1, tau = _weierstrass_omega_tau(ctx, "weierp", g2, g3, tau,
                                          omega1, omega2)
-    return _wp_from_tau_omega(ctx, z, omega1, tau)
+    z_norm = z / (2 * omega1)
+    q = ctx.qfrom(tau=tau)
+    j1z = ctx.jtheta(1, ctx.pi*z_norm, q)
+    j2 = ctx.jtheta(2, 0, q)
+    j3 = ctx.jtheta(3, 0, q)
+    j4z = ctx.jtheta(4, ctx.pi*z_norm, q)
+    wp_theta = ((ctx.pi*j2*j3*j4z/j1z)**2 -
+                ctx.pi**2 * (j2**4 + j3**4) / 3)
+    return wp_theta / omega1**2 / 4
 
 @defun_wrapped
 def weierpprime(ctx, z, g2=None, g3=None, tau=None,
@@ -1863,7 +1791,20 @@ def weierpprime(ctx, z, g2=None, g3=None, tau=None,
     z = ctx.convert(z)
     omega1, tau = _weierstrass_omega_tau(ctx, "weierpprime",
                                          g2, g3, tau, omega1, omega2)
-    return _wpprime_from_tau_omega(ctx, z, omega1, tau)
+    z_norm = z / (2 * omega1)
+    q = ctx.qfrom(tau=tau)
+    z1 = ctx.pi * z_norm
+    j10p = ctx.jtheta(1, 0, q, 1)
+    j20 = ctx.jtheta(2, 0, q)
+    j30 = ctx.jtheta(3, 0, q)
+    j40 = ctx.jtheta(4, 0, q)
+    k0 = j10p**3 / (j20 * j30 * j40)
+    j1z1 = ctx.jtheta(1, z1, q)
+    j2z1 = ctx.jtheta(2, z1, q)
+    j3z1 = ctx.jtheta(3, z1, q)
+    j4z1 = ctx.jtheta(4, z1, q)
+    kz = j2z1 * j3z1 * j4z1 / j1z1**3
+    return -ctx.pi**3 / (4 * omega1**3) * k0 * kz
 
 @defun_wrapped
 def weiersigma(ctx, z, g2=None, g3=None, tau=None,
@@ -2024,8 +1965,8 @@ def weierpinv(ctx, p, g2=None, g3=None, tau=None, omega1=None, omega2=None,
     # Optionally select sign based on derivative
     if weierp_prime is not None:
         weierp_prime = ctx.convert(weierp_prime)
-        wpprime_neg_z = _wpprime_from_tau_omega(ctx, -z, omega1, tau)
-        wpprime_pos_z = _wpprime_from_tau_omega(ctx, z, omega1, tau)
+        wpprime_neg_z = ctx.weierpprime(-z, omega1=omega1, omega2=omega2)
+        wpprime_pos_z = ctx.weierpprime(z, omega1=omega1, omega2=omega2)
 
         if (abs(wpprime_neg_z - weierp_prime) <
                 abs(wpprime_pos_z - weierp_prime)):
