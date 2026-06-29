@@ -456,7 +456,8 @@ class _mpf(mpnumeric):
         _, _, (prec, rounding) = self._ctxdata
         ctx = self.context
         return format_mpf(self._mpf_, format_spec, prec, rounding,
-                          ctx._pretty_repr_dps)
+                          ctx._pretty_repr_dps,
+                          not ctx._legacy)
 
     def sqrt(self):
         ctx = self.context
@@ -771,7 +772,8 @@ class _mpc(mpnumeric):
         ctx = self.context
         _, _, (prec, rounding) = self._ctxdata
         return format_mpc(self._mpc_, format_spec, prec, rounding,
-                          ctx._pretty_repr_dps)
+                          ctx._pretty_repr_dps,
+                          not ctx._legacy)
 
 
 complex_types = (complex, _mpc)
