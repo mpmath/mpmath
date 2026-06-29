@@ -1851,9 +1851,9 @@ def format_mpc(num, format_spec, prec, rnd, _pretty_repr_dps, unique):
             digits_im = digits_im.removesuffix('.0')
         else:
             if format_dict['precision'] <= 0:
-                if not 'e' in digits_re:
+                if 'e' not in digits_re:
                     digits_re = digits_re.rstrip('0')
-                if not 'e' in digits_im:
+                if 'e' not in digits_im:
                     digits_im = digits_im.rstrip('0')
     digits_im += 'j'
 
