@@ -9979,14 +9979,12 @@ Evaluation of derivatives::
 **Possible issues**
 
 For `|q| \ge 1` or `\Im(\tau) \le 0`, :func:`~mpmath.jtheta` raises
-``ValueError``. This exception is also raised for `|q|` extremely
-close to 1 (or equivalently `\tau` very close to 0), since the
-series would converge too slowly::
+``ValueError``::
 
-    >>> jtheta(1, 10, 0.99999999 * exp(0.5*j))
+    >>> jtheta(1, 10, 2)
     Traceback (most recent call last):
       ...
-    ValueError: abs(q) > THETA_Q_LIM = 1.000000
+    ValueError: abs(q) >= 1
 
 """
 
