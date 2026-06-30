@@ -46,8 +46,8 @@ def test_bare_console_bare_division():
     assert c.expect_exact('0.5\r\n>>> ') == 0
 
 
-def test_bare_console_no_legacy():
-    c = Console(f'{sys.executable} -m mpmath --no-ipython --no-legacy')
+def test_bare_console_short_str():
+    c = Console(f'{sys.executable} -m mpmath --no-ipython --short-str')
 
     assert c.expect_exact('>>> ') == 0
     assert c.send('0.1\r\n') == 5

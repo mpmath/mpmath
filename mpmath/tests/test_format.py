@@ -516,8 +516,7 @@ def test_mpf_floats_bulk(fmt, x):
                  allow_infinity=True,
                  allow_subnormal=False))
 def test_mpf_floats_default_bulk(fmt, x):
-    mp.pretty_dps = "repr"
-    mp._legacy = False
+    mp.short_str = True
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
@@ -553,8 +552,7 @@ def test_mpc_complexes_bulk(fmt, z):
 @example(fmt='', z=complex(0))
 @example(fmt='#', z=complex(0))
 def test_mpc_complexes_default_bulk(fmt, z):
-    mp.pretty_dps = "repr"
-    mp._legacy = False
+    mp.short_str = True
     if ((not z.real and math.copysign(1, z.real) == -1)
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero

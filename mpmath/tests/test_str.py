@@ -68,6 +68,7 @@ def test_matrix_str():
 @example(3.411330784663857e+16)
 @example(5.960464477539063e-08)
 def test_float_short_repr(f):
+    mp.short_str = True
     if not f and math.copysign(1, f) == -1:
         return
     s = str(f)
@@ -78,7 +79,6 @@ def test_float_short_repr(f):
     s = s.replace("e+0", "e+").replace("e-0", "e-")
     if '.' not in s:
         s = re.sub(r'(\d)e', r'\1.0e', s)
-    mp._legacy = False
     m = mpf(f)
     sm = str(m)
     assert s == sm
@@ -87,7 +87,7 @@ def test_float_short_repr(f):
 
 
 def test_short_repr_specials():
-    mp._legacy = False
+    mp.short_str = True
     assert str(mpf(0)) == '0.0'
     assert str(mpf('inf')) == 'inf'
     assert str(mpf('-inf')) == '-inf'
@@ -95,13 +95,13 @@ def test_short_repr_specials():
 
 
 def test_short_repr_mpc():
-    mp._legacy = False
+    mp.short_str = True
     mp.pretty = True
     z = mpc(1+0.1j)
     assert str(z) == repr(z) == '(1.0 + 0.1j)'
 
 def test_short_repr_roundtrip():
-    mp._legacy = False
+    mp.short_str = True
     for dps in [15, 20, 30, 50, 100, 300]:
         with mp.workdps(dps):
             for _ in range(10000):
