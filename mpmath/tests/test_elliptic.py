@@ -17,9 +17,11 @@ import pytest
 
 from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
                     ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
-                    elliprj, eps, exp, inf, isnan, j, jtheta, ldexp, ln2, mp,
-                    mpc, mpf, nan, nsum, pi, qfrom, sec, sech, sin, sinh, sqrt,
-                    tan, tanh)
+                    elliprj, eps, exp, gamma, inf, isnan, j, jtheta, kleinj,
+                    ldexp, ln2, mp, mpc, mpf, nan, nsum, pi, polyroots, qfrom,
+                    sec, sech, sin, sinh, sqrt, tan, tanh, weierhalfperiods,
+                    weierinvariants, weierp, weierpinv, weierpprime,
+                    weiersigma, weierzeta)
 
 
 def mpc_ae(a, b, eps=eps):
@@ -790,3 +792,369 @@ def test_issue_1104():
     ans = jtheta(4, z, q, 3)
     assert mpc_ae(ans, ref)
     assert mpc_ae(ans, mp.extraprec(10000)(jtheta)(4, z, q, 3))
+
+# Weierstrass Elliptic Functions
+# ============================================================================
+
+def test_weierstrass_tau_uses_normalized_periods():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    tau = j/2
+    omega1 = 0.5
+    omega2 = tau/2
+
+    for f in [weierp, weierpprime, weiersigma, weierzeta]:
+        assert mpc_ae(f(z, tau=tau),
+                      f(z, omega1=omega1, omega2=omega2), eps=eps*1000)
+
+def test_weierstrass_g2g3_differential_equation():
+    # https://dlmf.nist.gov/23.3#E10
+    mp.dps = 30
+
+    z = mpf('0.3')
+    for g2, g3 in [(60, 140), (0, 140), (60, 0)]:
+        p = weierp(z, g2=g2, g3=g3)
+        pp = weierpprime(z, g2=g2, g3=g3)
+        assert mpc_ae(pp**2, 4*p**3 - g2*p - g3, eps=eps*1000)
+
+def test_weierstrass_parameter_conversions():
+    mp.dps = 30
+
+    omega1 = 1
+    omega2 = j/2
+    g2, g3 = weierinvariants(omega1, omega2)
+
+    omega1, omega2 = weierhalfperiods(g2, g3)
+
+    g2_roundtrip, g3_roundtrip = weierinvariants(omega1, omega2)
+    assert mpc_ae(g2, g2_roundtrip, eps=eps*10000)
+    assert mpc_ae(g3, g3_roundtrip, eps=eps*10000)
+    assert (omega2/omega1).imag > 0
+
+def test_weierstrass_special_half_periods():
+    mp.dps = 30
+
+    # Scaled version of http://dlmf.nist.gov/23.5.E5
+    lemniscatic = gamma(1/4)**2/(4*sqrt(pi))
+    omega1, omega2 = weierhalfperiods(1, 0)
+    lattice_points = [
+        m*omega1 + n*omega2
+        for m in [-1, 0, 1]
+        for n in [-1, 0, 1]
+        if m or n
+    ]
+    assert min(abs(point - lemniscatic) for point in lattice_points) < eps*1000
+    assert min(abs(point - j*lemniscatic) for point in lattice_points) < eps*1000
+
+    # Scaled version of http://dlmf.nist.gov/23.5.E9
+    equianharmonic = gamma(mpf(1)/3)**3/(4*pi)
+    tau = 0.5 + sqrt(3)*j/2
+    omega1, omega2 = weierhalfperiods(0, 1)
+    assert mpc_ae(omega1, equianharmonic, eps=eps*1000)
+    assert mpc_ae(omega2, equianharmonic*tau, eps=eps*1000)
+
+def test_weierstrass_half_periods_high_precision():
+    mp.dps = 80
+
+    g2 = 60
+    g3 = 140
+    omega1, omega2 = weierhalfperiods(g2, g3)
+    g2_roundtrip, g3_roundtrip = weierinvariants(omega1, omega2)
+
+    assert mpc_ae(g2_roundtrip, g2, eps=eps*10000)
+    assert mpc_ae(g3_roundtrip, g3, eps=eps*10000)
+
+def test_weierstrass_parameter_conversions_with_kleinj():
+    mp.dps = 30
+
+    tau = 0.625 + 0.75j
+    g2, g3 = weierinvariants(0.5, tau/2)
+    recovered_omega1, recovered_omega2 = weierhalfperiods(g2, g3)
+    recovered_tau = recovered_omega2/recovered_omega1
+    j_from_invariants = g2**3/(g2**3 - 27*g3**2)
+
+    assert mpc_ae(kleinj(tau), j_from_invariants, eps=eps*1000)
+    assert mpc_ae(kleinj(recovered_tau), kleinj(tau), eps=eps*1000)
+
+def test_weierstrass_half_period_values_are_cubic_roots():
+    mp.dps = 30
+
+    omega1 = 1
+    omega2 = j/2
+    g2, g3 = weierinvariants(omega1, omega2)
+
+    roots = polyroots([-g3, -g2, 0, 4], maxsteps=50)
+    half_period_values = [
+        weierp(omega1, omega1=omega1, omega2=omega2),
+        weierp(omega2, omega1=omega1, omega2=omega2),
+        weierp(omega1 + omega2, omega1=omega1, omega2=omega2),
+    ]
+
+    for value in half_period_values:
+        assert mpc_ae(4*value**3 - g2*value - g3, 0,
+                      eps=eps*1000)
+        assert min(abs(value - root) for root in roots) < eps*1000
+    for root in roots:
+        assert min(abs(value - root) for value in half_period_values) < eps*1000
+
+def test_weierstrass_conversions_with_weierp():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    g2, g3 = 60, 140
+    omega1, omega2 = weierhalfperiods(g2, g3)
+    assert mpc_ae(weierp(z, g2=g2, g3=g3),
+                  weierp(z, omega1=omega1, omega2=omega2), eps=eps*1000)
+
+def test_weierstrass_periodicity():
+    mp.dps = 30
+
+    # http://dlmf.nist.gov/23.2.E9
+    z = mpf('0.3')
+    omega1 = 1
+    omega2 = j/2
+    p = weierp(z, omega1=omega1, omega2=omega2)
+    pp = weierpprime(z, omega1=omega1, omega2=omega2)
+
+    assert mpc_ae(weierp(z + 2*omega1, omega1=omega1, omega2=omega2),
+                  p, eps=eps*1000)
+    assert mpc_ae(weierp(z + 2*omega2, omega1=omega1, omega2=omega2),
+                  p, eps=eps*1000)
+    assert mpc_ae(weierpprime(z + 2*omega1,
+                              omega1=omega1, omega2=omega2), pp,
+                  eps=eps*1000)
+    assert mpc_ae(weierpprime(z + 2*omega2,
+                              omega1=omega1, omega2=omega2), pp,
+                  eps=eps*1000)
+
+def test_weierstrass_scaling_laws():
+    mp.dps = 30
+
+    # http://dlmf.nist.gov/23.10.iv
+    z = mpf('0.3')
+    scale = mpf('1.7')
+    omega1 = 1
+    omega2 = j/2
+    scaled_omega1 = scale*omega1
+    scaled_omega2 = scale*omega2
+
+    assert mpc_ae(weierp(scale*z, omega1=scaled_omega1,
+                         omega2=scaled_omega2),
+                  weierp(z, omega1=omega1, omega2=omega2)/scale**2,
+                  eps=eps*1000)
+    assert mpc_ae(weierpprime(scale*z, omega1=scaled_omega1,
+                              omega2=scaled_omega2),
+                  weierpprime(z, omega1=omega1, omega2=omega2)/scale**3,
+                  eps=eps*1000)
+    assert mpc_ae(weiersigma(scale*z, omega1=scaled_omega1,
+                             omega2=scaled_omega2),
+                  scale*weiersigma(z, omega1=omega1, omega2=omega2),
+                  eps=eps*1000)
+    assert mpc_ae(weierzeta(scale*z, omega1=scaled_omega1,
+                            omega2=scaled_omega2),
+                  weierzeta(z, omega1=omega1, omega2=omega2)/scale,
+                  eps=eps*1000)
+
+def test_weierstrass_tau_omega_parameterizations():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    tau = j/2
+    omega1 = 0.5
+    omega2 = tau/2
+    for f in [weierp, weierpprime, weiersigma, weierzeta]:
+        assert mpc_ae(f(z, tau=tau), f(z, omega1=omega1, omega2=omega2))
+
+def test_weierstrass_addition_theorem():
+    mp.dps = 30
+
+    # http://dlmf.nist.gov/23.10.E1
+    z = mpf('0.3')
+    w = mpf('0.4') + j/10
+    omega1 = 1
+    omega2 = j/2
+
+    pz = weierp(z, omega1=omega1, omega2=omega2)
+    pw = weierp(w, omega1=omega1, omega2=omega2)
+    ppz = weierpprime(z, omega1=omega1, omega2=omega2)
+    ppw = weierpprime(w, omega1=omega1, omega2=omega2)
+    rhs = ((ppz - ppw)/(pz - pw))**2/4 - pz - pw
+
+    assert mpc_ae(weierp(z + w, omega1=omega1, omega2=omega2),
+                  rhs, eps=eps*1000)
+
+def test_weierstrass_zeta_legendre_relation():
+    mp.dps = 30
+
+    # http://dlmf.nist.gov/23.2.E11
+    # http://dlmf.nist.gov/23.2.E14
+    z = mpf('0.3') + j/10
+    omega1 = 1
+    omega2 = j/2
+
+    eta1_increment = weierzeta(z + 2*omega1,
+                               omega1=omega1, omega2=omega2)
+    eta1_increment -= weierzeta(z, omega1=omega1, omega2=omega2)
+    eta2_increment = weierzeta(z + 2*omega2,
+                               omega1=omega1, omega2=omega2)
+    eta2_increment -= weierzeta(z, omega1=omega1, omega2=omega2)
+    assert mpc_ae(eta1_increment*omega2 - eta2_increment*omega1,
+                  pi*j, eps=eps*1000)
+
+    eta1 = weierzeta(omega1, omega1=omega1, omega2=omega2)
+    eta2 = weierzeta(omega2, omega1=omega1, omega2=omega2)
+    assert mpc_ae(eta1*omega2 - eta2*omega1, pi*j/2, eps=eps*1000)
+
+def test_weierstrass_sigma_zeta_identities():
+    mp.dps = 30
+
+    # http://dlmf.nist.gov/23.2.E8
+    z = mpf('0.3')
+    tau = j/2
+    assert mpc_ae(diff(lambda t: weiersigma(t, tau=tau), z) /
+                  weiersigma(z, tau=tau), weierzeta(z, tau=tau),
+                  eps=eps*1000)
+    assert mpc_ae(diff(lambda t: weierzeta(t, tau=tau), z),
+                  -weierp(z, tau=tau), eps=eps*1000)
+
+def test_weierstrass_weierpinv():
+    mp.dps = 30
+
+    z = mpf('0.3')
+    g2, g3 = 60, 140
+    p = weierp(z, g2=g2, g3=g3)
+    pp = weierpprime(z, g2=g2, g3=g3)
+    z2 = weierpinv(p, g2=g2, g3=g3)
+    assert mpc_ae(z2, z, eps=eps*1000)
+    assert mpc_ae(weierp(z2, g2=g2, g3=g3), p, eps=eps*1000)
+
+    z2 = weierpinv(p, g2=g2, g3=g3, weierp_prime=pp)
+    assert mpc_ae(z2, z, eps=eps*1000)
+    assert mpc_ae(weierpprime(z2, g2=g2, g3=g3), pp, eps=eps*1000)
+
+    z2 = weierpinv(p, g2=g2, g3=g3, weierp_prime=-pp)
+    assert mpc_ae(z2, -z, eps=eps*1000)
+    assert mpc_ae(weierpprime(z2, g2=g2, g3=g3), -pp, eps=eps*1000)
+
+def test_weierstrass_p_agrees_with_jacobi_sn():
+    mp.dps = 30
+
+    # If e1 + e2 + e3 = 0, then
+    #
+    #     wp(z; g2, g3) = e3 + (e1 - e3)/sn(sqrt(e1 - e3)*z, m)**2
+    #
+    # where
+    #
+    #     m = (e2 - e3)/(e1 - e3)
+    #
+    # and 4*(x - e1)*(x - e2)*(x - e3) = 4*x**3 - g2*x - g3.
+    # Shifted version of http://dlmf.nist.gov/23.6.E26
+    e1 = 2
+    e2 = -0.5
+    e3 = -mpf(3)/2
+
+    g2 = -4*(e1*e2 + e1*e3 + e2*e3)
+    g3 = 4*e1*e2*e3
+
+    scale = sqrt(e1 - e3)
+    m = (e2 - e3)/(e1 - e3)
+
+    z_values = [
+        mpf('0.2'),
+        mpf('0.3'),
+        mpf('0.2') + j/10,
+        mpf('0.4') - j/20,
+    ]
+
+    for z in z_values:
+        sn = ellipfun('sn', scale*z, m)
+        expected = e3 + (e1 - e3)/sn**2
+        assert mpc_ae(weierp(z, g2=g2, g3=g3), expected, eps=eps*1000)
+
+def test_weierstrass_degenerate_sinh_case():
+    mp.dps = 30
+
+    z = mpf('2.3456')
+    g2 = mpf(1)/12
+    g3 = -mpf(1)/216
+
+    expected = mpf(1)/12 + 1/(4*sinh(z/2)**2)
+    actual = weierp(z, g2=g2, g3=g3)
+
+    assert mpc_ae(actual, expected, eps=eps*1000)
+
+def test_weierstrass_values_from_wolfram_engine():
+    """
+    Test values computed with Wolfram Engine at 50 decimal digits.
+    """
+    mp.dps = 30
+
+    z = mpf(1)/5 + j/10
+    g2 = 23
+    g3 = -6
+
+    # Wolfram Engine N[WeierstrassP[1/5 + I/10, {23, -6}], 50]
+    res = (mpf('12.034598774562061614120425445264439480909180451987') -
+           mpf('15.954494688453814173909097100149572873560659025384')*j)
+    result = weierp(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassZeta[1/5 + I/10, {23, -6}], 50]
+    res = (mpf('3.9992187928039781633477175010941910299674720024081') -
+           mpf('2.0041989210825396679692243492987154755001509689191')*j)
+    result = weierzeta(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassPPrime[1/5 + I/10, {23, -6}], 50]
+    res = (-mpf('31.54270502882344156819611453200111232882467293381') +
+           mpf('176.22165647344596777337677909680659880143827576854')*j)
+    result = weierpprime(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassSigma[1/5 + I/10, {23, -6}], 50]
+    res = (mpf('0.20003622045198197835660834749697373254229661740043') +
+           mpf('0.09996069154774003218065176170970294010303412640179')*j)
+    result = weiersigma(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    z = mpf(23)/7 + j/19
+    g2 = 4
+    g3 = j/7
+
+    # Wolfram Engine N[WeierstrassP[23/7 + I/19, {4, I/7}], 50]
+    res = (mpf('2.2404307465194869190166863785647513208647609853834') -
+           mpf('0.5325343281547884762112232120255440012711106470188')*j)
+    result = weierp(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassZeta[23/7 + I/19, {4, I/7}], 50]
+    res = (mpf('2.6598023545241487676259152806188261775361664938905') -
+           mpf('0.1724953898440469052904087998933282167782688769615')*j)
+    result = weierzeta(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassPPrime[23/7 + I/19, {4, I/7}], 50]
+    res = (-mpf('5.8878748476527295086161128667469618082615948921289') +
+           mpf('2.5039163494781823494565528962139346083786451647413')*j)
+    result = weierpprime(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+    # Wolfram Engine N[WeierstrassSigma[23/7 + I/19, {4, I/7}], 50]
+    res = (-mpf('6.9051546244372935099218335621773818059877316069834') -
+           mpf('1.7875281795111006668737717361366903871401611117693')*j)
+    result = weiersigma(z, g2=g2, g3=g3)
+    assert mpc_ae(result, res, eps=eps*1000)
+
+
+def test_weierstrass_invalid_parameterization():
+    z = mpf('0.3')
+    pytest.raises(ValueError, lambda: weierp(z))
+    pytest.raises(ValueError, lambda: weierp(z, g2=1))
+    pytest.raises(ValueError, lambda: weierp(z, tau=-j))
+    pytest.raises(ValueError, lambda: weierp(z, omega1=1))
+    pytest.raises(ValueError, lambda: weierp(z, omega1=1, omega2=-j))
+    pytest.raises(ValueError, lambda: weierp(z, g2=60, g3=140, tau=j/2))
+    pytest.raises(ValueError, lambda: weierinvariants(1, -j))
+    pytest.raises(TypeError, lambda: weierinvariants(1))
+    pytest.raises(TypeError, lambda: weierhalfperiods(1))
