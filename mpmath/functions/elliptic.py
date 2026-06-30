@@ -185,10 +185,12 @@ def qbarfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
         return ctx.expjpi(2*tau)
 
 @defun_wrapped
-def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
+def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
+            g2=None, g3=None, omega1=None, omega2=None):
     r"""
     Returns the elliptic half-period ratio `\tau`, given any of
-    `q, m, k, \tau, \bar{q}`::
+    `q, m, k, \tau, \bar{q}`, both Weierstrass invariants
+    `g_2, g_3`, or both half-periods `\omega_1, \omega_2`::
 
         >>> from mpmath import mp, taufrom, qfrom, mfrom, kfrom, qbarfrom
         >>> mp.dps = 25
@@ -203,8 +205,14 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
         (0.0 + 0.5j)
         >>> taufrom(qbar=qbarfrom(tau=0.5j))
         (0.0 + 0.5j)
+        >>> taufrom(omega1=1, omega2=0.5j)
+        (0.0 + 0.5j)
 
     """
+    if (g2 is None) != (g3 is None):
+        raise ValueError("taufrom: must provide both g2 and g3")
+    if (omega1 is None) != (omega2 is None):
+        raise ValueError("taufrom: must provide both omega1 and omega2")
     if tau is not None:
         return ctx.convert(tau)
     if m is not None:
@@ -218,6 +226,19 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
     if qbar is not None:
         qbar = ctx.convert(qbar)
         return ctx.log(qbar) / (2*ctx.pi*ctx.j)
+    if g2 is not None:
+        g2 = ctx.convert(g2)
+        g3 = ctx.convert(g3)
+        J = ctx.kleinj(g2=g2, g3=g3)
+        return ctx.kleinjinv(J)
+    if omega1 is not None:
+        omega1 = ctx.convert(omega1)
+        omega2 = ctx.convert(omega2)
+        tau = omega2 / omega1
+        if ctx.im(tau) <= 0:
+            raise ValueError("taufrom: omega ratio must be in upper "
+                             "half-plane")
+        return tau
 
 @defun_wrapped
 def kfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None):
@@ -379,7 +400,7 @@ def ellipfun(ctx, kind, u=None, m=None, q=None, k=None, tau=None):
     return +v
 
 @defun_wrapped
-def kleinj(ctx, tau=None, **kwargs):
+def kleinj(ctx, tau=None, g2=None, g3=None, **kwargs):
     r"""
     Evaluates the Klein j-invariant, which is a modular function defined for
     `\tau` in the upper half-plane as
@@ -399,6 +420,9 @@ def kleinj(ctx, tau=None, **kwargs):
 
     An alternative, common notation is that of the j-function
     `j(\tau) = 1728 J(\tau)`.
+
+    The invariant can also be computed directly from Weierstrass invariants
+    by providing both ``g2`` and ``g3``.
 
     **Plots**
 
@@ -465,6 +489,12 @@ def kleinj(ctx, tau=None, **kwargs):
         1264538.909475140509320227
 
     """
+    if (g2 is None) != (g3 is None):
+        raise ValueError("kleinj: must provide both g2 and g3")
+    if g2 is not None:
+        g2 = ctx.convert(g2)
+        g3 = ctx.convert(g3)
+        return g2**3 / (g2**3 - 27*g3**2)
     q = ctx.qfrom(tau=tau, **kwargs)
     t2 = ctx.jtheta(2,0,q)
     t3 = ctx.jtheta(3,0,q)
@@ -473,6 +503,41 @@ def kleinj(ctx, tau=None, **kwargs):
     Q = 54*(t2*t3*t4)**8
     return P/Q
 
+@defun_wrapped
+def kleinjinv(ctx, J):
+    r"""
+    Evaluates a branch of the inverse Klein j-invariant.
+
+    Given a value `J`, returns a half-period ratio `\tau` in the upper
+    half-plane such that ``kleinj(tau)`` equals `J`, up to numerical error.
+    Since ``kleinj`` is invariant under modular transformations, the inverse
+    is multivalued; this function returns one representative.
+
+    **Examples**
+
+        >>> from mpmath import mp, kleinj, kleinjinv, chop
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> tau = 0.625+0.75j
+        >>> chop(kleinj(kleinjinv(kleinj(tau))) - kleinj(tau))
+        0.0
+        >>> kleinjinv(1)
+        (0.0 + 1.0j)
+
+    """
+    J = ctx.convert(J)
+    if J == 0:
+        return ctx.mpc(-ctx.mpf(1)/2, ctx.sqrt(3)/2)
+    _j = 1728 * J
+    sqrt_arg = 3*(1728*_j**2 - _j**3)
+    exponent = ctx.mpf(1) / ctx.mpf(3)
+    t = (-_j**3 + 2304*_j**2 - 884736*_j +
+         12288*ctx.sqrt(sqrt_arg))**exponent
+    x = ctx.mpf(1)/768*t + (1 - _j/768) - (1536*_j - _j**2) / (768*t)
+
+    lbd = (1 + ctx.sqrt(1 - 4*x)) / 2
+    tau = ctx.j * ctx.agm(1, ctx.sqrt(1-lbd)) / ctx.agm(1, ctx.sqrt(lbd))
+    return tau
 
 def RF_calc(ctx, x, y, z, r):
     if y == z: return RC_calc(ctx, x, y, r)
@@ -1518,43 +1583,6 @@ def _eisenstein_G4_G6(ctx, tau):
     G6 = 2 * ctx.zeta(6) * E6
     return G4, G6
 
-def _inverse_kleinj(ctx, J):
-    """
-    Compute tau from Klein's J-invariant using the inverse j-function.
-    See: https://en.wikipedia.org/wiki/J-invariant
-    """
-    J = ctx.convert(J)
-    _j = 1728 * J
-    sqrt_arg = 3*(1728*_j**2 - _j**3)
-    exponent = ctx.mpf(1) / ctx.mpf(3)
-    t = (-_j**3 + 2304*_j**2 - 884736*_j +
-         12288*ctx.sqrt(sqrt_arg))**exponent
-    x = ctx.mpf(1)/768*t + (1 - _j/768) - (1536*_j - _j**2) / (768*t)
-
-    lbd = (1 + ctx.sqrt(1 - 4*x)) / 2
-    tau = ctx.j * ctx.agm(1, ctx.sqrt(1-lbd)) / ctx.agm(1, ctx.sqrt(lbd))
-    return tau
-
-def _kleinj_from_g2g3(ctx, g2, g3):
-    """
-    Klein's absolute invariant J from g2, g3.
-    (Not the j one with 1728 factor)
-    https://mathworld.wolfram.com/KleinsAbsoluteInvariant.html
-    """
-    g2 = ctx.convert(g2)
-    g3 = ctx.convert(g3)
-    return 1 / (1 - 27*g3**2/g2**3)
-
-def _tau_from_g(ctx, g2, g3):
-    """
-    Compute tau (half-period ratio) from g2, g3.
-    """
-    g2 = ctx.convert(g2)
-    g3 = ctx.convert(g3)
-    J = _kleinj_from_g2g3(ctx, g2, g3)
-    tau = _inverse_kleinj(ctx, J)
-    return tau
-
 def _weierstrass_omega_tau(ctx, funcname, g2=None, g3=None, tau=None,
                            omega1=None, omega2=None):
     """
@@ -1648,12 +1676,12 @@ def weierhalfperiods(ctx, g2, g3):
                       ctx.gamma(ctx.mpf(1)/ctx.mpf(3))**3 / (4*ctx.pi))
             tau = ctx.mpc(ctx.mpf(1)/ctx.mpf(2), ctx.sqrt(3)/2)
         elif g3 == 0:
-            tau = _tau_from_g(ctx, g2, g3)
+            tau = ctx.taufrom(g2=g2, g3=g3)
             G4, G6 = _eisenstein_G4_G6(ctx, tau)
             omegaA = (ctx.j * (ctx.mpf(15)/(4*g2) * G4) **
                       (ctx.mpf(1)/ctx.mpf(4)))
         else:
-            tau = _tau_from_g(ctx, g2, g3)
+            tau = ctx.taufrom(g2=g2, g3=g3)
             G4, G6 = _eisenstein_G4_G6(ctx, tau)
             omegaA = ctx.sqrt(g2/g3 * G6/G4 * ctx.mpf(7)/ctx.mpf(12))
 
@@ -1679,7 +1707,8 @@ def weierhalfperiods(ctx, g2, g3):
 
         scale = max([ctx.one] + [abs(x) for x in [e1, e2, e3] + wps])
         tolerance = ctx.sqrt(ctx.eps) * scale
-        if mae > tolerance: raise ValueError("weierhalfperiods: no convergence")
+        if mae > tolerance:
+            raise ValueError("weierhalfperiods: no convergence")
 
         omega1, omega2 = [omegas[k] for k in index_combos[min_index]][:2]
         if ctx.im(omega2/omega1) <= 0:
