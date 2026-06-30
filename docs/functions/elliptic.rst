@@ -46,6 +46,18 @@ Jacobi elliptic functions
 .. autofunction:: mpmath.ellipfun
 
 
+Weierstrass elliptic functions
+..............................
+
+.. autofunction:: mpmath.weierinvariants
+.. autofunction:: mpmath.weierhalfperiods
+.. autofunction:: mpmath.weierp
+.. autofunction:: mpmath.weierpprime
+.. autofunction:: mpmath.weiersigma
+.. autofunction:: mpmath.weierzeta
+.. autofunction:: mpmath.weierpinv
+
+
 Modular functions
 .................
 
