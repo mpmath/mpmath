@@ -133,16 +133,22 @@ class _mpf(mpnumeric):
 
     def __repr__(self):
         ctx = self.context
-        rounding = ctx._prec_rounding[1]
+        prec, rounding = ctx._prec_rounding
         if ctx.pretty:
+            if ctx.short_str:
+                return to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
             return to_str(self._mpf_, ndigits, rnd=rounding)
+        if ctx.short_str:
+            return f"mpf({to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)!r})"
         return f"mpf({to_str(self._mpf_, ctx._repr_digits, rnd=rounding)!r})"
 
     def __str__(self):
         ctx = self.context
-        rounding = ctx._prec_rounding[1]
+        prec, rounding = ctx._prec_rounding
+        if ctx.short_str:
+            return to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)
         return to_str(self._mpf_, ctx._str_digits, rnd=rounding)
 
     def __hash__(self): return mpf_hash(self._mpf_)
@@ -450,7 +456,8 @@ class _mpf(mpnumeric):
         _, _, (prec, rounding) = self._ctxdata
         ctx = self.context
         return format_mpf(self._mpf_, format_spec, prec, rounding,
-                          ctx._pretty_repr_dps)
+                          ctx._pretty_repr_dps,
+                          ctx.short_str)
 
     def sqrt(self):
         ctx = self.context
@@ -547,6 +554,8 @@ class _mpc(mpnumeric):
     def __repr__(self):
         ctx = self.context
         if ctx.pretty:
+            if ctx.short_str:
+                return f"({mpc_to_str(self._mpc_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)})"
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
             return f"({mpc_to_str(self._mpc_, ndigits)})"
@@ -556,6 +565,8 @@ class _mpc(mpnumeric):
 
     def __str__(self):
         ctx = self.context
+        if ctx.short_str:
+            return f"({mpc_to_str(self._mpc_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, unique=True)})"
         return f"({mpc_to_str(self._mpc_, ctx._str_digits)})"
 
     def __complex__(self):
@@ -761,7 +772,8 @@ class _mpc(mpnumeric):
         ctx = self.context
         _, _, (prec, rounding) = self._ctxdata
         return format_mpc(self._mpc_, format_spec, prec, rounding,
-                          ctx._pretty_repr_dps)
+                          ctx._pretty_repr_dps,
+                          ctx.short_str)
 
 
 complex_types = (complex, _mpc)
