@@ -899,7 +899,7 @@ def test_kleinjinv():
     value = kleinj(tau)
 
     assert mpc_ae(kleinj(kleinjinv(value)), value, eps=eps*1000)
-    assert mpc_ae(kleinjinv(0), -mpf(1)/2 + sqrt(3)*j/2,
+    assert mpc_ae(kleinjinv(0), -0.5 + sqrt(3)*j/2,
                   eps=eps*1000)
     assert mpc_ae(kleinjinv(1), j, eps=eps*1000)
 
