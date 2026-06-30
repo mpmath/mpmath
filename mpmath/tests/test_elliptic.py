@@ -14,6 +14,7 @@ Author of the first version: M.T. Taschuk
 import random
 
 import pytest
+import mpmath.functions.elliptic as elliptic_functions
 
 from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
                     ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
@@ -865,6 +866,13 @@ def test_weierstrass_half_periods_high_precision():
 
     assert mpc_ae(g2_roundtrip, g2, eps=eps*10000)
     assert mpc_ae(g3_roundtrip, g3, eps=eps*10000)
+
+def test_weierstrass_half_periods_no_convergence(monkeypatch):
+    def bad_roots(ctx, omega1, omega2):
+        return [ctx.mpf(10), ctx.mpf(20), ctx.mpf(30)]
+
+    monkeypatch.setattr(elliptic_functions, "_roots_from_omega", bad_roots)
+    pytest.raises(ValueError, lambda: weierhalfperiods(0, 1))
 
 def test_weierstrass_parameter_conversions_with_kleinj():
     mp.dps = 30
