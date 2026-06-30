@@ -63,3 +63,4 @@ Modular functions
 
 .. autofunction:: mpmath.eta
 .. autofunction:: mpmath.kleinj
+.. autofunction:: mpmath.kleinjinv
