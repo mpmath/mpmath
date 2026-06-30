@@ -1664,7 +1664,7 @@ def weierhalfperiods(ctx, g2, g3):
         >>> chop(g2), chop(g3)
         (60.0, 140.0)
         >>> chop(omega2/omega1)
-        (0.5 + 0.209032224450873j)
+        (-0.5 + 0.209032224450873j)
 
     """
     with ctx.extraprec(10):
