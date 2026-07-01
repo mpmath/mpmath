@@ -15,7 +15,7 @@ jobs:
   frozen-version:
     runs-on: ubuntu-24.04
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
     - uses: actions/setup-python@v6
@@ -45,7 +45,7 @@ jobs:
     env:
       PYTEST_ADDOPTS: -n auto --durations=20
     steps:
-    - uses: actions/checkout@v6
+    - uses: actions/checkout@v7
       with:
         fetch-depth: 0
     - name: Set up Python ${{ matrix.python-version }}
