@@ -7152,9 +7152,9 @@ integer::
     >>> mp.pretty = True
     >>> primepi(50), riemannr(50)
     (15, 14.9757023241462)
-    >>> max(abs(primepi(n)-int(round(riemannr(n)))) for n in range(100))
+    >>> max(abs(primepi(n)-round(riemannr(n))) for n in range(100))
     1
-    >>> max(abs(primepi(n)-int(round(riemannr(n)))) for n in range(300))
+    >>> max(abs(primepi(n)-round(riemannr(n))) for n in range(300))
     2
 
 The Riemann R function can be evaluated for arguments far too large
