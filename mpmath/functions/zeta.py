@@ -875,10 +875,6 @@ def secondzeta_prime_term(ctx, s, a, **kwargs):
     return +totsum, err, n
 
 def secondzeta_exp_term(ctx, s, a):
-    if ctx.isnpint(s):
-        m = round(ctx.re(s))
-        if not m & 1:
-            return ctx.mpf('-0.25')**(-m//2)
     tol = ctx.eps
     f = lambda n: (0.25*a)**n/((n+0.5*s)*ctx.fac(n))
     totsum = ctx.zero
