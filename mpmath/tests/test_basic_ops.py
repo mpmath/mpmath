@@ -13,7 +13,8 @@ from hypothesis import strategies as st
 import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
                     isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
-                    mpi, nan, ninf, nint, nint_distance, nstr, pi, workprec)
+                    mpi, nan, ninf, nint, nint_distance, nstr, pi, rand,
+                    workprec)
 from mpmath.libmp import (MPZ, finf, fnan, fninf, fnone, fone, from_float,
                           from_int, from_str, mpf_add, mpf_mul, mpf_sub,
                           round_down, round_nearest, round_up, to_float,
@@ -760,3 +761,25 @@ def test_jacobi_symbol():
     assert jacobi_symbol(11, -3) == -1
     assert jacobi_symbol(-11, 3) == 1
     assert jacobi_symbol(-11, -3) == -1
+
+
+def test_issue_1116():
+    mp.prec = 54
+    x = mpf('0x1.d55368e2bef2p-4')
+    assert repr(x) != "mpf('0.11458149882303958')"
+    assert eval(repr(x)) == x
+
+
+def test_eval_repr_roundtrip():
+    for _ in range(10):
+        prec = random.randint(10, 1001)
+        with workprec(prec):
+            for _ in range(1000):
+                x = rand()
+                assert eval(repr(x)) == x, (prec, x)
+                n = random.randint(-100, 300)
+                if n > 0:
+                    x *= 10**n
+                elif x < 0:
+                    x /= 10**n
+                assert eval(repr(x)) == x, (prec, x)

@@ -55,7 +55,7 @@ using the existing interface):
 >>> ft = lambda t: exp(-t) - exp(-1000*t)
 >>> fpvec = [fp(p) for p in myTalbot.p]
 >>> ft(t)-myTalbot.calc_time_domain_solution(fpvec,t,manual_prec=True)
-mpf('1.928300179528890061756872185e-21')
+mpf('1.92830017952889006175687218e-21')
 
 This manual approach is also useful to look at the Laplace parameter,
 order, or working precision which were computed.

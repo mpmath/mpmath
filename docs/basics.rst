@@ -97,10 +97,10 @@ When the precision has been set, all ``mpf`` operations are carried out at that 
 
     >>> mp.dps = 50
     >>> mpf(1) / 6
-    mpf('0.16666666666666666666666666666666666666666666666666656')
+    mpf('0.1666666666666666666666666666666666666666666666666666')
     >>> mp.dps = 25
     >>> mpf(2) ** mpf('0.5')
-    mpf('1.414213562373095048801688713')
+    mpf('1.41421356237309504880168871')
 
 The precision of complex arithmetic is also controlled by the ``mp`` object:
 
