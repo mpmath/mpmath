@@ -164,7 +164,7 @@ def test_multidimensional(capsys):
         f1x = f1(x, y)
         return (f2(x, y) - f1x, f3(x, y) - f1x)
     x = findroot(f, (10, 10))
-    assert [int(round(i)) for i in x] == [3, 4]
+    assert [round(i) for i in x] == [3, 4]
 
 def test_trivial():
     assert findroot(lambda x: 0, 1) == 1

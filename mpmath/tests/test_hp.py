@@ -221,7 +221,7 @@ def last_digits(a):
     b = float(int(r))/10**(len(r) - m)
     if b >= 10**m - 0.5:  # pragma: no cover
         raise NotImplementedError
-    n = int(round(b))
+    n = round(b)
     sn = str(n)
     s = s[:-m] + '0'*num0 + sn
     return s[-20:]
