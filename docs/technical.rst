@@ -87,9 +87,9 @@ With *prec* bits of precision, an arbitrary number can be approximated relativel
 
 More precisely, mpmath uses the following formulas to translate between *prec* and *dps*::
 
-  dps(prec) = max(1, int(round(int(prec) / C - 1)))
+  dps(prec) = max(1, round(int(prec)/C - 1))
 
-  prec(dps) = max(1, int(round((int(dps) + 1) * C)))
+  prec(dps) = max(1, round((int(dps) + 1)*C))
 
 Note that the dps is set 1 decimal digit lower than the corresponding binary precision. This is done to hide minor rounding errors and artifacts resulting from binary-decimal conversion. As a result, mpmath interprets 53 bits as giving 15 digits of decimal precision, not 16.
 
