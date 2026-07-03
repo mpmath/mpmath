@@ -515,6 +515,7 @@ def test_mpf_floats_bulk(fmt, x):
        st.floats(allow_nan=True,
                  allow_infinity=True,
                  allow_subnormal=False))
+@example('', 1000000000000000.0)
 def test_mpf_floats_default_bulk(fmt, x):
     mp.short_str = True
     if not x and math.copysign(1, x) == -1:
