@@ -38,6 +38,8 @@ Spherical Bessel functions
 
 .. autofunction:: mpmath.spherical_jn
 .. autofunction:: mpmath.spherical_yn
+.. autofunction:: mpmath.spherical_in
+.. autofunction:: mpmath.spherical_kn
 
 
 Kelvin functions

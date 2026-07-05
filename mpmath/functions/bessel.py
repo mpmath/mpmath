@@ -241,6 +241,78 @@ def spherical_yn(ctx, n, z):
     """
     return ctx.bessely(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/(2*z))
 
+@defun
+def spherical_in(ctx, n, z):
+    r"""
+    Modified spherical Bessel function of the first kind.
+
+    This function is a solution to the spherical Bessel equation
+    (equation 10.47.2 of [DLMF]_):
+
+    .. math ::
+        z^2 \frac{\mathrm{d}^2 w}{\mathrm{d}z^2}
+          + 2z \frac{\mathrm{d}w}{\mathrm{d}z} - (z^2 + \nu(\nu + 1)) w = 0.
+
+    It can be defined as
+
+    .. math ::
+        i_\nu(z) = \sqrt{\frac{\pi}{2z}} I_{\nu + \frac{1}{2}}(z),
+
+    where `I_\nu(z)` is the modified Bessel function of the first kind.
+
+    **References**
+
+    1. [DLMF]_ Chapter 10.47.
+
+    **Examples**
+
+    >>> from mpmath import spherical_in
+
+    >>> spherical_in(0, 1)
+    mpf('1.1752011936438014')
+    >>> spherical_in(6, 0.5 + 3j)
+    mpc(real='-0.0027505520810430398', imag='0.0033767606983784665')
+
+    """
+    return ctx.besseli(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/(2*z))
+
+
+@defun
+def spherical_kn(ctx, n, z):
+    r"""
+    Modified spherical Bessel function of the second kind.
+
+    This function is a solution to the spherical Bessel equation
+    (equation 10.47.2 of [DLMF]_):
+
+    .. math ::
+        z^2 \frac{\mathrm{d}^2 w}{\mathrm{d}z^2}
+          + 2z \frac{\mathrm{d}w}{\mathrm{d}z} - (z^2 + \nu(\nu + 1)) w = 0.
+
+    It can be defined as
+
+    .. math ::
+        k_\nu(z) = \sqrt{\frac{\pi}{2z}} K_{\nu + \frac{1}{2}}(z),
+
+    where `K_\nu(z)` is the modified Bessel function of the second kind.
+
+    **References**
+
+    1. [DLMF]_ Chapter 10.47.
+
+    **Examples**
+
+    >>> from mpmath import spherical_kn
+
+    >>> spherical_kn(0, 1)
+    mpf('0.57786367489546075')
+    >>> spherical_kn(6, 0.5 + 3j)
+    mpc(real='-8.6615736788078621', imag='5.5165801484422303')
+
+    """
+    return ctx.besselk(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/(2*z))
+
+
 @defun_wrapped
 def whitm(ctx,k,m,z,**kwargs):
     if z == 0:

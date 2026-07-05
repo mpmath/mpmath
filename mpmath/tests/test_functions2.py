@@ -14,9 +14,9 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     j0, j1, jacobi, kei, ker, laguerre, lambertw, ldexp,
                     legendre, legenp, legenq, lerchphi, li, log, lower_gamma,
                     meijerg, mp, mpc, mpf, nan, ncdf, npdf, nthroot, pi,
-                    polylog, qp, quadts, shi, si, spherharm, spherical_jn,
-                    spherical_yn, sqrt, struveh, struvel, upper_gamma, whitm,
-                    whitw, zeta)
+                    polylog, qp, quadts, shi, si, spherharm, spherical_in,
+                    spherical_jn, spherical_kn, spherical_yn,  sqrt, struveh,
+                    struvel, upper_gamma, whitm, whitw, zeta)
 from mpmath.libmp import BACKEND, NoConvergence
 
 
@@ -90,6 +90,25 @@ def test_bessel():
     assert besselk(0,j).ae(-0.13863371520405399968-1.20196971531720649914j)
     assert (besselk(3, 10**10) * mpf(10)**4342944824).ae(1.1628981033356187851)
     assert besselk(1,inf) == 0
+
+    # Wolfram Alpha 'BesselI(1/2, 1) * sqrt(Pi/2)':
+    #   1.1752011936438014568823818505956008151557179813340958702295654130...
+    assert spherical_in(0, 1).ae(1.1752011936438014)
+    # Wolfram Alpha 'BesselI(6 + 1/2, -3/2 + 2i) * sqrt(Pi/(2*(-3/2 + 2i)))':
+    #   0.00148388231096733251173089391601784161922189251473120918275977... +
+    #   0.000845861411724706883120219362123810624982673749447104701594298... i
+    ref = 0.0014838823109673326 + 0.0008458614117247069j
+    assert spherical_in(6, -1.5 + 2j).ae(ref)
+
+    # Wolfram Alpha 'BesselK(1/2, 1) * sqrt(Pi/2)':
+    #   0.5778636748954608589550465916563481495604255115822079102498532676...
+    assert spherical_kn(0, 1).ae(0.5778636748954609)
+    # Wolfram Alpha 'BesselK(6 + 1/2, -3/2 + 2i) * sqrt(Pi/(2*(-3/2 + 2i)))':
+    #   -25.4279100776794722746614983711690029962367654326627722884534962... -
+    #   13.3888853002501422390150938842561861730636349970408995566123039... i
+    ref = -25.42791007767947 - 13.388885300250143j
+    assert spherical_kn(6, -1.5 + 2j).ae(ref)
+
     assert spherical_jn(0, 1).ae(0.841470984807896)
     assert spherical_yn(0, 1).ae(-0.54030230586814)
     # test for issue 331, bug reported by Michael Hartmann
