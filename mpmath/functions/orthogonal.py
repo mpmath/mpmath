@@ -320,6 +320,10 @@ def gegenbauer(ctx, n, a, z, **kwargs):
         return 0*(z+n)
     if not z and ctx.isint(n) and int(n.real) % 2:
         return ctx.zero
+    # At a zero of the polynomial the hypergeometric series cancels to
+    # exactly zero; treat sub-precision results as zero instead of failing
+    # to converge (e.g. gegenbauer(2, 1, mpf('0.5')) == 0).
+    kwargs.setdefault('zeroprec', ctx.prec)
     if ctx.isnpint(a+0.5):
         # TODO: something else is required here
         # E.g.: gegenbauer(-2, -0.5, 3) == -12
@@ -456,6 +460,10 @@ def chebyt(ctx, n, x, **kwargs):
         return x * 0
     if kwargs.get('force_series') is None:
         kwargs['force_series'] = True
+    # At a root of the polynomial the series cancels to exactly zero;
+    # treat sub-precision results as zero rather than failing to converge
+    # (e.g. chebyt(mpf('1.5'), mpf('0.5')) == 0).
+    kwargs.setdefault('zeroprec', ctx.prec)
     return ctx.hyp2f1(-n,n,(1,2),(1-x)/2, **kwargs)
 
 @defun_wrapped
@@ -464,6 +472,10 @@ def chebyu(ctx, n, x, **kwargs):
         return x * 0
     if kwargs.get('force_series') is None:
         kwargs['force_series'] = True
+    # At a root of the polynomial the series cancels to exactly zero;
+    # treat sub-precision results as zero rather than failing to converge
+    # (e.g. chebyu(2, mpf('0.5')) == 0).
+    kwargs.setdefault('zeroprec', ctx.prec)
     return (n+1) * ctx.hyp2f1(-n, n+2, (3,2), (1-x)/2, **kwargs)
 
 @defun

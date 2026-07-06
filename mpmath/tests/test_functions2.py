@@ -720,6 +720,19 @@ def test_orthpoly():
     assert chebyt(10**3, 1j, force_series=False) == chebyt(10**3, 1j)
     pytest.raises(NoConvergence, lambda: chebyt(10**6, 1j))  # issue 852
     assert chebyu(10**3, 1j, force_series=False) == chebyu(10**3, 1j)
+    # at a root the series cancels to exactly zero; must return 0 rather
+    # than raising NoConvergence.  U_2(x)=4x^2-1 and U_5 both vanish at 1/2.
+    assert chebyu(2, mpf('0.5')) == 0
+    assert chebyu(2, mpf('-0.5')) == 0
+    assert chebyu(5, mpf('0.5')) == 0
+    assert chebyu(2, mpc('0.5')) == 0
+    # T_{3/2}(x)=cos(1.5*acos(x)) vanishes at x=1/2 (fractional degree)
+    assert chebyt(mpf('1.5'), mpf('0.5')) == 0
+    # neighbouring non-root values are unchanged
+    assert chebyu(4, mpf('0.5')).ae(-1)
+    assert chebyt(3, mpf('0.5')).ae(-1)
+    # the large-degree guard (issue 852) must remain in force
+    pytest.raises(NoConvergence, lambda: chebyt(10**6, 1j))
     assert legendre(3.5,-1) == inf
     assert legendre(4.5,-1) == -inf
     assert legendre(3.5+1j,-1) == mpc(inf,inf)
@@ -783,6 +796,11 @@ def test_gegenbauer():
     assert gegenbauer(2, 1, 0).ae(-1)
     assert gegenbauer(4, 1.5, 0).ae(1.875)
     assert gegenbauer(2.5, 1, 0).ae(-0.70710678118654752440)
+    # nonzero roots of the polynomial vanish exactly; C_2^1 == U_2 has a
+    # root at 1/2, which previously raised NoConvergence.
+    assert gegenbauer(2, 1, mpf('0.5')) == 0
+    assert gegenbauer(2, 1, mpf('-0.5')) == 0
+    assert gegenbauer(4, 1, mpf('0.5')).ae(-1)
     mp.dps = 200
     assert gegenbauer(2,-1.0, 27397079.00297188) == 0  # issue 461
 
