@@ -91,25 +91,14 @@ def test_bessel():
     assert (besselk(3, 10**10) * mpf(10)**4342944824).ae(1.1628981033356187851)
     assert besselk(1,inf) == 0
 
-    # Wolfram Engine 15:
-    # 'N[BesselI[1/2, 1] * Sqrt[Pi/2], 30]' gives
-    # 1.17520119364380145688238185060
+    # Reference values for spherical_in(n, z) and spherical_kn(n, z) were
+    # computed with Wolfram Engine 15:
+    #     SphericalIn[n_, z_] := BesselI[n + 1/2, z] * Sqrt[Pi / (2*z)]
+    #     SphericalKn[n_, z_] := BesselK[n + 1/2, z] * Sqrt[Pi / (2*z)]
     assert spherical_in(0, 1).ae(1.1752011936438014)
-
-    # Wolfram Engine 15:
-    # 'N[BesselI[13/2, -3/2 + 2I] * Sqrt[Pi/(2*(-3/2 + 2I))], 30]' gives
-    # 0.00148388231096733251173089391602 + 0.00084586141172470688312021936212 I
     ref = 0.0014838823109673326 + 0.0008458614117247069j
     assert spherical_in(6, -1.5 + 2j).ae(ref)
-
-    # Wolfram Engine 15:
-    # 'N[BesselK[1/2, 1] * Sqrt[Pi/2], 30]' gives
-    # 0.577863674895460858955046591656
     assert spherical_kn(0, 1).ae(0.5778636748954609)
-
-    # Wolfram Engine 15:
-    # 'N[BesselK[13/2, -3/2 + 2I] * Sqrt[Pi/(2*(-3/2 + 2I))], 30]' gives
-    # -25.4279100776794722746614983712 - 13.3888853002501422390150938843 I
     ref = -25.42791007767947 - 13.388885300250143j
     assert spherical_kn(6, -1.5 + 2j).ae(ref)
 
