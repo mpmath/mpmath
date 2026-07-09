@@ -57,6 +57,9 @@ Bug fixes:
   see #1101 (Vincent Gao)
 * Reorganize fixed-precision computations for theta3 to avoid
   severe cancellation, see #1107 (Sergey B Kirpichev)
+* Close the internally created figure in plot(), cplot() and splot() when
+  the plotted function raises, so a stale blank window is no longer shown
+  on the next call, see #1007 (Apoorv Darshan)
 
 Maintenance:
 
