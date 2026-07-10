@@ -14,9 +14,9 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     j0, j1, jacobi, kei, ker, laguerre, lambertw, ldexp,
                     legendre, legenp, legenq, lerchphi, li, log, lower_gamma,
                     meijerg, mp, mpc, mpf, nan, ncdf, npdf, nthroot, pi,
-                    polylog, qp, quadts, shi, si, spherharm, spherical_jn,
-                    spherical_yn, sqrt, struveh, struvel, upper_gamma, whitm,
-                    whitw, zeta)
+                    polylog, qp, quadts, shi, si, spherharm, spherical_in,
+                    spherical_jn, spherical_kn, spherical_yn,  sqrt, struveh,
+                    struvel, upper_gamma, whitm, whitw, zeta)
 from mpmath.libmp import BACKEND, NoConvergence
 
 
@@ -90,6 +90,18 @@ def test_bessel():
     assert besselk(0,j).ae(-0.13863371520405399968-1.20196971531720649914j)
     assert (besselk(3, 10**10) * mpf(10)**4342944824).ae(1.1628981033356187851)
     assert besselk(1,inf) == 0
+
+    # Reference values for spherical_in(n, z) and spherical_kn(n, z) were
+    # computed with Wolfram Engine 15:
+    #     SphericalIn[n_, z_] := BesselI[n + 1/2, z] * Sqrt[Pi / (2*z)]
+    #     SphericalKn[n_, z_] := BesselK[n + 1/2, z] * Sqrt[Pi / (2*z)]
+    assert spherical_in(0, 1).ae(1.1752011936438014)
+    ref = 0.0014838823109673326 + 0.0008458614117247069j
+    assert spherical_in(6, -1.5 + 2j).ae(ref)
+    assert spherical_kn(0, 1).ae(0.5778636748954609)
+    ref = -25.42791007767947 - 13.388885300250143j
+    assert spherical_kn(6, -1.5 + 2j).ae(ref)
+
     assert spherical_jn(0, 1).ae(0.841470984807896)
     assert spherical_yn(0, 1).ae(-0.54030230586814)
     # test for issue 331, bug reported by Michael Hartmann

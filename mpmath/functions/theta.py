@@ -372,79 +372,6 @@ def _djacobi_theta3(ctx, z, q, nd):
         return (-1)**(1 + nd//2) * s + (ctx.zero if nd else ctx.one)
 
 @defun
-def _djacobi_theta2a(ctx, z, q, nd):
-    """
-    case ctx._im(z) != 0
-    dtheta(2, z, q, nd) =
-    j*nd q**1/4 * Sum(q**(n*n + n) * (2*n+1)*nd * exp(j*(2*n + 1)*z), n=-inf, inf)
-    max term for (2*n0+1)*log(q).real - 2* ctx._im(z) ~= 0
-    n0 = int(ctx._im(z)/log(q).real - 1/2)
-    """
-    n = n0 = int(z.imag/ctx.log(q).real - 1/2)
-    e2 = ctx.expj(2*z)
-    e = e0 = ctx.expj((2*n + 1)*z)
-    a = q**(n*n + n)
-    # leading term
-    term = (2*n+1)**nd * a * e
-    s = term
-    eps1 = ctx.eps*abs(term)
-    while 1:
-        n += 1
-        e = e * e2
-        term = (2*n+1)**nd * q**(n*n + n) * e
-        if abs(term) < eps1:
-            break
-        s += term
-    e = e0
-    e2 = ctx.expj(-2*z)
-    n = n0
-    while 1:
-        n -= 1
-        e = e * e2
-        term = (2*n+1)**nd * q**(n*n + n) * e
-        if abs(term) < eps1:
-            break
-        s += term
-    return ctx.j**nd * s * ctx.nthroot(q, 4)
-
-@defun
-def _djacobi_theta3a(ctx, z, q, nd):
-    """
-    case ctx._im(z) != 0
-    djtheta3(z, q, nd) = (2*j)**nd *
-      Sum(q**(n*n) * n**nd * exp(j*2*n*z), n, -inf, inf)
-    max term for minimum n*abs(log(q).real) + ctx._im(z)
-    """
-    n = n0 = int(-z.imag/abs(ctx.log(q).real))
-    e2 = ctx.expj(2*z)
-    e = e0 = ctx.expj(2*n*z)
-    a = q**(n*n) * e
-    s = term = n**nd * a
-    eps1 = ctx.eps*abs(term if term else a)
-    while 1:
-        n += 1
-        e = e * e2
-        a = q**(n*n) * e
-        term = n**nd * a
-        aterm = abs(term if term else a)
-        if aterm < eps1:
-            break
-        s += term
-    e = e0
-    e2 = ctx.expj(-2*z)
-    n = n0
-    while 1:
-        n -= 1
-        e = e * e2
-        a = q**(n*n) * e
-        term = n**nd * a
-        aterm = abs(term if term else a)
-        if aterm < eps1:
-            break
-        s += term
-    return (2*ctx.j)**nd * s
-
-@defun
 def _reduce_psl2z(ctx, z):
     """
     Returns the cumulative transformation matrix, that reduces a complex
@@ -571,6 +498,11 @@ def jtheta(ctx, n, z, q, derivative=0):
     if abs(q) >= 1:
         raise ValueError(f"abs(q) >= 1")
 
+    # We use Fourier series (DLMF, §20.2(i)) to compute functions, when
+    # |q| is not near 1.  Else, transform τ to the fundamental
+    # domain (|Re(τ)| ≤ 0.5 and |τ| ≥ 1), applying transformations
+    # of lattice parameter (DLMF, §20.7(viii)).
+
     if ctx._jtheta_needs_modular(z, q):
         tau = ctx.taufrom(q=q)
         g = ctx._reduce_psl2z(tau)
@@ -581,44 +513,40 @@ def jtheta(ctx, n, z, q, derivative=0):
 
         return ctx.extraprec(extra, True)(ctx._jtheta_modular)(g, n, z, q, nd)
 
-    # Implementation note
-    # If ctx._im(z) is close to zero, _jacobi_theta2 and _jacobi_theta3
-    # are used,
-    # which compute the series starting from n=0 using fixed precision
-    # numbers;
-    # otherwise  _jacobi_theta2a and _jacobi_theta3a are used, which compute
-    # the series starting from n=n0, which is the largest term.
+    # At that point, τ is in the fundamental domain and thus Im(τ) ≥ √3π/2.
+    # Using quasi-periodicity property (see DLMF, §20.2(ii)) brings
+    # z to the domain |Im(z)| ≤ π |Im(τ)|/2.
 
-    # TODO: write _jacobi_theta2a and _jacobi_theta3a using fixed-point
+    if abs(z.imag) > abs(ctx.log(q).real)/2:
+        with ctx.extraprec(10):
+            tau = ctx.taufrom(q=q)
+            tau_pi = tau*ctx.pi
+            k = round(z.imag/tau_pi.imag)
+            assert k != 0
+            beta = -ctx.j*2*k
+            C = q**(k**2)*ctx.exp(beta*z)
+            if n in (1, 4) and k & 1:
+                C = -C
+            new_z = z - k*tau_pi
+
+            def terms():
+                for i in range(nd + 1):
+                    yield (ctx.binomial(nd, i) * beta**i
+                           * ctx.jtheta(n, new_z, q, nd - i))
+
+            res = C*sum(terms())
+        return +res
 
     extra = 10 + ctx.prec * nd // 10
     if z:
         M = ctx.mag(z)
         if M > 5 or ((n != 1 if nd else n == 1) and M < -5):
             extra += 2*abs(M)
-    cz = 0.5
-    extra2 = 50
     with ctx.extraprec(extra):
-        if n in [1, 2]:
+        if n < 3:
             z_inner = z - ctx.pi/2 if n == 1 else z
-            if z.imag:
-                if abs(z.imag) < cz * abs(ctx.log(q).real):
-                    ctx.dps += extra2
-                    res = ctx._djacobi_theta2(z_inner, q, nd)
-                else:
-                    ctx.dps += 10
-                    res = ctx._djacobi_theta2a(z_inner, q, nd)
-            else:
-                res = ctx._djacobi_theta2(z_inner, q, nd)
+            res = ctx._djacobi_theta2(z_inner, q, nd)
         else:
             q_inner = -q if n == 4 else q
-            if z.imag:
-                if abs(z.imag) < cz * abs(ctx.log(q).real):
-                    ctx.dps += extra2
-                    res = ctx._djacobi_theta3(z, q_inner, nd)
-                else:
-                    ctx.dps += 10
-                    res = ctx._djacobi_theta3a(z, q_inner, nd)
-            else:
-                res = ctx._djacobi_theta3(z, q_inner, nd)
+            res = ctx._djacobi_theta3(z, q_inner, nd)
     return +res
