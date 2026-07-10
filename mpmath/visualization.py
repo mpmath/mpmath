@@ -43,71 +43,67 @@ def plot(ctx, f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
         import pylab
         fig = pylab.figure()
         axes = fig.add_subplot(111)
-    try:
-        if not isinstance(f, (tuple, list)):
-            f = [f]
-        a, b = xlim
-        colors = ['b', 'r', 'g', 'm', 'k']
-        for n, func in enumerate(f):
-            x = ctx.arange(a, b, (b-a)/float(points))
-            segments = []
-            segment = []
-            in_complex = False
-            for i in range(len(x)):
-                try:
-                    if i != 0:
-                        for sing in singularities:
-                            if x[i-1] <= sing and x[i] >= sing:
-                                raise ValueError
-                    v = func(x[i])
-                    if ctx.isnan(v) or abs(v) > 1e300:
-                        raise ValueError
-                    if hasattr(v, "imag") and v.imag:
-                        re = float(v.real)
-                        im = float(v.imag)
-                        if not in_complex:
-                            in_complex = True
-                            segments.append(segment)
-                            segment = []
-                        segment.append((float(x[i]), re, im))
-                    else:
-                        if in_complex:
-                            in_complex = False
-                            segments.append(segment)
-                            segment = []
-                        if hasattr(v, "real"):
-                            v = v.real
-                        segment.append((float(x[i]), v))
-                except ctx.plot_ignore:
-                    if segment:
+    if not isinstance(f, (tuple, list)):
+        f = [f]
+    a, b = xlim
+    colors = ['b', 'r', 'g', 'm', 'k']
+    for n, func in enumerate(f):
+        x = ctx.arange(a, b, (b-a)/float(points))
+        segments = []
+        segment = []
+        in_complex = False
+        for i in range(len(x)):
+            try:
+                if i != 0:
+                    for sing in singularities:
+                        if x[i-1] <= sing and x[i] >= sing:
+                            raise ValueError
+                v = func(x[i])
+                if ctx.isnan(v) or abs(v) > 1e300:
+                    raise ValueError
+                if hasattr(v, "imag") and v.imag:
+                    re = float(v.real)
+                    im = float(v.imag)
+                    if not in_complex:
+                        in_complex = True
                         segments.append(segment)
-                    segment = []
-            if segment:
-                segments.append(segment)
-            for segment in segments:
-                x = [s[0] for s in segment]
-                y = [s[1] for s in segment]
-                if not x:
-                    continue
-                c = colors[n % len(colors)]
-                if len(segment[0]) == 3:
-                    z = [s[2] for s in segment]
-                    axes.plot(x, y, '--'+c, linewidth=3, **plot_kwargs)
-                    axes.plot(x, z, ':'+c, linewidth=3, **plot_kwargs)
+                        segment = []
+                    segment.append((float(x[i]), re, im))
                 else:
-                    axes.plot(x, y, c, linewidth=3, **plot_kwargs)
-        axes.set_xlim([float(_) for _ in xlim])
-        if ylim:
-            axes.set_ylim([float(_) for _ in ylim])
-        axes.set_xlabel('x')
-        axes.set_ylabel('f(x)')
-        axes.grid(True)
-    except BaseException:
-        # Don't leave a blank figure behind if computation fails; it
-        # would otherwise linger and be shown on the next call (issue #1007).
-        if fig:
-            pylab.close(fig)
-        raise
+                    if in_complex:
+                        in_complex = False
+                        segments.append(segment)
+                        segment = []
+                    if hasattr(v, "real"):
+                        v = v.real
+                    segment.append((float(x[i]), v))
+            except ctx.plot_ignore:
+                if segment:
+                    segments.append(segment)
+                segment = []
+            except Exception:
+                pylab.close(fig)
+                raise
+        if segment:
+            segments.append(segment)
+        for segment in segments:
+            x = [s[0] for s in segment]
+            y = [s[1] for s in segment]
+            if not x:
+                continue
+            c = colors[n % len(colors)]
+            if len(segment[0]) == 3:
+                z = [s[2] for s in segment]
+                axes.plot(x, y, '--'+c, linewidth=3, **plot_kwargs)
+                axes.plot(x, z, ':'+c, linewidth=3, **plot_kwargs)
+            else:
+                axes.plot(x, y, c, linewidth=3, **plot_kwargs)
+    axes.set_xlim([float(_) for _ in xlim])
+    if ylim:
+        axes.set_ylim([float(_) for _ in ylim])
+    axes.set_xlabel('x')
+    axes.set_ylabel('f(x)')
+    axes.grid(True)
     if fig:
         if file:
             pylab.savefig(file, dpi=dpi)
@@ -196,40 +192,36 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
     if not axes:
         fig = pylab.figure()
         axes = fig.add_subplot(111)
-    try:
-        rea, reb = re
-        ima, imb = im
-        dre = reb - rea
-        dim = imb - ima
-        M = int(ctx.sqrt(points*dre/dim)+1)
-        N = int(ctx.sqrt(points*dim/dre)+1)
-        x = pylab.linspace(rea, reb, M)
-        y = pylab.linspace(ima, imb, N)
-        # Note: we have to be careful to get the right rotation.
-        # Test with these plots:
-        #   cplot(lambda z: z if z.real < 0 else 0)
-        #   cplot(lambda z: z if z.imag < 0 else 0)
-        w = pylab.zeros((N, M, 3))
-        for n in range(N):
-            for m in range(M):
-                z = ctx.mpc(x[m], y[n])
-                try:
-                    v = color(f(z))
-                except ctx.plot_ignore:
-                    v = (0.5, 0.5, 0.5)
-                w[n,m] = v
-            if verbose:
-                print(str(n) + ' of ' + str(N))
-        rea, reb, ima, imb = [float(_) for _ in [rea, reb, ima, imb]]
-        axes.imshow(w, extent=(rea, reb, ima, imb), origin='lower', **imshow_kwargs)
-        axes.set_xlabel('Re(z)')
-        axes.set_ylabel('Im(z)')
-    except BaseException:
-        # Don't leave a blank figure behind if computation fails; it
-        # would otherwise linger and be shown on the next call (issue #1007).
-        if fig:
-            pylab.close(fig)
-        raise
+    rea, reb = re
+    ima, imb = im
+    dre = reb - rea
+    dim = imb - ima
+    M = int(ctx.sqrt(points*dre/dim)+1)
+    N = int(ctx.sqrt(points*dim/dre)+1)
+    x = pylab.linspace(rea, reb, M)
+    y = pylab.linspace(ima, imb, N)
+    # Note: we have to be careful to get the right rotation.
+    # Test with these plots:
+    #   cplot(lambda z: z if z.real < 0 else 0)
+    #   cplot(lambda z: z if z.imag < 0 else 0)
+    w = pylab.zeros((N, M, 3))
+    for n in range(N):
+        for m in range(M):
+            z = ctx.mpc(x[m], y[n])
+            try:
+                v = color(f(z))
+            except ctx.plot_ignore:
+                v = (0.5, 0.5, 0.5)
+            except Exception:
+                pylab.close(fig)
+                raise
+            w[n,m] = v
+        if verbose:
+            print(str(n) + ' of ' + str(N))
+    rea, reb, ima, imb = [float(_) for _ in [rea, reb, ima, imb]]
+    axes.imshow(w, extent=(rea, reb, ima, imb), origin='lower', **imshow_kwargs)
+    axes.set_xlabel('Re(z)')
+    axes.set_ylabel('Im(z)')
     if fig:
         if file:
             pylab.savefig(file, dpi=dpi)
@@ -269,55 +261,52 @@ def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True,
     fig = None
     if not axes:
         fig, axes = plt.subplots(subplot_kw={'projection': '3d'})
-    try:
-        ua, ub = map(float, u)
-        va, vb = map(float, v)
-        du = ub - ua
-        dv = vb - va
-        if not isinstance(points, (list, tuple)):
-            points = [points, points]
-        M, N = points
-        u = np.linspace(ua, ub, M)
-        v = np.linspace(va, vb, N)
-        x, y, z = [np.zeros((M, N)) for i in range(3)]
-        xab, yab, zab = [[0, 0] for i in range(3)]
-        for n in range(N):
-            for m in range(M):
+    ua, ub = map(float, u)
+    va, vb = map(float, v)
+    du = ub - ua
+    dv = vb - va
+    if not isinstance(points, (list, tuple)):
+        points = [points, points]
+    M, N = points
+    u = np.linspace(ua, ub, M)
+    v = np.linspace(va, vb, N)
+    x, y, z = [np.zeros((M, N)) for i in range(3)]
+    xab, yab, zab = [[0, 0] for i in range(3)]
+    for n in range(N):
+        for m in range(M):
+            try:
                 fdata = f(ctx.convert(u[m]), ctx.convert(v[n]))
-                try:
-                    x[m,n], y[m,n], z[m,n] = fdata
-                except TypeError:
-                    x[m,n], y[m,n], z[m,n] = u[m], v[n], fdata
-                for c, cab in [(x[m,n], xab), (y[m,n], yab), (z[m,n], zab)]:
-                    if c < cab[0]:
-                        cab[0] = c
-                    if c > cab[1]:
-                        cab[1] = c
-        if wireframe:
-            axes.plot_wireframe(x, y, z, rstride=4, cstride=4, **plot3d_kwargs)
-        else:
-            axes.plot_surface(x, y, z, rstride=4, cstride=4, **plot3d_kwargs)
-        axes.set_xlabel('x')
-        axes.set_ylabel('y')
-        axes.set_zlabel('z')
-        if keep_aspect:
-            dx, dy, dz = [cab[1] - cab[0] for cab in [xab, yab, zab]]
-            maxd = max(dx, dy, dz)
-            if dx < maxd:
-                delta = maxd - dx
-                axes.set_xlim3d(xab[0] - delta / 2.0, xab[1] + delta / 2.0)
-            if dy < maxd:
-                delta = maxd - dy
-                axes.set_ylim3d(yab[0] - delta / 2.0, yab[1] + delta / 2.0)
-            if dz < maxd:
-                delta = maxd - dz
-                axes.set_zlim3d(zab[0] - delta / 2.0, zab[1] + delta / 2.0)
-    except BaseException:
-        # Don't leave a blank figure behind if computation fails; it
-        # would otherwise linger and be shown on the next call (issue #1007).
-        if fig:
-            plt.close(fig)
-        raise
+            except Exception:
+                plt.close(fig)
+                raise
+            try:
+                x[m,n], y[m,n], z[m,n] = fdata
+            except TypeError:
+                x[m,n], y[m,n], z[m,n] = u[m], v[n], fdata
+            for c, cab in [(x[m,n], xab), (y[m,n], yab), (z[m,n], zab)]:
+                if c < cab[0]:
+                    cab[0] = c
+                if c > cab[1]:
+                    cab[1] = c
+    if wireframe:
+        axes.plot_wireframe(x, y, z, rstride=4, cstride=4, **plot3d_kwargs)
+    else:
+        axes.plot_surface(x, y, z, rstride=4, cstride=4, **plot3d_kwargs)
+    axes.set_xlabel('x')
+    axes.set_ylabel('y')
+    axes.set_zlabel('z')
+    if keep_aspect:
+        dx, dy, dz = [cab[1] - cab[0] for cab in [xab, yab, zab]]
+        maxd = max(dx, dy, dz)
+        if dx < maxd:
+            delta = maxd - dx
+            axes.set_xlim3d(xab[0] - delta / 2.0, xab[1] + delta / 2.0)
+        if dy < maxd:
+            delta = maxd - dy
+            axes.set_ylim3d(yab[0] - delta / 2.0, yab[1] + delta / 2.0)
+        if dz < maxd:
+            delta = maxd - dz
+            axes.set_zlim3d(zab[0] - delta / 2.0, zab[1] + delta / 2.0)
     if fig:
         if file:
             plt.savefig(file, dpi=dpi)
