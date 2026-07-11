@@ -1097,3 +1097,10 @@ def test_issue_749():
 
 def test_issue_1035():
     assert mp.acos(1e-50j).ae(1.5707963267948966)
+
+def test_wrap_libmp_api():
+    assert sin(1) != sin(1, prec=1000)
+    assert sin(1) != sin(1, dps=100)
+    assert sin(1, rounding='d') < sin(1, rounding='u')
+    pytest.raises(ValueError, lambda: sin(1, prec=123, dps=321))
+    pytest.raises(TypeError, lambda: sin(1, 2))

@@ -1708,7 +1708,7 @@ def weierp(ctx, z, g2=None, g3=None, tau=None, omega1=None, omega2=None):
     - by the elliptic invariants `g_2, g_3`;
     - by the half-periods `\omega_1, \omega_2`;
     - by `\tau`, corresponding to the normalized half-periods
-    `\omega_1 = 1/2`, `\omega_2 = \tau/2`.
+      `\omega_1 = 1/2`, `\omega_2 = \tau/2`.
 
     The periods of `\wp` are `2\omega_1` and `2\omega_2`. Thus the
     `\tau` parameterization corresponds to periods `1` and `\tau`.
@@ -1935,7 +1935,7 @@ def weierpinv(ctx, p, g2=None, g3=None, tau=None, omega1=None, omega2=None,
     - `g2, g3`: elliptic invariants
     - `tau` or `omega1, omega2`: alternative parameterizations
     - `weierp_prime` (optional): derivative value used to choose the sign of
-    the inverse
+       the inverse
 
     **Examples**
 
