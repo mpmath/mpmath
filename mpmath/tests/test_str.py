@@ -86,6 +86,35 @@ def test_float_short_repr(f):
     assert m == mpf(sm)
 
 
+@given(st.complex_numbers(allow_subnormal=False,
+                          allow_nan=False,
+                          allow_infinity=False))
+def test_complex_short_repr(z):
+    mp.short_str = True
+    if ((not z.real and math.copysign(1, z.real) == -1)
+            or (not z.imag and math.copysign(1, z.imag) == -1)):
+        return  # skip negative zero
+    s = str(z)
+    # Fixup complex repr
+    # 1. add missing real component
+    # 2. remove leading 0 in exponent
+    if '(' not in s:
+        s = '(0'+('' if z.imag < 0 else '+')+s+')'
+    s = s.replace("e+0", "e+").replace("e-0", "e-")
+    mz = mpc(z)
+    smz = str(mz)
+    # Fixup our repr
+    # 1. remove trailing .0's
+    # 2. remove spaces
+    smz = smz.replace(".0 ", " ")
+    smz = smz.replace(" ", "")
+    smz = smz.replace(".0j", "j")
+    smz = smz.replace(".0e", "e")
+    assert s == smz
+    assert f"mpc(real='{mz.real!s}', imag='{mz.imag!s}')" == repr(mz)
+    assert mz == mpc(smz)
+
+
 def test_short_repr_specials():
     mp.short_str = True
     assert str(mpf(0)) == '0.0'
