@@ -20,9 +20,8 @@ jobs:
           pip install --upgrade .[docs]
       - name: Building docs
         run: |
-          alias sphinx-build='sphinx-build --color -W --keep-going'
-          sphinx-build -b html docs build/sphinx/html
-          sphinx-build -b latex docs build/sphinx/latex
+          sphinx-build --color -W --keep-going -b html docs build/sphinx/html
+          sphinx-build --color -W --keep-going -b latex docs build/sphinx/latex
           make -C build/sphinx/latex all-pdf
         env:
           NO_COLOR: 1  # workaround for sphinx-contrib/autoprogram#76
