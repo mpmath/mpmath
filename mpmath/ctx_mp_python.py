@@ -1154,15 +1154,18 @@ class PythonMPContext:
         by raising ComplexResult.
 
         """
-        def f(x, **kwargs):
+        def f(x, *, prec=None, dps=None, rounding=None):
             if type(x) not in ctx.types:
                 x = ctx.convert(x)
-            prec, rounding = ctx._prec_rounding
-            if kwargs:
-                prec = kwargs.get('prec', prec)
-                if 'dps' in kwargs:
-                    prec = dps_to_prec(kwargs['dps'])
-                rounding = kwargs.get('rounding', rounding)
+            ctx_prec, ctx_rounding = ctx._prec_rounding
+            if prec and dps:
+                raise ValueError("both prec and dps can't be specified")
+            if dps:
+                prec = dps_to_prec(dps)
+            if prec is None:
+                prec = ctx_prec
+            if rounding is None:
+                rounding = ctx_rounding
             if hasattr(x, '_mpf_'):
                 try:
                     return ctx.make_mpf(mpf_f(x._mpf_, prec, rounding))
