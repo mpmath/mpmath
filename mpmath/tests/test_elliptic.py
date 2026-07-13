@@ -18,9 +18,10 @@ import pytest
 from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
                     ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
                     elliprj, eps, exp, gamma, inf, isnan, j, jtheta, kleinj,
-                    ldexp, ln2, mp, mpc, mpf, nan, nsum, pi, polyroots, qfrom,
-                    sec, sech, sin, sinh, sqrt, tan, tanh, weierhalfperiods,
-                    weierinvariants, weierp, weierpinv, weierpprime,
+                    kleinjinv, ldexp, ln2, mp, mpc, mpf, nan, nsum, pi,
+                    polyroots, qfrom, sec, sech, sin, sinh, sqrt, tan, tanh,
+                    weierhalfperiods, weierinvariants, weierp, weierpinv,
+                    weierpprime,
                     weiersigma, weierzeta)
 
 
@@ -876,6 +877,17 @@ def test_weierstrass_parameter_conversions_with_kleinj():
 
     assert mpc_ae(kleinj(tau), j_from_invariants, eps=eps*1000)
     assert mpc_ae(kleinj(recovered_tau), kleinj(tau), eps=eps*1000)
+
+def test_kleinjinv():
+    mp.dps = 30
+
+    tau = 0.625 + 0.75j
+    value = kleinj(tau)
+
+    assert mpc_ae(kleinj(kleinjinv(value)), value, eps=eps*1000)
+    assert mpc_ae(kleinjinv(0), -0.5 + sqrt(3)*j/2,
+                  eps=eps*1000)
+    assert mpc_ae(kleinjinv(1), j, eps=eps*1000)
 
 def test_weierstrass_half_period_values_are_cubic_roots():
     mp.dps = 30

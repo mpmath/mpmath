@@ -474,6 +474,79 @@ def kleinj(ctx, tau=None, **kwargs):
     return P/Q
 
 
+@defun_wrapped
+def kleinjinv(ctx, J):
+    r"""
+    Evaluates a branch of the inverse Klein j-invariant.
+
+    Given a value `J`, returns a half-period ratio `\tau` in the upper
+    half-plane such that ``kleinj(tau)`` equals `J`, up to numerical error.
+    Since ``kleinj`` is invariant under modular transformations, the inverse
+    is multivalued; this function returns one representative.
+    The branch is determined by principal square/cube roots in the formula
+    below; the returned value is one modularly equivalent preimage and is not
+    canonicalized to a fundamental domain.
+
+    The implementation uses the classical inverse construction via the
+    modular lambda function, described as Method 1 in the Wikipedia article
+    at https://en.wikipedia.org/wiki/J-invariant#Inverse_functions.
+
+    It first converts from the normalized invariant `J` to `j = 1728 J`,
+    then solves
+
+    .. math ::
+
+        j = 256 (1 - x)^3 / x^2, \quad x = \lambda (1 - \lambda),
+
+    for `lambda`.  The half-period ratio is then obtained from
+
+    .. math ::
+
+        \tau = i K(1 - \lambda) / K(\lambda),
+
+    where `K` is the complete elliptic integral.  Using
+
+    .. math ::
+
+        K(m) = \pi / (2 \operatorname{AGM}(1, \sqrt{1 - m})),
+
+    this is evaluated by the arithmetic-geometric mean formula
+
+    .. math ::
+
+        \tau =
+        i \operatorname{AGM}(1, \sqrt{1 - \lambda}) /
+        \operatorname{AGM}(1, \sqrt{\lambda}).
+
+    Different root choices give different modularly equivalent branches.
+
+    **Examples**
+
+        >>> from mpmath import mp, kleinj, kleinjinv, chop
+        >>> mp.dps = 25
+        >>> mp.pretty = True
+        >>> tau = 0.625+0.75j
+        >>> chop(kleinj(kleinjinv(kleinj(tau))) - kleinj(tau))
+        0.0
+        >>> kleinjinv(1)
+        (0.0 + 1.0j)
+
+    """
+    J = ctx.convert(J)
+    if J == 0:
+        return ctx.mpc(-ctx.mpf(1)/2, ctx.sqrt(3)/2)
+    _j = 1728 * J
+    sqrt_arg = 3*(1728*_j**2 - _j**3)
+    exponent = ctx.mpf(1) / ctx.mpf(3)
+    t = (-_j**3 + 2304*_j**2 - 884736*_j +
+         12288*ctx.sqrt(sqrt_arg))**exponent
+    x = ctx.mpf(1)/768*t + (1 - _j/768) - (1536*_j - _j**2) / (768*t)
+
+    lbd = (1 + ctx.sqrt(1 - 4*x)) / 2
+    tau = ctx.j * ctx.agm(1, ctx.sqrt(1-lbd)) / ctx.agm(1, ctx.sqrt(lbd))
+    return tau
+
+
 def RF_calc(ctx, x, y, z, r):
     if y == z: return RC_calc(ctx, x, y, r)
     if x == z: return RC_calc(ctx, y, x, r)
@@ -1518,23 +1591,6 @@ def _eisenstein_G4_G6(ctx, tau):
     G6 = 2 * ctx.zeta(6) * E6
     return G4, G6
 
-def _inverse_kleinj(ctx, J):
-    """
-    Compute tau from Klein's J-invariant using the inverse j-function.
-    See: https://en.wikipedia.org/wiki/J-invariant
-    """
-    J = ctx.convert(J)
-    _j = 1728 * J
-    sqrt_arg = 3*(1728*_j**2 - _j**3)
-    exponent = ctx.mpf(1) / ctx.mpf(3)
-    t = (-_j**3 + 2304*_j**2 - 884736*_j +
-         12288*ctx.sqrt(sqrt_arg))**exponent
-    x = ctx.mpf(1)/768*t + (1 - _j/768) - (1536*_j - _j**2) / (768*t)
-
-    lbd = (1 + ctx.sqrt(1 - 4*x)) / 2
-    tau = ctx.j * ctx.agm(1, ctx.sqrt(1-lbd)) / ctx.agm(1, ctx.sqrt(lbd))
-    return tau
-
 def _kleinj_from_g2g3(ctx, g2, g3):
     """
     Klein's absolute invariant J from g2, g3.
@@ -1552,7 +1608,7 @@ def _tau_from_g(ctx, g2, g3):
     g2 = ctx.convert(g2)
     g3 = ctx.convert(g3)
     J = _kleinj_from_g2g3(ctx, g2, g3)
-    tau = _inverse_kleinj(ctx, J)
+    tau = ctx.kleinjinv(J)
     return tau
 
 def _weierstrass_omega_tau(ctx, funcname, g2=None, g3=None, tau=None,
@@ -1636,7 +1692,7 @@ def weierhalfperiods(ctx, g2, g3):
         >>> chop(g2), chop(g3)
         (60.0, 140.0)
         >>> chop(omega2/omega1)
-        (0.5 + 0.209032224450873j)
+        (-0.5 + 0.209032224450873j)
 
     """
     with ctx.extraprec(10):
@@ -1935,7 +1991,7 @@ def weierpinv(ctx, p, g2=None, g3=None, tau=None, omega1=None, omega2=None,
     - `g2, g3`: elliptic invariants
     - `tau` or `omega1, omega2`: alternative parameterizations
     - `weierp_prime` (optional): derivative value used to choose the sign of
-       the inverse
+      the inverse
 
     **Examples**
 
