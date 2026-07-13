@@ -14,12 +14,14 @@ Author of the first version: M.T. Taschuk
 import random
 
 import pytest
+import mpmath.functions.elliptic as elliptic_functions
 
 from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
                     ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
                     elliprj, eps, exp, gamma, inf, isnan, j, jtheta, kleinj,
-                    ldexp, ln2, mp, mpc, mpf, nan, nsum, pi, polyroots, qfrom,
-                    sec, sech, sin, sinh, sqrt, tan, tanh, weierhalfperiods,
+                    kleinjinv, kfrom, ldexp, ln2, mp, mpc, mpf, mfrom, nan,
+                    nsum, pi, polyroots, qbarfrom, qfrom, sec, sech, sin,
+                    sinh, sqrt, tan, tanh, taufrom, weierhalfperiods,
                     weierinvariants, weierp, weierpinv, weierpprime,
                     weiersigma, weierzeta)
 
@@ -772,6 +774,31 @@ def test_elliptic_integrals():
 def test_issue_238():
     assert isnan(qfrom(m=nan))
 
+def test_argument_conversions_from_weierstrass_data():
+    mp.dps = 30
+
+    half_periods = [
+        (1, j/2),
+        (1, mpf(1)/2 + 3*j/4),
+        (mpf(3)/4 + j/4, -mpf(1)/5 + 9*j/10),
+    ]
+
+    for omega1, omega2 in half_periods:
+        tau = omega2 / omega1
+        g2, g3 = weierinvariants(omega1, omega2)
+        tau_from_invariants = taufrom(g2=g2, g3=g3)
+
+        for func in [qfrom, qbarfrom, kfrom, mfrom]:
+            assert mpc_ae(func(omega1=omega1, omega2=omega2),
+                          func(tau=tau), eps=eps*1000)
+            assert mpc_ae(func(g2=g2, g3=g3),
+                          func(tau=tau_from_invariants), eps=eps*1000)
+
+    g2, g3 = weierinvariants(1, j/2)
+    for func in [qfrom, qbarfrom, kfrom, mfrom]:
+        pytest.raises(ValueError, lambda func=func: func(g2=g2))
+        pytest.raises(ValueError, lambda func=func: func(omega1=1))
+
 def test_issue_604():
     assert ellipe(pi, 1).ae('2.0')
 
@@ -865,6 +892,13 @@ def test_weierstrass_half_periods_high_precision():
     assert mpc_ae(g2_roundtrip, g2, eps=eps*10000)
     assert mpc_ae(g3_roundtrip, g3, eps=eps*10000)
 
+def test_weierstrass_half_periods_no_convergence(monkeypatch):
+    def bad_roots(ctx, omega1, omega2):
+        return [ctx.mpf(10), ctx.mpf(20), ctx.mpf(30)]
+
+    monkeypatch.setattr(elliptic_functions, "_roots_from_omega", bad_roots)
+    pytest.raises(ValueError, lambda: weierhalfperiods(0, 1))
+
 def test_weierstrass_parameter_conversions_with_kleinj():
     mp.dps = 30
 
@@ -876,6 +910,64 @@ def test_weierstrass_parameter_conversions_with_kleinj():
 
     assert mpc_ae(kleinj(tau), j_from_invariants, eps=eps*1000)
     assert mpc_ae(kleinj(recovered_tau), kleinj(tau), eps=eps*1000)
+    assert mpc_ae(kleinj(taufrom(g2=g2, g3=g3)), kleinj(tau),
+                  eps=eps*1000)
+
+def test_kleinj_from_weierstrass_invariants():
+    mp.dps = 30
+
+    tau = 0.625 + 0.75j
+    g2, g3 = weierinvariants(0.5, tau/2)
+
+    assert mpc_ae(kleinj(g2=g2, g3=g3), kleinj(tau), eps=eps*1000)
+    assert kleinj(g2=0, g3=1).ae(0)
+    assert kleinj(g2=1, g3=0).ae(1)
+    pytest.raises(ValueError, lambda: kleinj(g2=g2))
+    pytest.raises(ValueError, lambda: kleinj(g3=g3))
+
+def test_kleinj_argument_conversions():
+    mp.dps = 30
+
+    tau = 0.625 + 0.75j
+    value = kleinj(tau)
+
+    assert mpc_ae(kleinj(q=qfrom(tau=tau)), value, eps=eps*1000)
+    assert mpc_ae(kleinj(qbar=qbarfrom(tau=tau)), value, eps=eps*1000)
+    assert mpc_ae(kleinj(k=kfrom(tau=tau)), value, eps=eps*1000)
+    assert mpc_ae(kleinj(m=mfrom(tau=tau)), value, eps=eps*1000)
+    assert mpc_ae(kleinj(omega1=1, omega2=tau), value, eps=eps*1000)
+    pytest.raises(ValueError, lambda: kleinj(omega1=1))
+
+def test_kleinjinv():
+    mp.dps = 30
+
+    tau = 0.625 + 0.75j
+    value = kleinj(tau)
+
+    assert mpc_ae(kleinj(kleinjinv(value)), value, eps=eps*1000)
+    assert mpc_ae(kleinjinv(0), -0.5 + sqrt(3)*j/2,
+                  eps=eps*1000)
+    assert mpc_ae(kleinjinv(1), j, eps=eps*1000)
+
+def test_taufrom_weierstrass_invariants():
+    mp.dps = 30
+
+    tau = 0.625 + 0.75j
+    g2, g3 = weierinvariants(0.5, tau/2)
+    recovered_tau = taufrom(g2=g2, g3=g3)
+
+    assert mpc_ae(kleinj(recovered_tau), kleinj(tau), eps=eps*1000)
+    pytest.raises(ValueError, lambda: taufrom(g2=g2))
+    pytest.raises(ValueError, lambda: taufrom(g3=g3))
+
+def test_taufrom_half_periods():
+    mp.dps = 30
+
+    assert mpc_ae(taufrom(omega1=1, omega2=0.5*j), 0.5*j,
+                  eps=eps*1000)
+    pytest.raises(ValueError, lambda: taufrom(omega1=1))
+    pytest.raises(ValueError, lambda: taufrom(omega2=j))
+    pytest.raises(ValueError, lambda: taufrom(omega1=1, omega2=-j))
 
 def test_weierstrass_half_period_values_are_cubic_roots():
     mp.dps = 30

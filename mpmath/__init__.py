@@ -46,6 +46,7 @@ qbarfrom = mp.qbarfrom
 ellipfun = mp.ellipfun
 jtheta = mp.jtheta
 kleinj = mp.kleinj
+kleinjinv = mp.kleinjinv
 eta = mp.eta
 
 # Weierstrass elliptic functions
