@@ -1056,6 +1056,8 @@ def fpp2(f, e, p, B=10):
         S *= B
     e = k - 1
     D = bytearray()
+    low = False
+    high = False
     while True:
         k -= 1
         U, R = divmod(R * B, S)
@@ -1066,14 +1068,15 @@ def fpp2(f, e, p, B=10):
         high = cmp((S << 1) - Mplus, R2)
         D.append(stddigits_as_bytes[U])
         if low or high:
-            round_up = not low
-            if low and high:
-                round_up = R2 >= S
-                if round_up and R2 == S:
-                    round_up = U & 1
-            if round_up:
-                D[-1] += 1
             break
+    round_up = high
+    if low and high:
+        round_up = R2 >= S
+        if round_up and R2 == S:
+            round_up = U & 1
+    if round_up:
+        assert ord('0') <= D[-1] < ord(stddigits[B - 1])
+        D[-1] += 1
     return D.decode(), e
 
 def to_digits_exp(s, dps, base=10, prec=-1):

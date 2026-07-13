@@ -67,6 +67,7 @@ def test_matrix_str():
 @example(-10.0)
 @example(3.411330784663857e+16)
 @example(5.960464477539063e-08)
+@example(562949953421312.2)
 def test_float_short_repr(f):
     mp.short_str = True
     if not f and math.copysign(1, f) == -1:
@@ -134,9 +135,10 @@ def test_short_repr_roundtrip():
     for dps in [15, 20, 30, 50, 100, 300]:
         with mp.workdps(dps):
             for _ in range(10000):
-                f = random.choice([(mpmath.rand()-0.5)*2]*10
-                                  + [(mpmath.rand()-0.5)*2*10**5]*5
-                                  + [(mpmath.rand()-0.5)*2*10**100]*2)
+                f = random.choice([(mpmath.rand()-0.5)*2 for _ in range(10)]
+                                  + [(mpmath.rand()-0.5)*2*10**5 for _ in range(5)]
+                                  + [(mpmath.rand()-0.5)*2/10**5 for _ in range(5)]
+                                  + [(mpmath.rand()-0.5)*2*10**100 for _ in range(2)])
                 s = str(f)
                 b = mpf(s)
                 assert f == b  # round-trip
