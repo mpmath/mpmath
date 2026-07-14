@@ -1036,48 +1036,48 @@ def fpp2(f, e, p, B=10):
     # into account, using strict inequatities for low/high conditions,
     # following the Burger & Dybvig Scheme code from "Printing Floating-Point
     # Numbers Quickly and Accurately".
-    cmp = operator.lt if f & 1 else operator.le
+    cmp_low = operator.lt if f & 1 else operator.le
+    cmp_high = operator.lt if f & 1 else operator.le
     ep = e - p
-    R = f << max(+ep, 0)
-    S = 1 << max(-ep, 0)
+    R = f << max(+ep, 0) + 1
+    S = 1 << max(-ep, 0) + 1
     Mminus = Mplus = 1 << max(ep, 0)
     if f == 1 << (p - 1):
         Mplus <<= 1
         R <<= 1
         S <<= 1
     k = 0
-    while R < (S + B - 1)//B:
+    while R + Mplus <= S:
         k -= 1
         R *= B
         Mplus *= B
         Mminus *= B
-    while 2*R + Mplus >= 2*S:
+    while R + Mplus >= S*B:
         k += 1
         S *= B
-    e = k - 1
+    assert R + Mplus >= S
     D = bytearray()
     low = False
     high = False
     while True:
-        k -= 1
-        U, R = divmod(R * B, S)
-        Mminus *= B
-        Mplus *= B
-        R2 = R << 1
-        low = cmp(R2, Mminus)
-        high = cmp((S << 1) - Mplus, R2)
+        U, R = divmod(R, S)
+        low = cmp_low(R, Mminus)
+        high = cmp_high(S, R + Mplus)
         D.append(stddigits_as_bytes[U])
         if low or high:
             break
+        R *= B
+        Mminus *= B
+        Mplus *= B
     round_up = high
     if low and high:
-        round_up = R2 >= S
-        if round_up and R2 == S:
+        round_up = 2*R >= S
+        if round_up and 2*R == S:
             round_up = U & 1
     if round_up:
         assert ord('0') <= D[-1] < ord(stddigits[B - 1])
         D[-1] += 1
-    return D.decode(), e
+    return D.decode(), k
 
 def to_digits_exp(s, dps, base=10, prec=-1):
     """Helper function for representing the floating-point number s as
