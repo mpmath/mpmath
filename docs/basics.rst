@@ -97,10 +97,10 @@ When the precision has been set, all ``mpf`` operations are carried out at that 
 
     >>> mp.dps = 50
     >>> mpf(1) / 6
-    mpf('0.16666666666666666666666666666666666666666666666666656')
+    mpf('0.1666666666666666666666666666666666666666666666666666')
     >>> mp.dps = 25
     >>> mpf(2) ** mpf('0.5')
-    mpf('1.414213562373095048801688713')
+    mpf('1.41421356237309504880168871')
 
 The precision of complex arithmetic is also controlled by the ``mp`` object:
 
@@ -123,7 +123,7 @@ The (binary) exponent is stored exactly and is independent of the precision.
 
 The ``rounding`` property control default rounding mode for the context:
 
-    >>> mp.rounding  # round to nearest
+    >>> mp.rounding  # round to nearest is the default
     'n'
     >>> sin(1)
     mpf('0.8414709848078965')
@@ -236,7 +236,7 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
 To use enough digits to be able recreate value exactly, set ``mp.pretty_dps``
 to ``"repr"`` (default value is ``"str"``).  Same option is used to control
 default number of digits in the new-style string formatting *without format
-specifier*, i.e. `format(exp(mpf(1)))`.
+specifier*, i.e. ``format(exp(mpf(1)))``.
 
 The number of digits with which numbers are printed by default is determined by
 the working precision.  To specify the number of digits to show without

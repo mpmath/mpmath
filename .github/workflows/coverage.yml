@@ -8,12 +8,12 @@ jobs:
     env:
       PYTEST_ADDOPTS: --cov mpmath --cov-append -n auto
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: "3.x"
       - name: Install dependencies
         run: |
           pip install --upgrade setuptools pip
@@ -37,7 +37,7 @@ jobs:
           coverage html
           diff-cover coverage.xml --fail-under=100 \
             --compare-branch=origin/master
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         with:
           name: coverage
           path: |

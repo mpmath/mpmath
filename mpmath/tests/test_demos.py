@@ -110,6 +110,7 @@ C22: J = integral(sin(sin(sin(x)))), x=0..1
     assert result.stdout == expected
 
 
+@pytest.mark.filterwarnings("ignore:.*:DeprecationWarning")
 def test_pidigits():
     c = Console(f'{sys.executable} demo/pidigits.py')
     assert c.expect_exact('> ') == 0
@@ -129,6 +130,7 @@ def test_sofa():
     assert result.stdout == '2.2195316688719674255462841007968\n'
 
 
+@pytest.mark.filterwarnings("ignore:.*:DeprecationWarning")
 def test_taylor():
     c = Console(f'{sys.executable} demo/taylor.py')
     assert c.expect_exact('Enter the value of x (e.g. 3.5): ') == 0

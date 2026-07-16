@@ -8,11 +8,6 @@ class SpecialFunctions:
     """
     defined_functions = {}
 
-    # The series for the Jacobi theta functions converge for |q| < 1;
-    # in the current implementation they throw a ValueError for
-    # abs(q) > THETA_Q_LIM
-    THETA_Q_LIM = 1 - 10**-7
-
     def __init__(self):
         cls = self.__class__
         for name in cls.defined_functions:
@@ -279,22 +274,22 @@ def _rootof1(ctx, k, n):
     return ctx.expjpi(2*ctx.mpf(k)/n)
 
 @defun
-def root(ctx, x, n, k=0):
+def root(ctx, z, n, k=0):
     n = int(n)
-    x = ctx.convert(x)
+    z = ctx.convert(z)
     if k:
         # Special case: there is an exact real root
-        if (n & 1 and 2*k == n-1) and (not ctx.im(x)) and (ctx.re(x) < 0):
-            return -ctx.root(-x, n)
+        if (n & 1 and 2*k == n-1) and (not ctx.im(z)) and (ctx.re(z) < 0):
+            return -ctx.root(-z, n)
         # Multiply by root of unity
         prec = ctx.prec
         try:
             ctx.prec += 10
-            v = ctx.root(x, n, 0) * ctx._rootof1(k, n)
+            v = ctx.root(z, n, 0) * ctx._rootof1(k, n)
         finally:
             ctx.prec = prec
         return +v
-    return ctx._nthroot(x, n)
+    return ctx._nthroot(z, n)
 
 @defun
 def unitroots(ctx, n, primitive=False):
@@ -395,9 +390,8 @@ def _lambertw_special(ctx, z, k):
     # Some kind of nan or complex inf/nan?
     return ctx.ln(z)
 
-import cmath
 import math
-
+import cmath
 
 def _lambertw_approx_hybrid(z, k):
     imag_sign = 0
@@ -515,7 +509,7 @@ def _lambertw_series(ctx, z, k, tol):
 def lambertw(ctx, z, k=0):
     z = ctx.convert(z)
     k = int(k)
-    if ctx.isspecial(z):
+    if not ctx.isnormal(z):
         return _lambertw_special(ctx, z, k)
     prec = ctx.prec
     ctx.prec += 20 + ctx.mag(k or 1)

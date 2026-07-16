@@ -1,9 +1,10 @@
 from random import choice, randint, seed
 
 from mpmath import mpf
-from mpmath.libmp import (from_int, from_str, mpf_div, mpf_mul, mpf_rdiv_int,
-                          round_ceiling, round_down, round_floor,
-                          round_nearest, round_up, trailing)
+from mpmath.libmp import (from_int, from_str, mpf_div, mpf_mul, round_ceiling,
+                          round_down, round_floor, round_nearest, round_up)
+from mpmath.libmp.libintmath import trailing
+from mpmath.libmp.libmpf import mpf_rdiv_int
 
 
 def test_div_1_3():
@@ -83,7 +84,7 @@ def test_tight_integer_division():
         a = from_int(a); b = from_int(b); p = from_int(p)
         for mode in [round_floor, round_ceiling, round_down,
                      round_up, round_nearest]:
-            assert mpf_div(p, a, width, mode) == b
+            assert mpf_div(p, a, int(width), mode) == b
 
 
 def test_epsilon_rounding():

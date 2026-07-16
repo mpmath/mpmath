@@ -11,9 +11,6 @@ from mpmath import fp, inf, mp, nan, ninf, workdps
 from mpmath.libmp.libmpf import read_format_spec
 
 
-vinfo = sys.version_info
-
-
 @st.composite
 def fmt_str(draw, types='fFeE', for_complex=False):
     res = ''
@@ -41,7 +38,7 @@ def fmt_str(draw, types='fFeE', for_complex=False):
     res += draw(st.sampled_from([''] + list('-+ ')))
 
     # no_neg_0 (not used yet.)
-    if vinfo >= (3, 11):
+    if sys.version_info >= (3, 11):
         res += draw(st.sampled_from([''] + ['z']))
 
     # alternate mode
@@ -71,7 +68,7 @@ def fmt_str(draw, types='fFeE', for_complex=False):
                 + ['0' + str(_) for _ in range(40)]))
     if prec:
         res += '.' + prec
-        if vinfo >= (3, 14):
+        if sys.version_info >= (3, 14):
             gchar = draw(st.sampled_from([''] + list(',_')))
             res += gchar
 
@@ -477,7 +474,6 @@ def test_mpf_fmt_cpython():
     assert f'{mp.pi}' == '3.1415926535897931'
 
 
-@settings(max_examples=20000)
 @given(fmt_str(types=list('fFeEgG%') + ['']),
        st.floats(allow_nan=True,
                  allow_infinity=True,
@@ -501,7 +497,7 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
-    if spec['frac_separators'] and vinfo < (3, 14):
+    if spec['frac_separators'] and sys.version_info < (3, 14):
         mp.pretty_dps = "str"
         return  # see also python/cpython#130860
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
@@ -515,7 +511,6 @@ def test_mpf_floats_bulk(fmt, x):
         assert format(x, fmt) == format(mp.mpf(x), fmt)
 
 
-@settings(max_examples=20000)
 @given(fmt_str(types=list('gGfFeE') + [''], for_complex=True),
        st.complex_numbers(allow_nan=True,
                           allow_infinity=True,
@@ -526,7 +521,7 @@ def test_mpc_complexes(fmt, z):
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
     spec = read_format_spec(fmt)
-    if spec['frac_separators'] and vinfo < (3, 14):
+    if spec['frac_separators'] and sys.version_info < (3, 14):
         return  # see also python/cpython#130860
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
         # The mpmath could choose a different decimal
@@ -843,7 +838,6 @@ def test_errors():
         f"{mp.mpf(1):._6f}"
 
 
-@settings(max_examples=10000)
 @given(st.floats(allow_nan=True, allow_infinity=True,
                  allow_subnormal=False))
 @example(float('nan'))
@@ -864,12 +858,12 @@ except OSError:
 def float_print(d, i):
     fmt = "%." + str(i) + "a\n"
     a = ctypes.create_string_buffer(256)
+    libc.sprintf.argtypes = [ctypes.c_char_p, ctypes.c_char_p]
     libc.sprintf(a, bytes(fmt, 'utf-8'), ctypes.c_double(d))
     return a.raw.decode('utf-8').split("\n")[0]
 
 
 @pytest.mark.skipif(libc is None, reason='requires libc')
-@settings(max_examples=10000)
 @given(st.floats(allow_nan=False, allow_infinity=False,
                  allow_subnormal=False),
        st.integers(min_value=0, max_value=15))
@@ -880,7 +874,6 @@ def test_hexadecimal_with_libc_bulk(x, p):
     assert mp.mpf(m_hex) == mp.mpf(x_hex)
 
 
-@settings(max_examples=10000)
 @given(st.floats(allow_nan=False, allow_infinity=False,
                  allow_subnormal=False),
        st.integers(min_value=-3, max_value=15))

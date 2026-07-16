@@ -316,7 +316,7 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
     if not z:
         return ctx.one+z
     magz = ctx.mag(z)
-    if magz >= 7 and not (ctx.isint(a) and ctx.re(a) <= 0):
+    if magz >= 7 and not ctx.isnpint(a):
         if ctx.isinf(z) and ctx.sign(a) == ctx.sign(b) == ctx.sign(z) == 1:
             return ctx.inf
         if ctx.isinf(magz):
@@ -406,9 +406,9 @@ def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
     if z == 1:
         # TODO: the following logic can be simplified
         convergent = ctx.re(c-a-b) > 0
-        finite = (ctx.isint(a) and a <= 0) or (ctx.isint(b) and b <= 0)
-        zerodiv = ctx.isint(c) and c <= 0 and not \
-            ((ctx.isint(a) and c <= a <= 0) or (ctx.isint(b) and c <= b <= 0))
+        finite = ctx.isnpint(a) or ctx.isnpint(b)
+        zerodiv = ctx.isnpint(c) and not \
+            ((ctx.isnpint(a) and c <= a) or (ctx.isnpint(b) and c <= b))
         #print "bz", a, b, c, z, convergent, finite, zerodiv
         # Gauss's theorem gives the value if convergent
         if (convergent or finite) and not zerodiv:
@@ -429,9 +429,8 @@ def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
         return ctx.nan
 
     # Hit zero denominator unless numerator goes to 0 first
-    if ctx.isint(c) and c <= 0:
-        if (ctx.isint(a) and c <= a <= 0) or \
-           (ctx.isint(b) and c <= b <= 0):
+    if ctx.isnpint(c):
+        if (ctx.isnpint(a) and c <= a) or (ctx.isnpint(b) and c <= b):
             pass
         else:
             # Pole in series
@@ -442,8 +441,8 @@ def _hyp2f1(ctx, a_s, b_s, z, **kwargs):
     # Fast case: standard series converges rapidly,
     # possibly in finitely many terms
     if ctx.isfinite(z) and (absz <= 0.8 or
-                            (ctx.isint(a) and -1000 <= a <= 0) or
-                            (ctx.isint(b) and -1000 <= b <= 0)):
+                            (ctx.isnpint(a) and -1000 <= a) or
+                            (ctx.isnpint(b) and -1000 <= b)):
         try:
             return ctx.hypsum(2, 1, (atype, btype, ctype), [a, b, c], z, **kwargs)
         except ctx.NoConvergence:
@@ -496,7 +495,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
     absz = abs(z)
     ispoly = False
     for a in a_s:
-        if ctx.isint(a) and a <= 0:
+        if ctx.isnpint(a):
             ispoly = True
             break
     # Direct summation

@@ -311,6 +311,45 @@ class LinearAlgebraMethods:
             ctx.prec = prec
         return result
 
+    def pinv(ctx, A, *, rtol=None):
+        """
+        Returns Moore-Penrose pseudoinverse of the matrix `A`.
+
+        This is a generalization of the matrix inverse that provides a unique
+        result even for singular and non-square matrices. In the overdetermined
+        case, it provides the least squares solution. In the underdetermined
+        case, it provides the minimum norm solution.
+
+        The Moore-Penrose inverse of `A` is computed using its singular-value
+        decomposition. If `s` is the maximum singular value of `A`, then the
+        significance cut-off value is determined by `rtol * s`. Any singular
+        value below this value is assumed insignificant.
+
+        **Arguments**
+
+        A : The matrix to compute the pseudoinverse for.
+        rtol: Optional relative threshold term.
+            The default value is ctx.eps * max(A.rows, A.cols).
+
+        **References**
+
+        * [Wikipedia]_ https://en.wikipedia.org/wiki/Moore%E2%80%93Penrose_inverse
+        """
+        U, S, V = ctx.svd(A)
+
+        if not rtol:
+            rtol = max(A.rows, A.cols) * S[0] * ctx.eps
+        assert rtol > 0
+
+        Splus = ctx.zeros(V.cols, U.cols)
+        for ind, val in enumerate(S):
+            if val > rtol * max(S):
+                Splus[ind, ind] = 1/val
+
+        v_conj_T = V.apply(lambda x: ctx.conj(x)).T
+        u_conj_T = U.apply(lambda x: ctx.conj(x)).T
+        return v_conj_T * Splus * u_conj_T
+
     def householder(ctx, A):
         """
         (A|b) -> H, p, x, res
@@ -332,7 +371,10 @@ class LinearAlgebraMethods:
             s = ctx.fsum(abs(A[i,j])**2 for i in range(j, m))
             if not abs(s) > ctx.eps:
                 raise ValueError('matrix is numerically singular')
-            p.append(-ctx.sign(ctx.re(A[j,j])) * ctx.sqrt(s))
+            sign = ctx.sign(ctx.re(A[j,j]))
+            if sign == 0:
+                sign = ctx.one
+            p.append(-sign * ctx.sqrt(s))
             kappa = ctx.one / (s - p[j] * A[j,j])
             A[j,j] -= p[j]
             for k in range(j+1, n):
@@ -539,33 +581,35 @@ class LinearAlgebraMethods:
 
         Determinant of identity is 1.
 
-        >>> from mpmath import eye, matrix, det
+        >>> from mpmath import eye, matrix, det, mp
+        >>> mp.pretty = True
         >>> A = eye(3)
-        >>> print(det(A))
+        >>> det(A)
         1.0
 
         The determinant of a 0 by 0 matrix is 1 as the product of no factors
         is by convention the multiplicative identity.
+
         >>> A = matrix(0, 0)
-        >>> print(det(A))
+        >>> det(A)
         1
 
         But in general a matrix can have any number as its determinant.
 
         >>> A = matrix([[2, 6, 4],[3, 8, 6],[1, 1, 2]])
-        >>> print(det(A))
+        >>> det(A)
         0
 
         The determinant is vanishing if a matrix has no inverse.
 
         >>> A = matrix([[1, 3, 2],[0, 1, 0],[0, 0, 0]])
-        >>> print(det(A))
+        >>> det(A)
         0
 
         But, matrix has determinate different from zero full rank if and only is is equivalent to identity,
 
         >>> A = matrix([[1, 3, -2], [1, 9, -6], [1, 4, -3]])
-        >>> print(det(A))
+        >>> det(A)
         -2.0
 
         i.e. has an inverse matrix.
@@ -573,7 +617,7 @@ class LinearAlgebraMethods:
         >>> B = matrix([[3, -1, 0], [3, 1, -4], [5, 1, -6]]) / 2
         >>> A*B == eye(3)
         True
-        >>> print(det(B))
+        >>> det(B)
         -0.5
 
         Moreover, a matrix of integers has an inverse matrix of integers
@@ -583,8 +627,8 @@ class LinearAlgebraMethods:
         >>> B = matrix([[3, -1, 1],[2, 1, 0],[-2, 1, -1]])
         >>> A*B == eye(3)
         True
-        >>> print(det(A), det(B))
-        -1.0 -1.0
+        >>> det(A), det(B)
+        (-1.0, -1.0)
 
         """
         prec = ctx.prec

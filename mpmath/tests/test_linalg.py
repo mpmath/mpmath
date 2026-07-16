@@ -4,7 +4,7 @@ import pytest
 
 from mpmath import (cond, det, diag, exp, expm, extend, extradps, eye, fp,
                     hilbert, inf, inverse, iv, j, lu, lu_solve, matrix, mnorm,
-                    mp, mpc, mpf, nint, norm, pi, qr, qr_solve, rand, rank,
+                    mp, mpc, mpf, nint, norm, pi, pinv, qr, qr_solve, rand, rank,
                     randmatrix, residual, zeros, absmin, eps)
 
 
@@ -113,6 +113,20 @@ def test_inverse():
         inv = inverse(A)
         assert mnorm(A*inv - eye(A.rows), 1) < 1.e-14
 
+def test_pinv():
+    # Test the Moore Penrose pseudoinverse for square matrices.
+    for A in [A1, A2, A5]:
+        inv = pinv(A)
+        assert mnorm(A*inv - eye(A.rows), 1) < 1.e-13
+
+    # Test the Moore Penrose pseudoinverse for non-square matrices.
+    A = matrix([[1, 0], [0, 1], [0, 1]])
+    Aplus = matrix([[1, 0, 0], [0, 0.5, 0.5]])
+    assert mnorm(pinv(A) - Aplus, 1) < 1.e-14
+
+    # Check with non-default tolerance.
+    assert mnorm(pinv(A, rtol=1e-20) - Aplus, 1) < 1.e-14
+
 def test_householder():
     A, b = A8, b8
     H, p, x, r = householder(extend(A, b))
@@ -186,6 +200,18 @@ def test_solve_overdet_complex():
     A = matrix([[1, 2j], [3, 4j], [5, 6]])
     b = matrix([1 + j, 2, -j])
     assert norm(residual(A, lu_solve(A, b), b)) < 1.0208
+
+def test_qr_solve_issue_983():
+    A = matrix([[1, -pi/20, (-pi/20)**2, (-pi/20)**3],
+                [1, 0, 0, 0],
+                [1, pi / 20, (pi/20)**2, (pi/20)**3],
+                [1, pi/10, (pi/10)**2, (pi/10)**3]])
+    b = matrix([[mp.sin(-pi/20)],
+                [0],
+                [mp.sin(pi/20)],
+                [mp.sin(pi/20)]])
+    x, _ = qr_solve(A, b)
+    assert norm(residual(A, x, b), inf) < 1e-14
 
 def test_singular():
     A = [[5.6, 1.2], [7./15, .1]]
@@ -276,7 +302,6 @@ def test_exp_pade():
         e1 = expm(a1, method='pade')
         mp.dps = dps + extra
         d = e2 - e1
-        #print d
         mp.dps = dps
         assert norm(d, inf).ae(0)
 
@@ -321,32 +346,22 @@ def test_qr():
         # perform A -> QR decomposition
         Q, R = qr(A, mode, edps = exdps)
 
-        #print('\n\n A = \n', nstr(A, 4))
-        #print('\n Q = \n', nstr(Q, 4))
-        #print('\n R = \n', nstr(R, 4))
-        #print('\n Q*R = \n', nstr(Q*R, 4))
-
         maxnorm = mpf('1.0E-11')
         n1 = norm(A - Q * R)
-        #print '\n Norm of A - Q * R = ', n1
         assert n1 <= maxnorm
 
         if dtype == 'real':
             n1 = norm(eye(m) - Q.T * Q)
-            #print ' Norm of I - Q.T * Q = ', n1
             assert n1 <= maxnorm
 
             n1 = norm(eye(m) - Q * Q.T)
-            #print ' Norm of I - Q * Q.T = ', n1
             assert n1 <= maxnorm
 
         if dtype == 'complex':
             n1 = norm(eye(m) - Q.T * Q.conjugate())
-            #print ' Norm of I - Q.T * Q.conjugate() = ', n1
             assert n1 <= maxnorm
 
             n1 = norm(eye(m) - Q.conjugate() * Q.T)
-            #print ' Norm of I - Q.conjugate() * Q.T = ', n1
             assert n1 <= maxnorm
 
 def test_rank():

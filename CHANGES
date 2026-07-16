@@ -1,5 +1,89 @@
---1.4.0--
+--1.5.0--
 Released TBD
+
+Features:
+
+* Support special numbers in mpf_frexp() like math.frexp(),
+  see #1081 (Sergey B Kirpichev)
+* Add ModAB rootfinding algorithm, see #1093 (Ayush Baranwal)
+* Add Brent root-finding algorithm, see #1103 (Ayush Baranwal)
+* Correct integral path of the lerchphi() to use Laplace transform
+  integral, see #1109 (Sergey B Kirpichev)
+
+Compatibility:
+
+* Drop support for CPython 3.9, see #1058 (Sergey B Kirpichev)
+* Remove deprecated math2 and rational modules, see #1057 (Sergey B Kirpichev)
+* Remove deprecated mp.mpnumeric alias, see #1057 (Sergey B Kirpichev)
+* Remove deprecated bitcount(), fp.is_special() and  to/from_pickable()
+  functions, see #1057 (Sergey B Kirpichev)
+* Drop DeprecationWarning for force_type kwarg for matrix(),
+  see #1057 (Sergey B Kirpichev)
+* Use signed=True per default in to_man_exp(), see #1057 (Sergey B Kirpichev)
+* Use asc=True per default for polynomial functions, see
+  #1057 (Sergey B Kirpichev)
+* Restrict libmp exports to public API, see #1089 (Sergey B Kirpichev)
+
+Bug fixes:
+
+* Fix test_hexadecimal_with_libc_bulk(), see #1049 (Doug Torrance)
+* Keep available deprecated aliases for mpc/mpf_log() (Sergey B Kirpichev)
+* Use version_file option of setuptools-scm to keep version info, see #1048
+  (Sergey B Kirpichev)
+* Add workaround for test on s390x, see #1061 (Sergey B Kirpichev)
+* Fix signature of root(), see #1072 (Sergey B Kirpichev)
+* Speedup removal trailing zeros in _normalize/from_man_exp(), see #1074
+  (Fredrik Johansson and Sergey B Kirpichev)
+* Improve documentation about rounding in the mp context,
+  see #1079 (Sergey B Kirpichev)
+* Correct to_float() conversion for double-rounding cases (e.g. subnormals),
+  see #1082 (Sergey B Kirpichev)
+* Fix qr_solve() failure on well-conditioned matrices with zero pivot, see
+  #1083 (Jam Balaya)
+* Clarify to_float() docstring, see #1087 (Sergey B Kirpichev)
+* Add extra precision for summation in mpf_hypot(), see
+  #1088 (Sergey B Kirpichev)
+* Fix typo and function names for sin/cospi(), see #1091 (Sergey B Kirpichev)
+* Raise ValueError when same sign at interval boundaries in bisection
+  rootfinding algorithm, see #1092 (Ayush Baranwal)
+* Correct interval update for Ridder's method, see #1096 (Sergey B Kirpichev)
+* Set dynamic maxsteps value for the bisect method, see
+  #1096 (Sergey B Kirpichev)
+* Implement direct series for lerchphi() base case with |z| < 1,
+  see #1100 (Sergey B Kirpichev)
+* Correct exception message for THETA_Q_LIM, see #1102
+  (Sergey B Kirpichev and Jam Balaya)
+* Fix gegenbauer() failing to converge for odd integer n at z=0,
+  see #1101 (Vincent Gao)
+* Reorganize fixed-precision computations for theta3 to avoid
+  severe cancellation, see #1107 (Sergey B Kirpichev)
+
+Maintenance:
+
+* Add bash script to test package version in a frozen application version
+  and a separate CI job to run it, see #1055 (flurin4)
+* Revert "Add backport action", see #1063 (Sergey B Kirpichev)
+* Test on CPython 3.15, see #1071, #1106 and #1110 (Sergey B Kirpichev)
+* Add AI-related policy, see #1098 (Sergey B Kirpichev)
+* Fix test_sn_cn_dn_identities(), see #1106 (Sergey B Kirpichev)
+* Fix test_compatibility(): avoid using of private numpy
+  API (Sergey B Kirpichev)
+
+
+--1.4.1--
+Released March 15, 2026
+
+Bug fixes:
+
+* Fix test_hexadecimal_with_libc_bulk(), see #1049 (Doug Torrance)
+* Keep available deprecated aliases for mpc/mpf_log() (Sergey B Kirpichev)
+* Use version_file option of setuptools-scm to keep version info, see #1048
+  (Sergey B Kirpichev)
+* Add workaround for test on s390x, see #1061 (Sergey B Kirpichev)
+
+
+--1.4.0--
+Released February 23, 2026
 
 Features:
 
@@ -12,7 +96,7 @@ Features:
   Kirpichev)
 * Support randmatrix() for mp.iv and mp contexts, see #527 (Maximilian
   Gaukler)
-* Added rand() function for matrices, see #610 (Jan-Philipp Hoffmann)
+* Added rank() function for matrices, see #610 (Jan-Philipp Hoffmann)
 * Add plus flag to select the B_1 sign convention for bernoulli/bernfrac, see
   #724 (Jeremy Tan Jie Rui, Sergey B Kirpichev)
 * Add mpf.as_integer_ratio() method, support construction of mpf from Decimal
@@ -58,14 +142,14 @@ Features:
   #936 (Sergey B Kirpichev)
 * Use PyREPL, as fallback (no IPython), see #941 (Sergey B Kirpichev)
 * Add exp2() and log2(), see #948 (Sergey B Kirpichev)
-* Add isspecial() method for contexts, see #949 (Sergey B Kirpichev)
 * Support rounding property for the mp context, see #963 (Sergey B Kirpichev)
 * Add Fox H-function with rational A/B parameters (foxh()), see #982 (Hongren Zheng)
+* Provide experimental support for free-threading builds, see #993 (Sergey B Kirpichev)
 
 Compatibility:
 
 * Drop Python 2 support, see #629 (Fangchen Li)
-* Drop support for Python versions < 3.8, see #675 (Sergey B Kirpichev)
+* Drop support for Python versions < 3.9, see #675 and #911 (Sergey B Kirpichev)
 * Drop private mpq class, use Rational's, provided by backend, see #691 and
   #769 (Sergey B Kirpichev)
 * Drop to_pickable()/from_pickable() helpers, see #667 and #769 (Sergey B
@@ -78,14 +162,13 @@ Compatibility:
 * Deprecate current (descending) order of coefficients in polyval(), etc, see
   #779, #844 and #845 (Sergey B Kirpichev, Warren Weckesser)
 * Deprecate mpmath.math2, see #769 (Sergey B Kirpichev)
-* Drop support for CPython 3.8, see #911 (Sergey B Kirpichev)
-* Deprecate isnormal() method of contexts, see #949 (Sergey B Kirpichev)
 * Importing from the mpmath.libmp submodules is deprecated, use instead ``from
   mpmath.libmp import foo``, see
   issue https://github.com/mpmath/mpmath/issues/704#issuecomment-2953536980
   for available functions (Sergey B Kirpichev)
 * Deprecate bitcount function, see #721 and #955 (Sergey B Kirpichev)
 * Deprecate mpf/mpc_log, see #989 (Sergey B Kirpichev)
+* Deprecate fp.is_special(), see #1042 (Sergey B Kirpichev)
 
 Bug fixes:
 
@@ -146,8 +229,8 @@ Bug fixes:
 * Special case in ctx.hypsum for infinite z, see #902 (Sergey B Kirpichev)
 * Raise an exception if iv's comparison can't be decided, see #903 (Sergey B
   Kirpichev)
-* Add special case for ±inf in polylog_continuation(), see #904 (Sergey B
-  Kirpichev)
+* Add special case for ±inf in polylog_continuation(), see #904, #1034
+  and #1037 (Sergey B Kirpichev, Colin B. Macdonald)
 * Increase working precision in polylog_general() for negative s, see #898
   (Sergey B Kirpichev)
 * Correct case for integer n in besselj/besseli, see #909 (Sergey B Kirpichev)
@@ -155,7 +238,7 @@ Bug fixes:
 * Ensure mpf_bernoulli() returns normalized answer, see #939 (Sergey B
   Kirpichev)
 * Use mpf_log1p in acos_asin() helper (implementing Hull et al algorithm), see
-  #948 (Sergey B Kirpichev)
+  #948 and #1036 (Sergey B Kirpichev)
 * Fix kwargs passing in the nstr() for mpc, see #964 (David Walker)
 * Fix exception type for int(inf), see #966 (Sergey B Kirpichev)
 * Ensure exp, sin, tan, etc have a correct __name__ attribute, see #997
@@ -163,6 +246,12 @@ Bug fixes:
 * Matrix raise ValueError in case of negative dimensions, see #1004 (Ayush
   Baranwal)
 * Support lists in sinm() and cosm(), see #1003 (Ayush Baranwal)
+* Properly handle nan's elliprj(), see #1038 (Sergey B Kirpichev)
+* Raise ValueError for logm(0), see #1017 (Ayush Baranwal)
+* Fix erf(z) with re(z) of large magnitude, see #1039 (Sergey B Kirpichev)
+* Return nan's for polylog(s, nan) or polylog(s, nan+nanj),
+  see #1041 (Sergey B Kirpichev)
+* Fix fp.isnormal() for subnormals, see #1042 (Sergey B Kirpichev)
 
 Maintenance:
 
@@ -194,10 +283,11 @@ Maintenance:
 * Simplify ctx_mp_python.py, see #806 (Sergey B Kirpichev)
 * Update gmpy2 deps, see #808 and #813 (Sergey B Kirpichev)
 * Enable testing on 3.14, see #851 (Sergey B Kirpichev)
-* Refactor Github Actions, see 905 (Sergey B Kirpichev)
+* Refactor Github Actions, see #905 (Sergey B Kirpichev)
 * Build and publish wheel, see #913 (David Hotham)
 * Use the intended setuptools_scm integration pattern, see #940 (Ronny
   Pfannschmidt)
+* Add backport action, see #1042 (Sergey B Kirpichev)
 
 See the release milestone (1.4) for a complete list of issues and pull requests
 involved in this release.

@@ -91,7 +91,7 @@ def barnesg(ctx, z):
         return ctx.nan
     if ctx.isnan(z):
         return z
-    if (not ctx._im(z)) and ctx._re(z) <= 0 and ctx.isint(ctx._re(z)):
+    if ctx.isnpint(z):
         return z*0
     # Account for size (would not be needed if computing log(G))
     if abs(z) > 5:
@@ -146,7 +146,7 @@ def hyperfac(ctx, z):
     else:
         extra = 0
     ctx.prec += extra
-    if not ctx._im(z) and ctx._re(z) < 0 and ctx.isint(ctx._re(z)):
+    if z and ctx.isnpint(z):
         n = int(ctx.re(z))
         h = ctx.hyperfac(-n-1)
         if ((n+1)//2) & 1:

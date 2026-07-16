@@ -7,7 +7,8 @@ from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     j, log, loggamma, mp, mpc, mpf, mpmathify, nan, pi,
                     polyexp, polylog, primezeta, psi, rf, rgamma, sech,
                     secondzeta, siegelz, sinc, sqrt, stieltjes, superfac, zeta)
-from mpmath.libmp import from_float, mpf_zeta_int, round_up
+from mpmath.libmp import from_float, round_up
+from mpmath.libmp.gammazeta import mpf_zeta_int
 
 
 def test_zeta_int_bug():

@@ -1,5 +1,5 @@
-from operator import gt, lt
 import random
+from operator import gt, lt
 
 from . import libmp
 from .calculus.calculus import CalculusMethods
@@ -338,15 +338,15 @@ class StandardBaseContext(Context,
     def _default_hyper_maxprec(ctx, p):
         return int(1000 * p**0.25 + 4*p)
 
-    _gcd = staticmethod(libmp.gcd)
-    list_primes = staticmethod(libmp.list_primes)
-    isprime = staticmethod(libmp.isprime)
-    bernfrac = staticmethod(libmp.bernfrac)
-    moebius = staticmethod(libmp.moebius)
+    _gcd = staticmethod(libmp.libintmath.gcd)
+    list_primes = staticmethod(libmp.libintmath.list_primes)
+    isprime = staticmethod(libmp.libintmath.isprime)
+    bernfrac = staticmethod(libmp.gammazeta.bernfrac)
+    moebius = staticmethod(libmp.libintmath.moebius)
     _ifac = staticmethod(libmp.ifac)
-    _eulernum = staticmethod(libmp.eulernum)
-    _stirling1 = staticmethod(libmp.stirling1)
-    _stirling2 = staticmethod(libmp.stirling2)
+    _eulernum = staticmethod(libmp.libintmath.eulernum)
+    _stirling1 = staticmethod(libmp.libintmath.stirling1)
+    _stirling2 = staticmethod(libmp.libintmath.stirling2)
 
     def sum_accurately(ctx, terms, check_step=1):
         prec = ctx.prec

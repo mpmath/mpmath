@@ -402,8 +402,8 @@ def polylog_series(ctx, s, z):
 def polylog_continuation(ctx, n, z):
     if n < 0:
         return z*0
-    if ctx._is_real_type(z) and ctx.isinf(z) and n > 0 and z < 0:
-        return ctx.ninf
+    if ctx._is_real_type(z) and ctx.isinf(z) and n > 0:
+        return ctx.ninf if z < 0 else ctx.mpc(ctx.ninf, ctx.nan)
     twopij = 2j * ctx.pi
     a = -twopij**n/ctx.fac(n) * ctx.bernpoly(n, ctx.ln(z)/twopij)
     if ctx._is_real_type(z) and z < 0:
@@ -493,6 +493,10 @@ def polylog(ctx, s, z):
         return polylog_series(ctx, s, z)
     if abs(z) >= 1.4 and ctx.isint(s):
         return (-1)**(s+1)*polylog_series(ctx, s, 1/z) + polylog_continuation(ctx, int(ctx.re(s)), z)
+    if ctx.isnan(z):
+        if ctx._is_real_type(z) and ctx.isnpint(s):
+            return ctx.nan
+        return ctx.mpc(ctx.nan, ctx.nan)
     if ctx.isint(s):
         return polylog_unitcircle(ctx, int(ctx.re(s)), z)
     return polylog_general(ctx, s, z)
@@ -871,10 +875,6 @@ def secondzeta_prime_term(ctx, s, a, **kwargs):
     return +totsum, err, n
 
 def secondzeta_exp_term(ctx, s, a):
-    if ctx.isint(s) and ctx.re(s) <= 0:
-        m = int(round(ctx.re(s)))
-        if not m & 1:
-            return ctx.mpf('-0.25')**(-m//2)
     tol = ctx.eps
     f = lambda n: (0.25*a)**n/((n+0.5*s)*ctx.fac(n))
     totsum = ctx.zero
@@ -1018,10 +1018,10 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
     s = ctx.convert(s)
     a = ctx.convert(a)
     tol = ctx.eps
-    if ctx.isint(s) and ctx.re(s) <= 1:
+    if ctx.isnpint(s-1):
         if abs(s-1) < tol*1000:
             return ctx.inf
-        m = int(round(ctx.re(s)))
+        m = round(ctx.re(s))
         if m & 1:
             return ctx.inf
         else:
@@ -1158,13 +1158,47 @@ def lerchphi(ctx, z, s, a):
             v += zpow / (a+n)**s
             zpow *= z
         return zpow * ctx.lerchphi(z,s, a+m) + v
-    g = ctx.ln(z)
-    v = 1/(2*a**s) + ctx.gammainc(1-s, -a*g) * (-g)**(s-1) / z**a
-    h = s / 2
-    r = 2*ctx.pi
-    f = lambda t: ctx.sin(s*ctx.atan(t/a)-t*g) / \
-        ((a**2+t**2)**h * ctx.expm1(r*t))
-    v += 2*ctx.quad(f, [0, ctx.inf])
-    if not ctx.im(z) and not ctx.im(s) and not ctx.im(a) and ctx.re(z) < 1:
-        v = ctx.chop(v)
-    return v
+    if abs(z) < 0.5:
+        return ctx.nsum(lambda k: z**k/(a+k)**s, [0, ctx.inf])
+    g = lambda t: t**(s - 1)*ctx.exp(-a*t)/(1 - z*ctx.exp(-t))
+    h = lambda t: (-t)**(s - 1)*ctx.exp(-a*t)/(1 - z*ctx.exp(-t))
+    L = ctx.log(z)
+    if ctx.isint(s) and s.real >= 1:
+        if abs(L.imag) < 0.25 and L.real >= 0:
+            if z.imag <= 0:
+                I = ctx.quad(g, [0, +1j, +1j + abs(L) + 1, abs(L) + 1, ctx.inf])
+            else:
+                I = ctx.quad(g, [0, -1j, -1j + abs(L) + 1, abs(L) + 1, ctx.inf])
+        else:
+            I = ctx.quad(g, [0, ctx.inf])
+        return ctx.rgamma(s)*I
+    if L.real < -0.5:
+        residue = 0
+        c = min(abs(L.real)/2, 1)
+        left = right = top = c
+    elif abs(L.imag) > 0.5:
+        residue = 0
+        c = min(abs(L.imag)/2, 1)
+        left = right = top = c
+    else:
+        residue = (-L)**s/L/z**a
+        left = max(0, -L.real) + 1
+        top = abs(L.imag) + 1
+        right = abs(L) + 1
+    isreal = not z.imag and z.real < 1 and not s.imag and not a.imag and a.real > 0
+    w = ctx.mpc(-1)**(s - 1)
+    I = 0
+    if isreal:
+        I += 2j*ctx.im(ctx.quad(g, [right, right + top*1j]) / w)
+        I += 2j*ctx.im(ctx.quad(g, [right + top*1j, -left + top*1j]) / w)
+        I += 2j*ctx.im(ctx.quad(h, [-left + top*1j, -left]))
+        I += ctx.quad(g, [right, ctx.inf]) * (w - 1/w)
+    else:
+        I += ctx.quad(g, [right, right + top*1j])/w
+        I += ctx.quad(g, [right + top*1j, -left + top*1j])/w
+        I += ctx.quad(h, [-left + top*1j, -left - top*1j])
+        I += ctx.quad(g, [-left - top*1j, right - top*1j])*w
+        I += ctx.quad(g, [right - top*1j, right])*w
+        I += ctx.quad(g, [right, ctx.inf])*(w - 1/w)
+    I = I/(2*ctx.pi*1j) + residue
+    return -ctx.gamma(1 - s)*I

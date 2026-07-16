@@ -283,7 +283,6 @@ class Muller:
             error = abs(x2 - x1)
             yield x2, error
 
-# TODO: consider raising a ValueError when there's no sign change in a and b
 class Bisection:
     """
     1d-solver generating pairs of approximative root and error.
@@ -307,17 +306,23 @@ class Bisection:
         if len(x0) != 2:
             raise ValueError('expected interval of 2 points, got %i' % len(x0))
         self.f = f
-        self.a = x0[0]
-        self.b = x0[1]
+        self.a, self.b = x0
+        self.maxsteps = 2*ctx.prec + ctx.ceil(ctx.log2(abs(self.a - self.b)))
 
     def __iter__(self):
+        ctx = self.ctx
         f = self.f
         a = self.a
         b = self.b
         l = b - a
+        fa = f(a)
         fb = f(b)
+
+        if fa*fb > 0:
+            raise ValueError("Function must have opposite signs at interval boundaries.")
+
         while True:
-            m = self.ctx.ldexp(a + b, -1)
+            m = ctx.ldexp(a + b, -1)
             fm = f(m)
             sign = fm * fb
             if sign < 0:
@@ -326,7 +331,7 @@ class Bisection:
                 b = m
                 fb = fm
             else:
-                yield m, self.ctx.zero
+                yield m, ctx.zero
             l /= 2
             yield (a + b)/2, abs(l)
 
@@ -502,12 +507,15 @@ class Ridder:
                     print('canceled with f(x4) =', fx4)
                 yield x4, abs(x1 - x2)
                 break
-            if fx4 * fx2 < 0: # root in [x4, x2]
-                x1 = x4
-                fx1 = fx4
-            else: # root in [x1, x4]
+            if fx3 * fx4 < 0:  # root in [x4, x3]
+                x1, x2 = x4, x3
+                fx1, fx2 = fx4, fx3
+            elif fx4 * fx1 < 0:  # in [x1, x4]
                 x2 = x4
                 fx2 = fx4
+            else:  # in [x4, x2]
+                x1 = x4
+                fx1 = fx4
             error = abs(x1 - x2)
             yield (x1 + x2)/2, error
 
@@ -567,7 +575,208 @@ class ANewton:
                     print('accelerating convergence')
             yield x0, error
 
-# TODO: add Brent
+class Brent:
+    """
+    1d-solver generating pairs of approximative root and error.
+
+    Uses Brent's method to find a root of f in [a, b]. It combines
+    Bisection, the Secant method, and Inverse Quadratic Interpolation (IQI)
+    for robust and superlinear convergence.
+
+    Pro:
+    * Guaranteed to converge if a root is bracketed (like Bisection).
+    * Can converge much faster than Bisection on smooth functions.
+
+    Contra:
+    * Needs an initial sign-changing bracket.
+
+    http://en.wikipedia.org/wiki/Brent%27s_method
+    """
+    maxsteps = 100
+
+    def __init__(self, ctx, f, x0, **kwargs):
+        self.ctx = ctx
+        if len(x0) != 2:
+            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+
+        self.f = f
+        self.a, self.b = x0
+        self.tol = kwargs['tol']
+
+    def __iter__(self):
+        ctx = self.ctx
+        f = self.f
+
+        a = self.a
+        b = self.b
+        fa = f(a)
+        fb = f(b)
+
+        if fa*fb > 0:
+            raise ValueError("Function must have opposite signs at interval boundaries.")
+
+        if abs(fa) < abs(fb):
+            a, b = b, a
+            fa, fb = fb, fa
+
+        c = a
+        fc = fa
+        d = c # will be assigned properly on the first interation
+        mflag = True
+
+        while True:
+
+            yield b, abs(b - a)
+
+            if fa != fc and fb != fc:
+                # Inverse Quadratic Interpolation formula
+                s = (a * fb * fc) / ((fa - fb) * (fa - fc)) + \
+                    (b * fa * fc) / ((fb - fa) * (fb - fc)) + \
+                    (c * fa * fb) / ((fc - fa) * (fc - fb))
+            else:
+                # standard Secant
+                s = b - fb * (b - a) / (fb - fa)
+
+            # Define conditions matching Brent's bounds
+            bound_lower = (3 * a + b) / 4
+            is_between = (bound_lower <= s <= b) or (b <= s <= bound_lower)
+
+            delta = ctx.eps * max(ctx.one, ctx.fabs(b))
+
+            cond1 = not is_between
+            cond2 = mflag and (abs(s - b) >= abs(b - c) / 2)
+            cond3 = (not mflag) and (abs(s - b) >= abs(c - d) / 2)
+            cond4 = mflag and (abs(b - c) < delta)
+            cond5 = (not mflag) and (abs(c - d) < delta)
+
+            if cond1 or cond2 or cond3 or cond4 or cond5:
+                s = ctx.ldexp(a + b, -1)
+                mflag = True
+            else:
+                mflag = False
+
+            fs = f(s)
+
+            d = c
+            c = b
+            fc = fb
+
+            if fa*fs < 0:
+                b = s
+                fb = fs
+            else:
+                a = s
+                fa = fs
+
+            if abs(fa) < abs(fb):
+                a, b = b, a
+                fa, fb = fb, fa
+
+class ModAB:
+    """
+    1d-solver generating pairs of approximative root and error.
+
+    Uses the Modified Anderson-Björck (modAB) hybrid method to find
+    a root of f in [a, b]. It dynamically switches between Bisection
+    and False Position (Secant) while correcting for stagnant endpoints.
+
+    Pro:
+    * Robust and guaranteed to converge (like Bisection)
+    * Fast convergence on smooth functions (like Secant)
+
+    Contra:
+    * Needs an initial sign change bracket
+
+    https://doi.org/10.3390/a19050332
+    """
+    maxsteps = 200
+
+    def __init__(self, ctx, f, x0, **kwargs):
+        self.ctx = ctx
+        if len(x0) != 2:
+            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+
+        self.f = f
+
+        # Enforce ordering: self.a as lower bound, self.b as upper bound
+        self.a, self.b = x0
+        if self.a > self.b:
+            self.a, self.b = self.b, self.a
+
+    def __iter__(self):
+        ctx = self.ctx
+        f = self.f
+
+        a = self.a
+        b = self.b
+        fa = f(a)
+        fb = f(b)
+
+        # Check for initial bracketing
+        if fa*fb > 0:
+            raise ValueError("Function must have opposite signs at interval boundaries.")
+
+        bisection = True
+        side = 0 # -1 for left moved last, 1 for right, 0 for none
+        threshold = b - a
+        C = ctx.mpf(16) # Safety factor threshold scaling constant
+
+        while True:
+            if bisection:
+                x3 = ctx.ldexp(a + b, -1)
+            else:
+                x3 = (a * fb - b * fa) / (fb - fa)
+
+            # Yield the current best guess and the remaining interval length (error)
+            yield x3, abs(b - a)
+
+            # Evaluate function or handle out-of-bounds secant calculations
+            if bisection:
+                fx3 = f(x3)
+                ym = ctx.ldexp(fa + fb, -1)
+
+                # Check linearity to see if we can switch to secant
+                r = ctx.one - ctx.fabs(ym / (fb - fa)) # Symmetry factor
+                k = r * r                              # Deviation factor
+
+                if ctx.fabs(ym - fx3) < k * (ctx.fabs(fx3) + ctx.fabs(ym)):
+                    bisection = False
+                    threshold = (b - a) * C
+            else:
+                # Clamp secant point safely within the bounds to handle floating-point rounding
+                if x3 <= a:
+                    x3, fx3 = a, fa
+                elif x3 >= b:
+                    x3, fx3 = b, fb
+                else:
+                    fx3 = f(x3)
+
+                threshold *= 0.5
+
+            # Check for exact root convergence
+            if fx3 == ctx.zero:
+                yield x3, ctx.zero
+
+            # Update the interval and apply Anderson-Björck adjustments
+            if fa*fx3 > 0:
+                if side == 1:
+                    m = ctx.one - (fx3 / fa)
+                    fb *= ctx.ldexp(ctx.one, -1) if m <= 0 else m
+                elif not bisection:
+                    side = 1
+                a, fa = x3, fx3
+            else:
+                if side == -1:
+                    m = ctx.one - (fx3 / fb)
+                    fa *= ctx.ldexp(ctx.one, -1) if m <= 0 else m
+                elif not bisection:
+                    side = -1
+                b, fb = x3, fx3
+
+            # Fallback check: If progress is too slow, force a bisection step next time
+            if (b - a) > threshold:
+                bisection = True
+                side = 0
 
 ############################
 # MULTIDIMENSIONAL SOLVERS #
@@ -686,7 +895,7 @@ class MDNewton:
 str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'halley':Halley, 'muller':Muller, 'bisect':Bisection,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
-              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton}
+              'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton, 'modAB':ModAB, 'brent':Brent}
 
 def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
     r"""
@@ -739,7 +948,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     expected to be positive).
     You can use the following string aliases:
     'secant', 'mnewton', 'halley', 'muller', 'illinois', 'pegasus', 'anderson',
-    'ridder', 'anewton', 'bisect'
+    'ridder', 'anewton', 'bisect', 'modAB'
 
     See mpmath.calculus.optimization for their documentation.
 
@@ -879,7 +1088,7 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     **Intersection methods**
 
     When you need to find a root in a known interval, it's highly recommended to
-    use an intersection-based solver like ``'anderson'`` or ``'ridder'``.
+    use an intersection-based solver like ```'modAB'``` or ``'anderson'`` or ``'ridder'``.
     Usually they converge faster and more reliable. They have however problems
     with multiple roots and usually need a sign change to find a root::
 

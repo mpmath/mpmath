@@ -16,8 +16,9 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     sec, sech, sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan,
                     tanh, twinprime, unitroots)
 from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
-                          mpf_mul, mpf_pow_int, mpf_rand, mpf_sqrt,
-                          round_ceiling, round_down, round_nearest, round_up)
+                          mpf_mul, mpf_pow_int, mpf_sqrt, round_ceiling,
+                          round_down, round_nearest, round_up)
+from mpmath.libmp.libmpf import mpf_rand
 
 
 def mpc_ae(a, b, eps=eps):
@@ -156,6 +157,9 @@ def test_hypot():
     assert hypot(0.33, 0) == mpf(0.33)
     assert hypot(-0.33, 0) == mpf(0.33)
     assert hypot(3, 4) == mpf(5)
+    # issue 1011
+    assert hypot(1.0000044432326138,
+                 1.0068578402095993) == mpf('1.4190742041473763')
 
 def test_exact_cbrt():
     for i in range(0, 20000, 200):
@@ -546,6 +550,10 @@ def test_frexp():
     assert frexp(1) == (0.5, 1)
     assert frexp(0.2) == (0.8, -2)
     assert frexp(1000) == (0.9765625, 10)
+    assert frexp(inf) == (inf, 0)
+    assert frexp(-inf) == (-inf, 0)
+    r = frexp(nan)
+    assert isnan(r[0]) and r[1] == 0
 
 def test_aliases():
     assert ln(7) == log(7)
@@ -1089,3 +1097,10 @@ def test_issue_749():
 
 def test_issue_1035():
     assert mp.acos(1e-50j).ae(1.5707963267948966)
+
+def test_wrap_libmp_api():
+    assert sin(1) != sin(1, prec=1000)
+    assert sin(1) != sin(1, dps=100)
+    assert sin(1, rounding='d') < sin(1, rounding='u')
+    pytest.raises(ValueError, lambda: sin(1, prec=123, dps=321))
+    pytest.raises(TypeError, lambda: sin(1, 2))

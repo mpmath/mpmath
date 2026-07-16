@@ -3,6 +3,7 @@ import decimal
 import math
 import operator
 import random
+import sys
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest
@@ -11,13 +12,15 @@ from hypothesis import strategies as st
 
 import mpmath
 from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
-                    isinf, isint, isnan, isnormal, isspecial, iv, monitor, mp,
-                    mpc, mpf, mpi, nan, ninf, nint, nint_distance, nstr, pi,
+                    isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
+                    mpi, nan, ninf, nint, nint_distance, nstr, pi, rand,
                     workprec)
-from mpmath.libmp import (MPQ, MPZ, finf, fnan, fninf, fnone, fone, from_float,
-                          from_int, from_pickable, from_str, isprime, mpf_add,
-                          mpf_mul, mpf_sub, round_down, round_nearest,
-                          round_up, to_int, to_man_exp, to_pickable)
+from mpmath.libmp import (MPZ, finf, fnan, fninf, fnone, fone, from_float,
+                          from_int, from_str, mpf_add, mpf_mul, mpf_sub,
+                          round_down, round_nearest, round_up, to_float,
+                          to_int, to_man_exp)
+from mpmath.libmp.backend import MPQ
+from mpmath.libmp.libintmath import isprime, jacobi_symbol
 
 
 def test_type_compare():
@@ -121,6 +124,9 @@ def test_pow():
     assert inf ** mpf(0) == mpf(1)
     assert ninf ** mpf(0) == mpf(1)
     assert nan ** mpf(0) == mpf(1)
+    assert mpc(1, -inf)**3 == mpc(-inf, inf)
+    assert mpc(1, -inf)**4 == mpc(inf, inf)
+
 
 def test_mixed_misc():
     assert 1 + mpf(3) == mpf(3) + 1 == 4
@@ -152,7 +158,7 @@ def test_mpf_init():
     assert a1 != a3
     assert str(a1) == '0.300000190734863'
     assert str(a3) == '0.3'
-    pytest.raises(ValueError, lambda: mpf((1, 2, 3)))
+    pytest.raises(ValueError, lambda: mpf((1,)))
     pytest.raises(ValueError, lambda: mpf(mpi(1, 2)))
     pytest.raises(TypeError, lambda: mpf(object()))
     pytest.raises(TypeError, lambda: mpf(1 + 1j))
@@ -180,6 +186,8 @@ def test_mpf_init():
     assert mpf('0x1.4ace478p+33') == mpf(11100000000.0)
     assert mpf('0x1.4ace478p+33', base=0) == mpf(11100000000.0)
     assert mpf('1.4ace478p+33', base=16) == mpf(11100000000.0)
+    assert mpf((1, 17813873926281399, -78, 54), prec=5,
+               rounding='u') == mpf('-5.9604644775390625e-8')
 
     assert mpf(float('+inf')) == +inf
     assert mpf(float('-inf')) == -inf
@@ -462,40 +470,50 @@ def test_isnan_etc():
     assert isinf(MPQ(3, 2)) is False
     assert isinf(MPQ(0, 1)) is False
     pytest.raises(TypeError, lambda: isinf(object()))
-    assert isspecial(3) is False
-    assert isspecial(3.5) is False
-    assert isspecial(mpf(3.5)) is False
-    assert isspecial(0) is True
-    assert isspecial(mpf(0)) is True
-    assert isspecial(0.0) is True
-    assert isspecial(inf) is True
-    assert isspecial(-inf) is True
-    assert isspecial(nan) is True
-    assert isspecial(float(inf)) is True
-    assert isspecial(mpc(0, 0)) is True
-    assert isspecial(mpc(3, 0)) is False
-    assert isspecial(mpc(0, 3)) is False
-    assert isspecial(mpc(3, 3)) is False
-    assert isspecial(mpc(0, nan)) is True
-    assert isspecial(mpc(0, inf)) is True
-    assert isspecial(mpc(3, nan)) is True
-    assert isspecial(mpc(3, inf)) is True
-    assert isspecial(mpc(3, -inf)) is True
-    assert isspecial(mpc(nan, 0)) is True
-    assert isspecial(mpc(inf, 0)) is True
-    assert isspecial(mpc(nan, 3)) is True
-    assert isspecial(mpc(inf, 3)) is True
-    assert isspecial(mpc(inf, nan)) is True
-    assert isspecial(mpc(nan, inf)) is True
-    assert isspecial(mpc(nan, nan)) is True
-    assert isspecial(mpc(inf, inf)) is True
-    assert isspecial(MPQ(3, 2)) is False
-    assert isspecial(MPQ(0, 1)) is True
-    pytest.raises(TypeError, lambda: isspecial(object()))
-    assert isspecial(5e-324) is False  # issue 946
-    assert fp.isspecial(5e-324) is False
-    assert fp.isspecial(0.0) is True
-    assert fp.isspecial(-0.0) is True
+    assert isnormal(3) is True
+    assert isnormal(3.5) is True
+    assert isnormal(mpf(3.5)) is True
+    assert isnormal(0) is False
+    assert isnormal(mpf(0)) is False
+    assert isnormal(0.0) is False
+    assert isnormal(inf) is False
+    assert isnormal(-inf) is False
+    assert isnormal(nan) is False
+    assert isnormal(float(inf)) is False
+    assert isnormal(mpc(0, 0)) is False
+    assert isnormal(mpc(3, 0)) is True
+    assert isnormal(mpc(0, 3)) is True
+    assert isnormal(mpc(3, 3)) is True
+    assert isnormal(mpc(0, nan)) is False
+    assert isnormal(mpc(0, inf)) is False
+    assert isnormal(mpc(3, nan)) is False
+    assert isnormal(mpc(3, inf)) is False
+    assert isnormal(mpc(3, -inf)) is False
+    assert isnormal(mpc(nan, 0)) is False
+    assert isnormal(mpc(inf, 0)) is False
+    assert isnormal(mpc(nan, 3)) is False
+    assert isnormal(mpc(inf, 3)) is False
+    assert isnormal(mpc(inf, nan)) is False
+    assert isnormal(mpc(nan, inf)) is False
+    assert isnormal(mpc(nan, nan)) is False
+    assert isnormal(mpc(inf, inf)) is False
+    assert isnormal(MPQ(3, 2)) is True
+    assert isnormal(MPQ(0, 1)) is False
+    pytest.raises(TypeError, lambda: isnormal(object()))
+    assert isnormal(math.nextafter(0, 1)) is True  # issue 946
+    assert fp.isnormal(math.nextafter(0, 1)) is False
+    assert fp.isnormal(0.0) is False
+    assert fp.isnormal(-0.0) is False
+    assert fp.isnormal(fp.nan) is False
+    assert fp.isnormal(fp.inf) is False
+    assert fp.isnormal(fp.ninf) is False
+    assert fp.isnormal(1.0) is True
+    assert fp.isnormal(sys.float_info.min) is True
+    assert fp.isnormal(1+0j) is True
+    assert fp.isnormal(0j) is False
+    assert fp.isnormal(-0j) is False
+    assert fp.isnormal(1+1j) is True
+    assert fp.isnormal(complex('inf+1j')) is False
     assert isint(3) is True
     assert isint(0) is True
     assert isint(int(3)) is True
@@ -544,13 +562,6 @@ def test_isnan_etc():
     assert mp.isnpint(-1 + 0.1j) is False
     assert mp.isnpint(0 + 0.1j) is False
     assert mp.isnpint(inf) is False
-    with pytest.deprecated_call():
-        for ctx in [mp, fp]:
-            assert ctx.isnormal(1) is True
-            assert ctx.isnormal(0.0) is False
-            assert ctx.isnormal(ctx.mpc(0)) is False
-            assert ctx.isnormal(ctx.mpc(0, 1)) is True
-            assert ctx.isnormal(ctx.mpc(1, inf)) is False
 
 
 def test_isprime():
@@ -569,34 +580,8 @@ def test_ctx_mag():
     assert mp.mag(MPQ(2)) == 2
     assert mp.mag(MPQ(0)) == mpf('-inf')
 
-
-def test_ctx_mp_mpnumeric():
-    with pytest.deprecated_call():
-        from mpmath.ctx_mp import mpnumeric
-
-def test_to_man_exp_deprecation():
-    with pytest.deprecated_call():
-        to_man_exp(fnone)
-
-def test_rational_deprecation():
-    with pytest.deprecated_call():
-        assert mpmath.rational.mpq(1, 2) == MPQ(1, 2)
-    with pytest.deprecated_call():
-        pytest.raises(AttributeError, lambda: mpmath.rational.spam)
-
-
-def test_math2_deprecation():
-    with pytest.deprecated_call():
-        assert mpmath.math2.log == mpmath.libfp.log
-
-
-def test_to_from_pickable():
-    x = mpf(1.2)._mpf_
-    with pytest.deprecated_call():
-        assert to_pickable(x) == x
-    with pytest.deprecated_call():
-        assert from_pickable(x) == x
-
+def test_to_man_exp():
+    assert to_man_exp(fnone, signed=False) == (1, 0)
 
 def test_rand_precision():
     """
@@ -652,6 +637,7 @@ def test_issue_260():
 @example(2.675, 2)
 @example(math.inf, 3)
 @example(-math.inf, 1)
+@example(8.9884656743115795e+307, 0)
 def test_round_bulk(x, n):
     mp.prec = fp.prec
     m = mpf(x)
@@ -700,13 +686,6 @@ def test_issue_985():
     assert mpc(-1) in {1, -1}
 
 
-def test_mpfmpc_log_deprecation():
-    with pytest.deprecated_call():
-        mpmath.libmp.mpf_log(mpf(123)._mpf_, 53)
-    with pytest.deprecated_call():
-        mpmath.libmp.mpc_log(mpc(123)._mpc_, 53)
-
-
 def test_issue_975():
     def worker():
         mp = mpmath.MPContext()
@@ -717,3 +696,90 @@ def test_issue_975():
     for i in range(sz):
         futures[i] = tpe.submit(worker)
     assert len(collections.Counter(f.result() for f in futures))
+
+
+def test_to_float():
+    # coverage tests
+    mp.dps = 1000
+
+    x = mpf('0b1.1111111111111111111111111111111111111'
+            '11111111111111011p-1023')
+    assert float(x).hex() == '0x0.fffffffffffffp-1022'
+    x = mpf('0b1.1111111111111111111111111111111111111'
+            '11111111111111111p-1023')
+    assert float(x).hex() == '0x1.0000000000000p-1022'
+
+    assert math.isnan(float(mpf('nan')))
+    assert float(-mpf('0x1.1p-1075')) == float.fromhex('-0x0.0000000000001p-1022')
+    assert float(mpf('0x1.1p-1075')) == float.fromhex('0x0.0000000000001p-1022')
+
+    assert to_float(mpf('0x1p3000')._mpf_) == sys.float_info.max
+    assert to_float((-mpf('0x1p3000'))._mpf_) == -sys.float_info.max
+    pytest.raises(OverflowError, lambda: to_float(mpf('0x1p3000')._mpf_,
+                                                  strict=True,
+                                                  rnd=round_nearest))
+    pytest.raises(OverflowError, lambda: to_float((-mpf('0x1p3000'))._mpf_,
+                                                  strict=True,
+                                                  rnd=round_nearest))
+
+def test_issue_1078():
+    mp.dps = 5000  # way too large
+
+    # These are adjacent denormals (in 64-bit doubles)
+    lo = mpf("0x0.0000000000001p-1022")
+    hi = mpf("0x0.0000000000002p-1022")
+
+    # Take a value that's a tiny bit below the
+    # midpoint (i.e. closer to `lo`):
+    mid = (lo + hi) / 2
+
+    # Offset of 2^-52 ULP: correctly rounds to lo
+    val_ok = mid - mpf(2) ** -(1074 + 52)
+    # Offset of 2^-53 ULP: was incorrectly rounded to hi (even)
+    val_bad = mid - mpf(2) ** -(1074 + 53)
+
+    assert float(val_ok) == float(val_bad) == float(lo)
+
+
+def test_jacobi_symbol():
+    assert jacobi_symbol(25, 41) == 1
+    assert jacobi_symbol(-23, 83) == -1
+    assert jacobi_symbol(3, 9) == 0
+    assert jacobi_symbol(42, 97) == -1
+    assert jacobi_symbol(3, 5) == -1
+    assert jacobi_symbol(7, 9) == 1
+    assert jacobi_symbol(0, 3) == 0
+    assert jacobi_symbol(0, 1) == 1
+    assert jacobi_symbol(2, 1) == 1
+    assert jacobi_symbol(1, 3) == 1
+    pytest.raises(ValueError, lambda: jacobi_symbol(3, 8))
+    assert jacobi_symbol(10, 3) == 1
+    assert jacobi_symbol(10, -3) == 1
+    assert jacobi_symbol(-10, 3) == -1
+    assert jacobi_symbol(-10, -3) == 1
+    assert jacobi_symbol(11, 3) == -1
+    assert jacobi_symbol(11, -3) == -1
+    assert jacobi_symbol(-11, 3) == 1
+    assert jacobi_symbol(-11, -3) == -1
+
+
+def test_issue_1116():
+    mp.prec = 54
+    x = mpf('0x1.d55368e2bef2p-4')
+    assert repr(x) != "mpf('0.11458149882303958')"
+    assert eval(repr(x)) == x
+
+
+def test_eval_repr_roundtrip():
+    for _ in range(10):
+        prec = random.randint(10, 1001)
+        with workprec(prec):
+            for _ in range(1000):
+                x = rand()
+                assert eval(repr(x)) == x, (prec, x)
+                n = random.randint(-100, 300)
+                if n > 0:
+                    x *= 10**n
+                elif x < 0:
+                    x /= 10**n
+                assert eval(repr(x)) == x, (prec, x)

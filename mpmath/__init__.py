@@ -1,7 +1,4 @@
-from importlib.metadata import version
-
-__version__ = version(__name__)
-del version
+from ._version import __version__
 
 import functools
 import sys
@@ -12,10 +9,6 @@ from .usertools import monitor, timing
 from .ctx_fp import FPContext
 from .ctx_mp import MPContext
 from .ctx_iv import MPIntervalContext
-
-# deprecated modules
-from . import rational
-from . import math2
 
 fp = FPContext()
 mp = MPContext()
@@ -53,7 +46,17 @@ qbarfrom = mp.qbarfrom
 ellipfun = mp.ellipfun
 jtheta = mp.jtheta
 kleinj = mp.kleinj
+kleinjinv = mp.kleinjinv
 eta = mp.eta
+
+# Weierstrass elliptic functions
+weierinvariants = mp.weierinvariants
+weierhalfperiods = mp.weierhalfperiods
+weierp = mp.weierp
+weierpprime = mp.weierpprime
+weiersigma = mp.weiersigma
+weierzeta = mp.weierzeta
+weierpinv = mp.weierpinv
 
 qp = mp.qp
 qhyper = mp.qhyper
@@ -75,7 +78,6 @@ multiplicity = mp.multiplicity
 isinf = mp.isinf
 isnan = mp.isnan
 isnormal = mp.isnormal
-isspecial = mp.isspecial
 isint = mp.isint
 isfinite = mp.isfinite
 almosteq = mp.almosteq
@@ -162,6 +164,7 @@ lu = mp.lu
 qr = mp.qr
 unitvector = mp.unitvector
 inverse = mp.inverse
+pinv = mp.pinv
 residual = mp.residual
 qr_solve = mp.qr_solve
 cholesky = mp.cholesky
@@ -398,6 +401,8 @@ besseljzero = mp.besseljzero
 besselyzero = mp.besselyzero
 spherical_jn = mp.spherical_jn
 spherical_yn = mp.spherical_yn
+spherical_in = mp.spherical_in
+spherical_kn = mp.spherical_kn
 hankel1 = mp.hankel1
 hankel2 = mp.hankel2
 struveh = mp.struveh

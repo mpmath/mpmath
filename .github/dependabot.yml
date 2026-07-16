@@ -4,3 +4,8 @@ updates:
     directory: "/"
     schedule:
       interval: "monthly"
+    rebase-strategy: "disabled"
+    groups:
+      actions-deps:
+        patterns:
+          - "*"

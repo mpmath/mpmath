@@ -81,6 +81,9 @@ def plot(ctx, f, xlim=[-5,5], ylim=None, points=200, file=None, dpi=None,
                 if segment:
                     segments.append(segment)
                 segment = []
+            except Exception:
+                pylab.close(fig)
+                raise
         if segment:
             segments.append(segment)
         for segment in segments:
@@ -209,6 +212,9 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
                 v = color(f(z))
             except ctx.plot_ignore:
                 v = (0.5, 0.5, 0.5)
+            except Exception:
+                pylab.close(fig)
+                raise
             w[n,m] = v
         if verbose:
             print(str(n) + ' of ' + str(N))
@@ -268,7 +274,11 @@ def splot(ctx, f, u=[-5,5], v=[-5,5], points=100, keep_aspect=True,
     xab, yab, zab = [[0, 0] for i in range(3)]
     for n in range(N):
         for m in range(M):
-            fdata = f(ctx.convert(u[m]), ctx.convert(v[n]))
+            try:
+                fdata = f(ctx.convert(u[m]), ctx.convert(v[n]))
+            except Exception:
+                plt.close(fig)
+                raise
             try:
                 x[m,n], y[m,n], z[m,n] = fdata
             except TypeError:

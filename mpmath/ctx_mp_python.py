@@ -1,22 +1,23 @@
 import inspect
 import numbers
 import sys
-import warnings
 
 from . import function_docs
-from .libmp import (MPQ, MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
-                    format_mpc, format_mpf, from_Decimal, from_float, from_int,
-                    from_man_exp, from_npfloat, from_rational, from_str, fzero,
-                    int_types, mpc_abs, mpc_add, mpc_add_mpf, mpc_conjugate,
-                    mpc_div, mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
-                    mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
-                    mpc_mul_mpf, mpc_neg, mpc_pos, mpc_pow, mpc_pow_int,
-                    mpc_pow_mpf, mpc_sub, mpc_sub_mpf, mpc_to_complex,
-                    mpc_to_str, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
-                    mpf_gt, mpf_hash, mpf_le, mpf_lt, mpf_mod, mpf_mul,
-                    mpf_neg, mpf_pos, mpf_pow, mpf_sub, mpf_sum, prec_to_dps,
-                    round_nearest, to_fixed, to_float, to_int, to_man_exp,
-                    to_rational, to_str)
+from .libmp import (MPZ, ComplexResult, dps_to_prec, finf, fnan, fninf,
+                    from_float, from_int, from_man_exp, from_rational,
+                    from_str, fzero, int_types, mpc_abs, mpc_pow, mpc_pow_int,
+                    mpc_pow_mpf, mpf_abs, mpf_add, mpf_div, mpf_eq, mpf_ge,
+                    mpf_gt, mpf_le, mpf_lt, mpf_mod, mpf_mul, mpf_neg, mpf_pow,
+                    mpf_sub, prec_to_dps, round_nearest, to_float, to_int,
+                    to_man_exp, to_rational, to_str)
+from .libmp.backend import MPQ
+from .libmp.libmpc import (mpc_add, mpc_add_mpf, mpc_conjugate, mpc_div,
+                           mpc_div_mpf, mpc_hash, mpc_is_inf, mpc_is_nonzero,
+                           mpc_mpf_div, mpc_mpf_sub, mpc_mul, mpc_mul_int,
+                           mpc_mul_mpf, mpc_neg, mpc_pos, mpc_sub, mpc_sub_mpf,
+                           mpc_to_complex, mpc_to_str)
+from .libmp.libmpf import (format_mpc, format_mpf, from_Decimal, from_npfloat,
+                           mpf_hash, mpf_pos, mpf_sum, to_fixed)
 
 
 new = object.__new__
@@ -909,11 +910,32 @@ class PythonMPContext:
         return ctx.isinf(x)
 
     def isnormal(ctx, x):
-        warnings.warn("the isnormal() method is deprecated",
-                      DeprecationWarning)
+        """
+        Determine whether *x* is "normal" in the sense of floating-point
+        representation; that is, return *False* if *x* is zero, an
+        infinity or NaN; otherwise return *True*. By extension, a
+        complex number *x* is considered "normal" if its magnitude is
+        normal::
+
+            >>> from mpmath import isnormal, inf, nan, mpc
+            >>> isnormal(3)
+            True
+            >>> isnormal(0)
+            False
+            >>> isnormal(inf); isnormal(-inf); isnormal(nan)
+            False
+            False
+            False
+            >>> isnormal(0+0j)
+            False
+            >>> isnormal(0+3j)
+            True
+            >>> isnormal(mpc(2,nan))
+            False
+        """
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
-                return bool(to_man_exp(x._mpf_, signed=True)[0])
+                return bool(to_man_exp(x._mpf_)[0])
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
@@ -926,48 +948,6 @@ class PythonMPContext:
             return bool(x)
         x = ctx.convert(x)
         return ctx.isnormal(x)
-
-    def isspecial(ctx, x):
-        """
-        Determine whether *x* is a "special" in the sense of floating-point
-        representation; that is, return *True* if *x* is zero, an
-        infinity or NaN; otherwise return *False*.  By extension, a
-        complex number *x* is considered "special" if its magnitude is
-        special::
-
-            >>> from mpmath import isspecial, inf, nan, mpc
-            >>> isspecial(3)
-            False
-            >>> isspecial(0)
-            True
-            >>> isspecial(inf)
-            True
-            >>> isspecial(-inf)
-            True
-            >>> isspecial(nan)
-            True
-            >>> isspecial(0+0j)
-            True
-            >>> isspecial(0+3j)
-            False
-            >>> isspecial(mpc(2,nan))
-            True
-        """
-        if hasattr(x, "_mpf_"):
-            if ctx.isfinite(x):
-                return not bool(to_man_exp(x._mpf_, signed=True)[0])
-            return True
-        if hasattr(x, "_mpc_"):
-            re, im = x._mpc_
-            re_special = not bool(re[1])
-            im_special = not bool(im[1])
-            if re == fzero: return im_special
-            if im == fzero: return re_special
-            return re_special or im_special
-        if isinstance(x, int_types) or isinstance(x, MPQ):
-            return not bool(x)
-        x = ctx.convert(x)
-        return ctx.isspecial(x)
 
     def isint(ctx, x, gaussian=False):
         """
@@ -998,15 +978,15 @@ class PythonMPContext:
             return True
         if hasattr(x, "_mpf_"):
             if ctx.isfinite(x):
-                man, exp = to_man_exp(x._mpf_, signed=True)
+                man, exp = to_man_exp(x._mpf_)
                 return bool((man and exp >= 0) or x._mpf_ == fzero)
             return False
         if hasattr(x, "_mpc_"):
             re, im = x._mpc_
             if ctx.isfinite(x):
-                man, exp = to_man_exp(re, signed=True)
+                man, exp = to_man_exp(re)
                 re_isint = bool((man and exp >= 0) or re == fzero)
-                man, exp = to_man_exp(im, signed=True)
+                man, exp = to_man_exp(im)
                 im_isint = bool((man and exp >= 0) or im == fzero)
             else:
                 return False
@@ -1174,15 +1154,18 @@ class PythonMPContext:
         by raising ComplexResult.
 
         """
-        def f(x, **kwargs):
+        def f(x, *, prec=None, dps=None, rounding=None):
             if type(x) not in ctx.types:
                 x = ctx.convert(x)
-            prec, rounding = ctx._prec_rounding
-            if kwargs:
-                prec = kwargs.get('prec', prec)
-                if 'dps' in kwargs:
-                    prec = dps_to_prec(kwargs['dps'])
-                rounding = kwargs.get('rounding', rounding)
+            ctx_prec, ctx_rounding = ctx._prec_rounding
+            if prec and dps:
+                raise ValueError("both prec and dps can't be specified")
+            if dps:
+                prec = dps_to_prec(dps)
+            if prec is None:
+                prec = ctx_prec
+            if rounding is None:
+                rounding = ctx_rounding
             if hasattr(x, '_mpf_'):
                 try:
                     return ctx.make_mpf(mpf_f(x._mpf_, prec, rounding))
@@ -1250,7 +1233,7 @@ class PythonMPContext:
                 v = x._mpf_
             else:
                 raise NotImplementedError
-        man, exp = to_man_exp(v, signed=True)
+        man, exp = to_man_exp(v)
         if man:
             if exp >= -4:
                 if exp >= 0:
@@ -1268,7 +1251,7 @@ class PythonMPContext:
             return ctx.ninf
         if x in (finf, fninf, fnan):
             return ctx.make_mpf(mpf_abs(x))
-        man, exp = to_man_exp(x, signed=True)
+        man, exp = to_man_exp(x)
         return exp+man.bit_length()
 
     def mag(ctx, x):

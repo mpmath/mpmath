@@ -6,23 +6,10 @@ import math
 import random
 import re
 import sys
-import warnings
 
 from .backend import BACKEND, MPZ, MPZ_FIVE, MPZ_ONE, MPZ_ZERO, gmpy, int_types
 from .libintmath import (bctable, bin_to_radix, isqrt, numeral, sqrtrem,
-                         stddigits, trailtable)
-
-
-def to_pickable(x):
-    warnings.warn("to_pickable helper function is deprecated",
-                  DeprecationWarning)
-    return x
-
-
-def from_pickable(x):
-    warnings.warn("from_pickable helper function is deprecated",
-                  DeprecationWarning)
-    return x
+                         stddigits, trailing)
 
 
 class ComplexResult(ValueError):
@@ -34,26 +21,22 @@ round_floor = sys.intern('f')
 round_ceiling = sys.intern('c')
 round_up = sys.intern('u')
 round_down = sys.intern('d')
-round_fast = round_down
 
 def prec_to_dps(n):
     """Return number of accurate decimals that can be represented
     with a precision of n bits."""
-    return max(1, int(round(int(n)/blog2_10)-1))
+    return max(1, round(int(n)/blog2_10) - 1)
 
 def dps_to_prec(n):
     """Return the number of bits required to represent n decimals
     accurately."""
-    return max(1, int(round((int(n)+1)*blog2_10)))
+    return max(1, round((int(n) + 1)*blog2_10))
 
 def repr_dps(n):
     """Return the number of decimal digits required to represent
     a number with n-bit precision so that it can be uniquely
     reconstructed from the representation."""
-    dps = prec_to_dps(n)
-    if dps == 15:
-        return 17
-    return dps + 3
+    return 1 + math.ceil(int(n)/blog2_10)
 
 #----------------------------------------------------------------------------#
 #                    Some commonly needed float values                       #
@@ -74,7 +57,16 @@ finf = (0, MPZ_ZERO, -456, -2)
 fninf = (1, MPZ_ZERO, -789, -3)
 
 math_float_inf = math.inf
+math_float_nan = math.nan
 blog2_10 = 3.3219280948873626
+
+float_mant_dig = sys.float_info.mant_dig
+float_min_exp = sys.float_info.min_exp
+float_max_exp = sys.float_info.max_exp
+float_eps = sys.float_info.epsilon
+float_max = sys.float_info.max
+float_min = sys.float_info.min
+float_min_subnormal_exp = float_min_exp - float_mant_dig
 
 
 #----------------------------------------------------------------------------#
@@ -129,11 +121,11 @@ shifts_down = {round_floor:(1,0), round_ceiling:(0,1),
 # This function is called almost every time an mpf is created.
 # It has been optimized accordingly.
 
-def _normalize(sign, man, exp, bc, prec, rnd):
+def normalize(sign, man, exp, bc, prec, rnd):
     """
     Create a raw mpf tuple with value (-1)**sign * man * 2**exp and
-    normalized mantissa. The mantissa is rounded in the specified
-    direction if its size exceeds the precision. Trailing zero bits
+    normalized mantissa.  The mantissa is rounded according to the specified
+    rounding mode if its size exceeds the precision. Trailing zero bits
     are also stripped from the mantissa to ensure that the
     representation is canonical.
 
@@ -147,6 +139,12 @@ def _normalize(sign, man, exp, bc, prec, rnd):
     If these conditions are not met, use from_man_exp, mpf_pos, or any
     of the conversion functions to create normalized raw mpf tuples.
     """
+    assert type(man) == MPZ
+    assert type(bc) in _exp_types
+    assert type(exp) in _exp_types
+    assert bc == man.bit_length()
+    assert man >= 0
+
     if not man:
         return fzero
     # Cut mantissa down to size if larger than target precision
@@ -166,13 +164,7 @@ def _normalize(sign, man, exp, bc, prec, rnd):
         bc = prec
     # Strip trailing bits
     if not man & 1:
-        t = trailtable[man & 255]
-        if not t:
-            while not man & 255:
-                man >>= 8
-                exp += 8
-                bc -= 8
-            t = trailtable[man & 255]
+        t = trailing(man)
         man >>= t
         exp += t
         bc -= t
@@ -182,26 +174,18 @@ def _normalize(sign, man, exp, bc, prec, rnd):
     # so this is easy to check for.
     if man == 1:
         bc = 1
-    return sign, man, exp, bc
+    return sign, man, int(exp), int(bc)
 
 _exp_types = (int,)
 
 if gmpy:
-    _normalize = gmpy._mpmath_normalize
-
-def normalize(sign, man, exp, bc, prec, rnd):
-    assert type(man) == MPZ
-    assert type(bc) in _exp_types
-    assert type(exp) in _exp_types
-    assert bc == man.bit_length()
-    assert man >= 0
-    return _normalize(sign, man, exp, bc, prec, rnd)
+    normalize = gmpy._mpmath_normalize
 
 #----------------------------------------------------------------------------#
 #                            Conversion functions                            #
 #----------------------------------------------------------------------------#
 
-def from_man_exp(man, exp, prec=0, rnd=round_fast):
+def from_man_exp(man, exp, prec=0, rnd=round_down):
     """Create raw mpf from (man, exp) pair. The mantissa may be signed.
     If no precision is specified, the mantissa is stored exactly."""
     if isinstance(man, int_types):
@@ -220,19 +204,9 @@ def from_man_exp(man, exp, prec=0, rnd=round_fast):
         if not man:
             return fzero
         if not man & 1:
-            if man & 2:
-                return (sign, man >> 1, exp + 1, bc - 1)
-            t = trailtable[man & 255]
-            if not t:
-                while not man & 255:
-                    man >>= 8
-                    exp += 8
-                    bc -= 8
-                t = trailtable[man & 255]
-            man >>= t
-            exp += t
-            bc -= t
-        return (sign, man, exp, bc)
+            t = trailing(man)
+            return sign, man >> t, int(exp + t), int(bc - t)
+        return sign, man, exp, bc
     return normalize(sign, man, exp, bc, prec, rnd)
 
 int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
@@ -240,7 +214,7 @@ int_cache = dict((n, from_man_exp(n, 0)) for n in range(-10, 257))
 if gmpy:
     from_man_exp = gmpy._mpmath_create
 
-def from_int(n, prec=0, rnd=round_fast):
+def from_int(n, prec=0, rnd=round_down):
     """Create a raw mpf from an integer. If no precision is specified,
     the mantissa is stored exactly."""
     if not prec:
@@ -248,14 +222,8 @@ def from_int(n, prec=0, rnd=round_fast):
             return int_cache[n]
     return from_man_exp(MPZ(n), 0, prec, rnd)
 
-def to_man_exp(s, signed=None):
+def to_man_exp(s, signed=True):
     """Return (man, exp) of a raw mpf. Raise an error if inf/nan."""
-    if signed is None:
-        warnings.warn("Returning unsigned mantissa value per default "
-                      "is deprecated.  Please adapt your code to use "
-                      "signed=True (return a signed mantissa).",
-                      DeprecationWarning)
-        signed = False
     sign, man, exp, bc = s
     if (not man) and exp:
         raise ValueError("mantissa and exponent are defined "
@@ -264,7 +232,7 @@ def to_man_exp(s, signed=None):
         man = -man
     return man, exp
 
-def to_int(s, rnd=round_fast):
+def to_int(s, rnd=round_down):
     """Convert a raw mpf to the nearest int. Rounding is done down by
     default (same as int(float) in Python), but can be changed. If the
     input is inf/nan, an exception is raised."""
@@ -278,7 +246,7 @@ def to_int(s, rnd=round_fast):
             return (-man) << exp
         return man << exp
     # Make default rounding fast
-    if rnd == round_fast:
+    if rnd == round_down:
         if sign:
             return -(man >> (-exp))
         else:
@@ -310,28 +278,28 @@ def mpf_round_int(s, rnd):
             raise NotImplementedError
     return mpf_pos(s, min(bc, mag), rnd)
 
-def mpf_floor(s, prec=0, rnd=round_fast):
+def mpf_floor(s, prec=0, rnd=round_down):
     v = mpf_round_int(s, round_floor)
     if prec:
         v = mpf_pos(v, prec, rnd)
     return v
 
-def mpf_ceil(s, prec=0, rnd=round_fast):
+def mpf_ceil(s, prec=0, rnd=round_down):
     v = mpf_round_int(s, round_ceiling)
     if prec:
         v = mpf_pos(v, prec, rnd)
     return v
 
-def mpf_nint(s, prec=0, rnd=round_fast):
+def mpf_nint(s, prec=0, rnd=round_down):
     v = mpf_round_int(s, round_nearest)
     if prec:
         v = mpf_pos(v, prec, rnd)
     return v
 
-def mpf_frac(s, prec=0, rnd=round_fast):
+def mpf_frac(s, prec=0, rnd=round_down):
     return mpf_sub(s, mpf_floor(s), prec, rnd)
 
-def from_float(x, prec=53, rnd=round_fast):
+def from_float(x, prec=53, rnd=round_down):
     """Create a raw mpf from a Python float, rounding if necessary.
     If prec >= 53, the result is guaranteed to represent exactly the
     same number as the input. If prec is not specified, use prec=53."""
@@ -342,7 +310,7 @@ def from_float(x, prec=53, rnd=round_fast):
     m, e = math.frexp(x)
     return from_man_exp(MPZ(m*(1<<53)), e-53, prec, rnd)
 
-def from_npfloat(x, prec=113, rnd=round_fast):
+def from_npfloat(x, prec=113, rnd=round_down):
     """Create a raw mpf from a numpy float, rounding if necessary.
     If prec >= 113, the result is guaranteed to represent exactly the
     same number as the input. If prec is not specified, use prec=113."""
@@ -355,7 +323,7 @@ def from_npfloat(x, prec=113, rnd=round_fast):
         return from_man_exp(MPZ(np.ldexp(m, 113)), int(e)-113, prec, rnd)
     return fnan
 
-def from_Decimal(x, prec=0, rnd=round_fast):
+def from_Decimal(x, prec=0, rnd=round_down):
     """Create a raw mpf from a Decimal, rounding if necessary.
     If prec is not specified, use the equivalent bit precision
     of the number of significant digits in x."""
@@ -365,44 +333,67 @@ def from_Decimal(x, prec=0, rnd=round_fast):
         prec = int(len(x.as_tuple()[1])*blog2_10)
     return from_str(str(x), prec, rnd)
 
-def to_float(s, strict=False, rnd=round_fast):
+def to_float(s, strict=False, rnd=round_down):
     """
-    Convert a raw mpf to a Python float. The result is exact if
-    s.bit_length() <= 53 and no underflow/overflow occurs.
+    Convert a raw mpf to a Python float.  The result is exact
+    if s.bit_length() <= sys.float_info.mant_dig and no
+    underflow/overflow occurs.  Else result is correctly rounded.
 
-    If the number is too large or too small to represent as a regular
-    float, it will be converted to inf or 0.0. Setting strict=True
-    forces an OverflowError to be raised instead.
-
-    Warning: with a directed rounding mode, the correct nearest representable
-    floating-point number in the specified direction might not be computed
-    in case of overflow or (gradual) underflow.
+    If the magnitude of rounded number is too large to represent as
+    a regular float, it will be converted to infinity.  Setting
+    strict=True forces an OverflowError to be raised instead.
     """
     sign, man, exp, bc = s
+
     if not man:
         if s == fzero: return 0.0
         if s == finf: return math_float_inf
         if s == fninf: return -math_float_inf
-        return math_float_inf/math_float_inf
-    if bc > 53:
-        sign, man, exp, bc = normalize(sign, man, exp, bc, 53, rnd)
-    if sign:
-        man = -man
-    try:
-        return math.ldexp(man, exp)
-    except OverflowError:
-        if strict:
-            raise
-        # Overflow to infinity
-        if exp + bc > 0:
-            if sign:
-                return -math_float_inf
-            else:
-                return math_float_inf
-        # Underflow to zero
+        return math_float_nan
+
+    exp2 = exp + bc
+    # The smallest normal number is 2^(-1022)=0.1p-1021, and the smallest
+    # subnormal is 2^(-1074)=0.1p-1073
+    if exp2 <= float_min_subnormal_exp:
+        if sign:
+            if rnd == round_floor or (rnd == round_nearest
+                                      and mpf_cmp(s, (1, MPZ(1), float_min_subnormal_exp
+                                                      - 1, 1)) < 0):
+                return -float_min * float_eps
+            return 0.0
+        if rnd == round_ceiling or (rnd == round_nearest
+                                    and mpf_cmp(s, (0, MPZ(1), float_min_subnormal_exp
+                                                    - 1, 1)) > 0):
+            return float_min * float_eps
         return 0.0
 
-def from_rational(p, q, prec, rnd=round_fast):
+    # The largest normal number is 2^1024*(1-2^(-53))=0.111...111p1024
+    if exp2 > float_max_exp:
+        if sign:
+            if rnd == round_down or rnd == round_ceiling:
+                return -float_max
+            if strict:
+                raise OverflowError("math range error")
+            return -math_float_inf
+        if rnd == round_down or rnd == round_floor:
+            return float_max
+        if strict:
+            raise OverflowError("math range error")
+        return math_float_inf
+
+    nbits = float_mant_dig
+    if exp2 < float_min_exp:
+        # In the subnormal case, compute the exact number of significant bits.
+        nbits += exp2 - float_min_exp
+        assert 1 <= nbits < float_mant_dig
+    if bc > nbits:
+        sign, man, exp, bc = normalize(sign, man, exp, bc, nbits, rnd)
+    if sign:
+        man = -man
+    # Should be exact:
+    return math.ldexp(man, exp)
+
+def from_rational(p, q, prec, rnd=round_down):
     """Create a raw mpf from a rational number p/q, round if
     necessary."""
     return mpf_div(from_int(p), from_int(q), prec, rnd)
@@ -460,11 +451,7 @@ def mpf_hash(s):
 
     # Handle special numbers
     if not sman:
-        if s == fnan:
-            if sys.version_info >= (3, 10):
-                return object.__hash__(s)
-            else:
-                return sys.hash_info.nan
+        if s == fnan: return object.__hash__(s)
         if s == finf: return sys.hash_info.inf
         if s == fninf: return -sys.hash_info.inf
 
@@ -559,7 +546,7 @@ def mpf_min_max(seq):
         if mpf_gt(x, max): max = x
     return min, max
 
-def mpf_pos(s, prec=0, rnd=round_fast):
+def mpf_pos(s, prec=0, rnd=round_down):
     """Calculate 0+s for a raw mpf (i.e., just round s to the specified
     precision)."""
     if prec:
@@ -569,7 +556,7 @@ def mpf_pos(s, prec=0, rnd=round_fast):
         return normalize(sign, man, exp, bc, prec, rnd)
     return s
 
-def mpf_neg(s, prec=0, rnd=round_fast):
+def mpf_neg(s, prec=0, rnd=round_down):
     """Negate a raw mpf (return -s), rounding the result to the
     specified precision. The prec argument can be omitted to do the
     operation exactly."""
@@ -583,7 +570,7 @@ def mpf_neg(s, prec=0, rnd=round_fast):
         return (1-sign, man, exp, bc)
     return normalize(1-sign, man, exp, bc, prec, rnd)
 
-def mpf_abs(s, prec=0, rnd=round_fast):
+def mpf_abs(s, prec=0, rnd=round_down):
     """Return abs(s) of the raw mpf s, rounded to the specified
     precision. The prec argument can be omitted to generate an
     exact result."""
@@ -608,7 +595,7 @@ def mpf_sign(s):
         return 0
     return (-1) ** sign
 
-def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
+def mpf_add(s, t, prec=0, rnd=round_down, _sub=0):
     """
     Add the two raw mpf values s and t.
 
@@ -703,12 +690,12 @@ def mpf_add(s, t, prec=0, rnd=round_fast, _sub=0):
         return normalize(ssign, sman, sexp, sbc, prec or sbc, rnd)
     return s
 
-def mpf_sub(s, t, prec=0, rnd=round_fast):
+def mpf_sub(s, t, prec=0, rnd=round_down):
     """Return the difference of two raw mpfs, s-t. This function is
     simply a wrapper of mpf_add that changes the sign of t."""
     return mpf_add(s, t, prec, rnd, 1)
 
-def mpf_sum(xs, prec=0, rnd=round_fast, absolute=False):
+def mpf_sum(xs, prec=0, rnd=round_down, absolute=False):
     """
     Sum a list of mpf values efficiently and accurately
     (typically no temporary roundoff occurs). If prec=0,
@@ -756,7 +743,7 @@ def mpf_sum(xs, prec=0, rnd=round_fast, absolute=False):
         return special
     return from_man_exp(man, exp, prec, rnd)
 
-def mpf_mul(s, t, prec=0, rnd=round_fast):
+def mpf_mul(s, t, prec=0, rnd=round_down):
     """Multiply two raw mpfs"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
@@ -777,7 +764,7 @@ def mpf_mul(s, t, prec=0, rnd=round_fast):
     if t == fzero: return fnan
     return {1:finf, -1:fninf}[mpf_sign(s) * mpf_sign(t)]
 
-def gmpy_mpf_mul_int(s, n, prec, rnd=round_fast):
+def gmpy_mpf_mul_int(s, n, prec, rnd=round_down):
     """Multiply by a Python integer."""
     sign, man, exp, bc = s
     if not man:
@@ -790,7 +777,7 @@ def gmpy_mpf_mul_int(s, n, prec, rnd=round_fast):
     man *= n
     return normalize(sign, man, exp, man.bit_length(), prec, rnd)
 
-def python_mpf_mul_int(s, n, prec, rnd=round_fast):
+def python_mpf_mul_int(s, n, prec, rnd=round_down):
     """Multiply by a Python integer."""
     sign, man, exp, bc = s
     if not man:
@@ -825,13 +812,10 @@ def mpf_frexp(x):
     """Convert x = y*2**n to (y, n) with abs(y) in [0.5, 1) if nonzero"""
     sign, man, exp, bc = x
     if not man:
-        if x == fzero:
-            return (fzero, 0)
-        else:
-            raise ValueError
+        return (x, 0)
     return mpf_shift(x, -bc-exp), bc+exp
 
-def mpf_div(s, t, prec, rnd=round_fast):
+def mpf_div(s, t, prec, rnd=round_down):
     """Floating-point division"""
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
@@ -871,7 +855,7 @@ def mpf_div(s, t, prec, rnd=round_fast):
     bc = quot.bit_length()
     return normalize(sign, quot, sexp-texp-extra, bc, prec or bc, rnd)
 
-def mpf_rdiv_int(n, t, prec, rnd=round_fast):
+def mpf_rdiv_int(n, t, prec, rnd=round_down):
     """Floating-point division n/t with a Python integer as numerator"""
     sign, man, exp, bc = t
     if not n or not man:
@@ -887,7 +871,7 @@ def mpf_rdiv_int(n, t, prec, rnd=round_fast):
         return normalize(sign, quot, -exp-extra, quot.bit_length(), prec, rnd)
     return normalize(sign, quot, -exp-extra, quot.bit_length(), prec, rnd)
 
-def mpf_mod(s, t, prec, rnd=round_fast):
+def mpf_mod(s, t, prec, rnd=round_down):
     ssign, sman, sexp, sbc = s
     tsign, tman, texp, tbc = t
     if ((not sman) and sexp) or ((not tman) and texp):
@@ -928,7 +912,7 @@ negative_rnd = {
   round_nearest : round_nearest
 }
 
-def mpf_pow_int(s, n, prec, rnd=round_fast):
+def mpf_pow_int(s, n, prec, rnd=round_down):
     """Compute s**n, where s is a raw mpf and n is a Python integer."""
     sign, man, exp, bc = s
 
@@ -1101,13 +1085,11 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rnd=round_nearest, fixed=False):
-    '''
+def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
+    """
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
-
-    Supports three kinds of rounding: up, down, or nearest.
-    '''
+    """
 
     assert len(digits) > dps
     assert rnd in (round_nearest, round_up, round_down, round_ceiling,
@@ -1335,7 +1317,7 @@ def str_to_man_exp(x, base=10):
 special_str = {'inf':finf, '+inf':finf, '-inf':fninf, 'nan':fnan,
                'oo':finf, '+oo':finf, '-oo':fninf}
 
-def from_str(x, prec=0, rnd=round_fast, base=0):
+def from_str(x, prec=0, rnd=round_down, base=0):
     """Create a raw mpf from a string x in a given base, rounding in the
     specified direction if the input number cannot be represented
     exactly as a binary floating-point number with the given number of
@@ -1491,7 +1473,7 @@ def read_format_spec(format_spec):
     return format_dict
 
 
-def format_fixed(s, dps, rnd=round_nearest):
+def format_fixed(s, dps, rnd=round_down):
     # First, get the exponent to know how many digits we will need
     base = 10
     _, _, exponent = to_digits_exp(s, 1, base)
@@ -1532,7 +1514,7 @@ def format_fixed(s, dps, rnd=round_nearest):
     return int_part, frac_part
 
 
-def format_scientific(s, dps, rnd=round_nearest):
+def format_scientific(s, dps, rnd=round_down):
     base = 10
 
     # First, get the exponent to know how many digits we will need
@@ -1546,7 +1528,7 @@ def format_scientific(s, dps, rnd=round_nearest):
     return digits[0], digits[1:], f'e{exponent:+03d}'
 
 
-def format_hexadecimal(s, dps, rnd=round_nearest):
+def format_hexadecimal(s, dps, rnd=round_down):
     prec = 4*dps + 1 if dps >= 0 else s[1].bit_length()
 
     if s[1]:
@@ -1573,7 +1555,7 @@ def format_hexadecimal(s, dps, rnd=round_nearest):
     return digits, frac_digits, f'p{exponent:+01d}'
 
 
-def format_binary(s, dps, rnd=round_nearest):
+def format_binary(s, dps, rnd=round_down):
     prec = dps + 1 if dps >= 0 else s[1].bit_length()
     s = mpf_pos(s, prec, rnd)
 
@@ -1786,7 +1768,7 @@ def format_mpc(num, format_spec, prec, rnd, _pretty_repr_dps):
 #----------------------------------------------------------------------------#
 
 
-def mpf_sqrt(s, prec, rnd=round_fast):
+def mpf_sqrt(s, prec, rnd=round_down):
     """
     Compute the square root of a nonnegative mpf value. The
     result is correctly rounded.
@@ -1814,10 +1796,10 @@ def mpf_sqrt(s, prec, rnd=round_fast):
             shift += 2
     return from_man_exp(man, (exp-shift)//2, prec, rnd)
 
-def mpf_hypot(x, y, prec, rnd=round_fast):
+def mpf_hypot(x, y, prec, rnd=round_down):
     """Compute the Euclidean norm sqrt(x**2 + y**2) of two raw mpfs
     x and y."""
     if y == fzero: return mpf_abs(x, prec, rnd)
     if x == fzero: return mpf_abs(y, prec, rnd)
-    hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+4)
+    hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+10, rnd)
     return mpf_sqrt(hypot2, prec, rnd)

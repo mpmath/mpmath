@@ -2189,7 +2189,7 @@ an entirely real-valued sum::
 
     >>> nsum(lambda k: 1/(k**2-2*k+3), [0, inf])
     1.694361433907061256154665
-    >>> nprint(polyroots([3,-2,1], asc=True))
+    >>> nprint(polyroots([3,-2,1]))
     [(1.0 - 1.41421j), (1.0 + 1.41421j)]
     >>> r1 = 1-sqrt(2)*j
     >>> r2 = r1.conjugate()
@@ -3015,7 +3015,7 @@ with ``eliminate_all=True``:
     >>> hyper([2], [], 3)
     0.25
 
-** References **
+**References**
 
 * [Buhring]_
 
@@ -5676,7 +5676,7 @@ The roots of Legendre polynomials are located symmetrically
 on the interval `[-1, 1]`::
 
     >>> for n in range(5):
-    ...     nprint(polyroots(taylor(lambda x: legendre(n, x), 0, n), asc=True))
+    ...     nprint(polyroots(taylor(lambda x: legendre(n, x), 0, n)))
     ...
     []
     [0.0]
@@ -7093,7 +7093,7 @@ investigating the zeros of the Riemann zeta function.
 For example, one can use a root-finding algorithm based
 on sign changes::
 
-    >>> findroot(siegelz, [100, 200], solver='bisect')
+    >>> findroot(siegelz, [176, 177], solver='bisect')
     176.4414342977104188888926
 
 To locate roots, Gram points `g_n` which can be computed
@@ -7152,9 +7152,9 @@ integer::
     >>> mp.pretty = True
     >>> primepi(50), riemannr(50)
     (15, 14.9757023241462)
-    >>> max(abs(primepi(n)-int(round(riemannr(n)))) for n in range(100))
+    >>> max(abs(primepi(n)-round(riemannr(n))) for n in range(100))
     1
-    >>> max(abs(primepi(n)-int(round(riemannr(n)))) for n in range(300))
+    >>> max(abs(primepi(n)-round(riemannr(n))) for n in range(300))
     2
 
 The Riemann R function can be evaluated for arguments far too large
@@ -7760,7 +7760,7 @@ Up to permutation, the roots of a given cyclotomic polynomial
 can be checked to agree with the list of primitive roots::
 
     >>> p = taylor(lambda x: cyclotomic(6,x), 0, 6)[:3]
-    >>> for r in polyroots(p, asc=True):
+    >>> for r in polyroots(p):
     ...     print(r)
     ...
     (0.5 - 0.8660254037844386467637232j)
@@ -9979,14 +9979,12 @@ Evaluation of derivatives::
 **Possible issues**
 
 For `|q| \ge 1` or `\Im(\tau) \le 0`, :func:`~mpmath.jtheta` raises
-``ValueError``. This exception is also raised for `|q|` extremely
-close to 1 (or equivalently `\tau` very close to 0), since the
-series would converge too slowly::
+``ValueError``::
 
-    >>> jtheta(1, 10, 0.99999999 * exp(0.5*j))
+    >>> jtheta(1, 10, 2)
     Traceback (most recent call last):
       ...
-    ValueError: abs(q) > THETA_Q_LIM = 1.000000
+    ValueError: abs(q) >= 1
 
 """
 

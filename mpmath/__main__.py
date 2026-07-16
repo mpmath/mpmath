@@ -40,6 +40,9 @@ parser.add_argument('--prec', type=int,
                     help='Set default mpmath precision')
 parser.add_argument('--no-pretty', help='Disable pretty-printing',
                     action='store_true')
+parser.add_argument('--int-limits',
+                    help="Enable string conversion length limitation for int's",
+                    action='store_true')
 
 
 def main():
@@ -49,7 +52,11 @@ def main():
         print(__version__)
         sys.exit(0)
 
+    if not args.int_limits:
+        sys.set_int_max_str_digits(0)
+
     lines = ['from mpmath import *',
+             'import mpmath',
              'from fractions import Fraction']
 
     if args.prec:

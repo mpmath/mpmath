@@ -574,7 +574,7 @@ def taylor(ctx, f, x, n, **options):
     the argument:
 
         >>> p = taylor(exp, 2.0, 10)
-        >>> polyval(p, 2.5 - 2.0, asc=True)
+        >>> polyval(p, 2.5 - 2.0)
         12.1824939606092
         >>> exp(2.5)
         12.1824939607035
@@ -618,7 +618,7 @@ def pade(ctx, a, L, M):
         >>> a = taylor(f, 0, 6)
         >>> p, q = pade(a, 3, 3)
         >>> x = 10
-        >>> polyval(p, x, asc=True)/polyval(q, x, asc=True)
+        >>> polyval(p, x)/polyval(q, x)
         1.38169105566806
         >>> f(x)
         1.38169855941551

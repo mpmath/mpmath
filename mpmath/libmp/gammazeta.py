@@ -35,7 +35,7 @@ from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fone, from_int,
                      mpf_add, mpf_div, mpf_floor, mpf_gt, mpf_le, mpf_lt,
                      mpf_mul, mpf_mul_int, mpf_neg, mpf_perturb, mpf_pos,
                      mpf_pow_int, mpf_rdiv_int, mpf_shift, mpf_sign, mpf_sub,
-                     negative_rnd, round_fast, round_nearest, to_fixed,
+                     negative_rnd, round_down, round_nearest, to_fixed,
                      to_float, to_int)
 
 
@@ -380,7 +380,7 @@ def bernoulli_size(n):
 
 BERNOULLI_PREC_CUTOFF = bernoulli_size(MAX_BERNOULLI_CACHE)
 
-def mpf_bernoulli(n, prec, rnd=round_fast, plus=False):
+def mpf_bernoulli(n, prec, rnd=round_down, plus=False):
     """Computation of Bernoulli numbers (numerically)"""
     if n < 2:
         if n < 0:
@@ -453,7 +453,7 @@ def mpf_bernoulli(n, prec, rnd=round_fast, plus=False):
         state[:] = [m, bin, bin1]
     return mpf_pos(numbers[n], prec, rnd)
 
-def mpf_bernoulli_huge(n, prec, rnd=round_fast):
+def mpf_bernoulli_huge(n, prec, rnd=round_down):
     wp = prec + 10
     piprec = wp + int(math.log(n,2))
     v = mpf_gamma_int(n+1, wp)
@@ -640,7 +640,7 @@ def mpc_harmonic(z, prec, rnd):
     a = mpc_psi0(mpc_add_mpf(z, fone, prec+5), prec)
     return mpc_add_mpf(a, mpf_euler(prec+5, rnd), prec, rnd)
 
-def mpf_psi0(x, prec, rnd=round_fast):
+def mpf_psi0(x, prec, rnd=round_down):
     """
     Computation of the digamma function (psi function of order 0)
     of a real argument.
@@ -699,7 +699,7 @@ def mpf_psi0(x, prec, rnd=round_fast):
         k += 1
     return from_man_exp(s, -wp, wp, rnd)
 
-def mpc_psi0(z, prec, rnd=round_fast):
+def mpc_psi0(z, prec, rnd=round_down):
     """
     Computation of the digamma function (psi function of order 0)
     of a complex argument.
@@ -753,16 +753,16 @@ def mpc_psi0(z, prec, rnd=round_fast):
     return s
 
 # Currently unoptimized
-def mpf_psi(m, x, prec, rnd=round_fast):
+def mpf_psi(m, x, prec, rnd=round_down):
     """
     Computation of the polygamma function of arbitrary integer order
     m >= 0, for a real argument x.
     """
     if m == 0:
-        return mpf_psi0(x, prec, rnd=round_fast)
+        return mpf_psi0(x, prec, rnd=round_down)
     return mpc_psi(m, (x, fzero), prec, rnd)[0]
 
-def mpc_psi(m, z, prec, rnd=round_fast):
+def mpc_psi(m, z, prec, rnd=round_down):
     """
     Computation of the polygamma function of arbitrary integer order
     m >= 0, for a complex argument z.
@@ -891,7 +891,7 @@ def borwein_coefficients(n):
 ZETA_INT_CACHE_MAX_PREC = 1000
 zeta_int_cache = local.zeta_int_cache = {}
 
-def mpf_zeta_int(s, prec, rnd=round_fast):
+def mpf_zeta_int(s, prec, rnd=round_down):
     """
     Optimized computation of zeta(s) for an integer s.
     """
@@ -944,7 +944,7 @@ def mpf_zeta_int(s, prec, rnd=round_fast):
         zeta_int_cache[s] = (wp, from_man_exp(t, -wp-wp))
     return from_man_exp(t, -wp-wp, prec, rnd)
 
-def mpf_zeta(s, prec, rnd=round_fast, alt=0):
+def mpf_zeta(s, prec, rnd=round_down, alt=0):
     sign, man, exp, bc = s
     if not man:
         if s == fzero:
@@ -1031,7 +1031,7 @@ def mpf_zeta(s, prec, rnd=round_fast, alt=0):
         q = mpf_sub(fone, mpf_pow(ftwo, mpf_sub(fone, s, wp), wp), wp)
         return mpf_div(t, q, prec, rnd)
 
-def mpc_zeta(s, prec, rnd=round_fast, alt=0, force=False):
+def mpc_zeta(s, prec, rnd=round_down, alt=0, force=False):
     re, im = s
     if im == fzero:
         return mpf_zeta(re, prec, rnd, alt), fzero
@@ -1121,10 +1121,10 @@ def mpc_zeta(s, prec, rnd=round_fast, alt=0, force=False):
         q = mpc_sub(mpc_one, mpc_pow(mpc_two, r, wp), wp)
         return mpc_div((tre, tim), q, prec, rnd)
 
-def mpf_altzeta(s, prec, rnd=round_fast):
+def mpf_altzeta(s, prec, rnd=round_down):
     return mpf_zeta(s, prec, rnd, 1)
 
-def mpc_altzeta(s, prec, rnd=round_fast):
+def mpc_altzeta(s, prec, rnd=round_down):
     return mpc_zeta(s, prec, rnd, 1)
 
 # Not optimized currently
@@ -1678,7 +1678,7 @@ def complex_stirling_series(x, y, prec):
     return sre, sim
 
 
-def mpf_gamma(x, prec, rnd=round_fast, type=0):
+def mpf_gamma(x, prec, rnd=round_down, type=0):
     """
     This function implements multipurpose evaluation of the gamma
     function, G(x), as well as the following versions of the same:
@@ -1884,7 +1884,7 @@ def mpf_gamma(x, prec, rnd=round_fast, type=0):
             return mpf_pos(w, prec, rnd)
 
 
-def mpc_gamma(z, prec, rnd=round_fast, type=0):
+def mpc_gamma(z, prec, rnd=round_down, type=0):
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
@@ -2118,25 +2118,25 @@ def mpc_gamma(z, prec, rnd=round_fast, type=0):
         if type == 3:
             return mpc_pos(y, prec, rnd)
 
-def mpf_factorial(x, prec, rnd=round_fast):
+def mpf_factorial(x, prec, rnd=round_down):
     return mpf_gamma(x, prec, rnd, 1)
 
-def mpc_factorial(x, prec, rnd=round_fast):
+def mpc_factorial(x, prec, rnd=round_down):
     return mpc_gamma(x, prec, rnd, 1)
 
-def mpf_rgamma(x, prec, rnd=round_fast):
+def mpf_rgamma(x, prec, rnd=round_down):
     return mpf_gamma(x, prec, rnd, 2)
 
-def mpc_rgamma(x, prec, rnd=round_fast):
+def mpc_rgamma(x, prec, rnd=round_down):
     return mpc_gamma(x, prec, rnd, 2)
 
-def mpf_loggamma(x, prec, rnd=round_fast):
+def mpf_loggamma(x, prec, rnd=round_down):
     sign, man, exp, bc = x
     if sign:
         raise ComplexResult
     return mpf_gamma(x, prec, rnd, 3)
 
-def mpc_loggamma(z, prec, rnd=round_fast):
+def mpc_loggamma(z, prec, rnd=round_down):
     a, b = z
     asign, aman, aexp, abc = a
     bsign, bman, bexp, bbc = b
@@ -2147,7 +2147,7 @@ def mpc_loggamma(z, prec, rnd=round_fast):
         return re, im
     return mpc_gamma(z, prec, rnd, 3)
 
-def mpf_gamma_int(n, prec, rnd=round_fast):
+def mpf_gamma_int(n, prec, rnd=round_down):
     if n < SMALL_FACTORIAL_CACHE_SIZE:
         return mpf_pos(small_factorial_cache[n-1], prec, rnd)
     return mpf_gamma(from_int(n), prec, rnd)

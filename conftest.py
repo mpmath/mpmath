@@ -1,13 +1,8 @@
-import os
 import sys
 
 import pytest
 
 import mpmath
-
-
-collect_ignore = ['mpmath/__init__.py',
-                  'mpmath/rational.py', 'mpmath/math2.py']
 
 
 def pytest_report_header(config):
@@ -20,13 +15,21 @@ def pytest_report_header(config):
 def pytest_configure(config):
     config.addinivalue_line('markers', 'slow: marks tests as slow')
 
+    if "no:hypothesispytest" not in config.getoption("-p"):
+        from hypothesis import settings
+
+        default = settings.get_profile("default")
+        settings.register_profile("default",
+                                  settings(default, max_examples=1000))
+        ci = settings.get_profile("ci")
+        settings.register_profile("ci", settings(ci, max_examples=10000))
+
 
 @pytest.fixture(autouse=True)
 def reset_mp_globals():
-    from mpmath import mp, iv
-    mp.prec = sys.float_info.mant_dig
-    mp.pretty = False
-    mp.rounding = 'n'
-    mp.pretty_dps = "str"
-    iv.prec = mp.prec
-    iv.pretty = False
+    mpmath.mp.prec = sys.float_info.mant_dig
+    mpmath.mp.pretty = False
+    mpmath.mp.rounding = 'n'
+    mpmath.mp.pretty_dps = "str"
+    mpmath.iv.prec = mpmath.mp.prec
+    mpmath.iv.pretty = False

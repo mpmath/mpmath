@@ -85,6 +85,8 @@ Credit also goes to:
 
 Release history:
 
+* Version 1.4.1 released on March 15, 2026
+* Version 1.4.0 released on February 23, 2026
 * Version 1.3.0 released on March 7, 2023
 * Version 1.2.1 released on February 9, 2021
 * Version 1.2.0 released on February 1, 2021
@@ -113,8 +115,8 @@ Release history:
 1. Download & installation
 --------------------------
 
-Mpmath requires Python 3.9 or later versions.  It has been tested with CPython
-3.9 through 3.14, with PyPy 3.11 and with GraalPy 25.0.
+Mpmath requires Python 3.10 or later versions.  It has been tested with CPython
+3.10 through 3.15, with PyPy 3.11 and with GraalPy 25.1.3.
 
 The latest release of mpmath can be downloaded from the mpmath
 website and from https://github.com/mpmath/mpmath/releases
@@ -185,3 +187,6 @@ to the `mpmath mailinglist <https://groups.google.com/g/mpmath>`_.
 
 You can also report bugs and send patches to the mpmath issue tracker,
 https://github.com/mpmath/mpmath/issues
+
+See also our `contributing guidelines
+<https://github.com/mpmath/mpmath/blob/master/.github/CONTRIBUTING.rst>`_.

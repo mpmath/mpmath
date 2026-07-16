@@ -1,17 +1,21 @@
+import platform
+import sys
+
 import pytest
 
 from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     besseljzero, besselk, bessely, besselyzero, betainc,
-                    chebyt, chebyu, chi, ci, convert, coulombg, e, e1, ei,
-                    ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp, expint,
-                    fadd, fmul, foxh, fp, fraction, fresnelc, fresnels, fsub, fsum,
-                    gamma, gammainc, gegenbauer, hankel1, hankel2, hermite,
-                    hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2, hyp2f3,
-                    hyper, hypercomb, hyperu, inf, isnan, j, j0, j1, jacobi,
-                    kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
-                    legenq, lerchphi, li, log, lower_gamma, meijerg, mp, mpc,
-                    mpf, nan, ncdf, npdf, nthroot, pi, qp, quadts, shi, si,
-                    spherharm, spherical_jn, spherical_yn, sqrt, struveh,
+                    chebyt, chebyu, chi, ci, clsin, convert, coulombg, e, e1,
+                    ei, ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp,
+                    expint, extradps, fadd, fmul, foxh, fp, fraction, fresnelc,
+                    fresnels, fsub, fsum, gamma, gammainc, gegenbauer, hankel1,
+                    hankel2, hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1,
+                    hyp2f2, hyp2f3, hyper, hypercomb, hyperu, inf, isnan, j,
+                    j0, j1, jacobi, kei, ker, laguerre, lambertw, ldexp,
+                    legendre, legenp, legenq, lerchphi, li, log, lower_gamma,
+                    meijerg, mp, mpc, mpf, nan, ncdf, npdf, nthroot, pi,
+                    polylog, qp, quadts, shi, si, spherharm, spherical_in,
+                    spherical_jn, spherical_kn, spherical_yn,  sqrt, struveh,
                     struvel, upper_gamma, whitm, whitw, zeta)
 from mpmath.libmp import BACKEND, NoConvergence
 
@@ -86,6 +90,18 @@ def test_bessel():
     assert besselk(0,j).ae(-0.13863371520405399968-1.20196971531720649914j)
     assert (besselk(3, 10**10) * mpf(10)**4342944824).ae(1.1628981033356187851)
     assert besselk(1,inf) == 0
+
+    # Reference values for spherical_in(n, z) and spherical_kn(n, z) were
+    # computed with Wolfram Engine 15:
+    #     SphericalIn[n_, z_] := BesselI[n + 1/2, z] * Sqrt[Pi / (2*z)]
+    #     SphericalKn[n_, z_] := BesselK[n + 1/2, z] * Sqrt[Pi / (2*z)]
+    assert spherical_in(0, 1).ae(1.1752011936438014)
+    ref = 0.0014838823109673326 + 0.0008458614117247069j
+    assert spherical_in(6, -1.5 + 2j).ae(ref)
+    assert spherical_kn(0, 1).ae(0.5778636748954609)
+    ref = -25.42791007767947 - 13.388885300250143j
+    assert spherical_kn(6, -1.5 + 2j).ae(ref)
+
     assert spherical_jn(0, 1).ae(0.841470984807896)
     assert spherical_yn(0, 1).ae(-0.54030230586814)
     # test for issue 331, bug reported by Michael Hartmann
@@ -532,7 +548,6 @@ def test_hyper_2f1():
 def test_hyper_2f1_hard():
     # Singular cases
     assert hyp2f1(2,-1,-1,3).ae(7)
-    pytest.raises(NotImplementedError, lambda: fp.hyp2f1(2,-1,-1,3))
     assert hyp2f1(2,-1,-1,3,eliminate_all=True).ae(0.25)
     assert hyp2f1(2,-2,-2,3).ae(34)
     assert hyp2f1(2,-2,-2,3,eliminate_all=True).ae(0.25)
@@ -771,6 +786,15 @@ def test_gegenbauer():
     assert gegenbauer(0, 4, 2.2) == 1
     assert gegenbauer(0, 0, 1.8) == 0
     assert gegenbauer(0, 1, 1.8) == 1
+    # issue 1077: odd integer n at z=0 vanishes
+    assert gegenbauer(1, 1, 0) == 0
+    assert gegenbauer(5, 1.5, 0) == 0
+    assert gegenbauer(3, 2, 0) == 0
+    assert gegenbauer(3, 1, mpc(0)) == 0
+    # adjacent cases must keep going through the general path
+    assert gegenbauer(2, 1, 0).ae(-1)
+    assert gegenbauer(4, 1.5, 0).ae(1.875)
+    assert gegenbauer(2.5, 1, 0).ae(-0.70710678118654752440)
     mp.dps = 200
     assert gegenbauer(2,-1.0, 27397079.00297188) == 0  # issue 461
 
@@ -1470,7 +1494,13 @@ def test_issue_239():
     x = ldexp(2476979795053773,-52)
     assert betainc(206, 385, 0, 0.55, 1).ae('0.99999999999999999999996570910644857895771110649954')
     mp.dps = 15
-    pytest.raises(ValueError, lambda: hyp2f1(-5,5,0.5,0.5))
+    expected_exc = ValueError
+    if platform.machine() == 's390x' and sys.version_info < (3, 14):
+        # This case has recursion depth beyond platform capabilities, that
+        # could be controlled with sys.setrecursionlimit().  See issue #1046
+        # for details.
+        expected_exc = RecursionError
+    pytest.raises(expected_exc, lambda: hyp2f1(-5,5,0.5,0.5))
 
 # Extra stress testing for Bessel functions
 # Reference zeros generated with the aid of scipy.special
@@ -2391,7 +2421,6 @@ ynp_small_zeros = \
 def test_bessel_zeros_extra():
     for v in range(V):
         for m in range(1,M+1):
-            print(v, m, "of", V, M)
             # Twice to test cache (if used)
             assert besseljzero(v,m).ae(jn_small_zeros[v][m-1])
             assert besseljzero(v,m).ae(jn_small_zeros[v][m-1])
@@ -2448,6 +2477,8 @@ def test_issue_473():
 def test_issue_1033():
     assert isnan(mp.polylog(2, mp.inf))
     assert isnan(mp.polylog(3, mp.inf))
+    assert mp.polylog(2, mp.inf).real == -mp.inf
+    assert mp.polylog(3, mp.inf).real == -mp.inf
 
 def test_issue_634():
     assert mp.polylog(1+1e-15, -2).ae(mp.mpf('-1.09861228866811'))
@@ -2462,3 +2493,57 @@ def test_issue_637():
 def test_issue_991():
     assert spherical_jn(0, 1.3).ae(0.74119860416707)
     assert spherical_yn(0, 1.3).ae(-0.20576832971122)
+
+def test_issue_545():
+    x = 100+j
+    assert erfc(x).ae(mpc('8.634691205220881e-4346',
+                          '1.5120569745187501e-4345'))
+    assert erfc(-x).ae(mpc(2, '-1.5120569745187501e-4345'),
+                       rel_eps=mpf('1e-4346'))
+    assert erf(x).ae(mpc(1, '-1.5120569745187501e-4345'),
+                     rel_eps=mpf('1e-4346'))
+    assert erf(-x).ae(mpc(-1, '1.5120569745187501e-4345'),
+                      rel_eps=mpf('1e-4346'))
+
+def test_issue_459():
+    assert isnan(clsin(1, mp.inf))
+    assert isnan(clsin(2, mp.inf))
+    assert isnan(clsin(2, mp.nan))
+    assert isnan(polylog(-2, mp.nan))
+
+def test_issue_1099():
+    mp.dps = 200
+    z = mpf(1)/2809
+    a = mpc(mpf(1)/4, pi*32/log(53))
+    r1 = lerchphi(z, 2, a)
+    r2 = extradps(100)(lerchphi)(z, 2, a)
+    assert r1.ae(r2)
+
+def test_issue_252():
+    z, s, a = 2.5, 1.5, 4
+    e = 1/mpf(10**10)
+    # N[LerchPhi[5/2, 3/2, 4-10^-10], 17]
+    assert lerchphi(z, s,
+                    a - e).ae(mpc('-0.16723817353102306-0.08686834435129020j'))
+    # N[LerchPhi[5/2, 3/2, 4+10^-10], 17]
+    assert lerchphi(z, s,
+                    a + e).ae(mpc('-0.16723817351940769-0.08686834433537087j'))
+    # N[LerchPhi[5/2, 3/2, 4], 17]
+    assert lerchphi(z, s,
+                    a).ae(mpc('-0.16723817352521537-0.08686834434333054j'))
+    # N[LerchPhi[5/2+I/4, 2, 4], 17]
+    assert lerchphi(2.5+0.25j, 2,
+                    4).ae(mpc('-0.066397419699793568+0.076201248010951803j'))
+    # N[LerchPhi[1/4+I/2, 5/2, 4], 17]
+    assert lerchphi(0.25+0.5j, 2.5,
+                    4).ae(mpc('0.032357329026949928+0.010945877309574764j'))
+    # N[LerchPhi[3/4, 5/2, 4], 17]
+    assert lerchphi(0.75, 2.5, 4).ae(mpf('0.058457869546642472'))
+
+def test_issue_496():
+    assert fp.hyper([0], [0], 0.25) == 1
+    assert fp.hyper([0], [0], 0.5) == 1
+    assert fp.hyper([0], [0], 1.5) == 1
+    assert fp.hyper([2, 0], [0, 1], 2.5) == 1
+    assert fp.hyper([1, -1], [-2], 3) == 2.5
+    assert fp.hyp2f1(2, -1, -1, 3) == 7
