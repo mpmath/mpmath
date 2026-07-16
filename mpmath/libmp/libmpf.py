@@ -1481,8 +1481,8 @@ def format_fixed(s, dps, rnd=round_down):
     # Now that we have an estimate, compute the correct digits
     # (we do this because the previous computation could yield the wrong
     # exponent by +- 1)
-    _, digits, exponent = to_digits_exp(s, max(dps + exponent,
-                                               int(s[3]/blog2_10)) + 10, base)
+    _, digits, exponent = to_digits_exp(s, dps + exponent + max(0, -s[2])
+                                        + 2, base)
     dps += exponent + 1
 
     if dps < 0:
