@@ -1085,10 +1085,15 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
+def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False,
+                 sticky=False):
     """
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
+
+    ``sticky`` marks that the value has a nonzero remainder past the last
+    supplied digit, so directed and nearest rounding round it up even when
+    every extracted guard digit is zero.
     """
 
     assert len(digits) > dps
@@ -1116,7 +1121,7 @@ def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
         # The first digit after dps is a 5 and we should determine whether we
         # round it up or down.
         if digits[dps] == rnd_digs[0]:
-            tie_down = True
+            tie_down = not sticky
 
             # If the digit we round to is even, we may round down if all the
             # following digits are 0.
@@ -1131,6 +1136,7 @@ def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
     elif rnd == round_up:
         # If any digit following a 0 is different from zero, we round up.
         if digits[dps] == '0':
+            tie_up = sticky
             for i in range(dps+1, len(digits)):
                 if digits[i] != '0':
                     tie_up = True
@@ -1483,17 +1489,27 @@ def format_fixed(s, dps, rnd=round_down):
     # exponent by +- 1)
     _, digits, exponent = to_digits_exp(
             s, max(dps+exponent+4, int(s[3]/blog2_10)), base)
+    # to_digits_exp truncates; flag a nonzero remainder past the last digit so
+    # rounding is not fooled by a short zero tail (#1131).
+    sticky = s[2] + len(digits) - 1 - exponent < 0
     orig_dps = dps
     dps += exponent + 1
 
-    # The number we want to print is lower in magnitude that the requested
-    # precision. We should only print 0s.
+    # The value's leading digit is past the last requested place, so it rounds
+    # to 0 -- or to a single unit there when rounding away from zero (#1131).
     if dps < 0:
-        int_part = '0'
-        frac_part = orig_dps*'0'
+        if rnd == round_ceiling:
+            roundup = not s[0]
+        elif rnd == round_floor:
+            roundup = bool(s[0])
+        else:
+            roundup = rnd == round_up
+        digits = '1'.rjust(orig_dps + 1, '0') if roundup else '0'*(orig_dps + 1)
+        int_part, frac_part = digits[0], digits[1:]
 
     else:
-        digits, exp_add = round_digits(s[0], digits, dps, base, rnd, True)
+        digits, exp_add = round_digits(s[0], digits, dps, base, rnd, True,
+                                       sticky)
         exponent += exp_add
 
         # Here we prepend the corresponding 0s to the digits string, according

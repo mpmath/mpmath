@@ -912,3 +912,50 @@ def test_hexadecimal_fmt():
         assert f'{x:.0a}' == '0x1p+0'
         assert f'{x:#.0a}' == '0x1.p+0'
         assert f"{mp.mpf('1.234567890123456789'):+.0a}" == '+0x1p+0'
+
+
+@given(st.floats(allow_nan=False, allow_infinity=False,
+                 allow_subnormal=False),
+       st.integers(min_value=1, max_value=40))
+def test_fixed_with_gmpy2_bulk(x, p):
+    gmpy2 = pytest.importorskip('gmpy2')
+    if not x and math.copysign(1, x) == -1:
+        return  # skip negative zero
+    gx = gmpy2.mpfr(x)
+    mx = mp.mpf(x)
+    for rnd in 'NUDYZ':
+        fmt = '.%d%sf' % (p, rnd)
+        assert format(mx, fmt) == format(gx, fmt)
+
+
+def test_issue_1131():
+    # 'f' formatting must round the last digit like the 'e' path and MPFR do.
+    # ~0.000464, below 0.1 unit in the last place at .1f:
+    tiny = float.fromhex('0x1.e6a84962cb8p-12')
+    cases = [
+        # nonzero remainder hidden past the extracted guard digits
+        (float.fromhex('0x1.605b39ff191e1p-1'), '.15Uf', '0.688196003332050'),
+        (float.fromhex('0x1.605b39ff191e1p-1'), '.15Yf', '0.688196003332050'),
+        (float.fromhex('0x1.52e639e794efdp-1'), '.21Nf', '0.661912736434231541161'),
+        (float.fromhex('0x1.42696b91b17cap-1'), '.21Uf', '0.629710542235210057883'),
+        (float.fromhex('0x1.42696b91b17cap-1'), '.21Yf', '0.629710542235210057883'),
+        (float.fromhex('0x1.7a4c433af45ap-4'),  '.21Uf', '0.092357885950397733411'),
+        (float.fromhex('0x1.3c38bbc793bf4p-3'), '.30Uf',
+         '0.154405085590468282852327774891'),
+        # value below the last requested place: away from zero rounds it up,
+        # toward zero truncates it (.0f drops the trailing '.0', as in CPython)
+        (tiny,  '.1Nf', '0.0'), (tiny,  '.1Zf', '0.0'), (tiny,  '.1Df', '0.0'),
+        (tiny,  '.1Uf', '0.1'), (tiny,  '.1Yf', '0.1'),
+        (tiny,  '.3Uf', '0.001'), (tiny, '.0Uf', '1'),
+        (-tiny, '.1Nf', '-0.0'), (-tiny, '.1Uf', '-0.0'), (-tiny, '.1Zf', '-0.0'),
+        (-tiny, '.1Df', '-0.1'), (-tiny, '.1Yf', '-0.1'),
+    ]
+    for x, fmt, expected in cases:
+        assert format(mp.mpf(x), fmt) == expected, (x.hex(), fmt)
+
+    # exact dyadic half-way ties still round to even; carries still propagate
+    assert format(mp.mpf('0.125'), '.2Nf') == '0.12'
+    assert format(mp.mpf('0.375'), '.2Nf') == '0.38'
+    assert format(mp.mpf('2.5'), '.0Nf') == '2'
+    assert format(mp.mpf('3.5'), '.0Nf') == '4'
+    assert format(mp.mpf('0.6999999999'), '.4Uf') == '0.7000'
