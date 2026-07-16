@@ -25,9 +25,9 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
 
         |c_1 x_1 + c_2 x_2 + ... + c_n x_n| < \mathrm{tol}
 
-    and such that `\max |c_k| < \mathrm{maxcoeff}`. If no such vector
-    exists, :func:`~mpmath.pslq` returns ``None``. The tolerance defaults to
-    3/4 of the working precision.
+    and such that `\max |c_k| < \mathrm{maxcoeff}`.  If no such vector
+    found in no more than ``maxsteps`` iterations, :func:`~mpmath.pslq`
+    returns ``None``.  The tolerance defaults to 3/4 of the working precision.
 
     **Examples**
 
