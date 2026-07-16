@@ -1481,37 +1481,29 @@ def format_fixed(s, dps, rnd=round_down):
     # Now that we have an estimate, compute the correct digits
     # (we do this because the previous computation could yield the wrong
     # exponent by +- 1)
-    _, digits, exponent = to_digits_exp(
-            s, max(dps+exponent+4, int(s[3]/blog2_10)), base)
-    orig_dps = dps
+    _, digits, exponent = to_digits_exp(s, max(dps + exponent,
+                                               int(s[3]/blog2_10)) + 10, base)
     dps += exponent + 1
 
-    # The number we want to print is lower in magnitude that the requested
-    # precision. We should only print 0s.
     if dps < 0:
-        int_part = '0'
-        frac_part = orig_dps*'0'
+        # The number we want to print is lower in magnitude that the
+        # requested precision.
+        digits = '0'*(-dps) + digits
+        exponent -= dps
+        dps = 0
+    digits, exp_add = round_digits(s[0], digits, dps, base, rnd, True)
+    exponent += exp_add
 
+    # Here we prepend the corresponding 0s to the digits string, according
+    # to the value of exponent
+    split = 1
+    if exponent < 0:
+        digits = "0"*(-exponent) + digits
     else:
-        digits, exp_add = round_digits(s[0], digits, dps, base, rnd, True)
-        exponent += exp_add
+        split += exponent
 
-        # Here we prepend the corresponding 0s to the digits string, according
-        # to the value of exponent
-        if exponent < 0:
-            digits = ("0"*(-exponent)) + digits
-            split = 1
-        else:
-            split = exponent + 1
-        int_part = digits[:split]
-
-        # Finally, assemble the digits including the decimal point
-        if orig_dps == 0:
-            return int_part, ''
-
-        frac_part = digits[split:]
-
-    return int_part, frac_part
+    # Finally, assemble the digits including the decimal point
+    return digits[:split], digits[split:]
 
 
 def format_scientific(s, dps, rnd=round_down):
