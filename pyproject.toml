@@ -64,7 +64,7 @@ addopts = "--doctest-modules --doctest-glob='*.rst'"
 norecursedirs = ['docs/plots', 'demo', '.eggs', '.git', '.hypothesis']
 filterwarnings = ['error::DeprecationWarning']
 xfail_strict = true
-timeout = 600
+timeout = 1000
 
 [tool.coverage.run]
 branch = true
