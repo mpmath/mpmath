@@ -45,7 +45,7 @@ jobs:
           - python-version: graalpy-25.0
             purepy: true
     env:
-      PYTEST_ADDOPTS: -n auto --durations=20
+      PYTEST_ADDOPTS: -n auto --durations=20 --maxfail=7
     steps:
     - uses: actions/checkout@v7
       with:
