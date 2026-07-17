@@ -42,7 +42,7 @@ jobs:
             purepy: true
           - python-version: pypy3.11
             purepy: true
-          - python-version: graalpy-25.0
+          - python-version: graalpy-25.1
             purepy: true
     env:
       PYTEST_ADDOPTS: -n auto --durations=20 --maxfail=7
