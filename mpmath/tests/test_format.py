@@ -1,6 +1,7 @@
 import cmath
 import ctypes
 import math
+import platform
 import sys
 
 import hypothesis.strategies as st
@@ -497,6 +498,8 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if spec['non_neg_0'] and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1021
     if spec['frac_separators'] and sys.version_info < (3, 14):
         mp.pretty_dps = "str"
         return  # see also python/cpython#130860
@@ -521,6 +524,8 @@ def test_mpc_complexes(fmt, z):
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
     spec = read_format_spec(fmt)
+    if spec['non_neg_0'] and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1021
     if spec['frac_separators'] and sys.version_info < (3, 14):
         return  # see also python/cpython#130860
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):

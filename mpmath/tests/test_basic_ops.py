@@ -2,6 +2,7 @@ import collections
 import decimal
 import math
 import operator
+import platform
 import random
 import sys
 from concurrent.futures import ThreadPoolExecutor
@@ -625,6 +626,8 @@ def test_issue_260():
     assert mpc(str(mpc(1j))) == mpc(1j)
 
 
+@pytest.mark.skipif(platform.python_implementation() == 'GraalVM',
+                    reason="oracle/graalpython#1021")
 @settings(max_examples=10000)
 @given(st.floats(allow_nan=True,
                  allow_infinity=True,
