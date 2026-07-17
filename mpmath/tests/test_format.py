@@ -498,7 +498,7 @@ def test_mpf_floats_bulk(fmt, x):
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
-    if spec['non_neg_0'] and platform.python_implementation() == 'GraalVM':
+    if spec['no_neg_0'] and platform.python_implementation() == 'GraalVM':
         return  # oracle/graalpython#1021
     if spec['frac_separators'] and sys.version_info < (3, 14):
         mp.pretty_dps = "str"
@@ -524,7 +524,7 @@ def test_mpc_complexes(fmt, z):
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
     spec = read_format_spec(fmt)
-    if spec['non_neg_0'] and platform.python_implementation() == 'GraalVM':
+    if spec['no_neg_0'] and platform.python_implementation() == 'GraalVM':
         return  # oracle/graalpython#1021
     if spec['frac_separators'] and sys.version_info < (3, 14):
         return  # see also python/cpython#130860
