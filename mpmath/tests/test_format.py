@@ -930,17 +930,17 @@ def test_fixed_with_gmpy2_bulk(x, p):
 
 def test_issue_1131():
     # 'f' formatting must round the last digit like the 'e' path and MPFR do.
-    # ~0.000464, below 0.1 unit in the last place at .1f:
-    tiny = float.fromhex('0x1.e6a84962cb8p-12')
+    # below 0.1 unit in the last place at .1f:
+    tiny = 0.0004641126344492319
     cases = [
         # nonzero remainder hidden past the extracted guard digits
-        (float.fromhex('0x1.605b39ff191e1p-1'), '.15Uf', '0.688196003332050'),
-        (float.fromhex('0x1.605b39ff191e1p-1'), '.15Yf', '0.688196003332050'),
-        (float.fromhex('0x1.52e639e794efdp-1'), '.21Nf', '0.661912736434231541161'),
-        (float.fromhex('0x1.42696b91b17cap-1'), '.21Uf', '0.629710542235210057883'),
-        (float.fromhex('0x1.42696b91b17cap-1'), '.21Yf', '0.629710542235210057883'),
-        (float.fromhex('0x1.7a4c433af45ap-4'),  '.21Uf', '0.092357885950397733411'),
-        (float.fromhex('0x1.3c38bbc793bf4p-3'), '.30Uf',
+        (0.688196003332049,   '.15Uf', '0.688196003332050'),
+        (0.688196003332049,   '.15Yf', '0.688196003332050'),
+        (0.6619127364342315,  '.21Nf', '0.661912736434231541161'),
+        (0.6297105422352101,  '.21Uf', '0.629710542235210057883'),
+        (0.6297105422352101,  '.21Yf', '0.629710542235210057883'),
+        (0.09235788595039773, '.21Uf', '0.092357885950397733411'),
+        (0.15440508559046828, '.30Uf',
          '0.154405085590468282852327774891'),
         # value below the last requested place: away from zero rounds it up,
         # toward zero truncates it (.0f drops the trailing '.0', as in CPython)
@@ -953,9 +953,10 @@ def test_issue_1131():
     for x, fmt, expected in cases:
         assert format(mp.mpf(x), fmt) == expected, (x.hex(), fmt)
 
-    # exact dyadic half-way ties still round to even; carries still propagate
+    # the expansion terminates with a 5 at the rounding position: round-half-even
     assert format(mp.mpf('0.125'), '.2Nf') == '0.12'
     assert format(mp.mpf('0.375'), '.2Nf') == '0.38'
     assert format(mp.mpf('2.5'), '.0Nf') == '2'
     assert format(mp.mpf('3.5'), '.0Nf') == '4'
+    # carry propagation
     assert format(mp.mpf('0.6999999999'), '.4Uf') == '0.7000'
