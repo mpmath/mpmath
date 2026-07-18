@@ -542,7 +542,7 @@ def test_mpc_complexes(fmt, z):
         return  # oracle/graalpython#1024
     if spec['precision'] == 0 and not z and spec['type'] == '' and platform.python_implementation() == 'GraalVM':
         return  # oracle/graalpython#1025
-    if spec['sign'] in ' +' and spec['type'] == '' and platform.python_implementation() == 'GraalVM':
+    if (spec['sign'] in ' +' or spec['thousands_separators']) and spec['type'] == '' and platform.python_implementation() == 'GraalVM':
         return  # oracle/graalpython#1026
     if spec['frac_separators'] and sys.version_info < (3, 14):
         return  # see also python/cpython#130860
