@@ -917,3 +917,51 @@ def test_hexadecimal_fmt():
         assert f'{x:.0a}' == '0x1p+0'
         assert f'{x:#.0a}' == '0x1.p+0'
         assert f"{mp.mpf('1.234567890123456789'):+.0a}" == '+0x1p+0'
+
+
+@given(st.floats(allow_nan=False, allow_infinity=False,
+                 allow_subnormal=False),
+       st.integers(min_value=1, max_value=40),
+       st.sampled_from(list('UDNYZ')))
+def test_fixed_with_gmpy2_bulk(x, dps, mode):
+    gmpy2 = pytest.importorskip('gmpy2')
+    if not x and math.copysign(1, x) == -1:
+        return  # skip negative zero
+    fmt = f'.{dps}{mode}f'
+    gx = gmpy2.mpfr(x)
+    mx = mp.mpf(x)
+    assert format(mx, fmt) == format(gx, fmt)
+
+
+def test_issue_1131():
+    # 'f' formatting must round the last digit like the 'e' path and MPFR do.
+    # below 0.1 unit in the last place at .1f:
+    tiny = 0.0004641126344492319
+    cases = [
+        # nonzero remainder hidden past the extracted guard digits
+        (0.688196003332049,   '.15Uf', '0.688196003332050'),
+        (0.688196003332049,   '.15Yf', '0.688196003332050'),
+        (0.6619127364342315,  '.21Nf', '0.661912736434231541161'),
+        (0.6297105422352101,  '.21Uf', '0.629710542235210057883'),
+        (0.6297105422352101,  '.21Yf', '0.629710542235210057883'),
+        (0.09235788595039773, '.21Uf', '0.092357885950397733411'),
+        (0.15440508559046828, '.30Uf',
+         '0.154405085590468282852327774891'),
+        # value below the last requested place: away from zero rounds it up,
+        # toward zero truncates it (.0f drops the trailing '.0', as in CPython)
+        (tiny,  '.1Nf', '0.0'), (tiny,  '.1Zf', '0.0'), (tiny,  '.1Df', '0.0'),
+        (tiny,  '.1Uf', '0.1'), (tiny,  '.1Yf', '0.1'),
+        (tiny,  '.3Uf', '0.001'), (tiny, '.0Uf', '1'),
+        (-tiny, '.1Nf', '-0.0'), (-tiny, '.1Uf', '-0.0'), (-tiny, '.1Zf', '-0.0'),
+        (-tiny, '.1Df', '-0.1'), (-tiny, '.1Yf', '-0.1'),
+    ]
+    for x, fmt, expected in cases:
+        assert format(mp.mpf(x), fmt) == expected, (x.hex(), fmt)
+
+    # the expansion terminates with a 5 at the rounding position: round-half-even
+    assert format(mp.mpf('0.125'), '.2Nf') == '0.12'
+    assert format(mp.mpf('0.375'), '.2Nf') == '0.38'
+    assert format(mp.mpf('2.5'), '.0Nf') == '2'
+    assert format(mp.mpf('3.5'), '.0Nf') == '4'
+    # carry propagation
+    assert format(mp.mpf('0.6999999999'), '.4Uf') == '0.7000'
