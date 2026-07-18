@@ -9,6 +9,11 @@ import pexpect
 import pytest
 
 
+if platform.python_implementation() == 'GraalVM':
+    pytest.skip("Don't run CLI tests on GraalPy.",
+                allow_module_level=True)
+
+
 class Console(pexpect.spawn):
     """Spawned console for testing."""
 
