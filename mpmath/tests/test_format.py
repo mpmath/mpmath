@@ -488,6 +488,9 @@ def test_mpf_fmt_cpython():
 @example(fmt='010.6,f', x=0.1234567891)
 @example(fmt='010.7,f', x=0.1234567891)
 @example(fmt='010._f', x=0.1234567891)
+@example(fmt='#.11g', x=6.103515625e-05)
+@example(fmt='07,f', x=float('inf'))
+@example(fmt='#.0', x=0.0)
 def test_mpf_floats_bulk(fmt, x):
     '''
     These are additional random tests that check that mp.mpf and fp.mpf yield
@@ -500,6 +503,12 @@ def test_mpf_floats_bulk(fmt, x):
     spec = read_format_spec(fmt)
     if spec['no_neg_0'] and platform.python_implementation() == 'GraalVM':
         return  # oracle/graalpython#1021
+    if spec['alternate'] and spec['type'] in 'gG' and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1023
+    if spec['thousands_separators'] and not math.isfinite(x) and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1024
+    if spec['precision'] == 0 and not x and spec['type'] == '' and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1025
     if spec['frac_separators'] and sys.version_info < (3, 14):
         mp.pretty_dps = "str"
         return  # see also python/cpython#130860
@@ -518,6 +527,7 @@ def test_mpf_floats_bulk(fmt, x):
        st.complex_numbers(allow_nan=True,
                           allow_infinity=True,
                           allow_subnormal=True))
+@example(fmt='#.0', z=0j)
 def test_mpc_complexes(fmt, z):
     mp.pretty_dps = "repr"
     if ((not z.real and math.copysign(1, z.real) == -1)
@@ -526,6 +536,14 @@ def test_mpc_complexes(fmt, z):
     spec = read_format_spec(fmt)
     if spec['no_neg_0'] and platform.python_implementation() == 'GraalVM':
         return  # oracle/graalpython#1021
+    if spec['alternate'] and spec['type'] in 'gG' and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1023
+    if spec['thousands_separators'] and not cmath.isfinite(z) and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1024
+    if spec['precision'] == 0 and not z and spec['type'] == '' and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1025
+    if spec['sign'] in ' +' and spec['type'] == '' and platform.python_implementation() == 'GraalVM':
+        return  # oracle/graalpython#1026
     if spec['frac_separators'] and sys.version_info < (3, 14):
         return  # see also python/cpython#130860
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
