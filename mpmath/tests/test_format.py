@@ -916,16 +916,16 @@ def test_hexadecimal_fmt():
 
 @given(st.floats(allow_nan=False, allow_infinity=False,
                  allow_subnormal=False),
-       st.integers(min_value=1, max_value=40))
-def test_fixed_with_gmpy2_bulk(x, p):
+       st.integers(min_value=1, max_value=40),
+       st.sampled_from(list('UDNYZ')))
+def test_fixed_with_gmpy2_bulk(x, dps, mode):
     gmpy2 = pytest.importorskip('gmpy2')
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
+    fmt = f'.{dps}{mode}f'
     gx = gmpy2.mpfr(x)
     mx = mp.mpf(x)
-    for rnd in 'NUDYZ':
-        fmt = '.%d%sf' % (p, rnd)
-        assert format(mx, fmt) == format(gx, fmt)
+    assert format(mx, fmt) == format(gx, fmt)
 
 
 def test_issue_1131():
