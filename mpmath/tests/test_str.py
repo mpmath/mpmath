@@ -1,4 +1,7 @@
-from mpmath import inf, matrix, mpc, nstr
+import hypothesis.strategies as st
+from hypothesis import example, given
+
+from mpmath import inf, matrix, mp, mpc, nstr
 
 
 A1 = matrix([])
@@ -50,3 +53,17 @@ def test_matrix_str():
 '''[1.0]
 [2.0]
 [3.0]'''
+
+
+@given(st.floats(allow_subnormal=True,
+                 allow_nan=False,
+                 allow_infinity=False),
+       st.sampled_from(list('nfcud')))
+@example(x=6.170920920537087e+17, rnd='f')
+def test_eval_repr_roundtrip(x, rnd):
+    mp.rounding = rnd
+    mp.pretty = True
+    mp.pretty_dps = 'repr'
+    mx = mp.mpf(x)
+    smx = repr(mx)
+    assert mx == mp.mpf(smx)
