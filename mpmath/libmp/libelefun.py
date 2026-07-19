@@ -77,6 +77,7 @@ for k in range(1, LOG_TAYLOR_PREC.bit_length()+1):
 #                                                                            #
 #----------------------------------------------------------------------------#
 
+
 def constant_memo(f):
     """
     Decorator for caching computed values of mathematical
@@ -84,16 +85,15 @@ def constant_memo(f):
     function taking a single argument prec as input and
     returning a fixed-point value with the given precision.
     """
-    f.memo_prec = -1
-    f.memo_val = None
+    f._prec_val = -1, None
     def g(prec, **kwargs):
-        memo_prec = f.memo_prec
+        memo_prec, memo_val = f._prec_val
         if prec <= memo_prec:
-            return f.memo_val >> (memo_prec-prec)
-        newprec = int(prec*1.05+10)
-        f.memo_val = f(newprec, **kwargs)
-        f.memo_prec = newprec
-        return f.memo_val >> (newprec-prec)
+            return memo_val >> (memo_prec-prec)
+        memo_prec = int(prec*1.05+10)
+        memo_val = f(memo_prec, **kwargs)
+        f._prec_val = memo_prec, memo_val
+        return memo_val >> (memo_prec-prec)
     g.__name__ = f.__name__
     g.__doc__ = f.__doc__
     return g
