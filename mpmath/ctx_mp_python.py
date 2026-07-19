@@ -136,15 +136,16 @@ class _mpf(mpnumeric):
     def __repr__(self):
         ctx = self.context
         prec, rounding = ctx._prec_rounding
-        rounding = _reversed_rnd[rounding]
         if ctx.pretty:
             if ctx.short_str:
                 return to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, rnd=rounding, prec=prec)
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
+            rounding = _reversed_rnd[rounding]
             return to_str(self._mpf_, ndigits, rnd=rounding)
         if ctx.short_str:
             return f"mpf({to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, rnd=rounding, prec=prec)!r})"
+        rounding = _reversed_rnd[rounding]
         return f"mpf({to_str(self._mpf_, ctx._repr_digits, rnd=rounding)!r})"
 
     def __str__(self):
@@ -557,10 +558,10 @@ class _mpc(mpnumeric):
     def __repr__(self):
         ctx = self.context
         prec, rounding = ctx._prec_rounding
-        rounding = _reversed_rnd[rounding]
         if ctx.pretty:
             if ctx.short_str:
                 return f"({mpc_to_str(self._mpc_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, rnd=rounding, prec=prec)})"
+            rounding = _reversed_rnd[rounding]
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
             return f"({mpc_to_str(self._mpc_, ndigits, rnd=rounding)})"
