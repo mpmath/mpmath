@@ -511,18 +511,29 @@ def test_mpf_floats_bulk(fmt, x):
         assert format(x, fmt) == format(mp.mpf(x), fmt)
 
 
+@given(fmt_str(types=['']),
+       st.floats(allow_nan=True,
+                 allow_infinity=True,
+                 allow_subnormal=False))
+@example('', 1000000000000000.0)
+def test_mpf_floats_default_bulk(fmt, x):
+    mp.short_str = True
+    if not x and math.copysign(1, x) == -1:
+        return  # skip negative zero
+    spec = read_format_spec(fmt)
+    assert format(x, fmt) == format(mp.mpf(x), fmt)
+
+
 @given(fmt_str(types=list('gGfFeE') + [''], for_complex=True),
        st.complex_numbers(allow_nan=True,
                           allow_infinity=True,
                           allow_subnormal=True))
-def test_mpc_complexes(fmt, z):
+def test_mpc_complexes_bulk(fmt, z):
     mp.pretty_dps = "repr"
     if ((not z.real and math.copysign(1, z.real) == -1)
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
     spec = read_format_spec(fmt)
-    if spec['frac_separators'] and sys.version_info < (3, 14):
-        return  # see also python/cpython#130860
     if spec['precision'] < 0 and any(math.isfinite(_) for _ in [z.real, z.imag]):
         # The mpmath could choose a different decimal
         # representative (wrt CPython) for same binary
@@ -533,6 +544,21 @@ def test_mpc_complexes(fmt, z):
             assert complex(format(z)) == complex(format(mp.mpc(z)))
     else:
         assert format(z, fmt) == format(mp.mpc(z), fmt)
+
+
+@given(fmt_str(types=[''], for_complex=True),
+       st.complex_numbers(allow_nan=True,
+                          allow_infinity=True,
+                          allow_subnormal=False))
+@example(fmt='', z=complex(0))
+@example(fmt='#', z=complex(0))
+def test_mpc_complexes_default_bulk(fmt, z):
+    mp.short_str = True
+    if ((not z.real and math.copysign(1, z.real) == -1)
+            or (not z.imag and math.copysign(1, z.imag) == -1)):
+        return  # skip negative zero
+    spec = read_format_spec(fmt)
+    assert format(z, fmt) == format(mp.mpc(z), fmt)
 
 
 def test_mpc_fmt():

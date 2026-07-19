@@ -1,7 +1,12 @@
+import math
+import random
+import re
+
 import hypothesis.strategies as st
 from hypothesis import example, given
 
-from mpmath import inf, matrix, mp, mpc, nstr
+import mpmath
+from mpmath import inf, matrix, mp, mpc, mpf, nstr
 
 
 A1 = matrix([])
@@ -67,3 +72,96 @@ def test_eval_repr_roundtrip(x, rnd):
     mx = mp.mpf(x)
     smx = repr(mx)
     assert mx == mp.mpf(smx)
+
+
+@given(st.floats(allow_subnormal=False,
+                 allow_nan=False,
+                 allow_infinity=False))
+@example(1.0)
+@example(-10.0)
+@example(3.411330784663857e+16)
+@example(5.960464477539063e-08)
+@example(562949953421312.2)
+def test_float_short_repr(f):
+    mp.short_str = True
+    if not f and math.copysign(1, f) == -1:
+        return
+    s = str(f)
+    # Fixup float repr
+    # 1. remove leading 0's in the exponent
+    # 2. add trailing 0's for scientific notation
+    #    if one has no dot.
+    s = s.replace("e+0", "e+").replace("e-0", "e-")
+    if '.' not in s:
+        s = re.sub(r'(\d)e', r'\1.0e', s)
+    m = mpf(f)
+    sm = str(m)
+    assert s == sm
+    assert f"mpf('{s}')" == repr(m)
+    assert m == mpf(sm)
+
+
+@given(st.complex_numbers(allow_subnormal=False,
+                          allow_nan=False,
+                          allow_infinity=False))
+def test_complex_short_repr(z):
+    mp.short_str = True
+    if ((not z.real and math.copysign(1, z.real) == -1)
+            or (not z.imag and math.copysign(1, z.imag) == -1)):
+        return  # skip negative zero
+    s = str(z)
+    # Fixup complex repr
+    # 1. add missing real component
+    # 2. remove leading 0 in exponent
+    if '(' not in s:
+        s = '(0'+('' if z.imag < 0 else '+')+s+')'
+    s = s.replace("e+0", "e+").replace("e-0", "e-")
+    mz = mpc(z)
+    smz = str(mz)
+    # Fixup our repr
+    # 1. remove trailing .0's
+    # 2. remove spaces
+    smz = smz.replace(".0 ", " ")
+    smz = smz.replace(" ", "")
+    smz = smz.replace(".0j", "j")
+    smz = smz.replace(".0e", "e")
+    assert s == smz
+    assert f"mpc(real='{mz.real!s}', imag='{mz.imag!s}')" == repr(mz)
+    assert mz == mpc(smz)
+
+
+def test_short_repr_specials():
+    mp.short_str = True
+    assert str(mpf(0)) == '0.0'
+    assert str(mpf('inf')) == 'inf'
+    assert str(mpf('-inf')) == '-inf'
+    assert str(mpf('nan')) == 'nan'
+
+
+def test_short_repr_mpc():
+    mp.short_str = True
+    mp.pretty = True
+    z = mpc(1+0.1j)
+    assert str(z) == repr(z) == '(1.0 + 0.1j)'
+
+def test_short_repr_roundtrip():
+    mp.short_str = True
+    for dps in [15, 20, 30, 50, 100, 300]:
+        with mp.workdps(dps):
+            for _ in range(10000):
+                f = random.choice([(mpmath.rand()-0.5)*2 for _ in range(10)]
+                                  + [(mpmath.rand()-0.5)*2*10**5 for _ in range(5)]
+                                  + [(mpmath.rand()-0.5)*2/10**5 for _ in range(5)]
+                                  + [(mpmath.rand()-0.5)*2*10**100 for _ in range(2)])
+                s = str(f)
+                b = mpf(s)
+                assert f == b  # round-trip
+                if '.' not in s or len(s) < 2 or s[-2:] == '.0':
+                    continue
+                # test that short repr is really minimal
+                integer, frac = s.split('.')
+                frac, *exponent = frac.split('e')
+                exponent = 'e' + exponent[0] if exponent else ''
+                assert f == mpf(str(integer + '.' + frac + exponent))
+                frac = frac[:-random.randint(1,len(frac))]
+                assert f != mpf(str(integer + '.' + frac + exponent))
