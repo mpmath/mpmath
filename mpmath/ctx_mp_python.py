@@ -34,6 +34,8 @@ def _make_mpc(x, y):
     from mpmath import mp
     return mp.mpc(x, y)
 
+_reversed_rnd = {'n': 'n', 'f': 'c', 'c': 'f', 'u': 'd', 'd': 'u'}
+
 
 class _mpf(mpnumeric):
     """
@@ -134,6 +136,7 @@ class _mpf(mpnumeric):
     def __repr__(self):
         ctx = self.context
         prec, rounding = ctx._prec_rounding
+        rounding = _reversed_rnd[rounding]
         if ctx.pretty:
             if ctx.short_str:
                 return to_str(self._mpf_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, rnd=rounding, prec=prec)
@@ -554,6 +557,7 @@ class _mpc(mpnumeric):
     def __repr__(self):
         ctx = self.context
         prec, rounding = ctx._prec_rounding
+        rounding = _reversed_rnd[rounding]
         if ctx.pretty:
             if ctx.short_str:
                 return f"({mpc_to_str(self._mpc_, ctx._repr_digits, max_fixed=ctx._repr_digits-1, rnd=rounding, prec=prec)})"

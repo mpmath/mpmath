@@ -60,6 +60,20 @@ def test_matrix_str():
 [3.0]'''
 
 
+@given(st.floats(allow_subnormal=True,
+                 allow_nan=False,
+                 allow_infinity=False),
+       st.sampled_from(list('nfcud')))
+@example(x=6.170920920537087e+17, rnd='f')
+def test_eval_repr_roundtrip(x, rnd):
+    mp.rounding = rnd
+    mp.pretty = True
+    mp.pretty_dps = 'repr'
+    mx = mp.mpf(x)
+    smx = repr(mx)
+    assert mx == mp.mpf(smx)
+
+
 @given(st.floats(allow_subnormal=False,
                  allow_nan=False,
                  allow_infinity=False))

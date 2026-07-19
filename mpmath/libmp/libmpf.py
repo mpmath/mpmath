@@ -1149,30 +1149,28 @@ def to_digits_exp(s, dps, base=10, prec=-1):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False,
-                 inexact=False):
+def round_digits(s, digits, exponent, dps, base, rnd=round_down, fixed=False):
     """
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
-
-    ``inexact`` marks that the value has a nonzero remainder past the last
-    supplied digit, so directed and nearest rounding round it up even when
-    every extracted guard digit is zero.
     """
 
     assert len(digits) > dps
     assert rnd in (round_nearest, round_up, round_down, round_ceiling,
                    round_floor)
+    sign = s[0]
+
+    # to_digits_exp truncates; flag a nonzero remainder past the last digit so
+    # rounding is not fooled by a short zero tail.
+    inexact = s[2] + len(digits) - 1 - exponent < 0
 
     if rnd == round_ceiling:
         rnd = round_down if sign else round_up
     elif rnd == round_floor:
         rnd = round_up if sign else round_down
 
-    exponent = 0
-
     if rnd == round_down:
-        return digits[:dps], 0
+        return digits[:dps], exponent
     elif rnd == round_nearest:
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
@@ -1321,8 +1319,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 digits = hex(n)[2:]
 
         if len(digits) > dps:
-            digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
-            exponent += exp_add
+            digits, exponent = round_digits(s, digits, exponent, dps, base, rnd)
 
         # Prettify numbers close to unit magnitude
         if not binary_exp and min_fixed < exponent < max_fixed:
@@ -1558,9 +1555,6 @@ def format_fixed(s, dps, rnd=round_down, prec=-1):
         # exponent by +- 1)
         _, digits, exponent = to_digits_exp(
                 s, max(dps+exponent+4, int(s[3]/blog2_10)), base)
-        # to_digits_exp truncates; flag a nonzero remainder past the last digit so
-        # rounding is not fooled by a short zero tail (#1131).
-        inexact = s[2] + len(digits) - 1 - exponent < 0
         dps += exponent + 1
 
         if dps < 0:
@@ -1570,8 +1564,7 @@ def format_fixed(s, dps, rnd=round_down, prec=-1):
             exponent -= dps
             dps = 0
 
-        digits, exp_add = round_digits(s[0], digits, dps, base, rnd, True, inexact)
-        exponent += exp_add
+        digits, exponent = round_digits(s, digits, exponent, dps, base, rnd, True)
     else:
         _, digits, exponent = to_digits_exp(s, dps, prec=prec)
 
@@ -1606,8 +1599,7 @@ def format_scientific(s, dps, rnd=round_down, prec=-1):
         _, digits, exponent = to_digits_exp(s, dps, prec=prec)
         digits = digits[0] + digits[1:].rstrip('0')
     if len(digits) > dps:
-        digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
-        exponent += exp_add
+        digits, exponent = round_digits(s, digits, exponent, dps, base, rnd)
 
     return digits[0], digits[1:], f'e{exponent:+03d}'
 
@@ -1702,8 +1694,7 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
             _, tdigits, exp = to_digits_exp(num, max(53/blog2_10, dps), 10)
             unique = False
         if num[1] and len(tdigits) > dps:
-            _, exp_add = round_digits(num, tdigits, dps, 10, rnd)
-            exp += exp_add
+            _, exp = round_digits(num, tdigits, exp, dps, 10, rnd)
 
         fix0 = 0 if fmt_type else 1
         if -4 <= exp < dps - fix0:

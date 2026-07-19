@@ -129,7 +129,7 @@ The ``rounding`` property control default rounding mode for the context:
     mpf('0.8414709848078965')
     >>> mp.rounding = 'u'  # round up
     >>> sin(1)
-    mpf('0.84147098480789662')
+    mpf('0.84147098480789661')
     >>> mp.rounding = 'n'
 
 Temporarily changing the precision
