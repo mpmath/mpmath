@@ -1337,7 +1337,7 @@ def nsum(ctx, f, *intervals, **options):
         transformation for logarithmic convergent or alternating divergent
         series. The ``'levin_variant'``-keyword selects the variant. Valid
         choices are "u", "t", "v" and "all" whereby "all" uses all three
-        u,t and v simultanously (This is good for performance comparison in
+        u,t and v simultaneously (This is good for performance comparison in
         conjunction with "verbose=True"). Instead of the Levin transform one can
         also use the Sidi-S transform by selecting the method ``'sidi'``.
         See :func:`~mpmath.levin` for additional details.
