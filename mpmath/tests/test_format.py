@@ -960,3 +960,35 @@ def test_issue_1131():
     assert format(mp.mpf('3.5'), '.0Nf') == '4'
     # carry propagation
     assert format(mp.mpf('0.6999999999'), '.4Uf') == '0.7000'
+
+
+def test_str_rounding_near_boundary():
+    # to_str extracted only dps+10 digits, narrower than format_scientific /
+    # format_fixed which cover the whole mantissa.  A value sitting just above
+    # a decimal boundary is then extracted as "...99999" one ULP low, so
+    # directed rounding through str/nstr fell one ULP short of the 'e' format
+    # and the exact value.  These exact dyadics are just above such boundaries.
+    with mp.workprec(200):
+        b = mp.mpf(1058187881481430099485) / mp.mpf(2)**74     # 0.056020000...16941...
+        d = mp.mpf(136826224263983729993245) / mp.mpf(2)**81   # 0.056590000...
+        e = -mp.mpf(2218543292904312125153593) / mp.mpf(2)**86  # -0.028674000...
+
+    # public nstr(rnd=...) API: only directed-away modes were affected
+    assert mp.nstr(b, 6, rnd='n') == '0.05602'
+    assert mp.nstr(b, 6, rnd='c') == '0.0560201'
+    assert mp.nstr(b, 6, rnd='u') == '0.0560201'
+    assert mp.nstr(b, 6, rnd='f') == '0.05602'
+    assert mp.nstr(b, 6, rnd='d') == '0.05602'
+    assert mp.nstr(d, 6, rnd='n') == '0.05659'
+    assert mp.nstr(d, 6, rnd='c') == '0.0565901'
+    assert mp.nstr(d, 6, rnd='u') == '0.0565901'
+    # negative: ceiling truncates the magnitude, floor/away rounds it up
+    assert mp.nstr(e, 6, rnd='c') == '-0.028674'
+    assert mp.nstr(e, 6, rnd='d') == '-0.028674'
+    assert mp.nstr(e, 6, rnd='u') == '-0.0286741'
+    assert mp.nstr(e, 6, rnd='f') == '-0.0286741'
+
+    # str/nstr now agrees with the already-correct 'e' format for the same value
+    assert format(b, '.5Ne') == '5.60200e-02'
+    assert format(b, '.5Ue') == '5.60201e-02'
+    assert format(b, '.5Ye') == '5.60201e-02'
