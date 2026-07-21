@@ -61,6 +61,7 @@ def test_from_str():
     assert mpf(from_str('0b1101.100101')) == mpf('13.578125')
     assert mpf(from_str('0o1101.100101')) == mpf('577.12524795532227')
     assert mpf(from_str('1.99999999', prec=0)) == mpf('1.9999999901046976')
+    pytest.raises(ValueError, lambda: from_str('1e400e2', 6))
 
 def test_eps_repr():
     mp.dps = 24
@@ -79,7 +80,6 @@ def test_to_str():
     x = mpf('1234.567891')._mpf_
     pytest.raises(ValueError, lambda: to_str(x, 6, binary_exp=True))
     pytest.raises(ValueError, lambda: to_str(x, 6, rnd='Y'))
-    pytest.raises(ValueError, lambda: to_str('1e400e2', 6))
     assert to_str(x, 5, rnd='n') == '1234.6'
     assert to_str(x, 5, rnd='d') == '1234.5'
     assert to_str(x, 5, rnd='u') == '1234.6'
