@@ -1085,7 +1085,7 @@ def to_digits_exp(s, dps, base=10):
     exponent += len(digits) - fixdps - 1
     return sign, digits, exponent
 
-def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
+def round_digits(s, digits, exponent, dps, base, rnd=round_down, fixed=False):
     """
     Returns the rounded digits, and the number of places the decimal point was
     shifted.
@@ -1094,16 +1094,19 @@ def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
     assert len(digits) > dps
     assert rnd in (round_nearest, round_up, round_down, round_ceiling,
                    round_floor)
+    sign = s[0]
+
+    # to_digits_exp truncates; flag a nonzero remainder past the last digit so
+    # rounding is not fooled by a short zero tail.
+    inexact = s[2] + len(digits) - 1 - exponent < 0
 
     if rnd == round_ceiling:
         rnd = round_down if sign else round_up
     elif rnd == round_floor:
         rnd = round_up if sign else round_down
 
-    exponent = 0
-
     if rnd == round_down:
-        return digits[:dps], 0
+        return digits[:dps], exponent
     elif rnd == round_nearest:
         rnd_digs = stddigits[(base//2 + base % 2):base]
     else:
@@ -1116,7 +1119,7 @@ def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
         # The first digit after dps is a 5 and we should determine whether we
         # round it up or down.
         if digits[dps] == rnd_digs[0]:
-            tie_down = True
+            tie_down = not inexact
 
             # If the digit we round to is even, we may round down if all the
             # following digits are 0.
@@ -1131,6 +1134,7 @@ def round_digits(sign, digits, dps, base, rnd=round_down, fixed=False):
     elif rnd == round_up:
         # If any digit following a 0 is different from zero, we round up.
         if digits[dps] == '0':
+            tie_up = inexact
             for i in range(dps+1, len(digits)):
                 if digits[i] != '0':
                     tie_up = True
@@ -1227,7 +1231,11 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
 
     # to_digits_exp rounds to floor.
     # This sometimes kills some instances of "...00001"
-    sign, digits, exponent = to_digits_exp(s, dps+10, base)
+    # For base 10 widen the window to the full mantissa (as format_scientific
+    # does), otherwise a value just above a decimal boundary is extracted as
+    # "...99999" one ULP low and directed rounding lands one ULP short.
+    ndig = (max(dps, int(s[3]/blog2_10)) if base == 10 else dps) + 10
+    sign, digits, exponent = to_digits_exp(s, ndig, base)
 
     rnd_digs = stddigits[(base//2 + base%2):base]
 
@@ -1247,8 +1255,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
                 n = int(digits, 16) >> shift
                 digits = hex(n)[2:]
 
-        digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
-        exponent += exp_add
+        digits, exponent = round_digits(s, digits, exponent, dps, base, rnd)
 
         # Prettify numbers close to unit magnitude
         if not binary_exp and min_fixed < exponent < max_fixed:
@@ -1483,35 +1490,27 @@ def format_fixed(s, dps, rnd=round_down):
     # exponent by +- 1)
     _, digits, exponent = to_digits_exp(
             s, max(dps+exponent+4, int(s[3]/blog2_10)), base)
-    orig_dps = dps
     dps += exponent + 1
 
-    # The number we want to print is lower in magnitude that the requested
-    # precision. We should only print 0s.
     if dps < 0:
-        int_part = '0'
-        frac_part = orig_dps*'0'
+        # The number we want to print is lower in magnitude that the
+        # requested precision.
+        digits = '0'*(-dps) + digits
+        exponent -= dps
+        dps = 0
 
+    digits, exponent = round_digits(s, digits, exponent, dps, base, rnd, True)
+
+    # Here we prepend the corresponding 0s to the digits string, according
+    # to the value of exponent
+    split = 1
+    if exponent < 0:
+        digits = "0"*(-exponent) + digits
     else:
-        digits, exp_add = round_digits(s[0], digits, dps, base, rnd, True)
-        exponent += exp_add
+        split += exponent
 
-        # Here we prepend the corresponding 0s to the digits string, according
-        # to the value of exponent
-        if exponent < 0:
-            digits = ("0"*(-exponent)) + digits
-            split = 1
-        else:
-            split = exponent + 1
-        int_part = digits[:split]
-
-        # Finally, assemble the digits including the decimal point
-        if orig_dps == 0:
-            return int_part, ''
-
-        frac_part = digits[split:]
-
-    return int_part, frac_part
+    # Finally, assemble the digits including the decimal point
+    return digits[:split], digits[split:]
 
 
 def format_scientific(s, dps, rnd=round_down):
@@ -1522,8 +1521,7 @@ def format_scientific(s, dps, rnd=round_down):
     _, digits, exponent = to_digits_exp(s, max(dps + 10,
                                                int(s[3]/blog2_10) + 10),
                                         base)
-    digits, exp_add = round_digits(s[0], digits, dps, base, rnd)
-    exponent += exp_add
+    digits, exponent = round_digits(s, digits, exponent, dps, base, rnd)
 
     return digits[0], digits[1:], f'e{exponent:+03d}'
 
@@ -1613,8 +1611,7 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps):
 
         _, tdigits, exp = to_digits_exp(num, max(53/blog2_10, dps), 10)
         if num[1]:
-            _, exp_add = round_digits(num, tdigits, dps, 10, rnd)
-            exp += exp_add
+            _, exp = round_digits(num, tdigits, exp, dps, 10, rnd)
 
         fix0 = 0 if fmt_type else 1
         if -4 <= exp < dps - fix0:

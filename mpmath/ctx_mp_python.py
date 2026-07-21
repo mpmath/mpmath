@@ -34,6 +34,8 @@ def _make_mpc(x, y):
     from mpmath import mp
     return mp.mpc(x, y)
 
+_reversed_rnd = {'n': 'n', 'f': 'c', 'c': 'f', 'u': 'd', 'd': 'u'}
+
 
 class _mpf(mpnumeric):
     """
@@ -133,7 +135,7 @@ class _mpf(mpnumeric):
 
     def __repr__(self):
         ctx = self.context
-        rounding = ctx._prec_rounding[1]
+        rounding = _reversed_rnd[ctx._prec_rounding[1]]
         if ctx.pretty:
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
@@ -546,17 +548,19 @@ class _mpc(mpnumeric):
 
     def __repr__(self):
         ctx = self.context
+        rounding = _reversed_rnd[ctx._prec_rounding[1]]
         if ctx.pretty:
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
-            return f"({mpc_to_str(self._mpc_, ndigits)})"
+            return f"({mpc_to_str(self._mpc_, ndigits, rnd=rounding)})"
         r = repr(self.real)[4:-1]
         i = repr(self.imag)[4:-1]
         return f"{type(self).__name__}(real={r}, imag={i})"
 
     def __str__(self):
         ctx = self.context
-        return f"({mpc_to_str(self._mpc_, ctx._str_digits)})"
+        rounding = ctx._prec_rounding[1]
+        return f"({mpc_to_str(self._mpc_, ctx._str_digits, rnd=rounding)})"
 
     def __complex__(self):
         ctx = self.context

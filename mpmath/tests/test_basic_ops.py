@@ -4,6 +4,7 @@ import math
 import operator
 import random
 import sys
+import threading
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest
@@ -783,3 +784,31 @@ def test_eval_repr_roundtrip():
                 elif x < 0:
                     x /= 10**n
                 assert eval(repr(x)) == x, (prec, x)
+
+
+def test_issue_1135():
+    for _ in range(100):
+        n = 4
+        barrier = threading.Barrier(n)
+        bad = []
+
+        def worker(index):
+            mp = mpmath.MPContext()
+
+            for iteration in range(100):
+                mp.prec = 100 + 100 * iteration + 10 * index
+                barrier.wait()
+
+                value = float(+mp.pi)
+                if value != math.pi:
+                    bad.append((mp.prec, value))
+
+        threads = [threading.Thread(target=worker, args=(i,))
+                   for i in range(n)]
+
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join()
+
+        assert not bad
