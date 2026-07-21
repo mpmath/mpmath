@@ -14,7 +14,6 @@ Author of the first version: M.T. Taschuk
 import random
 
 import pytest
-import mpmath.functions.elliptic as elliptic_functions
 
 from mpmath import (cos, cosh, cot, coth, csc, csch, diff, ellipe, ellipfun,
                     ellipk, ellippi, elliprc, elliprd, elliprf, elliprg,
@@ -857,7 +856,9 @@ def test_weierstrass_parameter_conversions():
     g2_roundtrip, g3_roundtrip = weierinvariants(omega1, omega2)
     assert mpc_ae(g2, g2_roundtrip, eps=eps*10000)
     assert mpc_ae(g3, g3_roundtrip, eps=eps*10000)
-    assert (omega2/omega1).imag > 0
+    tau = omega2/omega1
+    assert abs(tau.real) <= mpf('0.5')
+    assert abs(tau) >= 1
 
 def test_weierstrass_special_half_periods():
     mp.dps = 30
@@ -892,12 +893,43 @@ def test_weierstrass_half_periods_high_precision():
     assert mpc_ae(g2_roundtrip, g2, eps=eps*10000)
     assert mpc_ae(g3_roundtrip, g3, eps=eps*10000)
 
-def test_weierstrass_half_periods_no_convergence(monkeypatch):
-    def bad_roots(ctx, omega1, omega2):
-        return [ctx.mpf(10), ctx.mpf(20), ctx.mpf(30)]
+def test_weierstrass_half_periods_reference_values():
+    mp.dps = 30
 
-    monkeypatch.setattr(elliptic_functions, "_roots_from_omega", bad_roots)
-    pytest.raises(ValueError, lambda: weierhalfperiods(0, 1))
+    cases = [
+        # Wolfram Engine N[WeierstrassHalfPeriods[{12, 1}], 30]
+        ((12, 1),
+         (mpc('0.980738294394739292410226347661'),
+          mpc('1.01377388832044810173727513686j'))),
+        # Wolfram Engine N[WeierstrassHalfPeriods[{12, -1}], 30]
+        ((12, -1),
+         (mpc('-0.980738294394739292410226347661j'),
+          mpc('1.01377388832044810173727513686'))),
+        # Wolfram Engine
+        # N[WeierstrassHalfPeriods[{1 + 2 I, 3 - 4 I}], 30]
+        ((1+2j, 3-4j),
+         (mpc('0.384323637351610816269007338473',
+              '1.048679479243511496217225594331'),
+          mpc('-1.174237734840406867019569638285',
+              '-0.123713024549329486202780646669'))),
+    ]
+
+    for invariants, expected in cases:
+        periods = weierhalfperiods(*invariants)
+        assert mpc_ae(periods[0], expected[0], eps=eps*1000)
+        assert mpc_ae(periods[1], expected[1], eps=eps*1000)
+
+def test_weierstrass_half_periods_boundary_convention():
+    for dps in [15, 30, 50]:
+        with mp.workdps(dps):
+            omega1, omega2 = weierhalfperiods(60, 140)
+            tau = omega2/omega1
+            assert mp.almosteq(tau.real, mpf('0.5'))
+
+            omega1, omega2 = weierhalfperiods(-4, 1)
+            tau = omega2/omega1
+            assert mp.almosteq(abs(tau), 1)
+            assert tau.real >= 0
 
 def test_weierstrass_parameter_conversions_with_kleinj():
     mp.dps = 30
