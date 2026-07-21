@@ -284,7 +284,7 @@ class StandardBaseContext(Context,
                 break
         return result
 
-    def linspace(ctx, *args, **kwargs):
+    def linspace(ctx, *args, endpoint=True):
         """
         ``linspace(a, b, n)`` returns a list of `n` evenly spaced
         samples from `a` to `b`. The syntax ``linspace(mpi(a,b), n)``
@@ -318,7 +318,7 @@ class StandardBaseContext(Context,
                             % len(args))
         if n < 1:
             raise ValueError('n must be greater than 0')
-        if 'endpoint' not in kwargs or kwargs['endpoint']:
+        if endpoint:
             if n == 1:
                 return [ctx.mpf(a)]
             step = (b - a) / ctx.mpf(n - 1)
