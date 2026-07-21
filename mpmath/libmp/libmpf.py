@@ -1234,8 +1234,7 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     # For base 10 widen the window to the full mantissa (as format_scientific
     # does), otherwise a value just above a decimal boundary is extracted as
     # "...99999" one ULP low and directed rounding lands one ULP short.
-    _, _, _, bc = s
-    ndig = max(dps + 10, int(bc/blog2_10) + 10) if base == 10 else dps + 10
+    ndig = (max(dps, int(s[3]/blog2_10)) if base == 10 else dps) + 10
     sign, digits, exponent = to_digits_exp(s, ndig, base)
 
     rnd_digs = stddigits[(base//2 + base%2):base]
