@@ -456,7 +456,8 @@ class QuadratureMethods:
         ctx._gauss_legendre = GaussLegendre(ctx)
         ctx._tanh_sinh = TanhSinh(ctx)
 
-    def quad(ctx, f, *points, **kwargs):
+    def quad(ctx, f, *points, method='tanh-sinh', verbose=False,
+             maxdegree=None, error=False):
         r"""
         Computes a single, double or triple integral over a given
         1D interval, 2D rectangle, or 3D cuboid. A basic example::
@@ -720,7 +721,7 @@ class QuadratureMethods:
         1. [Weisstein]_ http://mathworld.wolfram.com/DoubleIntegral.html
 
         """
-        rule = kwargs.get('method', 'tanh-sinh')
+        rule = method
         if type(rule) is str:
             if rule == 'tanh-sinh':
                 rule = ctx._tanh_sinh
@@ -730,11 +731,10 @@ class QuadratureMethods:
                 raise ValueError("unknown quadrature rule: %s" % rule)
         else:
             rule = rule(ctx)
-        verbose = kwargs.get('verbose')
         dim = len(points)
         orig = prec = ctx.prec
         epsilon = ctx.eps/8
-        m = kwargs.get('maxdegree') or rule.guess_degree(prec)
+        m = maxdegree or rule.guess_degree(prec)
         points = [ctx._as_points(p) for p in points]
         try:
             ctx.prec += 20
@@ -756,11 +756,12 @@ class QuadratureMethods:
                 raise NotImplementedError("quadrature must have dim 1, 2 or 3")
         finally:
             ctx.prec = orig
-        if kwargs.get("error"):
+        if error:
             return +v, err
         return +v
 
-    def quadts(ctx, *args, **kwargs):
+    def quadts(ctx, *args, method='tanh-sinh', verbose=False,
+               maxdegree=None, error=False):
         """
         Performs tanh-sinh quadrature. The call
 
@@ -781,10 +782,11 @@ class QuadratureMethods:
         See documentation for TanhSinh for algorithmic information about
         tanh-sinh quadrature.
         """
-        kwargs['method'] = 'tanh-sinh'
-        return ctx.quad(*args, **kwargs)
+        return ctx.quad(*args, method=method, verbose=verbose,
+                        maxdegree=maxdegree, error=error)
 
-    def quadgl(ctx, *args, **kwargs):
+    def quadgl(ctx, *args, method='gauss-legendre', verbose=False,
+               maxdegree=None, error=False):
         """
         Performs Gauss-Legendre quadrature. The call
 
@@ -805,8 +807,8 @@ class QuadratureMethods:
         See documentation for TanhSinh for algorithmic information about
         tanh-sinh quadrature.
         """
-        kwargs['method'] = 'gauss-legendre'
-        return ctx.quad(*args, **kwargs)
+        return ctx.quad(*args, method=method, verbose=verbose,
+                        maxdegree=maxdegree, error=error)
 
     def quadosc(ctx, f, interval, omega=None, period=None, zeros=None):
         r"""
@@ -1005,7 +1007,9 @@ class QuadratureMethods:
         s += ctx.nsum(term, [n, ctx.inf])
         return s
 
-    def quadsubdiv(ctx, f, interval, tol=None, maxintervals=None, **kwargs):
+    def quadsubdiv(ctx, f, interval, tol=None, maxintervals=None, *,
+                   method='tanh-sinh', verbose=False,
+                   maxdegree=None, error=False):
         """
         Computes the integral of *f* over the interval or path specified
         by *interval*, using :func:`~mpmath.quad` together with adaptive
@@ -1072,7 +1076,8 @@ class QuadratureMethods:
         if maxintervals is None:
             maxintervals = 10 * ctx.prec
         count = 0
-        quad_args = kwargs.copy()
+        quad_args = {'method': method, 'verbose': verbose,
+                     'maxdegree': maxdegree, 'error': error}
         quad_args["verbose"] = False
         quad_args["error"] = True
         if tol is None:
@@ -1083,14 +1088,14 @@ class QuadratureMethods:
             while queue:
                 a, b = queue.pop()
                 s, err = ctx.quad(f, [a, b], **quad_args)
-                if kwargs.get("verbose"):
+                if verbose:
                     print("subinterval", count, a, b, err)
                 if err < tol or count > maxintervals:
                     total += s
                     total_error += err
                 else:
                     count += 1
-                    if count == maxintervals and kwargs.get("verbose"):
+                    if count == maxintervals and verbose:
                         print("warning: number of intervals exceeded maxintervals")
                     if a == -ctx.inf and b == ctx.inf:
                         m = 0
@@ -1104,7 +1109,7 @@ class QuadratureMethods:
                     queue.append((m, b))
         finally:
             ctx.prec = orig
-        if kwargs.get("error"):
+        if error:
             return +total, +total_error
         else:
             return +total
