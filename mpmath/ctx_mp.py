@@ -783,6 +783,19 @@ maxterms, or set zeroprec."""
         y, n = libmp.libmpf.mpf_frexp(x._mpf_)
         return ctx.make_mpf(y), n
 
+    def ulp(ctx, x):
+        """
+        Return the value of the least significant bit of the `x`.
+
+            >>> from mpmath import ulp
+            >>> ulp(1)
+            mpf('2.2204460492503131e-16')
+
+        """
+        x = ctx.convert(x)
+        *_, e, bc = x._mpf_
+        return ctx.make_mpf((0, 1, e + bc - ctx.prec, 1))
+
     def fneg(ctx, x, **kwargs):
         """
         Negates the number *x*, giving a floating-point result, optionally

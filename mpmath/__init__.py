@@ -222,6 +222,7 @@ mertens = mp.mertens
 
 ldexp = mp.ldexp
 frexp = mp.frexp
+ulp = mp.ulp
 
 fsum = mp.fsum
 fdot = mp.fdot
