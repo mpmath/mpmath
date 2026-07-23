@@ -2547,3 +2547,7 @@ def test_issue_496():
     assert fp.hyper([2, 0], [0, 1], 2.5) == 1
     assert fp.hyper([1, -1], [-2], 3) == 2.5
     assert fp.hyp2f1(2, -1, -1, 3) == 7
+
+def test_issue_1142():
+    assert spherical_jn(8, 5).ae(+spherical_jn(8, -5))
+    assert spherical_jn(9, 5).ae(-spherical_jn(9, -5))

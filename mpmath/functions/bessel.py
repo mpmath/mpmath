@@ -214,10 +214,10 @@ def spherical_jn(ctx, n, z):
 
     >>> from mpmath import spherical_jn
     >>> spherical_jn(0, 1)
-    mpf('0.84147098480789639')
+    mpf('0.8414709848078965')
 
     """
-    return ctx.besselj(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/(2*z))
+    return ctx.besselj(n + ctx.one/2, z) / ctx.sqrt(2*z/ctx.pi)
 
 @defun
 def spherical_yn(ctx, n, z):
@@ -236,10 +236,10 @@ def spherical_yn(ctx, n, z):
 
     >>> from mpmath import spherical_yn
     >>> spherical_yn(0, 1)
-    mpf('-0.54030230586813965')
+    mpf('-0.54030230586813977')
 
     """
-    return ctx.bessely(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/(2*z))
+    return ctx.bessely(n + ctx.one/2, z) / ctx.sqrt(2*z/ctx.pi)
 
 @defun
 def spherical_in(ctx, n, z):
@@ -271,10 +271,10 @@ def spherical_in(ctx, n, z):
     >>> spherical_in(0, 1)
     mpf('1.1752011936438014')
     >>> spherical_in(6, 0.5 + 3j)
-    mpc(real='-0.0027505520810430398', imag='0.0033767606983784665')
+    mpc(real='-0.0027505520810430402', imag='0.0033767606983784665')
 
     """
-    return ctx.besseli(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/(2*z))
+    return ctx.besseli(n + ctx.one/2, z) / ctx.sqrt(2*z/ctx.pi)
 
 
 @defun
@@ -307,10 +307,10 @@ def spherical_kn(ctx, n, z):
     >>> spherical_kn(0, 1)
     mpf('0.57786367489546075')
     >>> spherical_kn(6, 0.5 + 3j)
-    mpc(real='-8.6615736788078621', imag='5.5165801484422303')
+    mpc(real='-8.6615736788078621', imag='5.5165801484422294')
 
     """
-    return ctx.besselk(n + ctx.one/2, z) * ctx.sqrt(ctx.pi/(2*z))
+    return ctx.besselk(n + ctx.one/2, z) / ctx.sqrt(2*z/ctx.pi)
 
 
 @defun_wrapped
