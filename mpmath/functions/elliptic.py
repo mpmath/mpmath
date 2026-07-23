@@ -1635,6 +1635,9 @@ def _roots_from_omega(ctx, omega1, omega2):
     """
     Compute roots e1, e2, e3 of 4*z^3 - g2*z - g3 = 0 using theta functions.
     This is ~10x faster than solving the cubic directly.
+
+    The roots are naturally labelled by e1 = wp(omega1),
+    e2 = wp(omega1 + omega2), and e3 = wp(omega2).
     """
     tau = omega2 / omega1
     q = ctx.qfrom(tau=tau)
@@ -1644,8 +1647,33 @@ def _roots_from_omega(ctx, omega1, omega2):
     e1 = c * (j24 + 2*j44)
     e2 = c * (j24 - j44)
     e3 = -c * (2*j24 + j44)
-    roots = sorted([(e.real, e.imag) for e in [e1, e2, e3]], reverse=True)
-    return [ctx.mpc(real=t[0], imag=t[1]) for t in roots]
+    return e1, e2, e3
+
+
+def _canonicalize_weierstrass_periods(ctx, omega1, omega2):
+    """Choose a deterministic orientation for a reduced period basis."""
+    tau = omega2 / omega1
+
+    # Identify the vertical edges of the fundamental domain.
+    if ctx.almosteq(ctx.re(tau), -ctx.one/2):
+        omega2 += omega1
+        tau = omega2 / omega1
+
+    # Identify equivalent points on the circular boundary.
+    if ctx.almosteq(abs(tau), ctx.one) and ctx.re(tau) < 0:
+        omega1, omega2 = omega2, -omega1
+
+    # The invariants do not distinguish a basis from its simultaneous
+    # negation. Follow the usual convention of placing omega1 in the right
+    # half-plane, using the negative imaginary axis as the boundary.
+    real = ctx.re(omega1)
+    if ((real < 0 and not ctx.almosteq(real, 0)) or
+            (ctx.almosteq(real, 0) and ctx.im(omega1) > 0)):
+        omega1 = -omega1
+        omega2 = -omega2
+
+    return omega1, omega2
+
 
 def _eisenstein_E4_E6(ctx, tau):
     """
@@ -1737,7 +1765,14 @@ def weierinvariants(ctx, omega1, omega2):
 def weierhalfperiods(ctx, g2, g3):
     r"""
     Returns a pair of fundamental half-periods `(\omega_1, \omega_2)`
-    corresponding to the Weierstrass invariants `(g_2, g_3)`::
+    corresponding to the Weierstrass invariants `(g_2, g_3)`.
+
+    The basis is chosen so that `\tau = \omega_2/\omega_1` lies in the
+    standard modular fundamental domain. On its boundary, the representative
+    with `\operatorname{Re}(\tau) = 1/2` is preferred to `-1/2`, and the
+    right half of the circle `|\tau| = 1` is preferred. The simultaneous sign
+    ambiguity is fixed by placing `\omega_1` in the right half-plane, with
+    the negative imaginary axis included as its boundary::
 
         >>> from mpmath import mp, chop
         >>> from mpmath import weierhalfperiods, weierinvariants
@@ -1747,7 +1782,7 @@ def weierhalfperiods(ctx, g2, g3):
         >>> chop(g2), chop(g3)
         (60.0, 140.0)
         >>> chop(omega2/omega1)
-        (-0.5 + 0.209032224450873j)
+        (0.5 + 1.19598784664302j)
 
     """
     with ctx.extraprec(10):
@@ -1769,33 +1804,15 @@ def weierhalfperiods(ctx, g2, g3):
             omegaA = ctx.sqrt(g2/g3 * G6/G4 * ctx.mpf(7)/ctx.mpf(12))
 
         omegaB = tau * omegaA
-        omegaC = omegaA + omegaB
-        omegas = [omegaA, omegaB, omegaC]
-        index_combos = [(0,1,2), (0,2,1), (1,0,2),
-                        (1,2,0), (2,0,1), (2,1,0)]
+        if g2 != 0 and g3 != 0:
+            a, b, c, d = ctx._reduce_psl2z(tau)
+            omega1 = d*omegaA + c*omegaB
+            omega2 = b*omegaA + a*omegaB
+        else:
+            omega1, omega2 = omegaA, omegaB
 
-        e1, e2, e3 = _roots_from_omega(ctx, omegaA, omegaB)
-        wps = []
-        for omegaN in omegas:
-            wps.append(ctx.weierp(omegaN, omega1=omegaA, omega2=omegaB))
-
-        maes = []
-        for ic in index_combos:
-            mae = (abs(e1 - wps[ic[0]]) + abs(e2 - wps[ic[1]]) +
-                   abs(e3 - wps[ic[2]])) / 3
-            maes.append(mae)
-
-        mae = min(maes)
-        min_index = maes.index(mae)
-
-        scale = max([ctx.one] + [abs(x) for x in [e1, e2, e3] + wps])
-        tolerance = ctx.sqrt(ctx.eps) * scale
-        if mae > tolerance:
-            raise ValueError("weierhalfperiods: no convergence")
-
-        omega1, omega2 = [omegas[k] for k in index_combos[min_index]][:2]
-        if ctx.im(omega2/omega1) <= 0:
-            omega2 = -omega2
+        omega1, omega2 = _canonicalize_weierstrass_periods(
+            ctx, omega1, omega2)
         return +omega1, +omega2
 
 
@@ -2037,17 +2054,17 @@ def weierpinv(ctx, p, g2=None, g3=None, tau=None, omega1=None, omega2=None,
     the invariants `g_2, g_3`, the half-periods `\omega_1, \omega_2`, or
     `\tau`, corresponding to normalized periods `1` and `\tau`.
 
-    The inverse is multivalued up to periods and sign. If `weierp_prime` is
+    The inverse is multivalued up to periods and sign. If ``weierp_prime`` is
     provided, it is used to choose between `z` and `-z` by matching the
     corresponding value of `\wp'(z)`.
 
     **Parameters**
 
-    - `p`: the target value
-    - `g2, g3`: elliptic invariants
-    - `tau` or `omega1, omega2`: alternative parameterizations
-    - `weierp_prime` (optional): derivative value used to choose the sign of
-      the inverse
+    - ``p``: the target value
+    - ``g2``, ``g3``: elliptic invariants
+    - ``tau`` or ``omega1``, ``omega2``: alternative parameterizations
+    - ``weierp_prime`` (optional): derivative value used to choose the sign
+      of the inverse
 
     **Examples**
 
