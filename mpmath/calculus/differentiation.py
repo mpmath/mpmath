@@ -28,17 +28,14 @@ def difference(ctx, s, n):
         b = (b * (k-n)) // (k+1)
     return d
 
-def hsteps(ctx, f, x, n, prec, **options):
-    singular = options.get('singular')
-    addprec = options.get('addprec', 10)
-    direction = options.get('direction', 0)
+def hsteps(ctx, f, x, n, prec, *, method='step', direction=0, radius=0.25,
+           singular=False, addprec=10, relative=False, h=None):
     workprec = (prec+2*addprec) * (n+1)
     orig = ctx.prec
     try:
         ctx.prec = workprec
-        h = options.get('h')
         if h is None:
-            if options.get('relative'):
+            if relative:
                 hextramag = int(ctx.mag(x))
             else:
                 hextramag = 0
@@ -46,7 +43,6 @@ def hsteps(ctx, f, x, n, prec, **options):
         else:
             h = ctx.convert(h)
         # Directed: steps x, x+h, ... x+n*h
-        direction = options.get('direction', 0)
         if direction:
             h *= ctx.sign(direction)
             steps = range(n+1)
@@ -65,7 +61,8 @@ def hsteps(ctx, f, x, n, prec, **options):
 
 
 @defun
-def diff(ctx, f, x, n=1, **options):
+def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
+         singular=False, addprec=10, relative=False, h=None):
     r"""
     Numerically computes the derivative of `f`, `f'(x)`, or generally for
     an integer `n \ge 0`, the `n`-th derivative `f^{(n)}(x)`.
@@ -176,11 +173,13 @@ def diff(ctx, f, x, n=1, **options):
         partial = True
     except TypeError:
         pass
+    options = {'method': method, 'singular': singular,
+               'addprec': addprec, 'direction': direction,
+               'radius': radius, 'relative': relative, 'h': h}
     if partial:
         x = [ctx.convert(_) for _ in x]
         return _partial_diff(ctx, f, x, orders, options)
-    method = options.get('method', 'step')
-    if n == 0 and method != 'quad' and not options.get('singular'):
+    if n == 0 and method != 'quad' and not singular:
         return f(ctx.convert(x))
     prec = ctx.prec
     try:
@@ -190,7 +189,6 @@ def diff(ctx, f, x, n=1, **options):
             v = ctx.difference(values, n) / norm**n
         elif method == 'quad':
             ctx.prec += 10
-            radius = ctx.convert(options.get('radius', 0.25))
             def g(t):
                 rei = radius*ctx.expj(t)
                 z = x + rei
@@ -221,7 +219,8 @@ def _partial_diff(ctx, f, xs, orders, options):
     return _partial_diff(ctx, fdiff_inner, xs, orders, options)
 
 @defun
-def diffs(ctx, f, x, n=None, **options):
+def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
+          singular=False, addprec=10, relative=False, h=None):
     r"""
     Returns a generator that yields the sequence of derivatives
 
@@ -261,13 +260,15 @@ def diffs(ctx, f, x, n=None, **options):
         n = ctx.inf
     else:
         n = int(n)
-    if options.get('method', 'step') != 'step':
+    options = {'method': method, 'singular': singular,
+               'addprec': addprec, 'direction': direction,
+               'radius': radius, 'relative': relative, 'h': h}
+    if method != 'step':
         k = 0
         while k < n + 1:
             yield ctx.diff(f, x, k, **options)
             k += 1
         return
-    singular = options.get('singular')
     if singular:
         yield ctx.diff(f, x, 0, singular=True)
     else:
@@ -529,7 +530,8 @@ def differint(ctx, f, x, n=1, x0=0):
     return ctx.diff(g, x, m) / ctx.gamma(m-n)
 
 @defun
-def diffun(ctx, f, n=1, **options):
+def diffun(ctx, f, n=1, *, method='step', direction=0, radius=0.25,
+           singular=False, addprec=10, relative=False, h=None):
     r"""
     Given a function `f`, returns a function `g(x)` that evaluates the nth
     derivative `f^{(n)}(x)`::
@@ -547,6 +549,9 @@ def diffun(ctx, f, n=1, **options):
     See :func:`~mpmath.diff` for additional details and supported
     keyword options.
     """
+    options = {'method': method, 'singular': singular,
+               'addprec': addprec, 'direction': direction,
+               'radius': radius, 'relative': relative, 'h': h}
     if n == 0:
         return f
     def g(x):
@@ -554,7 +559,8 @@ def diffun(ctx, f, n=1, **options):
     return g
 
 @defun
-def taylor(ctx, f, x, n, **options):
+def taylor(ctx, f, x, n, *, chop=True, method='step', direction=0, radius=0.25,
+           singular=False, addprec=10, relative=False, h=None):
     r"""
     Produces a degree-`n` Taylor polynomial around the point `x` of the
     given function `f`. The coefficients are returned as a list.
@@ -580,8 +586,11 @@ def taylor(ctx, f, x, n, **options):
         12.1824939607035
 
     """
+    options = {'method': method, 'singular': singular,
+               'addprec': addprec, 'direction': direction,
+               'radius': radius, 'relative': relative, 'h': h}
     gen = enumerate(ctx.diffs(f, x, n, **options))
-    if options.get("chop", True):
+    if chop:
         return [ctx.chop(d)/ctx.factorial(i) for i, d in gen]
     else:
         return [d/ctx.factorial(i) for i, d in gen]

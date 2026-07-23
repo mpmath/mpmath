@@ -282,7 +282,7 @@ class _matrix:
     mathematical properties you might expect from a norm.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args):
         self._data = {}
         # LU decompostion cache, this is useful when solving the same system
         # multiple times, when calculating the inverse and when calculating the
@@ -820,16 +820,16 @@ class MatrixMethods:
         ctx.matrix.ctx = ctx
         ctx.matrix.convert = ctx.convert
 
-    def eye(ctx, n, **kwargs):
+    def eye(ctx, n):
         """
         Create square identity matrix n x n.
         """
-        A = ctx.matrix(n, **kwargs)
+        A = ctx.matrix(n)
         for i in range(n):
             A[i,i] = 1
         return A
 
-    def diag(ctx, diagonal, **kwargs):
+    def diag(ctx, diagonal):
         """
         Create square diagonal matrix using given list.
 
@@ -841,12 +841,12 @@ class MatrixMethods:
          ['0.0', '2.0', '0.0'],
          ['0.0', '0.0', '3.0']])
         """
-        A = ctx.matrix(len(diagonal), **kwargs)
+        A = ctx.matrix(len(diagonal))
         for i in range(len(diagonal)):
             A[i,i] = diagonal[i]
         return A
 
-    def zeros(ctx, *args, **kwargs):
+    def zeros(ctx, *args):
         """
         Create matrix m x n filled with zeros.
         One given dimension will create square matrix n x n.
@@ -865,13 +865,13 @@ class MatrixMethods:
             n = args[1]
         else:
             raise TypeError('zeros expected at most 2 arguments, got %i' % len(args))
-        A = ctx.matrix(m, n, **kwargs)
+        A = ctx.matrix(m, n)
         for i in range(m):
             for j in range(n):
                 A[i,j] = 0
         return A
 
-    def ones(ctx, *args, **kwargs):
+    def ones(ctx, *args):
         """
         Create matrix m x n filled with ones.
         One given dimension will create square matrix n x n.
@@ -890,7 +890,7 @@ class MatrixMethods:
             n = args[1]
         else:
             raise TypeError('ones expected at most 2 arguments, got %i' % len(args))
-        A = ctx.matrix(m, n, **kwargs)
+        A = ctx.matrix(m, n)
         for i in range(m):
             for j in range(n):
                 A[i,j] = 1
@@ -912,7 +912,7 @@ class MatrixMethods:
                 A[i,j] = ctx.one / (i + j + 1)
         return A
 
-    def randmatrix(ctx, m, n=None, min=0, max=1, **kwargs):
+    def randmatrix(ctx, m, n=None, min=0, max=1):
         """
         Create a random m x n matrix.
 
@@ -928,7 +928,7 @@ class MatrixMethods:
         """
         if not n:
             n = m
-        A = ctx.matrix(m, n, **kwargs)
+        A = ctx.matrix(m, n)
         for i in range(m):
             for j in range(n):
                 A[i,j] = ctx.rand() * (max - min) + min

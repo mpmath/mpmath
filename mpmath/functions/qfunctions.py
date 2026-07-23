@@ -1,7 +1,7 @@
 from .functions import defun, defun_wrapped
 
 @defun
-def qp(ctx, a, q=None, n=None, **kwargs):
+def qp(ctx, a, q=None, n=None, *, maxterms=None):
     r"""
     Evaluates the q-Pochhammer symbol (or q-rising factorial)
 
@@ -98,7 +98,8 @@ def qp(ctx, a, q=None, n=None, **kwargs):
             raise ValueError("q-function only defined for |q| < 1")
         elif q == 0:
             return ctx.one - a
-    maxterms = kwargs.get('maxterms', 50*ctx.prec)
+    if maxterms is None:
+        maxterms = 50*ctx.prec
     if infinite and same:
         # Euler's pentagonal theorem
         def terms():
@@ -131,7 +132,7 @@ def qp(ctx, a, q=None, n=None, **kwargs):
     return ctx.mul_accurately(factors)
 
 @defun_wrapped
-def qgamma(ctx, z, q, **kwargs):
+def qgamma(ctx, z, q, *, maxterms=None):
     r"""
     Evaluates the q-gamma function
 
@@ -167,11 +168,11 @@ def qgamma(ctx, z, q, **kwargs):
     """
     if abs(q) > 1:
         return ctx.qgamma(z,1/q)*q**((z-2)*(z-1)*0.5)
-    return ctx.qp(q, q, None, **kwargs) / \
-        ctx.qp(q**z, q, None, **kwargs) * (1-q)**(1-z)
+    return ctx.qp(q, q, None, maxterms=maxterms) / \
+        ctx.qp(q**z, q, None, maxterms=maxterms) * (1-q)**(1-z)
 
 @defun_wrapped
-def qfac(ctx, z, q, **kwargs):
+def qfac(ctx, z, q, *, maxterms=None):
     r"""
     Evaluates the q-factorial,
 
@@ -202,11 +203,11 @@ def qfac(ctx, z, q, **kwargs):
     """
     if ctx.isint(z) and ctx._re(z) > 0:
         n = int(ctx._re(z))
-        return ctx.qp(q, q, n, **kwargs) / (1-q)**n
-    return ctx.qgamma(z+1, q, **kwargs)
+        return ctx.qp(q, q, n, maxterms=maxterms) / (1-q)**n
+    return ctx.qgamma(z+1, q, maxterms=maxterms)
 
 @defun
-def qhyper(ctx, a_s, b_s, q, z, **kwargs):
+def qhyper(ctx, a_s, b_s, q, z, *, maxterms=None):
     r"""
     Evaluates the basic hypergeometric series or hypergeometric q-series
 
@@ -258,7 +259,8 @@ def qhyper(ctx, a_s, b_s, q, z, **kwargs):
     r = len(a_s)
     s = len(b_s)
     d = 1+s-r
-    maxterms = kwargs.get('maxterms', 50*ctx.prec)
+    if maxterms is None:
+        maxterms = 50*ctx.prec
     def terms():
         t = ctx.one
         yield t
