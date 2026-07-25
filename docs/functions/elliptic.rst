@@ -13,8 +13,8 @@ Elliptic arguments
 .. autofunction:: mpmath.mfrom
 .. autofunction:: mpmath.kfrom
 .. autofunction:: mpmath.taufrom
-.. autofunction:: mpmath.weierinvariants
-.. autofunction:: mpmath.weierhalfperiods
+.. autofunction:: mpmath.g2g3from
+.. autofunction:: mpmath.omega1omega2from
 
 
 Legendre elliptic integrals
