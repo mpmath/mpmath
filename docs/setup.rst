@@ -46,7 +46,7 @@ Current development version
 If you are a developer or like to get the latest updates as they come, be sure
 to install from git::
 
-    git clone git://github.com/mpmath/mpmath.git
+    git clone https://github.com/mpmath/mpmath.git
     cd mpmath
     pip install -e .[develop,docs]
 
