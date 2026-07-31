@@ -705,3 +705,11 @@ def test_issue_471():
 def test_issue_472():
     assert bernpoly(4, mpc(inf, 1e-50)) == mpc(inf, 0)
     assert mpc(inf, 2)**4 == mpc(inf, 0)
+
+def test_issue_493():
+    assert fp.binomial(1100, 1) == pytest.approx(1100.0)
+    assert fp.binomial(1100, 1099) == pytest.approx(1100.0)
+    assert fp.binomial(1100, 0) == 1.0
+    assert fp.rf(1100, 1) == pytest.approx(1100.0)
+    assert fp.beta(1100, 1) == pytest.approx(1/1100)
+    assert fp.binomial(5, 2) == pytest.approx(10.0)
