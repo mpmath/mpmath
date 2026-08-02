@@ -278,7 +278,10 @@ def test_logm():
     pytest.raises(ValueError, lambda: logm(A))
 
 def test_fft():
+    assert fft([]) == []
+    pytest.raises(ValueError, lambda: fft([1, 2, 3]))
     assert fft([1, 0, 0, 0]) == [1, 1, 1, 1]
+    assert fft([1, 0, 0], pad_to_power_of_two=True) == [1, 1, 1, 1]
 
     spectrum = fft([0, 1, 0, 0])
     expected = [1, -1j, -1, 1j]

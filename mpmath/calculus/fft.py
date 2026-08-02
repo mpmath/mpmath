@@ -1,3 +1,5 @@
+import math
+
 from .calculus import defun
 
 def _fft_recursive(ctx, values, inverse=False):
@@ -22,26 +24,43 @@ def _fft_recursive(ctx, values, inverse=False):
     return transformed
 
 @defun
-def fft(ctx, values, inverse=False):
-    r"""Computes the discrete Fourier transform of a sequence.
+def fft(ctx, values, inverse=False, pad_to_power_of_two=False):
+    r"""Computes the Fast Fourier Transform (or Inverse FFT) with optional zero-padding.
 
     If ``inverse=True``, computes the inverse transform and normalizes the
     result by the sequence length.
+    If ``pad_to_power_of_two=True``, the input sequence is automatically zero-padded to the next power of 2 if its length is not already a power of 2.
     """
-    n = len(values)
-    if n == 0:
+    orig_n = len(values)
+    if orig_n == 0:
         return []
-    if n & (n - 1) != 0:
-        raise ValueError("Length of input must be a power of 2.")
+
+    is_power_of_two = (orig_n & (orig_n - 1)) == 0
+
+    if not is_power_of_two:
+        if not pad_to_power_of_two:
+            raise ValueError(f"Length of input ({orig_n}) must be a power of 2.")
+
+        padded_n = 1 << math.ceil(math.log2(orig_n))
+    else:
+        padded_n = orig_n
 
     converted_values = [ctx.convert(v) for v in values]
-    transformed = _fft_recursive(ctx, converted_values, inverse=inverse)
-    if inverse and transformed:
-        n = len(transformed)
-        transformed = [value / n for value in transformed]
-    return transformed
+
+    if padded_n > orig_n:
+        converted_values.extend([ctx.zero] * (padded_n - orig_n))
+
+    result = _fft_recursive(ctx, converted_values, inverse)
+
+    if inverse:
+        scale = ctx.convert(padded_n)
+        result = [val / scale for val in result]
+
+    return result
 
 @defun
-def ifft(ctx, values):
-    r"""Computes the inverse discrete Fourier transform of a sequence."""
-    return fft(ctx, values, inverse=True)
+def ifft(ctx, values, pad_to_power_of_two=False):
+    r"""Computes the inverse discrete Fourier transform of a sequence with optional zero-padding.
+    If ``pad_to_power_of_two=True``, the input sequence is automatically zero-padded to the next power of 2 if its length is not already a power of 2.
+    """
+    return fft(ctx, values, inverse=True, pad_to_power_of_two=pad_to_power_of_two)
