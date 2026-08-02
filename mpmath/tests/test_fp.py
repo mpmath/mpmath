@@ -1811,3 +1811,12 @@ def test_issue_491():
 def test_issue_521():
     assert fp.ff(1, -fp.inf) == 0.0
     assert fp.isnan(fp.ff(1, fp.inf))
+
+def test_issue_493():
+    assert ae(fp.binomial(1100, 1), 1100.0)
+    assert ae(fp.binomial(1100, 1099), 1100.0)
+    assert fp.binomial(1100, 0) == 1.0
+    assert ae(fp.rf(1100, 1), 1100.0)
+    assert ae(fp.beta(1100, 1), 1/1100)
+    assert ae(fp.binomial(5, 2), 10.0)
+    pytest.raises(OverflowError, lambda: fp.binomial(1100, 550))
