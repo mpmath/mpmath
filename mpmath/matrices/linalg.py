@@ -188,7 +188,7 @@ class LinearAlgebraMethods:
             x[i] /= U[i,i]
         return x
 
-    def lu_solve(ctx, A, b, **kwargs):
+    def lu_solve(ctx, A, b):
         """
         Ax = b => x
 
@@ -202,7 +202,7 @@ class LinearAlgebraMethods:
         try:
             ctx.prec += 10
             # do not overwrite A nor b
-            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            A, b = ctx.matrix(A).copy(), ctx.matrix(b).copy()
             if A.rows < A.cols:
                 raise ValueError('cannot solve underdetermined system')
             if A.rows > A.cols:
@@ -278,7 +278,7 @@ class LinearAlgebraMethods:
         assert 0 < i <= n, 'this unit vector does not exist'
         return [ctx.zero]*(i-1) + [ctx.one] + [ctx.zero]*(n-i)
 
-    def inverse(ctx, A, **kwargs):
+    def inverse(ctx, A):
         """
         Calculate the inverse of a matrix.
 
@@ -289,7 +289,7 @@ class LinearAlgebraMethods:
         try:
             ctx.prec += 10
             # do not overwrite A
-            A = ctx.matrix(A, **kwargs).copy()
+            A = ctx.matrix(A).copy()
             n = A.rows
             # get LU factorisation
             A, p = ctx.LU_decomp(A)
@@ -306,7 +306,7 @@ class LinearAlgebraMethods:
                 for j in range(n):
                     row.append(cols[j][i])
                 inv.append(row)
-            result = ctx.matrix(inv, **kwargs)
+            result = ctx.matrix(inv)
         finally:
             ctx.prec = prec
         return result
@@ -406,7 +406,7 @@ class LinearAlgebraMethods:
     #    H, p, x, res = householder(A)
     # TODO: implement this
 
-    def residual(ctx, A, x, b, **kwargs):
+    def residual(ctx, A, x, b):
         """
         Calculate the residual of a solution to a linear equation system.
 
@@ -415,12 +415,12 @@ class LinearAlgebraMethods:
         oldprec = ctx.prec
         try:
             ctx.prec *= 2
-            A, x, b = ctx.matrix(A, **kwargs), ctx.matrix(x, **kwargs), ctx.matrix(b, **kwargs)
+            A, x, b = ctx.matrix(A), ctx.matrix(x), ctx.matrix(b)
             return A*x - b
         finally:
             ctx.prec = oldprec
 
-    def qr_solve(ctx, A, b, norm=None, **kwargs):
+    def qr_solve(ctx, A, b, norm=None):
         """
         Ax = b => x, ||Ax - b||
 
@@ -436,7 +436,7 @@ class LinearAlgebraMethods:
         try:
             ctx.prec += 10
             # do not overwrite A nor b
-            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            A, b = ctx.matrix(A).copy(), ctx.matrix(b).copy()
             if A.rows < A.cols:
                 raise ValueError('cannot solve underdetermined system')
             H, p, x, r = ctx.householder(ctx.extend(A, b))
@@ -444,7 +444,7 @@ class LinearAlgebraMethods:
             # calculate residual "manually" for determined systems
             if res == 0:
                 res = ctx.norm(ctx.residual(A, x, b))
-            return ctx.matrix(x, **kwargs), res
+            return ctx.matrix(x), res
         finally:
             ctx.prec = prec
 
@@ -536,7 +536,7 @@ class LinearAlgebraMethods:
                 L[i,j] = (A[i,j] - t) / L[j,j]
         return L
 
-    def cholesky_solve(ctx, A, b, **kwargs):
+    def cholesky_solve(ctx, A, b):
         """
         Ax = b => x
 
@@ -552,7 +552,7 @@ class LinearAlgebraMethods:
         try:
             ctx.prec += 10
             # do not overwrite A nor b
-            A, b = ctx.matrix(A, **kwargs).copy(), ctx.matrix(b, **kwargs).copy()
+            A, b = ctx.matrix(A).copy(), ctx.matrix(b).copy()
             if A.rows !=  A.cols:
                 raise ValueError('can only solve determined system')
             # Cholesky factorization

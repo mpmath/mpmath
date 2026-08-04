@@ -163,6 +163,7 @@ def test_mpf_init():
     pytest.raises(ValueError, lambda: mpf(mpi(1, 2)))
     pytest.raises(TypeError, lambda: mpf(object()))
     pytest.raises(TypeError, lambda: mpf(1 + 1j))
+    pytest.raises(ValueError, lambda: mpf(1, prec=111, dps=222))
     class SomethingReal:
         def _mpmath_(self, prec, rounding):
             return mp.make_mpf(from_str('1.3', prec, rounding))

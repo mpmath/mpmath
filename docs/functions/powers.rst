@@ -19,8 +19,8 @@ Exponentiation
 .. autofunction:: mpmath.power
 .. autofunction:: mpmath.expj
 .. autofunction:: mpmath.expjpi
-.. autofunction:: mpmath.expm1(x)
-.. autofunction:: mpmath.powm1(x, y)
+.. autofunction:: mpmath.expm1
+.. autofunction:: mpmath.powm1
 
 
 Logarithms
@@ -30,7 +30,7 @@ Logarithms
 .. autofunction:: mpmath.ln
 .. autofunction:: mpmath.log2
 .. autofunction:: mpmath.log10
-.. autofunction:: mpmath.log1p(x)
+.. autofunction:: mpmath.log1p
 
 
 Lambert W function

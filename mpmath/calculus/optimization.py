@@ -897,7 +897,9 @@ str2solver = {'newton':Newton, 'secant':Secant, 'mnewton':MNewton,
               'illinois':Illinois, 'pegasus':Pegasus, 'anderson':Anderson,
               'ridder':Ridder, 'anewton':ANewton, 'mdnewton':MDNewton, 'modAB':ModAB, 'brent':Brent}
 
-def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, **kwargs):
+def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True,
+             *, d1f=None, df=None, d2f=None, J=None,
+             multidimensional=False, norm=None, maxsteps=None):
     r"""
     Find an approximate solution to `f(x) = 0`, using *x0* as starting point or
     interval for *x*.
@@ -1113,19 +1115,26 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
     """
     prec = ctx.prec
     trap_complex = getattr(ctx, 'trap_complex', None)
+    kwargs = {}
     try:
         ctx.prec += 20
 
         # initialize arguments
         if tol is None:
             tol = ctx.eps * 2**10
-
-        kwargs['verbose'] = kwargs.get('verbose', verbose)
-
-        if 'd1f' in kwargs:
-            kwargs['df'] = kwargs['d1f']
-
         kwargs['tol'] = tol
+
+        kwargs['verbose'] = verbose
+
+        if df is not None:
+            kwargs['df'] = df
+        if d1f is not None:
+            kwargs['df'] = d1f
+        if d2f is not None:
+            kwargs['d2f'] = d2f
+        if J is not None:
+            kwargs['J'] = J
+
         if isinstance(x0, (list, tuple)):
             x0 = [ctx.convert(x) for x in x0]
         else:
@@ -1147,34 +1156,34 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True, 
         # detect multidimensional functions
         try:
             fx = f(*x0)
-            multidimensional = isinstance(fx, (list, tuple, ctx.matrix))
+            md = isinstance(fx, (list, tuple, ctx.matrix))
         except TypeError:
             fx = f(x0[0])
-            multidimensional = False
-        if 'multidimensional' in kwargs:
-            multidimensional = kwargs['multidimensional']
+            md = False
         if multidimensional:
+            md = multidimensional
+        if md:
             # only one multidimensional solver available at the moment
             solver = MDNewton
-            if 'norm' not in kwargs:
+            if norm is None:
                 norm = lambda x: ctx.norm(x, 'inf')
-                kwargs['norm'] = norm
-            else:
-                norm = kwargs['norm']
+            kwargs['norm'] = norm
             ctx.trap_complex = True  # MDNewton assume real input
         else:
             norm = abs
 
         # happily return starting point if it's a root
         if norm(fx) == 0:
-            if multidimensional:
+            if md:
                 return ctx.matrix(x0)
             else:
                 return x0[0]
 
         # use solver
         iterations = solver(ctx, f, x0, **kwargs)
-        maxsteps = kwargs.get('maxsteps', iterations.maxsteps)
+        if maxsteps is None:
+            maxsteps = iterations.maxsteps
+        kwargs['maxsteps'] = maxsteps
         i = 0
         for x, error in iterations:
             if verbose:

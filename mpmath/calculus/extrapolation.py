@@ -1084,11 +1084,11 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
 def adaptive_extrapolation(ctx, update, emfun, kwargs):
     option = kwargs.get
     if ctx._fixed_precision:
-        tol = option('tol', ctx.eps*2**10)
+        tol = option('tol') or ctx.eps*2**10
     else:
-        tol = option('tol', ctx.eps/2**10)
+        tol = option('tol') or ctx.eps/2**10
     verbose = option('verbose', False)
-    maxterms = option('maxterms', ctx.dps*10)
+    maxterms = option('maxterms') or ctx.dps*10
     method = set(option('method', 'r+s').split('+'))
     skip = option('skip', 0)
     steps = iter(option('steps', range(10, 10**9, 10)))
@@ -1136,7 +1136,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
     best = ctx.zero
     orig = ctx.prec
     try:
-        if 'workprec' in kwargs:
+        if kwargs.get('workprec'):
             ctx.prec = kwargs['workprec']
         elif TRY_RICHARDSON or TRY_SHANKS or len(summer)!=0:
             ctx.prec = (ctx.prec+10) * 4
@@ -1238,7 +1238,10 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
     return best
 
 @defun
-def nsum(ctx, f, *intervals, **options):
+def nsum(ctx, f, *intervals, tol=None, verbose=False,
+         maxterms=None, method='r+s', skip=0, strict=False,
+         levin_variant="u", workprec=None,
+         steps=range(10, 10**9, 10), ignore=False):
     r"""
     Computes the sum
 
@@ -1686,6 +1689,11 @@ def nsum(ctx, f, *intervals, **options):
     2. [Weisstein]_ http://mathworld.wolfram.com/MadelungConstants.html
 
     """
+    options = {'tol': tol, 'verbose': verbose, 'maxterms': maxterms,
+               'method': method, 'skip': skip, 'strict': strict,
+               'levin_variant': levin_variant, 'workprec': workprec,
+               'steps': steps, 'ignore': ignore}
+
     infinite, g = standardize(ctx, f, intervals, options)
     if not infinite:
         return +g()
@@ -1818,7 +1826,11 @@ def fold_infinite(ctx, f, intervals):
     return fold_infinite(ctx, g, intervals[:-1])
 
 @defun
-def nprod(ctx, f, interval, nsum=False, **kwargs):
+def nprod(ctx, f, interval, nsum=False,
+          *, tol=None, verbose=False,
+          maxterms=None, method='r+s', skip=0, strict=False,
+          levin_variant="u", workprec=None,
+          steps=range(10, 10**9, 10), ignore=False):
     r"""
     Computes the product
 
@@ -1953,6 +1965,11 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
     1. [Weisstein]_ http://mathworld.wolfram.com/InfiniteProduct.html
 
     """
+    kwargs = {'tol': tol, 'verbose': verbose, 'maxterms': maxterms,
+              'method': method, 'skip': skip, 'strict': strict,
+              'levin_variant': levin_variant, 'workprec': workprec,
+              'steps': steps, 'ignore': ignore}
+
     if nsum or ('e' in kwargs.get('method', '')):
         orig = ctx.prec
         try:
@@ -1989,7 +2006,9 @@ def nprod(ctx, f, interval, nsum=False, **kwargs):
 
 
 @defun
-def limit(ctx, f, x, direction=1, exp=False, **kwargs):
+def limit(ctx, f, x, direction=1, exp=False, *, tol=None, verbose=False,
+          maxterms=None, method='r+s', skip=0, strict=False,
+          levin_variant="u", workprec=None, steps=[10]):
     r"""
     Computes an estimate of the limit
 
@@ -2100,8 +2119,9 @@ def limit(ctx, f, x, direction=1, exp=False, **kwargs):
         for k in indices:
             values.append(g(k+1))
 
-    # XXX: steps used by nsum don't work well
-    if 'steps' not in kwargs:
-        kwargs['steps'] = [10]
+    kwargs = {'tol': tol, 'verbose': verbose, 'maxterms': maxterms,
+              'method': method, 'skip': skip, 'strict': strict,
+              'levin_variant': levin_variant, 'workprec': workprec,
+              'steps': steps}  # XXX: steps used by nsum don't work well
 
     return +ctx.adaptive_extrapolation(update, None, kwargs)

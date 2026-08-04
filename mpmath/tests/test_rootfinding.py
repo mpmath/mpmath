@@ -72,6 +72,16 @@ def test_mnewton():
     f = lambda x: polyval([1, 3, 3, 1], x)
     x = findroot(f, -0.9, solver='mnewton')
     assert abs(f(x)) < eps
+    x = findroot(f, -0.9, solver='mnewton',
+                 df=lambda x: polyval([3, 6, 3], x))
+    assert abs(f(x)) < eps
+    x = findroot(f, -0.9, solver='mnewton',
+                 d1f=lambda x: polyval([3, 6, 3], x))
+    assert abs(f(x)) < eps
+    x = findroot(f, -0.9, solver='mnewton',
+                 d1f=lambda x: polyval([3, 6, 3], x),
+                 d2f=lambda x: polyval([6, 6], x))
+    assert abs(f(x)) < 1000*eps
 
 def test_anewton():
     f = lambda x: (x - 2)**100
@@ -164,6 +174,10 @@ def test_multidimensional(capsys):
         f1x = f1(x, y)
         return (f2(x, y) - f1x, f3(x, y) - f1x)
     x = findroot(f, (10, 10))
+    assert [round(i) for i in x] == [3, 4]
+    x = findroot(f, (10, 10), multidimensional=True)
+    assert [round(i) for i in x] == [3, 4]
+    x = findroot(f, (10, 10), J=lambda *x: mp.jacobian(f, x))
     assert [round(i) for i in x] == [3, 4]
 
 def test_trivial():

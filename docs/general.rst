@@ -173,10 +173,13 @@ Properties of numbers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.nint_distance
 
-.. :func:`~mpmath.absmin`
-.. ^^^^^^^^^^^^^^^^^^^^^^^^
-.. .. autofunction:: mpmath.absmin(x)
-.. .. autofunction:: mpmath.absmax(x)
+:func:`~mpmath.absmin`
+^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.absmin
+
+:func:`~mpmath.absmax`
+^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.absmax
 
 Number generation
 -----------------
