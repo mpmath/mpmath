@@ -81,8 +81,8 @@ def grampoint(ctx, n):
 
 
 @defun_wrapped
-def siegelz(ctx, t, **kwargs):
-    d = int(kwargs.get("derivative", 0))
+def siegelz(ctx, t, *, derivative=0):
+    d = int(derivative)
     t = ctx.convert(t)
     t1 = ctx._re(t)
     t2 = ctx._im(t)
@@ -528,9 +528,9 @@ def clcos(ctx, s, z, pi=False):
     return 0.5*(ctx.polylog(s,a) + ctx.polylog(s,b))
 
 @defun
-def altzeta(ctx, s, **kwargs):
+def altzeta(ctx, s, *, prec=None, dps=None, rounding=None):
     try:
-        return ctx._altzeta(s, **kwargs)
+        return ctx._altzeta(s, prec=prec, dps=dps, rounding=rounding)
     except NotImplementedError:
         return ctx._altzeta_generic(s)
 
@@ -541,16 +541,19 @@ def _altzeta_generic(ctx, s):
     return -ctx.powm1(2, 1-s) * ctx.zeta(s)
 
 @defun
-def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
+def zeta(ctx, s, a=1, derivative=0, method=None, *, prec=None,
+         dps=None, rounding=None, verbose=False, maxprec=None):
     d = int(derivative)
     if a == 1 and not (d or method):
         try:
-            return ctx._zeta(s, **kwargs)
+            return ctx._zeta(s, prec=prec, dps=dps, rounding=rounding)
         except NotImplementedError:
             pass
     s = ctx.convert(s)
-    prec = ctx.prec
-    verbose = kwargs.get('verbose')
+    if prec is None:
+        prec = ctx.prec
+    if maxprec is None:
+        maxprec = 100*prec
     if (not s) and (not derivative):
         return ctx.mpf(0.5) - ctx._convert_param(a)[0]
     if a == 1 and method != 'euler-maclaurin':
@@ -570,7 +573,7 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
             try:
                 if verbose:
                     print("zeta: Attempting to use the Riemann-Siegel algorithm")
-                return ctx.rs_zeta(s, derivative, **kwargs)
+                return ctx.rs_zeta(s, derivative)
             except NotImplementedError:
                 if verbose:
                     print("zeta: Could not use the Riemann-Siegel algorithm")
@@ -589,12 +592,11 @@ def zeta(ctx, s, a=1, derivative=0, method=None, **kwargs):
         return 1/s
     if ctx.re(s) > 2*ctx.prec and a == 1 and not derivative:
         return ctx.one + ctx.power(2, -s)
-    return +ctx._hurwitz(s, a, d, **kwargs)
+    return +ctx._hurwitz(s, a, d, verbose=verbose, maxprec=maxprec)
 
 @defun
-def _hurwitz(ctx, s, a=1, d=0, **kwargs):
+def _hurwitz(ctx, s, a=1, d=0, *, verbose=False, maxprec=None):
     prec = ctx.prec
-    verbose = kwargs.get('verbose')
     try:
         extraprec = 10
         ctx.prec += extraprec
@@ -627,7 +629,7 @@ def _hurwitz(ctx, s, a=1, d=0, **kwargs):
                 return T1 + T2
             else:
                 extraprec = max(2*extraprec, min(cancellation + 5, 100*prec))
-                if extraprec > kwargs.get('maxprec', 100*prec):
+                if extraprec > maxprec:
                     raise ctx.NoConvergence("zeta: too much cancellation")
     finally:
         ctx.prec = prec
@@ -926,7 +928,7 @@ def secondzeta_singular_term(ctx, s, a, **kwargs):
     return +st, err
 
 @defun
-def secondzeta(ctx, s, a = 0.015, **kwargs):
+def secondzeta(ctx, s, a = 0.015, *, verbose=False, error=False):
     r"""
     Evaluates the secondary zeta function `Z(s)`, defined for
     `\mathrm{Re}(s)>1` by
@@ -1038,7 +1040,7 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
         t3 = secondzeta_exp_term(ctx, s, a)
         err = r1+r2+r4
         t = t1-t2+t3-t4
-        if kwargs.get("verbose"):
+        if verbose:
             print('main term =', t1)
             print('    computed using', gt, 'zeros of zeta')
             print('prime term =', t2)
@@ -1047,7 +1049,7 @@ def secondzeta(ctx, s, a = 0.015, **kwargs):
             print('singular term =', t4)
     finally:
         ctx.prec = prec
-    if kwargs.get("error"):
+    if error:
         w = max(ctx.mag(abs(t)),0)
         err = max(err*2**w, ctx.eps*1.*2**w)
         return +t, err

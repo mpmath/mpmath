@@ -12,7 +12,12 @@ def j1(ctx, x):
     return ctx.besselj(1, x)
 
 @defun
-def besselj(ctx, n, z, derivative=0, **kwargs):
+def besselj(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
+            force_series=False, asymp_tol=None, maxprec=None,
+            maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     if type(n) is int:
         n_isint = True
     else:
@@ -79,7 +84,12 @@ def besselj(ctx, n, z, derivative=0, **kwargs):
     return v
 
 @defun
-def besseli(ctx, n, z, derivative=0, **kwargs):
+def besseli(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
+            force_series=False, asymp_tol=None, maxprec=None,
+            maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     n = ctx.convert(n)
     z = ctx.convert(z)
     if n and ctx.isnpint(n):
@@ -117,7 +127,12 @@ def besseli(ctx, n, z, derivative=0, **kwargs):
     return v
 
 @defun_wrapped
-def bessely(ctx, n, z, derivative=0, **kwargs):
+def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
+            force_series=False, asymp_tol=None, maxprec=None,
+            maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     if not z:
         if derivative:
             # Not implemented
@@ -153,7 +168,12 @@ def bessely(ctx, n, z, derivative=0, **kwargs):
         ctx.besselj(-n,z,derivative,**kwargs))/sin
 
 @defun_wrapped
-def besselk(ctx, n, z, derivative=0, **kwargs):
+def besselk(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
+            force_series=False, asymp_tol=None, maxprec=None,
+            maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     if derivative:
         raise NotImplementedError
     if not z:
@@ -179,17 +199,27 @@ def besselk(ctx, n, z, derivative=0, **kwargs):
     return ctx.hypercomb(h, [n], **kwargs)
 
 @defun_wrapped
-def hankel1(ctx,n,x,**kwargs):
+def hankel1(ctx, n, x, derivative=0, *, eliminate=True, eliminate_all=False,
+            force_series=False, asymp_tol=None, maxprec=None,
+            maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     def terms():
-        return [ctx.besselj(n,x,**kwargs),
-                ctx.j*ctx.bessely(n,x,**kwargs)]
+        return [ctx.besselj(n,x,derivative,**kwargs),
+                ctx.j*ctx.bessely(n,x,derivative,**kwargs)]
     return ctx.sum_accurately(terms)
 
 @defun_wrapped
-def hankel2(ctx,n,x,**kwargs):
+def hankel2(ctx, n, x, derivative=0, *, eliminate=True, eliminate_all=False,
+            force_series=False, asymp_tol=None, maxprec=None,
+            maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     def terms():
-        return [ctx.besselj(n,x,**kwargs),
-                -ctx.j*ctx.bessely(n,x,**kwargs)]
+        return [ctx.besselj(n,x,derivative,**kwargs),
+                -ctx.j*ctx.bessely(n,x,derivative,**kwargs)]
     return ctx.sum_accurately(terms)
 
 @defun
@@ -314,7 +344,12 @@ def spherical_kn(ctx, n, z):
 
 
 @defun_wrapped
-def whitm(ctx,k,m,z,**kwargs):
+def whitm(ctx,k,m,z, *, eliminate=True, eliminate_all=False,
+          force_series=False, asymp_tol=None, maxprec=None,
+          maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     if z == 0:
         # M(k,m,z) = 0^(1/2+m)
         if ctx.re(m) > -0.5:
@@ -328,7 +363,12 @@ def whitm(ctx,k,m,z,**kwargs):
     return ctx.exp(x) * z**y * ctx.hyp1f1(y-k, 1+2*m, z, **kwargs)
 
 @defun_wrapped
-def whitw(ctx,k,m,z,**kwargs):
+def whitw(ctx,k,m,z, *, eliminate=True, eliminate_all=False,
+          force_series=False, asymp_tol=None, maxprec=None,
+          maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     if z == 0:
         g = abs(ctx.re(m))
         if g < 0.5:
@@ -342,7 +382,12 @@ def whitw(ctx,k,m,z,**kwargs):
     return ctx.exp(x) * z**y * ctx.hyperu(y-k, 1+2*m, z, **kwargs)
 
 @defun
-def hyperu(ctx, a, b, z, **kwargs):
+def hyperu(ctx, a, b, z, *, eliminate=True, eliminate_all=False,
+           force_series=False, asymp_tol=None, maxprec=None,
+           maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     a, atype = ctx._convert_param(a)
     b, btype = ctx._convert_param(b)
     z = ctx.convert(z)
@@ -371,7 +416,12 @@ def hyperu(ctx, a, b, z, **kwargs):
     return ctx.hypercomb(h, [a,b], **kwargs)
 
 @defun
-def struveh(ctx,n,z, **kwargs):
+def struveh(ctx, n, z, *, eliminate=True, eliminate_all=False,
+            force_series=False, asymp_tol=None, maxprec=None,
+            maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/StruveH/26/01/02/
@@ -380,7 +430,12 @@ def struveh(ctx,n,z, **kwargs):
     return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def struvel(ctx,n,z, **kwargs):
+def struvel(ctx, n, z, *, eliminate=True, eliminate_all=False,
+            force_series=False, asymp_tol=None, maxprec=None,
+            maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/StruveL/26/01/02/
@@ -408,15 +463,30 @@ def _anger(ctx,which,v,z,**kwargs):
     return ctx.hypercomb(h, [v], **kwargs)
 
 @defun
-def angerj(ctx, v, z, **kwargs):
+def angerj(ctx, v, z, *, eliminate=True, eliminate_all=False,
+           force_series=False, asymp_tol=None, maxprec=None,
+           maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     return _anger(ctx, 0, v, z, **kwargs)
 
 @defun
-def webere(ctx, v, z, **kwargs):
+def webere(ctx, v, z, *, eliminate=True, eliminate_all=False,
+           force_series=False, asymp_tol=None, maxprec=None,
+           maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     return _anger(ctx, 1, v, z, **kwargs)
 
 @defun
-def lommels1(ctx, u, v, z, **kwargs):
+def lommels1(ctx, u, v, z, *, eliminate=True, eliminate_all=False,
+             force_series=False, asymp_tol=None, maxprec=None,
+             maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     u = ctx._convert_param(u)[0]
     v = ctx._convert_param(v)[0]
     z = ctx.convert(z)
@@ -428,7 +498,12 @@ def lommels1(ctx, u, v, z, **kwargs):
     return ctx.hypercomb(h, [u,v], **kwargs)
 
 @defun
-def lommels2(ctx, u, v, z, **kwargs):
+def lommels2(ctx, u, v, z, *, eliminate=True, eliminate_all=False,
+             force_series=False, asymp_tol=None, maxprec=None,
+             maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     u = ctx._convert_param(u)[0]
     v = ctx._convert_param(v)[0]
     z = ctx.convert(z)
@@ -457,7 +532,12 @@ def lommels2(ctx, u, v, z, **kwargs):
     return ctx.hypercomb(h, [u,v], **kwargs)
 
 @defun
-def ber(ctx, n, z, **kwargs):
+def ber(ctx, n, z, *, eliminate=True, eliminate_all=False,
+        force_series=False, asymp_tol=None, maxprec=None,
+        maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinBer2/26/01/02/0001/
@@ -470,7 +550,12 @@ def ber(ctx, n, z, **kwargs):
     return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def bei(ctx, n, z, **kwargs):
+def bei(ctx, n, z, *, eliminate=True, eliminate_all=False,
+        force_series=False, asymp_tol=None, maxprec=None,
+        maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinBei2/26/01/02/0001/
@@ -483,7 +568,12 @@ def bei(ctx, n, z, **kwargs):
     return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def ker(ctx, n, z, **kwargs):
+def ker(ctx, n, z, *, eliminate=True, eliminate_all=False,
+        force_series=False, asymp_tol=None, maxprec=None,
+        maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKer2/26/01/02/0001/
@@ -499,7 +589,12 @@ def ker(ctx, n, z, **kwargs):
     return ctx.hypercomb(h, [n], **kwargs)
 
 @defun
-def kei(ctx, n, z, **kwargs):
+def kei(ctx, n, z, *, eliminate=True, eliminate_all=False,
+        force_series=False, asymp_tol=None, maxprec=None,
+        maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     n = ctx.convert(n)
     z = ctx.convert(z)
     # http://functions.wolfram.com/Bessel-TypeFunctions/KelvinKei2/26/01/02/0001/
@@ -577,7 +672,12 @@ def _airyderiv_0(ctx, z, n, ntype, which):
         raise NotImplementedError
 
 @defun
-def airyai(ctx, z, derivative=0, **kwargs):
+def airyai(ctx, z, derivative=0, *, eliminate=True, eliminate_all=False,
+        force_series=False, asymp_tol=None, maxprec=None,
+        maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     z = ctx.convert(z)
     if derivative:
         n, ntype = ctx._convert_param(derivative)
@@ -669,7 +769,12 @@ def airyai(ctx, z, derivative=0, **kwargs):
         return ctx.hypercomb(h, [], **kwargs)
 
 @defun
-def airybi(ctx, z, derivative=0, **kwargs):
+def airybi(ctx, z, derivative=0, *, eliminate=True, eliminate_all=False,
+        force_series=False, asymp_tol=None, maxprec=None,
+        maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     z = ctx.convert(z)
     if derivative:
         n, ntype = ctx._convert_param(derivative)
@@ -780,7 +885,7 @@ def airyaizero(ctx, k, derivative=0):
 def airybizero(ctx, k, derivative=0, complex=False):
     return _airy_zero(ctx, 1, k, derivative, complex)
 
-def _scorer(ctx, z, which, kwargs):
+def _scorer(ctx, z, which, derivative=0, **kwargs):
     z = ctx.convert(z)
     if ctx.isinf(z):
         if z == ctx.inf:
@@ -793,7 +898,7 @@ def _scorer(ctx, z, which, kwargs):
         extraprec = max(0, int(1.5*ctx.mag(z)))
     else:
         extraprec = 0
-    if kwargs.get('derivative'):
+    if derivative != 0:
         raise NotImplementedError
     # Direct asymptotic expansions, to avoid
     # exponentially large cancellation
@@ -824,12 +929,22 @@ def _scorer(ctx, z, which, kwargs):
     return ctx.hypercomb(h, [], **kwargs)
 
 @defun
-def scorergi(ctx, z, **kwargs):
-    return _scorer(ctx, z, 0, kwargs)
+def scorergi(ctx, z, derivative=0, *, eliminate=True, eliminate_all=False,
+             force_series=False, asymp_tol=None, maxprec=None,
+             maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
+    return _scorer(ctx, z, 0, derivative, **kwargs)
 
 @defun
-def scorerhi(ctx, z, **kwargs):
-    return _scorer(ctx, z, 1, kwargs)
+def scorerhi(ctx, z, derivative=0, *, eliminate=True, eliminate_all=False,
+             force_series=False, asymp_tol=None, maxprec=None,
+             maxterms=None, zeroprec=None, infprec=None, verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
+    return _scorer(ctx, z, 1, derivative, **kwargs)
 
 @defun_wrapped
 def coulombc(ctx, l, eta, _cache={}):
@@ -845,7 +960,13 @@ def coulombc(ctx, l, eta, _cache={}):
     return v
 
 @defun_wrapped
-def coulombf(ctx, l, eta, z, w=1, chop=True, **kwargs):
+def coulombf(ctx, l, eta, z, w=1, chop=True, *, eliminate=True,
+             eliminate_all=False, force_series=False, asymp_tol=None,
+             maxprec=None, maxterms=None, zeroprec=None, infprec=None,
+             verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     # Regular Coulomb wave function
     # Note: w can be either 1 or -1; the other may be better in some cases
     # TODO: check that chop=True chops when and only when it should
@@ -884,7 +1005,13 @@ def _coulomb_chi(ctx, l, eta, _cache={}):
     return v
 
 @defun_wrapped
-def coulombg(ctx, l, eta, z, w=1, chop=True, **kwargs):
+def coulombg(ctx, l, eta, z, w=1, chop=True, *, eliminate=True,
+             eliminate_all=False, force_series=False, asymp_tol=None,
+             maxprec=None, maxterms=None, zeroprec=None, infprec=None,
+             verbose=False):
+    kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
+                                   force_series, asymp_tol, maxprec,
+                                   maxterms, zeroprec, infprec, verbose)
     # Irregular Coulomb wave function
     # Note: w can be either 1 or -1; the other may be better in some cases
     # TODO: check that chop=True chops when and only when it should

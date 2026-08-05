@@ -1376,7 +1376,7 @@ def z_offline(ctx, w, k=0):
     return zv
 
 @defun
-def rs_zeta(ctx, s, derivative=0, **kwargs):
+def rs_zeta(ctx, s, derivative=0):
     if derivative > 4:
         raise NotImplementedError
     s = ctx.convert(s)

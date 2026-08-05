@@ -94,9 +94,9 @@ Coulomb wave functions
 Confluent U and Whittaker functions
 ...................................
 
-.. autofunction:: mpmath.hyperu(a, b, z)
-.. autofunction:: mpmath.whitm(k,m,z)
-.. autofunction:: mpmath.whitw(k,m,z)
+.. autofunction:: mpmath.hyperu
+.. autofunction:: mpmath.whitm
+.. autofunction:: mpmath.whitw
 
 
 Parabolic cylinder functions

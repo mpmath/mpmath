@@ -45,19 +45,20 @@ class _mpf(mpnumeric):
     """
     __slots__ = ['_mpf_', 'context']
 
-    def __new__(cls, val=fzero, **kwargs):
+    def __new__(cls, val=fzero, *, prec=None, dps=None, rounding=None, base=0):
         """A new mpf can be created from a Python float, an int, a
         or a decimal string representing a number in floating-point
         format."""
         ctx = cls.context
-        prec, rounding = ctx._prec_rounding
-        base = 0
-        if kwargs:
-            prec = kwargs.get('prec', prec)
-            if 'dps' in kwargs:
-                prec = dps_to_prec(kwargs['dps'])
-            rounding = kwargs.get('rounding', rounding)
-            base = kwargs.get('base', base)
+        ctx_prec, ctx_rounding = ctx._prec_rounding
+        if prec and dps:
+            raise ValueError("both prec and dps can't be specified")
+        if dps:
+            prec = dps_to_prec(dps)
+        if prec is None:
+            prec = ctx_prec
+        if rounding is None:
+            rounding = ctx_rounding
         v = new(cls)
         if type(val) is cls:
             val = val._mpf_

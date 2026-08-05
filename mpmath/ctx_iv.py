@@ -5,7 +5,8 @@ import sys
 from . import function_docs, libmp
 from .libmp import (MPZ_ONE, ComplexResult, dps_to_prec, finf, fnan, fninf,
                     from_float, from_int, from_str, fzero, int_types, mpf_le,
-                    mpf_neg, prec_to_dps, repr_dps, round_ceiling, round_floor)
+                    mpf_neg, prec_to_dps, repr_dps, round_ceiling, round_floor,
+                    round_nearest)
 from .libmp.libmpc import mpc_hash
 from .libmp.libmpf import mpf_hash, mpf_pos
 from .libmp.libmpi import (mpci_abs, mpci_add, mpci_div, mpci_mul, mpci_neg,
@@ -442,8 +443,17 @@ class MPIntervalContext(StandardBaseContext):
         assert mpf_le(a, b), "endpoints must be properly ordered"
         return ctx.make_mpf((a, b))
 
-    def nstr(ctx, x, n=5, **kwargs):
+    def nstr(ctx, x, n=5, *, strip_zeros=True, min_fixed=None, max_fixed=None,
+             show_zero_exponent=False, base=10, binary_exp=False,
+             rnd=round_nearest, mode='brackets', use_spaces=True,
+             brackets='[]', error_dps=4):
         x = ctx.convert(x)
+        kwargs = {'strip_zeros': strip_zeros, 'min_fixed': min_fixed,
+                  'max_fixed': max_fixed, 'show_zero_exponent': show_zero_exponent,
+                  'base': base, 'binary_exp': binary_exp,
+                  'rnd': rnd, 'use_spaces': use_spaces,
+                  'brackets': brackets, 'mode': mode,
+                  'error_dps': error_dps}
         if hasattr(x, "_mpi_"):
             return libmp.libmpi.mpi_to_str(x._mpi_, n, **kwargs)
         if hasattr(x, "_mpci_"):

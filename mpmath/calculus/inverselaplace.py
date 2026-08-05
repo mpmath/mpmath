@@ -38,7 +38,7 @@ class InverseLaplaceTransform:
 
 class FixedTalbot(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self, t, **kwargs):
+    def calc_laplace_parameter(self, t, *, tmax=None, degree=None, r=None):
         r"""The "fixed" Talbot method deforms the Bromwich contour towards
         `-\infty` in the shape of a parabola. Traditionally the Talbot
         algorithm has adjustable parameters, but the "fixed" version
@@ -101,14 +101,16 @@ class FixedTalbot(InverseLaplaceTransform):
         # ------------------------------
         # maximum time desired (used for scaling) default is requested
         # time.
-        self.tmax = self.ctx.convert(kwargs.get('tmax', self.t))
+        if tmax is None:
+            tmax = self.t
+        self.tmax = self.ctx.convert(tmax)
 
         # empirical relationships used here based on a linear fit of
         # requested and delivered dps for exponentially decaying time
         # functions for requested dps up to 512.
 
-        if 'degree' in kwargs:
-            self.degree = kwargs['degree']
+        if degree is not None:
+            self.degree = degree
             self.dps_goal = self.degree
         else:
             self.dps_goal = int(1.72*self.ctx.dps)
@@ -123,7 +125,9 @@ class FixedTalbot(InverseLaplaceTransform):
         self.ctx.dps = self.dps_goal
 
         # Abate & Valko rule of thumb for r parameter
-        self.r = kwargs.get('r', self.ctx.fraction(2, 5)*M)
+        if r is None:
+            r = self.ctx.fraction(2, 5)*M
+        self.r = r
 
         self.theta = self.ctx.linspace(0.0, self.ctx.pi, M+1)
 
@@ -215,7 +219,7 @@ class FixedTalbot(InverseLaplaceTransform):
 
 class Stehfest(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self, t, **kwargs):
+    def calc_laplace_parameter(self, t, *, degree=None):
         r"""
         The Gaver-Stehfest method is a discrete approximation of the
         Widder-Post inversion algorithm, rather than a direct
@@ -249,8 +253,8 @@ class Stehfest(InverseLaplaceTransform):
         # requested and delivered dps for exponentially decaying time
         # functions for requested dps up to 512.
 
-        if 'degree' in kwargs:
-            self.degree = kwargs['degree']
+        if degree is not None:
+            self.degree = degree
             self.dps_goal = int(1.38*self.degree)
         else:
             self.dps_goal = int(2.93*self.ctx.dps)
@@ -347,7 +351,8 @@ class Stehfest(InverseLaplaceTransform):
 
 class deHoog(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self, t, **kwargs):
+    def calc_laplace_parameter(self, t, *, tmax=None, degree=None, alpha=None,
+                               scale=2, tol=None, T=None):
         r"""the de Hoog, Knight & Stokes algorithm is an
         accelerated form of the Fourier series numerical
         inverse Laplace transform algorithms.
@@ -385,14 +390,16 @@ class deHoog(InverseLaplaceTransform):
 
         # optional
         # ------------------------------
-        self.tmax = kwargs.get('tmax', self.t)
+        if tmax is None:
+            tmax = self.t
+        self.tmax = tmax
 
         # empirical relationships used here based on a linear fit of
         # requested and delivered dps for exponentially decaying time
         # functions for requested dps up to 512.
 
-        if 'degree' in kwargs:
-            self.degree = kwargs['degree']
+        if degree is not None:
+            self.degree = degree
             self.dps_goal = int(1.38*self.degree)
         else:
             self.dps_goal = int(self.ctx.dps*1.36)
@@ -404,10 +411,14 @@ class deHoog(InverseLaplaceTransform):
         # adjust alpha component of abscissa of convergence for higher
         # precision
         tmp = self.ctx.power(10.0, -self.dps_goal)
-        self.alpha = self.ctx.convert(kwargs.get('alpha', tmp))
+        if alpha is None:
+            alpha = tmp
+        self.alpha = self.ctx.convert(alpha)
 
         # desired tolerance (here simply related to alpha)
-        self.tol = self.ctx.convert(kwargs.get('tol', self.alpha*10.0))
+        if tol is None:
+            tol = self.alpha*10.0
+        self.tol = self.ctx.convert(tol)
         self.np = 2*self.degree+1  # number of terms in approximation
 
         # this is adjusting the dps of the calling context
@@ -417,8 +428,10 @@ class deHoog(InverseLaplaceTransform):
         self.ctx.dps = self.dps_goal
 
         # scaling factor (likely tun-able, but 2 is typical)
-        self.scale = kwargs.get('scale', 2)
-        self.T = self.ctx.convert(kwargs.get('T', self.scale*self.tmax))
+        self.scale = scale
+        if T is None:
+            T = self.scale*self.tmax
+        self.T = self.ctx.convert(T)
 
         self.p = self.ctx.matrix(2*M+1, 1)
         self.gamma = self.alpha - self.ctx.log(self.tol)/(self.scale*self.T)
@@ -531,7 +544,7 @@ class deHoog(InverseLaplaceTransform):
 
 class Cohen(InverseLaplaceTransform):
 
-    def calc_laplace_parameter(self, t, **kwargs):
+    def calc_laplace_parameter(self, t, *, degree=None, alpha=None):
         r"""The Cohen algorithm accelerates the convergence of the nearly
         alternating series resulting from the application of the trapezoidal
         rule to the Bromwich contour inversion integral.
@@ -572,8 +585,8 @@ class Cohen(InverseLaplaceTransform):
         """
         self.t = self.ctx.convert(t)
 
-        if 'degree' in kwargs:
-            self.degree = kwargs['degree']
+        if degree is not None:
+            self.degree = degree
             self.dps_goal = int(1.5 * self.degree)
         else:
             self.dps_goal = int(self.ctx.dps * 1.74)
@@ -590,7 +603,9 @@ class Cohen(InverseLaplaceTransform):
         ttwo = 2 * self.t
         tmp = self.ctx.dps * self.ctx.log(10) + self.ctx.log(ttwo)
         tmp = self.ctx.fraction(2, 3) * tmp
-        self.alpha = self.ctx.convert(kwargs.get('alpha', tmp))
+        if alpha is None:
+            alpha = tmp
+        self.alpha = self.ctx.convert(alpha)
 
         # all but time-dependent part of p
         a_t = self.alpha / ttwo
@@ -659,7 +674,8 @@ class LaplaceTransformInversionMethods:
         ctx._de_hoog = deHoog(ctx)
         ctx._cohen = Cohen(ctx)
 
-    def invertlaplace(ctx, f, t, **kwargs):
+    def invertlaplace(ctx, f, t, *, method='cohen', tmax=None, degree=None,
+                      r=None, alpha=None, scale=2, tol=None, T=None):
         r"""Computes the numerical inverse Laplace transform for a
         Laplace-space function at a given time.  The function being
         evaluated is assumed to be a real-valued function of time.
@@ -901,7 +917,7 @@ class LaplaceTransformInversionMethods:
 
         """
 
-        rule = kwargs.get('method', 'cohen')
+        rule = method
         if type(rule) is str:
             lrule = rule.lower()
             if lrule == 'talbot':
@@ -917,6 +933,16 @@ class LaplaceTransformInversionMethods:
         else:
             rule = rule(ctx)
 
+        if rule == ctx._fixed_talbot:
+            kwargs = {'tmax': tmax, 'degree': degree, 'r': r}
+        elif rule == ctx._stehfest:
+            kwargs = {'degree': degree}
+        elif rule == ctx._de_hoog:
+            kwargs = {'tmax': tmax, 'degree': degree, 'alpha': alpha,
+                      'scale': scale, 'tol': tol, 'T': T}
+        else:
+            kwargs = {'degree': degree, 'alpha': alpha}
+
         # determine the vector of Laplace-space parameter
         # needed for the requested method and desired time
         rule.calc_laplace_parameter(t, **kwargs)
@@ -930,18 +956,20 @@ class LaplaceTransformInversionMethods:
         return rule.calc_time_domain_solution(fp, t)
 
     # shortcuts for the above function for specific methods
-    def invlaptalbot(ctx, *args, **kwargs):
-        kwargs['method'] = 'talbot'
-        return ctx.invertlaplace(*args, **kwargs)
+    def invlaptalbot(ctx, f, t, *, tmax=None, degree=None,
+                     r=None):
+        return ctx.invertlaplace(f, t, method='talbot', tmax=tmax,
+                                 degree=degree, r=r)
 
-    def invlapstehfest(ctx, *args, **kwargs):
-        kwargs['method'] = 'stehfest'
-        return ctx.invertlaplace(*args, **kwargs)
+    def invlapstehfest(ctx, f, t, *, degree=None):
+        return ctx.invertlaplace(f, t, method='stehfest', degree=degree)
 
-    def invlapdehoog(ctx, *args, **kwargs):
-        kwargs['method'] = 'dehoog'
-        return ctx.invertlaplace(*args, **kwargs)
+    def invlapdehoog(ctx, f, t, *, tmax=None, degree=None,
+                     alpha=None, scale=2, tol=None, T=None):
+        return ctx.invertlaplace(f, t, method='dehoog', tmax=tmax,
+                                 degree=degree, alpha=alpha, scale=scale,
+                                 tol=tol, T=T)
 
-    def invlapcohen(ctx, *args, **kwargs):
-        kwargs['method'] = 'cohen'
-        return ctx.invertlaplace(*args, **kwargs)
+    def invlapcohen(ctx, f, t, *, degree=None, alpha=None):
+        return ctx.invertlaplace(f, t, method='cohen', degree=degree,
+                                 alpha=alpha)

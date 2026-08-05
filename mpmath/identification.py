@@ -312,7 +312,8 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         print("Could not find an integer relation. Norm bound: %s" % norm)
     return None
 
-def findpoly(ctx, x, n=1, asc=True, **kwargs):
+def findpoly(ctx, x, n=1, asc=True, *,
+             tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     r"""
     ``findpoly(x, n)`` returns the coefficients of an integer
     polynomial `P` of degree at most `n` such that `P(x) \approx 0`.
@@ -427,7 +428,8 @@ def findpoly(ctx, x, n=1, asc=True, **kwargs):
     xs = [ctx.mpf(1)]
     for i in range(1,n+1):
         xs.append(x**i)
-        a = ctx.pslq(xs, **kwargs)
+        a = ctx.pslq(xs, tol=tol, maxcoeff=maxcoeff,
+                     maxsteps=maxsteps, verbose=verbose)
         if a is not None:
             return a if asc else a[::-1]
 

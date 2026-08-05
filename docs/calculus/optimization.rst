@@ -4,7 +4,7 @@ Root-finding and optimization
 Root-finding (``findroot``)
 ...........................
 
-.. autofunction:: mpmath.findroot(f, x0, solver=Secant, tol=None, verbose=False, verify=True, **kwargs)
+.. autofunction:: mpmath.findroot
 
 Solvers
 ^^^^^^^

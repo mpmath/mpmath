@@ -118,10 +118,16 @@ class StandardBaseContext(Context,
             prod *= arg
         return prod
 
-    def nprint(ctx, x, n=6, **kwargs):
+    def nprint(ctx, x, n=6, *, strip_zeros=True, min_fixed=None, max_fixed=None,
+               show_zero_exponent=False, base=10, binary_exp=False,
+               rnd=libmp.round_nearest):
         """
         Equivalent to ``print(nstr(x, n))``.
         """
+        kwargs = {'strip_zeros': strip_zeros, 'min_fixed': min_fixed,
+                  'max_fixed': max_fixed, 'show_zero_exponent': show_zero_exponent,
+                  'base': base, 'binary_exp': binary_exp,
+                  'rnd': rnd}
         print(ctx.nstr(x, n, **kwargs))
 
     def chop(ctx, x, tol=None):
@@ -284,7 +290,7 @@ class StandardBaseContext(Context,
                 break
         return result
 
-    def linspace(ctx, *args, **kwargs):
+    def linspace(ctx, *args, endpoint=True):
         """
         ``linspace(a, b, n)`` returns a list of `n` evenly spaced
         samples from `a` to `b`. The syntax ``linspace(mpi(a,b), n)``
@@ -318,7 +324,7 @@ class StandardBaseContext(Context,
                             % len(args))
         if n < 1:
             raise ValueError('n must be greater than 0')
-        if 'endpoint' not in kwargs or kwargs['endpoint']:
+        if endpoint:
             if n == 1:
                 return [ctx.mpf(a)]
             step = (b - a) / ctx.mpf(n - 1)
