@@ -3,7 +3,7 @@ import pytest
 from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
                     expm, fourier, fourierval, inf, invertlaplace, j, limit,
                     log, matrix, mp, mpf, norm, pade, pi, polyroots, polyval,
-                    sin, sinm, sqrt, logm, fft, ifft)
+                    sin, sinm, sqrt, logm, fft, invfft)
 
 
 def test_approximation():
@@ -279,7 +279,7 @@ def test_logm():
 
 def test_fft():
     assert fft([]) == []
-    pytest.raises(ValueError, lambda: fft([1, 2, 3]))
+    pytest.raises(NotImplementedError, lambda: fft([1, 2, 3]))
     assert fft([1, 0, 0, 0]) == [1, 1, 1, 1]
     assert fft([1, 0, 0], pad_to_power_of_two=True) == [1, 1, 1, 1]
 
@@ -290,4 +290,4 @@ def test_fft():
     spectrum = fft([1, 2, 3, 4])
     expected = [10, -2 + 2j, -2, -2 - 2j]
     assert all(a.ae(b) for a, b in zip(spectrum, expected))
-    assert mp.chop(ifft(spectrum)) == [1, 2, 3, 4]
+    assert mp.chop(invfft(spectrum)) == [1, 2, 3, 4]

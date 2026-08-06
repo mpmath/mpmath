@@ -10,4 +10,4 @@ FFT
 Inverse FFT
 ...........
 
-.. autofunction:: mpmath.ifft
+.. autofunction:: mpmath.invfft

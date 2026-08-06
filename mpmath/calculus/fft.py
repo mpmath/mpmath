@@ -23,12 +23,48 @@ def _fft_recursive(ctx, values, inverse=False):
         factor *= root
     return transformed
 
+def _fft_iterative(ctx, values, inverse=False):
+    n = len(values)
+    if n <= 1:
+        return list(values)
+
+    # Bit-Reversal Permutation
+    transformed = [ctx.zero] * n
+    num_bits = n.bit_length() - 1
+    for i in range(n):
+        rev = 0
+        for b in range(num_bits):
+            if (i >> b) & 1:
+                rev |= 1 << (num_bits - 1 - b)
+        transformed[rev] = values[i]
+
+    sign = 1 if inverse else -1
+    two_pi_j = 2 * ctx.pi * ctx.j
+
+    length = 2
+    while length <= n:
+        half = length >> 1
+        w_len = ctx.exp(sign * two_pi_j / length)
+
+        for i in range(0, n, length):
+            w = ctx.one
+            for j in range(half):
+                u = transformed[i + j]
+                v = transformed[i + j + half] * w
+                
+                transformed[i + j] = u + v
+                transformed[i + j + half] = u - v
+                
+                w *= w_len
+
+        length = length << 1
+
+    return transformed
+
 @defun
-def fft(ctx, values, inverse=False, pad_to_power_of_two=False):
+def fft(ctx, values, pad_to_power_of_two=False):
     r"""Computes the Fast Fourier Transform (or Inverse FFT) with optional zero-padding.
 
-    If ``inverse=True``, computes the inverse transform and normalizes the
-    result by the sequence length.
     If ``pad_to_power_of_two=True``, the input sequence is automatically zero-padded to the next power of 2 if its length is not already a power of 2.
     """
     orig_n = len(values)
@@ -39,28 +75,68 @@ def fft(ctx, values, inverse=False, pad_to_power_of_two=False):
 
     if not is_power_of_two:
         if not pad_to_power_of_two:
-            raise ValueError(f"Length of input ({orig_n}) must be a power of 2.")
+            raise NotImplementedError("FFT is only implemented for lengths that are powers of 2. Use pad_to_power_of_two=True to automatically pad the input sequence.")
 
         padded_n = 1 << math.ceil(math.log2(orig_n))
     else:
         padded_n = orig_n
 
     converted_values = [ctx.convert(v) for v in values]
+    pad_length = padded_n - orig_n
 
     if padded_n > orig_n:
-        converted_values.extend([ctx.zero] * (padded_n - orig_n))
+        converted_values.extend([ctx.zero] * pad_length)
 
-    result = _fft_recursive(ctx, converted_values, inverse)
-
-    if inverse:
-        scale = ctx.convert(padded_n)
-        result = [val / scale for val in result]
+    result = _fft_iterative(ctx, converted_values, False)
 
     return result
 
 @defun
-def ifft(ctx, values, pad_to_power_of_two=False):
+def invfft(ctx, values, pad_to_power_of_two=False):
     r"""Computes the inverse discrete Fourier transform of a sequence with optional zero-padding.
     If ``pad_to_power_of_two=True``, the input sequence is automatically zero-padded to the next power of 2 if its length is not already a power of 2.
     """
-    return fft(ctx, values, inverse=True, pad_to_power_of_two=pad_to_power_of_two)
+
+    orig_n = len(values)
+    if orig_n == 0:
+        return []
+
+    is_power_of_two = (orig_n & (orig_n - 1)) == 0
+
+    if not is_power_of_two:
+        if not pad_to_power_of_two:
+            raise NotImplementedError("Inverse FFT is only implemented for lengths that are powers of 2. Use pad_to_power_of_two=True to automatically pad the input sequence.")
+
+        padded_n = 1 << math.ceil(math.log2(orig_n))
+    else:
+        padded_n = orig_n
+
+    converted_values = [ctx.convert(v) for v in values]
+    pad_length = padded_n - orig_n
+
+    half = orig_n >> 1
+    zeros = [ctx.zero] * pad_length
+
+    if pad_length > 0:
+        if orig_n % 2 == 0:
+            nyquist_half = converted_values[half] / 2
+            converted_values = (
+                converted_values[:half] 
+                + [nyquist_half] 
+                + zeros 
+                + [nyquist_half] 
+                + converted_values[half + 1:]
+                )
+        else:
+            converted_values = (
+                converted_values[:half + 1] 
+                + zeros 
+                + converted_values[half + 1:]
+                )
+
+    result = _fft_iterative(ctx, converted_values, True)
+
+    scale = ctx.convert(padded_n)
+    result = [val / scale for val in result]
+
+    return result

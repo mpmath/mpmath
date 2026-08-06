@@ -453,7 +453,7 @@ sawtoothw = mp.sawtoothw
 unit_triangle = mp.unit_triangle
 sigmoid = mp.sigmoid
 fft = mp.fft
-ifft = mp.ifft
+invfft = mp.invfft
 
 
 # Hack to guard against setting module properties instead of 'mp', Issue #657
