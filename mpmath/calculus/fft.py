@@ -2,31 +2,16 @@ import math
 
 from .calculus import defun
 
-def _fft_recursive(ctx, values, inverse=False):
-    n = len(values)
-
-    if n == 1:
-        return values
-
-    sign = 1 if inverse else -1
-
-    even = _fft_recursive(ctx, values[0::2], inverse)
-    odd = _fft_recursive(ctx, values[1::2], inverse)
-    root = ctx.exp(sign * 2 * ctx.pi * ctx.j / n)
-    factor = ctx.one
-    half = n // 2
-    transformed = [ctx.zero] * n
-    for k in range(half):
-        term = factor * odd[k]
-        transformed[k] = even[k] + term
-        transformed[k + half] = even[k] - term
-        factor *= root
-    return transformed
-
 def _fft_iterative(ctx, values, inverse=False):
+    """
+    This function implements the Cooley-Tukey FFT algorithm iteratively. It computes the Fast Fourier Transform (or Inverse FFT) of a sequence of complex numbers.
+    The input sequence must have a length that is a power of 2. If the length is not a power of 2, the function raises a NotImplementedError.
+
+    https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm#Data_reordering,_bit_reversal,_and_in-place_algorithms
+    """
     n = len(values)
     if n <= 1:
-        return list(values)
+        return values
 
     # Bit-Reversal Permutation
     transformed = [ctx.zero] * n
@@ -43,7 +28,7 @@ def _fft_iterative(ctx, values, inverse=False):
 
     length = 2
     while length <= n:
-        half = length >> 1
+        half = length // 2
         w_len = ctx.exp(sign * two_pi_j / length)
 
         for i in range(0, n, length):
@@ -51,21 +36,20 @@ def _fft_iterative(ctx, values, inverse=False):
             for j in range(half):
                 u = transformed[i + j]
                 v = transformed[i + j + half] * w
-                
+
                 transformed[i + j] = u + v
                 transformed[i + j + half] = u - v
-                
+
                 w *= w_len
 
-        length = length << 1
+        length <<= 1
 
     return transformed
 
 @defun
 def fft(ctx, values, pad_to_power_of_two=False):
     r"""Computes the Fast Fourier Transform (or Inverse FFT) with optional zero-padding.
-
-    If ``pad_to_power_of_two=True``, the input sequence is automatically zero-padded to the next power of 2 if its length is not already a power of 2.
+    If ``pad_to_power_of_two=True``, the time domain sequence is automatically zero-padded at the end to the next power of 2 if its length is not already a power of 2.
     """
     orig_n = len(values)
     if orig_n == 0:
@@ -94,7 +78,7 @@ def fft(ctx, values, pad_to_power_of_two=False):
 @defun
 def invfft(ctx, values, pad_to_power_of_two=False):
     r"""Computes the inverse discrete Fourier transform of a sequence with optional zero-padding.
-    If ``pad_to_power_of_two=True``, the input sequence is automatically zero-padded to the next power of 2 if its length is not already a power of 2.
+    If ``pad_to_power_of_two=True``, the frequency domain sequence is automatically zero-padded with Nyquist-bin splitting to the next power of 2 if its length is not already a power of 2.
     """
 
     orig_n = len(values)
@@ -115,22 +99,23 @@ def invfft(ctx, values, pad_to_power_of_two=False):
     pad_length = padded_n - orig_n
 
     half = orig_n >> 1
-    zeros = [ctx.zero] * pad_length
 
     if pad_length > 0:
         if orig_n % 2 == 0:
+            zeros = [ctx.zero] * (pad_length - 1)
             nyquist_half = converted_values[half] / 2
             converted_values = (
-                converted_values[:half] 
-                + [nyquist_half] 
-                + zeros 
-                + [nyquist_half] 
+                converted_values[:half]
+                + [nyquist_half]
+                + zeros
+                + [nyquist_half]
                 + converted_values[half + 1:]
                 )
         else:
+            zeros = [ctx.zero] * pad_length
             converted_values = (
-                converted_values[:half + 1] 
-                + zeros 
+                converted_values[:half + 1]
+                + zeros
                 + converted_values[half + 1:]
                 )
 

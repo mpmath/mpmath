@@ -279,6 +279,7 @@ def test_logm():
 
 def test_fft():
     assert fft([]) == []
+    assert fft([1]) == [1]
     pytest.raises(NotImplementedError, lambda: fft([1, 2, 3]))
     assert fft([1, 0, 0, 0]) == [1, 1, 1, 1]
     assert fft([1, 0, 0], pad_to_power_of_two=True) == [1, 1, 1, 1]
@@ -291,3 +292,10 @@ def test_fft():
     expected = [10, -2 + 2j, -2, -2 - 2j]
     assert all(a.ae(b) for a, b in zip(spectrum, expected))
     assert mp.chop(invfft(spectrum)) == [1, 2, 3, 4]
+
+    assert invfft([]) == []
+    pytest.raises(NotImplementedError, lambda: invfft([1, 2, 3]))
+    assert invfft([1, 0, 0], pad_to_power_of_two=True) == [0.25, 0.25, 0.25, 0.25]
+    expected = [1, 1, 1, 0.5, 0, 0.5, 1, 1]
+    res = fft(invfft([1, 1, 1, 1, 1, 1], pad_to_power_of_two=True))
+    assert all(a.ae(b) for a, b in zip(res, expected))
