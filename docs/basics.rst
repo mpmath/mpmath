@@ -82,6 +82,7 @@ Mpmath uses a global working precision; it does not keep track of the precision 
       mp.dps = 15                 [default: 15]
       mp.rounding = 'n'           [default: 'n']
       mp.trap_complex = False     [default: False]
+      mp.pretty_dps = 'str'       [default: 'str']
 
 The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used).
 
@@ -237,6 +238,15 @@ To use enough digits to be able recreate value exactly, set ``mp.pretty_dps``
 to ``"repr"`` (default value is ``"str"``).  Same option is used to control
 default number of digits in the new-style string formatting *without format
 specifier*, i.e. ``format(exp(mpf(1)))``.
+
+    >>> mp.pretty = True
+    >>> mpf(0.1)
+    0.1
+    >>> mp.pretty_dps = "repr"
+    >>> mpf(0.1)
+    0.10000000000000001
+    >>> mp.pretty_dps = "str"
+    >>> mp.pretty = False
 
 The number of digits with which numbers are printed by default is determined by
 the working precision.  To specify the number of digits to show without
