@@ -1,7 +1,10 @@
+import math
+import random
+
 import hypothesis.strategies as st
 from hypothesis import example, given
 
-from mpmath import inf, matrix, mp, mpc, nstr
+from mpmath import inf, matrix, mp, mpc, mpf, nstr, rand
 
 
 A1 = matrix([])
@@ -62,8 +65,93 @@ def test_matrix_str():
 @example(x=6.170920920537087e+17, rnd='f')
 def test_eval_repr_roundtrip(x, rnd):
     mp.rounding = rnd
+    mp.shortest_str = False
     mp.pretty = True
     mp.pretty_dps = 'repr'
     mx = mp.mpf(x)
     smx = repr(mx)
     assert mx == mp.mpf(smx)
+    mp.pretty_dps = 'str'
+    mp.shortest_str = True
+    smx = repr(mx)
+    assert mx == mp.mpf(smx)
+
+
+@given(st.floats(allow_subnormal=False,
+                 allow_nan=False,
+                 allow_infinity=False))
+@example(1.0)
+@example(-10.0)
+@example(3.411330784663857e+16)
+@example(5.960464477539063e-08)
+@example(562949953421312.2)
+def test_float_short_repr(f):
+    mp.shortest_str = True
+    if not f and math.copysign(1, f) == -1:
+        return
+    s = str(f)
+    m = mpf(f)
+    sm = str(m)
+    assert s == sm
+    assert f"mpf('{s}')" == repr(m)
+    assert m == mpf(sm)
+
+
+@given(st.complex_numbers(allow_subnormal=False,
+                          allow_nan=False,
+                          allow_infinity=False))
+@example(1+0.1j)
+def test_complex_short_repr(z):
+    mp.shortest_str = True
+    mp.pretty = False
+    if ((not z.real and math.copysign(1, z.real) == -1)
+            or (not z.imag and math.copysign(1, z.imag) == -1)):
+        return  # skip negative zero
+    s = str(z)
+    mz = mpc(z)
+    smz = str(mz)
+    assert s == smz
+    assert f"mpc(real='{mz.real!s}', imag='{mz.imag!s}')" == repr(mz)
+    assert mz == mpc(smz)
+    mp.pretty = True
+    assert smz == repr(mz)
+
+
+def test_short_repr_specials():
+    mp.shortest_str = True
+    assert str(mpf(0)) == '0.0'
+    assert str(mpf('inf')) == 'inf'
+    assert str(mpf('-inf')) == '-inf'
+    assert str(mpf('nan')) == 'nan'
+
+
+def test_short_repr_roundtrip():
+    mp.shortest_str = True
+    for dps in [15, 20, 30, 50, 100, 300]:
+        with mp.workdps(dps):
+            for _ in range(10000):
+                f = random.choice([(rand()-0.5)*2 for _ in range(10)]
+                                  + [(rand()-0.5)*2*10**5 for _ in range(5)]
+                                  + [(rand()-0.5)*2/10**5 for _ in range(5)]
+                                  + [(rand()-0.5)*2*10**100 for _ in range(2)])
+                s = str(f)
+                b = mpf(s)
+                assert f == b  # round-trip
+
+                integer, *frac = s.split('.')
+                if not frac:
+                    continue
+                frac = frac[0]
+                if len(frac) < 2:
+                    continue
+                frac, *exponent = frac.split('e')
+                exponent = 'e' + exponent[0] if exponent else ''
+
+                # round-trip:
+                assert f == mpf(str(integer + '.' + frac + exponent))
+
+                # test that short repr is really minimal
+                frac = frac[:-1]
+                for d in range(10):
+                    frac = frac[:-1] + str(d)
+                    assert f != mpf(str(integer + '.' + frac + exponent))
