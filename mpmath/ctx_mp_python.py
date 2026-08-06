@@ -34,8 +34,6 @@ def _make_mpc(x, y):
     from mpmath import mp
     return mp.mpc(x, y)
 
-_reversed_rnd = {'n': 'n', 'f': 'c', 'c': 'f', 'u': 'd', 'd': 'u'}
-
 
 class _mpf(mpnumeric):
     """
@@ -45,7 +43,8 @@ class _mpf(mpnumeric):
     """
     __slots__ = ['_mpf_', 'context']
 
-    def __new__(cls, val=fzero, *, prec=None, dps=None, rounding=None, base=0):
+    def __new__(cls, val=fzero, *, prec=None, dps=None,
+                rounding=round_nearest, base=0):
         """A new mpf can be created from a Python float, an int, a
         or a decimal string representing a number in floating-point
         format."""
@@ -136,17 +135,15 @@ class _mpf(mpnumeric):
 
     def __repr__(self):
         ctx = self.context
-        rounding = _reversed_rnd[ctx._prec_rounding[1]]
         if ctx.pretty:
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
-            return to_str(self._mpf_, ndigits, rnd=rounding)
-        return f"mpf({to_str(self._mpf_, ctx._repr_digits, rnd=rounding)!r})"
+            return to_str(self._mpf_, ndigits)
+        return f"mpf({to_str(self._mpf_, ctx._repr_digits)!r})"
 
     def __str__(self):
         ctx = self.context
-        rounding = ctx._prec_rounding[1]
-        return to_str(self._mpf_, ctx._str_digits, rnd=rounding)
+        return to_str(self._mpf_, ctx._str_digits)
 
     def __hash__(self): return mpf_hash(self._mpf_)
     def __int__(self): return int(to_int(self._mpf_))
@@ -549,19 +546,17 @@ class _mpc(mpnumeric):
 
     def __repr__(self):
         ctx = self.context
-        rounding = _reversed_rnd[ctx._prec_rounding[1]]
         if ctx.pretty:
             ndigits = (ctx._repr_digits
                        if ctx._pretty_repr_dps else ctx._str_digits)
-            return f"({mpc_to_str(self._mpc_, ndigits, rnd=rounding)})"
+            return f"({mpc_to_str(self._mpc_, ndigits)})"
         r = repr(self.real)[4:-1]
         i = repr(self.imag)[4:-1]
         return f"{type(self).__name__}(real={r}, imag={i})"
 
     def __str__(self):
         ctx = self.context
-        rounding = ctx._prec_rounding[1]
-        return f"({mpc_to_str(self._mpc_, ctx._str_digits, rnd=rounding)})"
+        return f"({mpc_to_str(self._mpc_, ctx._str_digits)})"
 
     def __complex__(self):
         ctx = self.context
