@@ -2,9 +2,9 @@ import pytest
 
 from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
                     expm, fourier, fourierval, inf, invertlaplace, j, limit,
-                    log, matrix, mp, mpf, norm, pade, pi, polyroots, polyval,
+                    log, matrix, mp, fp, mpf, norm, pade, pi, polyroots, polyval,
                     sin, sinm, sqrt, logm, fft, invfft)
-
+import random
 
 def test_approximation():
     f = lambda x: cos(2-2*x)/x
@@ -293,9 +293,28 @@ def test_fft():
     assert all(a.ae(b) for a, b in zip(spectrum, expected))
     assert mp.chop(invfft(spectrum)) == [1, 2, 3, 4]
 
+    random.seed(42)
+    # test that fft and invfft are inverses of each other
+    x = [mp.rand() for _ in range(8)]
+    recovered = invfft(fft(x))
+    assert all(a.ae(b) for a, b in zip(recovered, x))
+
+    X = [mp.rand() for _ in range(8)]
+    recovered = fft(invfft(X))
+    assert all(a.ae(b) for a, b in zip(recovered, X))
+
     assert invfft([]) == []
     pytest.raises(NotImplementedError, lambda: invfft([1, 2, 3]))
-    assert invfft([1, 0, 0], pad_to_power_of_two=True) == [0.25, 0.25, 0.25, 0.25]
-    expected = [1, 1, 1, 0.5, 0, 0.5, 1, 1]
-    res = fft(invfft([1, 1, 1, 1, 1, 1], pad_to_power_of_two=True))
-    assert all(a.ae(b) for a, b in zip(res, expected))
+    assert invfft([3, 0, 0], pad_to_power_of_two=True) == [1, 1, 1, 1]
+
+    # test that invfft correctly handles Nyquist-bin splitting when padding
+    res = invfft([0, 3, 0, 0, 0, 3], pad_to_power_of_two=True)
+    expected = [1.0, 0.71, 0.0, -0.71, -1.0, -0.71, -0.0, 0.71]
+    assert all(a.ae(b, 1e-2) for a, b in zip(res, expected))
+
+    # test parseval's theorem
+    x = [mp.rand() for _ in range(64)]
+    X = fft(x, True)
+    time_energy = sum(abs(complex(v)) ** 2 for v in x)
+    freq_energy = sum(abs(complex(v)) ** 2 for v in X) / 64
+    assert abs(time_energy - freq_energy) < 1e-10

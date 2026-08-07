@@ -5,9 +5,9 @@ from .calculus import defun
 def _fft_iterative(ctx, values, inverse=False):
     """
     This function implements the Cooley-Tukey FFT algorithm iteratively. It computes the Fast Fourier Transform (or Inverse FFT) of a sequence of complex numbers.
-    The input sequence must have a length that is a power of 2. If the length is not a power of 2, the function raises a NotImplementedError.
+    The input sequence must have a length that is a power of 2.
 
-    https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm#Data_reordering,_bit_reversal,_and_in-place_algorithms
+    https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
     """
     n = len(values)
     if n <= 1:
@@ -46,10 +46,13 @@ def _fft_iterative(ctx, values, inverse=False):
 
     return transformed
 
+# TODO: Add support for non-power-of-two lengths using Bluestein's algorithm or similar methods.
+
 @defun
 def fft(ctx, values, pad_to_power_of_two=False):
     r"""Computes the Fast Fourier Transform (or Inverse FFT) with optional zero-padding.
     If ``pad_to_power_of_two=True``, the time domain sequence is automatically zero-padded at the end to the next power of 2 if its length is not already a power of 2.
+    Raises NotImplementedError if the input sequence length is not a power of 2 and ``pad_to_power_of_two`` is False.
     """
     orig_n = len(values)
     if orig_n == 0:
@@ -78,7 +81,10 @@ def fft(ctx, values, pad_to_power_of_two=False):
 @defun
 def invfft(ctx, values, pad_to_power_of_two=False):
     r"""Computes the inverse discrete Fourier transform of a sequence with optional zero-padding.
-    If ``pad_to_power_of_two=True``, the frequency domain sequence is automatically zero-padded with Nyquist-bin splitting to the next power of 2 if its length is not already a power of 2.
+    If ``pad_to_power_of_two=True``, the frequency domain sequence is automatically center zero-padded with Nyquist-bin splitting to the next power of 2 if its length is not already a power of 2.
+    The Nyquist-bin splitting is done by taking the value at the Nyquist frequency (if it exists) and splitting it evenly between the positive and negative Nyquist bins in the padded sequence.
+    Raises NotImplementedError if the input sequence length is not a power of 2 and ``pad_to_power_of_two`` is False.
+    The output is scaled by the length of the original input sequence to ensure that the inverse transform correctly recovers the original time-domain sequence.
     """
 
     orig_n = len(values)
@@ -121,7 +127,7 @@ def invfft(ctx, values, pad_to_power_of_two=False):
 
     result = _fft_iterative(ctx, converted_values, True)
 
-    scale = ctx.convert(padded_n)
+    scale = ctx.convert(orig_n)
     result = [val / scale for val in result]
 
     return result
