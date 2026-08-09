@@ -1065,15 +1065,24 @@ def fpp2(x, prec=0, base=10):
         S <<= 1
 
     # Step 2.  Compute ceil(log((R + Mplus)/S, base)).
-    k = 0
-    while rev_cmp(R + Mplus, S):
+    # We use (undocumented) support for computing logarithms of
+    # big integers (that overflows floats).  This is available
+    # also on PyPy and GraalPy.
+    k = math.ceil((math.log2(int(R + Mplus)) -
+                   math.log2(int(S)))/math.log2(int(base)))
+    if k < 0:
+        bk = base**-k
+        R *= bk
+        Mplus *= bk
+        Mminus *= bk
+    if k > 0:
+        S *= base**k
+    # k might be either exact or by 1 too big.
+    if rev_cmp(R + Mplus, S):
         k -= 1
         R *= base
         Mplus *= base
         Mminus *= base
-    while cmp(S*base, R + Mplus):
-        k += 1
-        S *= base
     assert cmp(S, R + Mplus)
     D = bytearray()
 
