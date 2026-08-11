@@ -174,10 +174,14 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
          with white for positive reals, black for negative reals, gold in the
          upper half plane, and blue in the lower half plane.
 
-    To obtain a sharp image, the number of points may need to be
-    increased to 100,000 or thereabout. Since evaluating the
-    function that many times is likely to be slow, the 'verbose'
-    option is useful to display progress.
+    The *points* argument specifies approximately the total number of
+    evaluation points in the rectangular grid, not the number per axis.
+    The number of points on each axis is rounded upward independently,
+    so the actual number of evaluations may be slightly larger.
+
+    To obtain a sharp image, *points* may need to be increased to 100,000
+    or thereabout. Since evaluating the function that many times is likely
+    to be slow, the 'verbose' option is useful to display progress.
 
     .. note :: This function requires matplotlib (pylab).
     """
@@ -196,8 +200,8 @@ def cplot(ctx, f, re=[-5,5], im=[-5,5], points=2000, color=None,
     ima, imb = im
     dre = reb - rea
     dim = imb - ima
-    M = int(ctx.sqrt(points*dre/dim)+1)
-    N = int(ctx.sqrt(points*dim/dre)+1)
+    M = int(ctx.ceil(ctx.sqrt(points*dre/dim)))
+    N = int(ctx.ceil(ctx.sqrt(points*dim/dre)))
     x = pylab.linspace(rea, reb, M)
     y = pylab.linspace(ima, imb, N)
     # Note: we have to be careful to get the right rotation.
