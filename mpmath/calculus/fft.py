@@ -1,10 +1,8 @@
-import math
-
 from .calculus import defun
 
-def _fft_iterative(ctx, values, inverse=False):
+def _fft_cooley_tuckey(ctx, values, inverse=False):
     """
-    This function implements the Cooley-Tukey FFT algorithm iteratively. It computes the Fast Fourier Transform (or Inverse FFT) of a sequence of complex numbers.
+    This function implements the Radix-2 Cooley-Tukey FFT algorithm iteratively. It computes the Fast Fourier Transform (or Inverse FFT) of a sequence of complex numbers.
     The input sequence must have a length that is a power of 2.
 
     https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
@@ -49,85 +47,44 @@ def _fft_iterative(ctx, values, inverse=False):
 # TODO: Add support for non-power-of-two lengths using Bluestein's algorithm or similar methods.
 
 @defun
-def fft(ctx, values, pad_to_power_of_two=False):
-    r"""Computes the Fast Fourier Transform (or Inverse FFT) with optional zero-padding.
-    If ``pad_to_power_of_two=True``, the time domain sequence is automatically zero-padded at the end to the next power of 2 if its length is not already a power of 2.
-    Raises NotImplementedError if the input sequence length is not a power of 2 and ``pad_to_power_of_two`` is False.
+def fft(ctx, values):
+    r"""Computes the Discrete Fourier Transform (DFT) of a sequence using the Radix-2 Cooley-Tukey FFT algorithm.
+    Raises NotImplementedError if the input sequence length is not a power of 2.
     """
-    orig_n = len(values)
-    if orig_n == 0:
+    n = len(values)
+    if n == 0:
         return []
 
-    is_power_of_two = (orig_n & (orig_n - 1)) == 0
+    is_power_of_two = (n & (n - 1)) == 0
 
     if not is_power_of_two:
-        if not pad_to_power_of_two:
-            raise NotImplementedError("FFT is only implemented for lengths that are powers of 2. Use pad_to_power_of_two=True to automatically pad the input sequence.")
-
-        padded_n = 1 << math.ceil(math.log2(orig_n))
-    else:
-        padded_n = orig_n
+        raise NotImplementedError(f"FFT is only implemented for lengths that are powers of 2, got length: {n}")
 
     converted_values = [ctx.convert(v) for v in values]
-    pad_length = padded_n - orig_n
 
-    if padded_n > orig_n:
-        converted_values.extend([ctx.zero] * pad_length)
-
-    result = _fft_iterative(ctx, converted_values, False)
+    result = _fft_cooley_tuckey(ctx, converted_values, False)
 
     return result
 
 @defun
-def invfft(ctx, values, pad_to_power_of_two=False):
-    r"""Computes the inverse discrete Fourier transform of a sequence with optional zero-padding.
-    If ``pad_to_power_of_two=True``, the frequency domain sequence is automatically center zero-padded with Nyquist-bin splitting to the next power of 2 if its length is not already a power of 2.
-    The Nyquist-bin splitting is done by taking the value at the Nyquist frequency (if it exists) and splitting it evenly between the positive and negative Nyquist bins in the padded sequence.
-    Raises NotImplementedError if the input sequence length is not a power of 2 and ``pad_to_power_of_two`` is False.
-    The output is scaled by the length of the original input sequence to ensure that the inverse transform correctly recovers the original time-domain sequence.
+def invfft(ctx, values):
+    r"""Computes the inverse Discrete Fourier Transform (IDFT) of a sequence using the Radix-2 Cooley-Tukey FFT algorithm.
+    Raises NotImplementedError if the input sequence length is not a power of 2.
     """
 
-    orig_n = len(values)
-    if orig_n == 0:
+    n = len(values)
+    if n == 0:
         return []
 
-    is_power_of_two = (orig_n & (orig_n - 1)) == 0
+    is_power_of_two = (n & (n - 1)) == 0
 
     if not is_power_of_two:
-        if not pad_to_power_of_two:
-            raise NotImplementedError("Inverse FFT is only implemented for lengths that are powers of 2. Use pad_to_power_of_two=True to automatically pad the input sequence.")
-
-        padded_n = 1 << math.ceil(math.log2(orig_n))
-    else:
-        padded_n = orig_n
+        raise NotImplementedError(f"Inverse FFT is only implemented for lengths that are powers of 2, got length: {n}")
 
     converted_values = [ctx.convert(v) for v in values]
-    pad_length = padded_n - orig_n
 
-    half = orig_n >> 1
+    result = _fft_cooley_tuckey(ctx, converted_values, True)
 
-    if pad_length > 0:
-        if orig_n % 2 == 0:
-            zeros = [ctx.zero] * (pad_length - 1)
-            nyquist_half = converted_values[half] / 2
-            converted_values = (
-                converted_values[:half]
-                + [nyquist_half]
-                + zeros
-                + [nyquist_half]
-                + converted_values[half + 1:]
-                )
-        else:
-            zeros = [ctx.zero] * pad_length
-            converted_values = (
-                converted_values[:half + 1]
-                + zeros
-                + converted_values[half + 1:]
-                )
-
-    result = _fft_iterative(ctx, converted_values, True)
-
-    scale = ctx.convert(orig_n)
-    result = [val / scale for val in result]
+    result = [val / n for val in result]
 
     return result

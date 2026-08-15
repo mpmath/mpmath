@@ -282,7 +282,6 @@ def test_fft():
     assert fft([1]) == [1]
     pytest.raises(NotImplementedError, lambda: fft([1, 2, 3]))
     assert fft([1, 0, 0, 0]) == [1, 1, 1, 1]
-    assert fft([1, 0, 0], pad_to_power_of_two=True) == [1, 1, 1, 1]
 
     spectrum = fft([0, 1, 0, 0])
     expected = [1, -1j, -1, 1j]
@@ -305,16 +304,10 @@ def test_fft():
 
     assert invfft([]) == []
     pytest.raises(NotImplementedError, lambda: invfft([1, 2, 3]))
-    assert invfft([3, 0, 0], pad_to_power_of_two=True) == [1, 1, 1, 1]
-
-    # test that invfft correctly handles Nyquist-bin splitting when padding
-    res = invfft([0, 3, 0, 0, 0, 3], pad_to_power_of_two=True)
-    expected = [1.0, 0.71, 0.0, -0.71, -1.0, -0.71, -0.0, 0.71]
-    assert all(a.ae(b, 1e-2) for a, b in zip(res, expected))
 
     # test parseval's theorem
     x = [mp.rand() for _ in range(64)]
-    X = fft(x, True)
+    X = fft(x)
     time_energy = sum(abs(complex(v)) ** 2 for v in x)
     freq_energy = sum(abs(complex(v)) ** 2 for v in X) / 64
     assert abs(time_energy - freq_energy) < 1e-10
