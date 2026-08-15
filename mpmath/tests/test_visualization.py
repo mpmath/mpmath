@@ -34,6 +34,28 @@ def test_axes():
     assert axes.get_ylabel() == 'Im(z)'
 
 
+def test_issue_379():
+    try:
+        import pylab
+    except ImportError:
+        pytest.skip("\nSkipping test (pylab not available)\n")
+
+    for ctx in [mp, fp]:
+        for points in [8, 9]:
+            fig = pylab.figure()
+            axes = fig.add_subplot(111)
+            evaluated = []
+
+            def f(z):
+                evaluated.append(z)
+                return z
+
+            ctx.cplot(f, points=points, axes=axes)
+            assert len(evaluated) == 9
+            assert axes.images[0].get_array().shape == (3, 3, 3)
+            pylab.close(fig)
+
+
 def test_issue_1007():
     # plot(), cplot() and splot() must not leave a stale figure open
     # when the user-supplied function raises an unexpected exception;
