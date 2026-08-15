@@ -1017,10 +1017,42 @@ def test_kleinjinv():
     value = kleinj(tau)
 
     assert mpc_ae(kleinj(kleinjinv(value)), value, eps=eps*1000)
-    assert mpc_ae(kleinjinv(0), -0.5 + sqrt(3)*j/2,
+    assert mpc_ae(kleinjinv(0), 0.5 + sqrt(3)*j/2,
                   eps=eps*1000)
     assert mpc_ae(kleinjinv(1), j, eps=eps*1000)
 
+
+def test_kleinjinv_fundamental_domain():
+    mp.dps = 30
+
+    assert mpc_ae(kleinjinv(0), mpf('0.5') + sqrt(3)*j/2,
+                  eps=eps*1000)
+    circular_boundary_tau = kleinjinv(mpf('0.25'))
+    assert mp.almosteq(abs(circular_boundary_tau), 1)
+    assert circular_boundary_tau.real > 0
+    assert mp.almosteq(kleinj(circular_boundary_tau), mpf('0.25'),
+                       rel_eps=mp.eps*100000, abs_eps=mp.eps*100000)
+
+    for tau in [0.625 + 0.75*j, 2.3 + 0.4*j, -1.7 + 0.2*j,
+                0.1 + 2.5*j]:
+        value = kleinj(tau)
+        recovered = kleinjinv(value)
+        assert mp.almosteq(kleinj(recovered), value,
+                           rel_eps=mp.eps*100000, abs_eps=mp.eps*100000)
+        assert recovered.imag > 0
+        assert abs(recovered.real) <= mpf('0.5') + mp.eps*100
+        assert abs(recovered) >= 1 - mp.eps*100
+
+
+def test_kleinjinv_real_values():
+    mp.dps = 30
+
+    for value in [mpf('1.01'), mpf(2), mpf('1e6'), mpc(2, 0)]:
+        tau = kleinjinv(value)
+        assert tau.real == 0
+        assert tau.imag >= 1
+        assert mp.almosteq(kleinj(tau), value,
+                           rel_eps=mp.sqrt(mp.eps), abs_eps=mp.eps*10000)
 
 def test_taufrom_weierstrass_invariants():
     mp.dps = 30
@@ -1030,6 +1062,17 @@ def test_taufrom_weierstrass_invariants():
     recovered_tau = taufrom(g2=g2, g3=g3)
 
     assert mpc_ae(kleinj(recovered_tau), kleinj(tau), eps=eps*1000)
+    assert recovered_tau.imag > 0
+    assert abs(recovered_tau.real) <= mpf('0.5') + mp.eps*100
+    assert abs(recovered_tau) >= 1 - mp.eps*100
+
+    for real_g2, real_g3 in [
+            (60, 140), (12, 1), (12, -1), (1, -1),
+            (-4, 1), (-4, -1), (0, 1), (1, 0)]:
+        recovered_tau = taufrom(g2=real_g2, g3=real_g3)
+        omega1, omega2 = omega1omega2from(g2=real_g2, g3=real_g3)
+        assert mpc_ae(recovered_tau, omega2/omega1, eps=eps*1000)
+
     pytest.raises(ValueError, lambda: taufrom(g2=g2))
     pytest.raises(ValueError, lambda: taufrom(g3=g3))
 
