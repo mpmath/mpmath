@@ -1,10 +1,12 @@
+import random
+
 import pytest
 
 from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
-                    expm, fourier, fourierval, inf, invertlaplace, j, limit,
-                    log, matrix, mp, fp, mpf, norm, pade, pi, polyroots, polyval,
-                    sin, sinm, sqrt, logm, fft, invfft)
-import random
+                    expm, fft, fourier, fourierval, inf, invertlaplace, invfft,
+                    j, limit, log, logm, matrix, mp, mpf, norm, pade, pi,
+                    polyroots, polyval, sin, sinm, sqrt)
+
 
 def test_approximation():
     f = lambda x: cos(2-2*x)/x
@@ -292,6 +294,10 @@ def test_fft():
     assert all(a.ae(b) for a, b in zip(spectrum, expected))
     assert mp.chop(invfft(spectrum)) == [1, 2, 3, 4]
 
+    spectrum = fft([1, j, -1, -j])
+    expected = [0, 4, 0, 0]
+    assert all(a.ae(b) for a, b in zip(spectrum, expected))
+
     random.seed(42)
     # test that fft and invfft are inverses of each other
     x = [mp.rand() for _ in range(8)]
@@ -301,6 +307,10 @@ def test_fft():
     X = [mp.rand() for _ in range(8)]
     recovered = fft(invfft(X))
     assert all(a.ae(b) for a, b in zip(recovered, X))
+
+    x = invfft([4, 1 - 1j, 0, 1 + 1j])
+    expected = [1.5, 1.5, 0.5, 0.5]
+    assert all(a.ae(b) for a, b in zip(x, expected))
 
     assert invfft([]) == []
     pytest.raises(NotImplementedError, lambda: invfft([1, 2, 3]))
