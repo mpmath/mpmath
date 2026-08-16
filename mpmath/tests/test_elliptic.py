@@ -1065,6 +1065,32 @@ def test_weierstrass_half_periods_direct_agm_roundtrip():
                 assert abs(tau) >= 1 - tol
 
 
+def test_weierstrass_parameter_conversion_normalization():
+    with mp.workprec(100):
+        high_precision = sqrt(2)
+
+    with mp.workprec(53):
+        invariant_results = [
+            g2g3from(g2=high_precision, g3=high_precision + 1),
+            g2g3from(tau=mpc('0.3', '1.2')),
+            g2g3from(omega1=high_precision,
+                     omega2=j*high_precision),
+        ]
+        period_results = [
+            omega1omega2from(omega1=high_precision,
+                             omega2=j*high_precision),
+            omega1omega2from(tau=mpc('0.3', '1.2')),
+            omega1omega2from(g2=12, g3=1),
+            omega1omega2from(g2=60, g3=140),
+            omega1omega2from(g2=1 + 2*j, g3=3 - 4*j),
+            omega1omega2from(g2=1, g3=0),
+            omega1omega2from(g2=0, g3=1),
+        ]
+
+        for result in invariant_results + period_results:
+            assert result == tuple(+value for value in result)
+
+
 def test_weierstrass_period_method_switch_is_continuous():
     mp.dps = 50
     threshold = ldexp(1, -20)

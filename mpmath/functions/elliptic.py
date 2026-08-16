@@ -1718,30 +1718,34 @@ def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
         "g2g3from", q, m, k, tau, qbar, g2, g3, omega1, omega2)
     with ctx.extraprec(10):
         if g2 is not None:
-            return +ctx.convert(g2), +ctx.convert(g3)
-        if omega1 is None:
-            tau = ctx.taufrom(q=q, m=m, k=k, tau=tau, qbar=qbar)
-            if ctx.im(tau) <= 0:
-                raise ValueError("g2g3from: tau must be in upper half-plane")
-            omega1 = ctx.one/2
-            omega2 = tau/2
+            g2 = ctx.convert(g2)
+            g3 = ctx.convert(g3)
         else:
-            omega1 = ctx.convert(omega1)
-            omega2 = ctx.convert(omega2)
-        if ctx.im(omega2/omega1) <= 0:
-            raise ValueError("g2g3from: omega ratio must be "
-                             "in upper half-plane")
-        tau = omega2 / omega1
-        q = ctx.qfrom(tau=tau)
-        j2 = ctx.jtheta(2, 0, q)
-        j3 = ctx.jtheta(3, 0, q)
-        factor = ctx.pi / (2 * omega1)
-        g2 = (ctx.mpf(4)/3) * factor**4 * (j2**8 - (j2*j3)**4 + j3**8)
-        g3 = ((ctx.mpf(8)/27) * factor**6 *
-              (j2**12 - (ctx.mpf(3)/2*j2**8*j3**4 +
-                         ctx.mpf(3)/2*j2**4*j3**8) +
-               j3**12))
-        return +g2, +g3
+            if omega1 is None:
+                tau = ctx.taufrom(q=q, m=m, k=k, tau=tau, qbar=qbar)
+                if ctx.im(tau) <= 0:
+                    raise ValueError("g2g3from: tau must be in upper "
+                                     "half-plane")
+                omega1 = ctx.one/2
+                omega2 = tau/2
+            else:
+                omega1 = ctx.convert(omega1)
+                omega2 = ctx.convert(omega2)
+            if ctx.im(omega2/omega1) <= 0:
+                raise ValueError("g2g3from: omega ratio must be "
+                                 "in upper half-plane")
+            tau = omega2 / omega1
+            q = ctx.qfrom(tau=tau)
+            j2 = ctx.jtheta(2, 0, q)
+            j3 = ctx.jtheta(3, 0, q)
+            factor = ctx.pi / (2 * omega1)
+            g2 = ((ctx.mpf(4)/3) * factor**4 *
+                  (j2**8 - (j2*j3)**4 + j3**8))
+            g3 = ((ctx.mpf(8)/27) * factor**6 *
+                  (j2**12 - (ctx.mpf(3)/2*j2**8*j3**4 +
+                             ctx.mpf(3)/2*j2**4*j3**8) +
+                   j3**12))
+    return +g2, +g3
 
 @defun
 def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
@@ -1778,23 +1782,28 @@ def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
     """
     _validate_weierstrass_parameter_args(
         "omega1omega2from", q, m, k, tau, qbar, g2, g3, omega1, omega2)
-    with ctx.extraprec(10):
-        if omega1 is not None:
+    if omega1 is not None:
+        with ctx.extraprec(10):
             omega1 = ctx.convert(omega1)
             omega2 = ctx.convert(omega2)
             if ctx.im(omega2/omega1) <= 0:
                 raise ValueError("omega1omega2from: omega ratio must be "
                                  "in upper half-plane")
-            return +omega1, +omega2
-        if g2 is None:
+        return +omega1, +omega2
+    if g2 is None:
+        with ctx.extraprec(10):
             tau = ctx.taufrom(q=q, m=m, k=k, tau=tau, qbar=qbar)
             if ctx.im(tau) <= 0:
                 raise ValueError("omega1omega2from: tau must be in upper "
                                  "half-plane")
-            return +(ctx.one/2), +(tau/2)
+            omega1 = ctx.one/2
+            omega2 = tau/2
+        return +omega1, +omega2
 
+    with ctx.extraprec(10):
         g2 = ctx.convert(g2)
         g3 = ctx.convert(g3)
+        periods = None
 
         if g2 == 0:
             omegaA = (g3 ** (ctx.mpf(-1)/ctx.mpf(6)) *
@@ -1850,41 +1859,52 @@ def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                     # For m <= 1/2 the standard rectangular basis is already
                     # reduced. For m > 1/2 apply its S-transform directly.
                     if m <= ctx.one/2:
-                        return +real_period, +(ctx.j*imaginary_period)
-                    return +(-ctx.j*imaginary_period), +real_period
+                        periods = (real_period,
+                                   ctx.j*imaginary_period)
+                    else:
+                        periods = (-ctx.j*imaginary_period, real_period)
+                else:
+                    # One real root and a conjugate pair. Real Cardano radicals
+                    # followed by a quadratic transformation express both
+                    # periods using complete elliptic integrals with real
+                    # parameters.
+                    root_discriminant = ctx.sqrt(-real_discriminant/1728)
+                    exponent = ctx.mpf(1)/3
+                    u3 = real_g3/8 + root_discriminant
+                    v3 = real_g3/8 - root_discriminant
+                    u = ctx.sign(u3)*abs(u3)**exponent
+                    v = ctx.sign(v3)*abs(v3)**exponent
+                    real_root = u+v
+                    root_real_part = 3*real_root/2
+                    root_imaginary_part = ctx.sqrt(3)*(u-v)/2
+                    H = ctx.sqrt(root_real_part**2 +
+                                 root_imaginary_part**2)
+                    m = (H-root_real_part)/(2*H)
+                    sqrt_H = ctx.sqrt(H)
+                    real_period = ctx.ellipk(m)/sqrt_H
+                    imaginary_part = ctx.ellipk(1-m)/(2*sqrt_H)
 
-                # One real root and a conjugate pair. Real Cardano radicals
-                # followed by a quadratic transformation express both periods
-                # using complete elliptic integrals with real parameters.
-                root_discriminant = ctx.sqrt(-real_discriminant/1728)
-                exponent = ctx.mpf(1)/3
-                u3 = real_g3/8 + root_discriminant
-                v3 = real_g3/8 - root_discriminant
-                u = ctx.sign(u3)*abs(u3)**exponent
-                v = ctx.sign(v3)*abs(v3)**exponent
-                real_root = u+v
-                root_real_part = 3*real_root/2
-                root_imaginary_part = ctx.sqrt(3)*(u-v)/2
-                H = ctx.sqrt(root_real_part**2 + root_imaginary_part**2)
-                m = (H-root_real_part)/(2*H)
-                sqrt_H = ctx.sqrt(H)
-                real_period = ctx.ellipk(m)/sqrt_H
-                imaginary_part = ctx.ellipk(1-m)/(2*sqrt_H)
-
-                # These bases directly implement the documented fundamental-
-                # domain and simultaneous-sign conventions in each real
-                # symmetry region, so no generic PSL(2,Z) reduction is needed.
-                if real_g2 > 0:
-                    if real_g3 > 0:
-                        return (+real_period,
-                                +(real_period/2 + ctx.j*imaginary_part))
-                    return (+(-2*ctx.j*imaginary_part),
-                            +(real_period/2-ctx.j*imaginary_part))
-                if real_g3 > 0:
-                    return (+(real_period/2+ctx.j*imaginary_part),
-                            +(-real_period/2+ctx.j*imaginary_part))
-                return (+(real_period/2-ctx.j*imaginary_part),
-                        +(real_period/2+ctx.j*imaginary_part))
+                    # These bases directly implement the documented
+                    # fundamental-domain and simultaneous-sign conventions in
+                    # each real symmetry region, so no generic PSL(2,Z)
+                    # reduction is needed.
+                    if real_g2 > 0:
+                        if real_g3 > 0:
+                            periods = (
+                                real_period,
+                                real_period/2 + ctx.j*imaginary_part)
+                        else:
+                            periods = (
+                                -2*ctx.j*imaginary_part,
+                                real_period/2-ctx.j*imaginary_part)
+                    elif real_g3 > 0:
+                        periods = (
+                            real_period/2+ctx.j*imaginary_part,
+                            -real_period/2+ctx.j*imaginary_part)
+                    else:
+                        periods = (
+                            real_period/2-ctx.j*imaginary_part,
+                            real_period/2+ctx.j*imaginary_part)
             else:
                 # Solve the original cubic directly. This obtains both the
                 # elliptic parameter and its scale together, avoiding inverse
@@ -1907,35 +1927,39 @@ def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                           (2*ctx.agm(1, ctx.sqrt(m))*sqrt_D))
                 tau = omegaB/omegaA
 
-        if g2 != 0 and g3 != 0:
-            a, b, c, d = ctx._reduce_psl2z(tau)
-            omega1 = d*omegaA + c*omegaB
-            omega2 = b*omegaA + a*omegaB
+        if periods is None:
+            if g2 != 0 and g3 != 0:
+                a, b, c, d = ctx._reduce_psl2z(tau)
+                omega1 = d*omegaA + c*omegaB
+                omega2 = b*omegaA + a*omegaB
+            else:
+                omega1, omega2 = omegaA, omegaB
+
+            # Remove sub-precision components introduced by inverse-j branch
+            # arithmetic before applying conventions on symmetry boundaries.
+            omega1 = ctx.chop(omega1)
+            omega2 = ctx.chop(omega2)
+            tau = omega2/omega1
+            # Identify equivalent points on the vertical and circular
+            # boundaries of the fundamental domain without recomputing the
+            # period ratio.
+            if ctx.almosteq(ctx.re(tau), -ctx.one/2):
+                omega2 += omega1
+                tau += 1
+            if ctx.almosteq(abs(tau), ctx.one) and ctx.re(tau) < 0:
+                omega1, omega2 = omega2, -omega1
+
+            # The invariants do not distinguish a basis from its simultaneous
+            # negation. Place omega1 in the right half-plane, with the negative
+            # imaginary axis included as its boundary.
+            real = ctx.re(omega1)
+            if ((real < 0 and not ctx.almosteq(real, 0)) or
+                    (ctx.almosteq(real, 0) and ctx.im(omega1) > 0)):
+                omega1 = -omega1
+                omega2 = -omega2
         else:
-            omega1, omega2 = omegaA, omegaB
-
-        # Remove sub-precision components introduced by inverse-j branch
-        # arithmetic before applying conventions on symmetry boundaries.
-        omega1 = ctx.chop(omega1)
-        omega2 = ctx.chop(omega2)
-        tau = omega2/omega1
-        # Identify equivalent points on the vertical and circular boundaries
-        # of the fundamental domain without recomputing the period ratio.
-        if ctx.almosteq(ctx.re(tau), -ctx.one/2):
-            omega2 += omega1
-            tau += 1
-        if ctx.almosteq(abs(tau), ctx.one) and ctx.re(tau) < 0:
-            omega1, omega2 = omega2, -omega1
-
-        # The invariants do not distinguish a basis from its simultaneous
-        # negation. Place omega1 in the right half-plane, with the negative
-        # imaginary axis included as its boundary.
-        real = ctx.re(omega1)
-        if ((real < 0 and not ctx.almosteq(real, 0)) or
-                (ctx.almosteq(real, 0) and ctx.im(omega1) > 0)):
-            omega1 = -omega1
-            omega2 = -omega2
-        return +omega1, +omega2
+            omega1, omega2 = periods
+    return +omega1, +omega2
 
 
 # ============================================================================
