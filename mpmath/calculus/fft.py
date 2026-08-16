@@ -5,7 +5,7 @@ def _fft_cooley_tuckey(ctx, values, inverse=False):
     This function implements the Radix-2 Cooley-Tukey FFT algorithm iteratively.
     It computes the Fast Fourier Transform (or Inverse FFT) of a sequence of
     complex numbers.
-    
+
     https://en.wikipedia.org/wiki/Cooley%E2%80%93Tukey_FFT_algorithm
     """
     n = len(values)
