@@ -57,7 +57,8 @@ def fft(ctx, values):
 
     is_power_of_two = (n & (n - 1)) == 0
     if not is_power_of_two:
-        raise NotImplementedError(f"FFT is only implemented for lengths that are powers of 2, got length: {n}")
+        raise NotImplementedError("FFT is only implemented for lengths that "
+                                  f"are powers of 2, got length: {n}")
 
     converted_values = [ctx.convert(v) for v in values]
     return _fft_cooley_tuckey(ctx, converted_values, False)
@@ -75,7 +76,8 @@ def invfft(ctx, values):
 
     is_power_of_two = (n & (n - 1)) == 0
     if not is_power_of_two:
-        raise NotImplementedError(f"Inverse FFT is only implemented for lengths that are powers of 2, got length: {n}")
+        raise NotImplementedError("Inverse FFT is only implemented for lengths that "
+                                  f"are powers of 2, got length: {n}")
 
     converted_values = [ctx.convert(v) for v in values]
     result = _fft_cooley_tuckey(ctx, converted_values, True)
