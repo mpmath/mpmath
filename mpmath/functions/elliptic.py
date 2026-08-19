@@ -1660,31 +1660,6 @@ def _roots_from_omega(ctx, omega1, omega2):
     return e1, e2, e3
 
 
-def _canonicalize_weierstrass_periods(ctx, omega1, omega2):
-    """Choose a deterministic orientation for a reduced period basis."""
-    tau = omega2 / omega1
-
-    # Identify the vertical edges of the fundamental domain.
-    if ctx.almosteq(ctx.re(tau), -ctx.one/2):
-        omega2 += omega1
-        tau = omega2 / omega1
-
-    # Identify equivalent points on the circular boundary.
-    if ctx.almosteq(abs(tau), ctx.one) and ctx.re(tau) < 0:
-        omega1, omega2 = omega2, -omega1
-
-    # The invariants do not distinguish a basis from its simultaneous
-    # negation. Follow the usual convention of placing omega1 in the right
-    # half-plane, using the negative imaginary axis as the boundary.
-    real = ctx.re(omega1)
-    if ((real < 0 and not ctx.almosteq(real, 0)) or
-            (ctx.almosteq(real, 0) and ctx.im(omega1) > 0)):
-        omega1 = -omega1
-        omega2 = -omega2
-
-    return omega1, omega2
-
-
 def _eisenstein_E4_E6(ctx, tau):
     """
     Eisenstein E-series of weight 4 and 6.
@@ -1693,9 +1668,13 @@ def _eisenstein_E4_E6(ctx, tau):
     q = ctx.qfrom(tau=tau)
     j2 = ctx.jtheta(2, 0, q)
     j3 = ctx.jtheta(3, 0, q)
-    j4 = ctx.jtheta(4, 0, q)
-    E4 = (j2**8 + j3**8 + j4**8) / 2
-    E6 = (-3*j2**8 * (j3**4 + j4**4) + (j3**12 + j4**12)) / 2
+    j24 = j2**4
+    j34 = j3**4
+    # Jacobi's identity j3**4 = j2**4 + j4**4 eliminates one
+    # comparatively expensive theta-constant evaluation.
+    E4 = j24**2 - j24*j34 + j34**2
+    E6 = (j24**3 - ctx.mpf(3)/2*j24**2*j34 -
+          ctx.mpf(3)/2*j24*j34**2 + j34**3)
     return E4, E6
 
 def _eisenstein_G4_G6(ctx, tau):
@@ -1706,6 +1685,7 @@ def _eisenstein_G4_G6(ctx, tau):
     G4 = 2 * ctx.zeta(4) * E4
     G6 = 2 * ctx.zeta(6) * E6
     return G4, G6
+
 
 # ============================================================================
 # Weierstrass parameter conversion functions
@@ -1738,30 +1718,34 @@ def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
         "g2g3from", q, m, k, tau, qbar, g2, g3, omega1, omega2)
     with ctx.extraprec(10):
         if g2 is not None:
-            return +ctx.convert(g2), +ctx.convert(g3)
-        if omega1 is None:
-            tau = ctx.taufrom(q=q, m=m, k=k, tau=tau, qbar=qbar)
-            if ctx.im(tau) <= 0:
-                raise ValueError("g2g3from: tau must be in upper half-plane")
-            omega1 = ctx.one/2
-            omega2 = tau/2
+            g2 = ctx.convert(g2)
+            g3 = ctx.convert(g3)
         else:
-            omega1 = ctx.convert(omega1)
-            omega2 = ctx.convert(omega2)
-        if ctx.im(omega2/omega1) <= 0:
-            raise ValueError("g2g3from: omega ratio must be "
-                             "in upper half-plane")
-        tau = omega2 / omega1
-        q = ctx.qfrom(tau=tau)
-        j2 = ctx.jtheta(2, 0, q)
-        j3 = ctx.jtheta(3, 0, q)
-        factor = ctx.pi / (2 * omega1)
-        g2 = (ctx.mpf(4)/3) * factor**4 * (j2**8 - (j2*j3)**4 + j3**8)
-        g3 = ((ctx.mpf(8)/27) * factor**6 *
-              (j2**12 - (ctx.mpf(3)/2*j2**8*j3**4 +
-                         ctx.mpf(3)/2*j2**4*j3**8) +
-               j3**12))
-        return +g2, +g3
+            if omega1 is None:
+                tau = ctx.taufrom(q=q, m=m, k=k, tau=tau, qbar=qbar)
+                if ctx.im(tau) <= 0:
+                    raise ValueError("g2g3from: tau must be in upper "
+                                     "half-plane")
+                omega1 = ctx.one/2
+                omega2 = tau/2
+            else:
+                omega1 = ctx.convert(omega1)
+                omega2 = ctx.convert(omega2)
+            if ctx.im(omega2/omega1) <= 0:
+                raise ValueError("g2g3from: omega ratio must be "
+                                 "in upper half-plane")
+            tau = omega2 / omega1
+            q = ctx.qfrom(tau=tau)
+            j2 = ctx.jtheta(2, 0, q)
+            j3 = ctx.jtheta(3, 0, q)
+            factor = ctx.pi / (2 * omega1)
+            g2 = ((ctx.mpf(4)/3) * factor**4 *
+                  (j2**8 - (j2*j3)**4 + j3**8))
+            g3 = ((ctx.mpf(8)/27) * factor**6 *
+                  (j2**12 - (ctx.mpf(3)/2*j2**8*j3**4 +
+                             ctx.mpf(3)/2*j2**4*j3**8) +
+                   j3**12))
+    return +g2, +g3
 
 @defun
 def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
@@ -1798,49 +1782,184 @@ def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
     """
     _validate_weierstrass_parameter_args(
         "omega1omega2from", q, m, k, tau, qbar, g2, g3, omega1, omega2)
-    with ctx.extraprec(10):
-        if omega1 is not None:
+    if omega1 is not None:
+        with ctx.extraprec(10):
             omega1 = ctx.convert(omega1)
             omega2 = ctx.convert(omega2)
             if ctx.im(omega2/omega1) <= 0:
                 raise ValueError("omega1omega2from: omega ratio must be "
                                  "in upper half-plane")
-            return +omega1, +omega2
-        if g2 is None:
+        return +omega1, +omega2
+    if g2 is None:
+        with ctx.extraprec(10):
             tau = ctx.taufrom(q=q, m=m, k=k, tau=tau, qbar=qbar)
             if ctx.im(tau) <= 0:
                 raise ValueError("omega1omega2from: tau must be in upper "
                                  "half-plane")
-            return +(ctx.one/2), +(tau/2)
+            omega1 = ctx.one/2
+            omega2 = tau/2
+        return +omega1, +omega2
 
+    with ctx.extraprec(10):
         g2 = ctx.convert(g2)
         g3 = ctx.convert(g3)
+        periods = None
 
         if g2 == 0:
             omegaA = (g3 ** (ctx.mpf(-1)/ctx.mpf(6)) *
                       ctx.gamma(ctx.mpf(1)/ctx.mpf(3))**3 / (4*ctx.pi))
             tau = ctx.mpc(ctx.mpf(1)/ctx.mpf(2), ctx.sqrt(3)/2)
+            omegaB = tau * omegaA
         elif g3 == 0:
-            tau = ctx.taufrom(g2=g2, g3=g3)
-            G4, G6 = _eisenstein_G4_G6(ctx, tau)
-            omegaA = (ctx.j * (ctx.mpf(15)/(4*g2) * G4) **
+            # Lemniscatic closed form, written to preserve the principal
+            # fourth-root branch used by the former Eisenstein calculation.
+            lemniscatic = (ctx.gamma(ctx.mpf(1)/4)**2 /
+                           (4*ctx.sqrt(ctx.pi)))
+            omegaA = (ctx.j * (lemniscatic**4/g2) **
                       (ctx.mpf(1)/ctx.mpf(4)))
+            tau = ctx.j
+            omegaB = tau * omegaA
         else:
-            tau = ctx.taufrom(g2=g2, g3=g3)
-            G4, G6 = _eisenstein_G4_G6(ctx, tau)
-            omegaA = ctx.sqrt(g2/g3 * G6/G4 * ctx.mpf(7)/ctx.mpf(12))
+            discriminant = g2**3 - 27*g3**2
+            g2_term = abs(g2)**3
+            g3_term = 27*abs(g3)**2
+            shape_ratio = min(g2_term, g3_term) / max(g2_term, g3_term)
 
-        omegaB = tau * omegaA
-        if g2 != 0 and g3 != 0:
-            a, b, c, d = ctx._reduce_psl2z(tau)
-            omega1 = d*omegaA + c*omegaB
-            omega2 = b*omegaA + a*omegaB
+            # Direct root formulas are singular at the cusp and ill-conditioned
+            # near J=0 and J=1. Retain the Eisenstein scale formula there so
+            # small nonzero invariants are not discarded by cancellation.
+            if discriminant == 0 or shape_ratio < ctx.ldexp(1, -20):
+                tau = ctx.taufrom(g2=g2, g3=g3)
+                G4, G6 = _eisenstein_G4_G6(ctx, tau)
+                omegaA = ctx.sqrt(g2/g3 * G6/G4 *
+                                  ctx.mpf(7)/ctx.mpf(12))
+                omegaB = tau * omegaA
+            elif ctx.im(g2) == 0 and ctx.im(g3) == 0:
+                real_g2 = ctx.re(g2)
+                real_g3 = ctx.re(g3)
+                real_discriminant = ctx.re(discriminant)
+                if real_discriminant > 0:
+                    # Three real roots. A trigonometric solution avoids the
+                    # complex intermediate values in Cardano's formula. The
+                    # ordered roots give a real elliptic parameter m.
+                    root_scale = ctx.sqrt(real_g2/3)
+                    cosine = (3*ctx.sqrt(3)*real_g3 /
+                              (real_g2*ctx.sqrt(real_g2)))
+                    cosine = min(ctx.one, max(-ctx.one, cosine))
+                    theta = ctx.acos(cosine)/3
+                    e1 = root_scale*ctx.cos(theta)
+                    e2 = root_scale*ctx.cos(theta-2*ctx.pi/3)
+                    e3 = root_scale*ctx.cos(theta+2*ctx.pi/3)
+                    D = e1-e3
+                    m = (e2-e3)/D
+                    sqrt_D = ctx.sqrt(D)
+                    real_period = ctx.ellipk(m)/sqrt_D
+                    imaginary_period = ctx.ellipk(1-m)/sqrt_D
+
+                    # For m <= 1/2 the standard rectangular basis is already
+                    # reduced. For m > 1/2 apply its S-transform directly.
+                    if m <= ctx.one/2:
+                        periods = (real_period,
+                                   ctx.j*imaginary_period)
+                    else:
+                        periods = (-ctx.j*imaginary_period, real_period)
+                else:
+                    # One real root and a conjugate pair. Real Cardano radicals
+                    # followed by a quadratic transformation express both
+                    # periods using complete elliptic integrals with real
+                    # parameters.
+                    root_discriminant = ctx.sqrt(-real_discriminant/1728)
+                    exponent = ctx.mpf(1)/3
+                    u3 = real_g3/8 + root_discriminant
+                    v3 = real_g3/8 - root_discriminant
+                    u = ctx.sign(u3)*abs(u3)**exponent
+                    v = ctx.sign(v3)*abs(v3)**exponent
+                    real_root = u+v
+                    root_real_part = 3*real_root/2
+                    root_imaginary_part = ctx.sqrt(3)*(u-v)/2
+                    H = ctx.sqrt(root_real_part**2 +
+                                 root_imaginary_part**2)
+                    m = (H-root_real_part)/(2*H)
+                    sqrt_H = ctx.sqrt(H)
+                    real_period = ctx.ellipk(m)/sqrt_H
+                    imaginary_part = ctx.ellipk(1-m)/(2*sqrt_H)
+
+                    # These bases directly implement the documented
+                    # fundamental-domain and simultaneous-sign conventions in
+                    # each real symmetry region, so no generic PSL(2,Z)
+                    # reduction is needed.
+                    if real_g2 > 0:
+                        if real_g3 > 0:
+                            periods = (
+                                real_period,
+                                real_period/2 + ctx.j*imaginary_part)
+                        else:
+                            periods = (
+                                -2*ctx.j*imaginary_part,
+                                real_period/2-ctx.j*imaginary_part)
+                    elif real_g3 > 0:
+                        periods = (
+                            real_period/2+ctx.j*imaginary_part,
+                            -real_period/2+ctx.j*imaginary_part)
+                    else:
+                        periods = (
+                            real_period/2-ctx.j*imaginary_part,
+                            real_period/2+ctx.j*imaginary_part)
+            else:
+                # Solve the original cubic directly. This obtains both the
+                # elliptic parameter and its scale together, avoiding inverse
+                # j followed by a separate reconstruction of e1-e3.
+                root_discriminant = ctx.sqrt(-discriminant/1728)
+                u3 = g3/8 + root_discriminant
+                u = u3**(ctx.mpf(1)/3)
+                v = g2/(12*u)
+                cube_root_unity = ctx.expjpi(ctx.mpf(2)/3)
+                cube_root_unity2 = -1-cube_root_unity
+                e1 = u+v
+                e2 = cube_root_unity*u + cube_root_unity2*v
+                e3 = cube_root_unity2*u + cube_root_unity*v
+                D = e1-e3
+                m = (e2-e3)/D
+                sqrt_D = ctx.sqrt(D)
+                omegaA = (ctx.pi /
+                          (2*ctx.agm(1, ctx.sqrt(1-m))*sqrt_D))
+                omegaB = (ctx.j*ctx.pi /
+                          (2*ctx.agm(1, ctx.sqrt(m))*sqrt_D))
+                tau = omegaB/omegaA
+
+        if periods is None:
+            if g2 != 0 and g3 != 0:
+                a, b, c, d = ctx._reduce_psl2z(tau)
+                omega1 = d*omegaA + c*omegaB
+                omega2 = b*omegaA + a*omegaB
+            else:
+                omega1, omega2 = omegaA, omegaB
+
+            # Remove sub-precision components introduced by inverse-j branch
+            # arithmetic before applying conventions on symmetry boundaries.
+            omega1 = ctx.chop(omega1)
+            omega2 = ctx.chop(omega2)
+            tau = omega2/omega1
+            # Identify equivalent points on the vertical and circular
+            # boundaries of the fundamental domain without recomputing the
+            # period ratio.
+            if ctx.almosteq(ctx.re(tau), -ctx.one/2):
+                omega2 += omega1
+                tau += 1
+            if ctx.almosteq(abs(tau), ctx.one) and ctx.re(tau) < 0:
+                omega1, omega2 = omega2, -omega1
+
+            # The invariants do not distinguish a basis from its simultaneous
+            # negation. Place omega1 in the right half-plane, with the negative
+            # imaginary axis included as its boundary.
+            real = ctx.re(omega1)
+            if ((real < 0 and not ctx.almosteq(real, 0)) or
+                    (ctx.almosteq(real, 0) and ctx.im(omega1) > 0)):
+                omega1 = -omega1
+                omega2 = -omega2
         else:
-            omega1, omega2 = omegaA, omegaB
-
-        omega1, omega2 = _canonicalize_weierstrass_periods(
-            ctx, omega1, omega2)
-        return +omega1, +omega2
+            omega1, omega2 = periods
+    return +omega1, +omega2
 
 
 # ============================================================================

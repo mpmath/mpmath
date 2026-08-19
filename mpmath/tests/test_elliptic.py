@@ -1021,6 +1021,7 @@ def test_kleinjinv():
                   eps=eps*1000)
     assert mpc_ae(kleinjinv(1), j, eps=eps*1000)
 
+
 def test_taufrom_weierstrass_invariants():
     mp.dps = 30
 
@@ -1031,6 +1032,93 @@ def test_taufrom_weierstrass_invariants():
     assert mpc_ae(kleinj(recovered_tau), kleinj(tau), eps=eps*1000)
     pytest.raises(ValueError, lambda: taufrom(g2=g2))
     pytest.raises(ValueError, lambda: taufrom(g3=g3))
+
+
+def test_weierstrass_half_periods_direct_agm_roundtrip():
+    base_cases = [
+        (60, 140), (12, 1), (12, -1), (4, 1), (4, -1),
+        (1, 1), (1, -1), (10, 5), (100, 1), (-4, 1), (-4, -1),
+        (1 + 2*j, 3 - 4*j),
+    ]
+
+    for dps in [15, 30, 80]:
+        with mp.workdps(dps):
+            # Recompute these phases at the active precision. They exercise
+            # the fallback's vertical and circular boundary normalization.
+            cases = base_cases + [
+                (mpf('0.01')*exp(j*pi/6), exp(j*pi/4)),
+                (exp(-j*pi/6), mpf('0.0001')*exp(-3*j*pi/4)),
+            ]
+            for g2, g3 in cases:
+                omega1, omega2 = omega1omega2from(g2=g2, g3=g3)
+                actual_g2, actual_g3 = g2g3from(
+                    omega1=omega1, omega2=omega2)
+                tol = mp.eps*10000
+                assert mp.almosteq(actual_g2, g2,
+                                   rel_eps=tol, abs_eps=tol)
+                assert mp.almosteq(actual_g3, g3,
+                                   rel_eps=tol, abs_eps=tol)
+
+                tau = omega2/omega1
+                assert tau.imag > 0
+                assert abs(tau.real) <= mpf('0.5') + tol
+                assert abs(tau) >= 1 - tol
+
+
+def test_weierstrass_parameter_conversion_normalization():
+    with mp.workprec(100):
+        high_precision = sqrt(2)
+
+    with mp.workprec(53):
+        invariant_results = [
+            g2g3from(g2=high_precision, g3=high_precision + 1),
+            g2g3from(tau=mpc('0.3', '1.2')),
+            g2g3from(omega1=high_precision,
+                     omega2=j*high_precision),
+        ]
+        period_results = [
+            omega1omega2from(omega1=high_precision,
+                             omega2=j*high_precision),
+            omega1omega2from(tau=mpc('0.3', '1.2')),
+            omega1omega2from(g2=12, g3=1),
+            omega1omega2from(g2=60, g3=140),
+            omega1omega2from(g2=1 + 2*j, g3=3 - 4*j),
+            omega1omega2from(g2=1, g3=0),
+            omega1omega2from(g2=0, g3=1),
+        ]
+
+        for result in invariant_results + period_results:
+            assert result == tuple(+value for value in result)
+
+
+def test_weierstrass_period_method_switch_is_continuous():
+    mp.dps = 50
+    threshold = ldexp(1, -20)
+
+    # The internal method switches when the ratio between |g2|**3 and
+    # 27*|g3|**2 crosses this threshold. Exercise both the J=0 and J=1
+    # sides and ensure the canonical period basis does not jump.
+    families = [
+        lambda ratio: ((27*ratio)**(mpf(1)/3), mpf(1)),
+        lambda ratio: (mpf(1), sqrt(ratio/27)),
+    ]
+    for make_invariants in families:
+        below = make_invariants(threshold*(1-mpf('1e-8')))
+        above = make_invariants(threshold*(1+mpf('1e-8')))
+        periods_below = omega1omega2from(g2=below[0], g3=below[1])
+        periods_above = omega1omega2from(g2=above[0], g3=above[1])
+
+        for value_below, value_above in zip(periods_below, periods_above):
+            assert mp.almosteq(value_below, value_above,
+                               rel_eps=mpf('1e-8'), abs_eps=mpf('1e-8'))
+
+        for invariants, periods in [(below, periods_below),
+                                    (above, periods_above)]:
+            actual = g2g3from(omega1=periods[0], omega2=periods[1])
+            assert mp.almosteq(actual[0], invariants[0],
+                               rel_eps=mp.eps*10000)
+            assert mp.almosteq(actual[1], invariants[1],
+                               rel_eps=mp.eps*10000)
 
 def test_taufrom_half_periods():
     mp.dps = 30
