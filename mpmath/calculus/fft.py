@@ -50,6 +50,16 @@ def fft(ctx, values):
     Computes the Discrete Fourier Transform (DFT) of a sequence.
 
     Raises NotImplementedError if the input sequence length is not a power of 2.
+
+    A few basic examples are:
+
+        >>> from mpmath import mp, fft
+        >>> mp.nprint(fft([1, 0, 0, 0]))
+        [1.0, (1.0 + 0.0j), 1.0, (1.0 + 0.0j)]
+        >>> mp.nprint(fft([1 + 2j, 1 + 2j]))
+        [(2.0 + 4.0j), (0.0 + 0.0j)]
+        >>> mp.nprint(fft([1, 2, 3, 4]))
+        [10.0, (-2.0 + 2.0j), -2.0, (-2.0 - 2.0j)]
     """
     n = len(values)
     if n == 0:
@@ -69,6 +79,15 @@ def invfft(ctx, values):
     Computes the inverse Discrete Fourier Transform (IDFT) of a sequence.
 
     Raises NotImplementedError if the input sequence length is not a power of 2.
+
+    A few basic examples are:
+
+        >>> from mpmath import mp, fft, invfft
+        >>> mp.nprint(invfft([1, 1, 1, 1]))
+        [1.0, (0.0 + 0.0j), 0.0, (0.0 + 0.0j)]
+        >>> x = [1, 2, 3, 4]
+        >>> mp.nprint(invfft(fft(x)))
+        [(1.0 + 0.0j), (2.0 + 0.0j), (3.0 + 0.0j), (4.0 + 0.0j)]
     """
     n = len(values)
     if n == 0:
