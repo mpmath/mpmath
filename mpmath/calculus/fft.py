@@ -13,13 +13,18 @@ def _fft_cooley_tuckey(ctx, values, inverse=False):
         return values
 
     # Bit-Reversal Permutation
+    def reverse_bits(n, width):
+        result = 0
+        for _ in range(width):
+            result <<= 1
+            result |= (n & 1)
+            n >>= 1
+        return result
+
     transformed = [ctx.zero] * n
     num_bits = n.bit_length() - 1
     for i in range(n):
-        rev = 0
-        for b in range(num_bits):
-            if (i >> b) & 1:
-                rev |= 1 << (num_bits - 1 - b)
+        rev = reverse_bits(i, num_bits)
         transformed[rev] = values[i]
 
     sign = ctx.one if inverse else -ctx.one
