@@ -51,15 +51,16 @@ def fft(ctx, values):
 
     Raises NotImplementedError if the input sequence length is not a power of 2.
 
-    A few basic examples are:
+    **Examples**
 
-        >>> from mpmath import mp, fft
-        >>> mp.nprint(fft([1, 0, 0, 0]))
-        [1.0, (1.0 + 0.0j), 1.0, (1.0 + 0.0j)]
-        >>> mp.nprint(fft([1 + 2j, 1 + 2j]))
-        [(2.0 + 4.0j), (0.0 + 0.0j)]
-        >>> mp.nprint(fft([1, 2, 3, 4]))
-        [10.0, (-2.0 + 2.0j), -2.0, (-2.0 - 2.0j)]
+    >>> from mpmath import mp
+    >>> mp.pretty = True
+    >>> mp.fft([1, 0, 0, 0])
+    [1.0, (1.0 + 0.0j), 1.0, (1.0 + 0.0j)]
+    >>> mp.fft([1 + 2j, 1 + 2j])
+    [(2.0 + 4.0j), (0.0 + 0.0j)]
+    >>> mp.fft([1, 2, 3, 4])
+    [10.0, (-2.0 + 2.0j), -2.0, (-2.0 - 2.0j)]
     """
     n = len(values)
     if n == 0:
@@ -71,7 +72,9 @@ def fft(ctx, values):
                                   f"are powers of 2, got length: {n}")
 
     converted_values = [ctx.convert(v) for v in values]
-    return _fft_cooley_tuckey(ctx, converted_values, False)
+    with ctx.extraprec(10):
+        result = _fft_cooley_tuckey(ctx, converted_values)
+    return [+v for v in result]
 
 @defun
 def invfft(ctx, values):
@@ -80,14 +83,15 @@ def invfft(ctx, values):
 
     Raises NotImplementedError if the input sequence length is not a power of 2.
 
-    A few basic examples are:
+    **Examples**
 
-        >>> from mpmath import mp, fft, invfft
-        >>> mp.nprint(invfft([1, 1, 1, 1]))
-        [1.0, (0.0 + 0.0j), 0.0, (0.0 + 0.0j)]
-        >>> x = [1, 2, 3, 4]
-        >>> mp.nprint(invfft(fft(x)))
-        [(1.0 + 0.0j), (2.0 + 0.0j), (3.0 + 0.0j), (4.0 + 0.0j)]
+    >>> from mpmath import mp
+    >>> mp.pretty = True
+    >>> mp.invfft([1, 1, 1, 1])
+    [1.0, (0.0 + 0.0j), 0.0, (0.0 + 0.0j)]
+    >>> x = [1, 2, 3, 4]
+    >>> mp.invfft(mp.fft(x))
+    [(1.0 + 0.0j), (2.0 + 0.0j), (3.0 + 0.0j), (4.0 + 0.0j)]
     """
     n = len(values)
     if n == 0:
@@ -99,5 +103,6 @@ def invfft(ctx, values):
                                   f"are powers of 2, got length: {n}")
 
     converted_values = [ctx.convert(v) for v in values]
-    result = _fft_cooley_tuckey(ctx, converted_values, True)
+    with ctx.extraprec(10):
+        result = _fft_cooley_tuckey(ctx, converted_values, True)
     return [val / n for val in result]

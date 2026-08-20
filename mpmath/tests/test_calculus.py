@@ -330,7 +330,7 @@ def power_of_two_signals(draw):
 def test_fft_randomized_complex(x):
     # test that fft and invfft are inverses of each other for random complex inputs
     recovered = invfft(fft(x))
-    assert all(mp.almosteq(a, b, rel_eps=1e-12) for a, b in zip(recovered, x))
+    assert all(a.ae(b) for a, b in zip(recovered, x))
 
     recovered = fft(invfft(x))
-    assert all(mp.almosteq(a, b, rel_eps=1e-12) for a, b in zip(recovered, x))
+    assert all(a.ae(b) for a, b in zip(recovered, x))
