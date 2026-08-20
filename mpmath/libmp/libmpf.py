@@ -1684,7 +1684,7 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
 
     int_part = ''
     exponent = ''
-    sign = ''
+    sign = '-' if num[0] else ''
 
     # Now the general case
     strip_last_zero = False
@@ -1720,8 +1720,33 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
             frac_part = frac_part.upper()
 
     elif unique:
-        # Here be dragons.
-        digits, exp = fpp2(num, prec, 10)
+        if abs(num[2] + num[3] - prec) > 10000:
+            dps = repr_dps(prec)
+            _, digits, exp = to_digits_exp(num, dps, 10)
+            if len(digits) > dps:
+                digits, exp = round_digits(num, digits, exp, dps,
+                                           10, round_nearest)
+            prev_digits = digits
+            prev_exp = exp
+            while True:
+                dps -= 1
+                new_digits, new_exp = round_digits(num, digits, exp, dps,
+                                                   10, round_down)
+                new_str = f"{sign}{new_digits[0]}.{new_digits[1:]}e{exp}"
+                if from_str(new_str, prec, round_nearest, 10) != num:
+                    new_digits, new_exp = round_digits(num, digits, exp, dps,
+                                                       10, round_up)
+                    new_str = f"{sign}{new_digits[0]}.{new_digits[1:]}e{exp}"
+                    if from_str(new_str, prec, round_nearest, 10) != num:
+                        digits = prev_digits
+                        exp = prev_exp
+                        break
+                prev_digits = new_digits
+                prev_exp = new_exp
+        else:
+            num = mpf_pos(num, prec, rnd)  # workaround issue 1158
+            # Here be dragons.
+            digits, exp = fpp2(num, prec, 10)
 
         split = 1
         if exp < -4 or exp > prec_to_dps(prec):
@@ -1781,7 +1806,6 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
         frac_part = fill_sep(frac_part, sep, frac_part[0], 1, sep_range)
     digits = frac_part + exponent
 
-    sign = '-' if num[0] else ''
     if sign != '-' and format_dict['sign'] != '-':
         sign = format_dict['sign']
     if fmt_type == 'f' and format_dict['no_neg_0']:

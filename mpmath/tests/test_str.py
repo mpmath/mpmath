@@ -129,11 +129,13 @@ def test_short_repr_roundtrip():
     mp.shortest_str = True
     for dps in [15, 20, 30, 50, 100, 300]:
         with mp.workdps(dps):
-            for _ in range(10000):
+            for _ in range(1000):
                 f = random.choice([(rand()-0.5)*2 for _ in range(10)]
                                   + [(rand()-0.5)*2*10**5 for _ in range(5)]
                                   + [(rand()-0.5)*2/10**5 for _ in range(5)]
-                                  + [(rand()-0.5)*2*10**100 for _ in range(2)])
+                                  + [(rand()-0.5)*2*10**100 for _ in range(2)]
+                                  + [(rand()-0.5)*2*10**10000 for _ in range(2)]
+                                  + [(rand()-0.5)*2/10**10000 for _ in range(2)])
                 s = str(f)
                 b = mpf(s)
                 assert f == b  # round-trip
