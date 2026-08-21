@@ -17,11 +17,12 @@ def _fft_cooley_tuckey(ctx, values, inverse=False):
     num_bits = n.bit_length() - 1
     for i in range(n):
         rev = 0
+        val = values[i]
         for _ in range(num_bits):
             rev <<= 1
             rev |= (i & 1)
             i >>= 1           
-        transformed[rev] = values[i]
+        transformed[rev] = val
 
     sign = ctx.one if inverse else -ctx.one
 
