@@ -52,6 +52,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
                  rounding=round_nearest, trap_complex=False):
         BaseMPContext.__init__(ctx)
         ctx.pretty = False
+        ctx.shortest_str = False
         ctx.types = [ctx.mpf, ctx.mpc, ctx.constant]
         ctx.default()
         ctx._set_prec(prec)
@@ -372,6 +373,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
             ("  mp.rounding = '%s'" % ctx.rounding).ljust(30) + f"[default: 'n']",
             ("  mp.trap_complex = %s" % ctx.trap_complex).ljust(30) + "[default: False]",
             ("  mp.pretty_dps = '%s'" % ctx.pretty_dps).ljust(30) + "[default: 'str']",
+            ("  mp.shortest_str = %s" % ctx.shortest_str).ljust(30) + "[default: False]",
         ]
         return "\n".join(lines)
 

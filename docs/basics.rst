@@ -83,6 +83,7 @@ Mpmath uses a global working precision; it does not keep track of the precision 
       mp.rounding = 'n'           [default: 'n']
       mp.trap_complex = False     [default: False]
       mp.pretty_dps = 'str'       [default: 'str']
+      mp.shortest_str = False     [default: False]
 
 The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used).
 
@@ -234,7 +235,26 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
     >>> mpf(0.6)
     mpf('0.59999999999999998')
 
-To use enough digits to be able recreate value exactly, set ``mp.pretty_dps``
+To use enough digits to be able recreate value exactly, enable
+``mp.shortest_str`` option.  With this, repr/str and the new-style string
+formatting *without format specifier* will use *minimal* number of decimal
+digits that will preserve value on string input, like repr for CPython's
+builtin floats:
+
+    >>> mp.shortest_str = True
+    >>> mp.pretty = True
+    >>> mpf(10.9) == mpf("10.9")
+    True
+    >>> mpf(10.9)
+    10.9
+    >>> f"{_}"
+    '10.9'
+    >>> mp.pretty = False
+    >>> mpf(10.9)
+    mpf('10.9')
+    >>> mp.shortest_str = False
+
+Alternatively, set ``mp.pretty_dps``
 to ``"repr"`` (default value is ``"str"``).  Same option is used to control
 default number of digits in the new-style string formatting *without format
 specifier*, i.e. ``format(exp(mpf(1)))``.
