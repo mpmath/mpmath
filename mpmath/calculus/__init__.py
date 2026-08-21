@@ -4,3 +4,4 @@ from . import approximation
 from . import differentiation
 from . import extrapolation
 from . import polynomials
+from . import fft

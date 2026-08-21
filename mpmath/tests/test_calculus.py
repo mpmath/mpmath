@@ -1,9 +1,11 @@
 import pytest
+from hypothesis import given
+from hypothesis import strategies as st
 
 from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
-                    expm, fourier, fourierval, inf, invertlaplace, j, limit,
-                    log, matrix, mp, mpf, norm, pade, pi, polyroots, polyval,
-                    sin, sinm, sqrt, logm)
+                    expm, fft, fourier, fourierval, inf, invertlaplace, invfft,
+                    j, limit, log, logm, matrix, mp, mpf, norm, pade, pi,
+                    polyroots, polyval, sin, sinm, sqrt)
 
 
 def test_approximation():
@@ -284,3 +286,59 @@ def test_logm():
     # Test for zero matrix
     A = [[0, 0], [0, 0]]
     pytest.raises(ValueError, lambda: logm(A))
+
+def test_fft():
+    assert fft([]) == []
+    assert fft([1]) == [1]
+    pytest.raises(NotImplementedError, lambda: fft([1, 2, 3]))
+    assert fft([1, 0, 0, 0]) == [1, 1, 1, 1]
+
+    spectrum = fft([0, 1, 0, 0])
+    expected = [1, -1j, -1, 1j]
+    assert all(a.ae(b) for a, b in zip(spectrum, expected))
+
+    spectrum = fft([1, 2, 3, 4])
+    expected = [10, -2 + 2j, -2, -2 - 2j]
+    assert all(a.ae(b) for a, b in zip(spectrum, expected))
+    assert mp.chop(invfft(spectrum)) == [1, 2, 3, 4]
+
+    spectrum = fft([1, j, -1, -j])
+    expected = [0, 4, 0, 0]
+    assert all(a.ae(b) for a, b in zip(spectrum, expected))
+
+    x = invfft([4, 1 - 1j, 0, 1 + 1j])
+    expected = [1.5, 1.5, 0.5, 0.5]
+    assert all(a.ae(b) for a, b in zip(x, expected))
+
+    assert invfft([]) == []
+    pytest.raises(NotImplementedError, lambda: invfft([1, 2, 3]))
+
+    # test parseval's theorem
+    x = [0.25 + 2.0j, -0.5, 0.75 - 1.0j, -1.0 - 8.0j, 0.5, 0.125 + 0.65j, -0.75, 1.25 + 2.5j]
+    X = fft(x)
+    time_energy = sum(abs(complex(v)) ** 2 for v in x)
+    freq_energy = sum(abs(complex(v)) ** 2 for v in X) / 8
+    assert abs(time_energy - freq_energy) < 1e-12
+
+@st.composite
+def power_of_two_signals(draw):
+    size = draw(st.sampled_from([1, 2, 4, 8, 16]))
+    return draw(st.lists(
+        st.complex_numbers(
+            min_magnitude=0,
+            max_magnitude=10,
+            allow_nan=False,
+            allow_infinity=False,
+        ),
+        min_size=size,
+        max_size=size,
+    ))
+
+@given(x=power_of_two_signals())
+def test_fft_randomized_complex(x):
+    # test that fft and invfft are inverses of each other for random complex inputs
+    recovered = invfft(fft(x))
+    assert all(a.ae(b) for a, b in zip(recovered, x))
+
+    recovered = fft(invfft(x))
+    assert all(a.ae(b) for a, b in zip(recovered, x))
