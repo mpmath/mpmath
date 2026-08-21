@@ -1728,7 +1728,7 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
                                            10, round_nearest)
             prev_digits = digits
             prev_exp = exp
-            while True:
+            while dps > 1:
                 dps -= 1
                 new_digits, new_exp = round_digits(num, digits, exp, dps,
                                                    10, round_down)
@@ -1743,6 +1743,9 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
                         break
                 prev_digits = new_digits
                 prev_exp = new_exp
+            else:
+                digits = new_digits
+                exp = new_exp
         else:
             num = mpf_pos(num, prec, rnd)  # workaround issue 1158
             # Here be dragons.
