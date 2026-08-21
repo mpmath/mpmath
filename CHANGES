@@ -9,6 +9,16 @@ Features:
 * Add Brent root-finding algorithm, see #1103 (Ayush Baranwal)
 * Correct integral path of the lerchphi() to use Laplace transform
   integral, see #1109 (Sergey B Kirpichev)
+* Add Weierstrass elliptic functions, see #1113, #1117,
+  #1141, #1146 and #1157 (Graham Hesketh)
+* Implement the modified spherical bessel functions spherical_in()
+  and spherical_kn(), see #1121 (Warren Weckesser)
+* Add ulp(), see #1144 (Sergey B Kirpichev)
+* Use round_nearest in repr/str and as default mpf's rounding mode,
+  see #1153 (Sergey B Kirpichev)
+* Add shortest_str context option to enable using shortest decimal
+  representations in str/repr/format output, see #1115 (Sergey B Kirpichev)
+* Add fft()/invfft() functions for DFT calculation, see #1152 (Ayush Baranwal)
 
 Compatibility:
 
@@ -23,6 +33,8 @@ Compatibility:
 * Use asc=True per default for polynomial functions, see
   #1057 (Sergey B Kirpichev)
 * Restrict libmp exports to public API, see #1089 (Sergey B Kirpichev)
+* Use explicit kwargs in public API, where possible,
+  see #1127 (Sergey B Kirpichev)
 
 Bug fixes:
 
@@ -57,6 +69,31 @@ Bug fixes:
   see #1101 (Vincent Gao)
 * Reorganize fixed-precision computations for theta3 to avoid
   severe cancellation, see #1107 (Sergey B Kirpichev)
+* Fix fp.hypsum() to exit if ZeroDivisionError occurs and t==0,
+  see #1112 (Sergey B Kirpichev)
+* Fix chebyfit IndexError when N <= 0, see #1114 (Vincent Gao)
+* Use generic modular transformations to compute jtheta() with
+  |q| ~ 1, see #1111 (Sergey B Kirpichev, Jam Balaya)
+* Fix repr_dps() to produce a correct estimate for prec!=53,
+  see #1118 (Sergey B Kirpichev)
+* Use quasi-periodicity property (DLMF, §20.2(ii)) to compute
+  jtheta(), *_theta2/3a() helpers now not needed, see #1120
+  (Sergey B Kirpichev)
+* Close leftover figure in plot/cplot/splot on error,
+  see #1123 (Apoorv Darshan)
+* Better document None return value of the pslq(), see
+  #1134 (Sergey B Kirpichev)
+* Fix last-digit rounding of the "f" format type, see #1132 (Vincent Gao)
+* Use CoW pattern to manage constant_memo() cache, see
+  #1138 (Sergey B Kirpichev)
+* Widen to_str's digit window so str/nstr rounds near-boundary values
+  correctly, see #1139 (Vincent Gao)
+* Correct definitions for spherical Bessel functions, see #1143
+  (Sergey B Kirpichev)
+* Added 2 new expceptions to Rosser's Rule, se #1148 (catalin-hanga)
+* Avoid spurious overflow in fp gammaprod, see #1150 (Sanjay Santhanam)
+* Document pretty_dps context's option, see #1153 (Sergey B Kirpichev)
+* Fix cplot points rounding, see #1155 (alexfyp)
 
 Maintenance:
 
