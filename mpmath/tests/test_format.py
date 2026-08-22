@@ -472,6 +472,8 @@ def test_mpf_fmt_cpython():
     assert f'{mp.pi}' == '3.14159265358979'
     mp.pretty_dps = 'repr'
     assert f'{mp.pi}' == '3.1415926535897931'
+    mp.shortest_str = True
+    assert f'{mp.mpf("1e100000")}' == '1e+100000'
 
 
 @given(fmt_str(types=list('fFeEgG%') + ['']),
