@@ -824,7 +824,7 @@ class PythonMPContext:
             >>> mpmathify(3.5)
             mpf('3.5')
             >>> mpmathify('2.1')
-            mpf('2.1000000000000001')
+            mpf('2.1')
             >>> mpmathify('3/4')
             mpf('0.75')
             >>> mpmathify('2+3j')

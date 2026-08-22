@@ -455,11 +455,11 @@ class MPContext(BaseMPContext, StandardBaseContext):
             >>> from mpmath import mp, besselj, autoprec, sin, pi, exp, expm1
             >>> mp.pretty = True
             >>> besselj(5, 125 * 10**28)    # Exact input
-            -8.03284785591801e-17
+            -8.032847855918012e-17
             >>> besselj(5, '1.25e30')   # Bad
-            7.12954868316652e-16
+            7.129548683166517e-16
             >>> autoprec(besselj)(5, '1.25e30')   # Good
-            -8.03284785591801e-17
+            -8.032847855918012e-17
 
         The following fails to converge because `\sin(\pi) = 0` whereas all
         finite-precision approximations of `\pi` give nonzero values::
@@ -474,7 +474,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
             >>> x = 1e-10
             >>> exp(x)-1
-            1.00000008274037e-10
+            1.000000082740371e-10
             >>> expm1(x)
             1.00000000005e-10
             >>> autoprec(lambda t: exp(t)-1)(x)
@@ -483,7 +483,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
             >>> exp(x)-1
             0.0
             >>> expm1(x)
-            1.0e-50
+            1e-50
             >>> autoprec(lambda t: exp(t)-1)(x)
             0.0
 
@@ -499,8 +499,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
               ...
             ZeroDivisionError
             >>> autoprec(f, catch=ZeroDivisionError)(1e-30)
-            1.0e+30
-
+            9.999999999999999e+29
 
         """
         def f_autoprec_wrapped(*args, **kwargs):
@@ -799,7 +798,7 @@ maxterms, or set zeroprec."""
 
             >>> from mpmath import ulp
             >>> ulp(1)
-            mpf('2.2204460492503131e-16')
+            mpf('2.220446049250313e-16')
 
         """
         x = ctx.convert(x)
@@ -906,9 +905,9 @@ maxterms, or set zeroprec."""
             >>> print(x + y - x)
             0.0
             >>> print(fadd(x, y, prec=inf) - x)
-            1.0e-1000
+            1e-1000
             >>> print(fadd(x, y, exact=True) - x)
-            1.0e-1000
+            1e-1000
 
         Exact addition can be inefficient and may be impossible to perform
         with large magnitude differences::
@@ -1028,7 +1027,7 @@ maxterms, or set zeroprec."""
             >>> print(x*y)
             10000000001000010000000001
             >>> print(mpf(x) * mpf(y))
-            1.0000000001e+25
+            1.000000000100001e+25
             >>> print(int(mpf(x) * mpf(y)))
             10000000001000011026399232
             >>> print(int(fmul(x, y)))
@@ -1047,7 +1046,7 @@ maxterms, or set zeroprec."""
             >>> fmul(x, y)
             mpc(real='2.0', imag='4.0')
             >>> fmul(x, y, rounding='u')
-            mpc(real='2.0', imag='4.0000000000000009')
+            mpc(real='2.0', imag='4.000000000000001')
             >>> fmul(x, y, exact=True)
             Traceback (most recent call last):
               ...
@@ -1090,7 +1089,7 @@ maxterms, or set zeroprec."""
             >>> fdiv(3, 2)
             mpf('1.5')
             >>> fdiv(2, 3)
-            mpf('0.66666666666666663')
+            mpf('0.6666666666666666')
             >>> fdiv(2+4j, 0.5)
             mpc(real='4.0', imag='8.0')
 
@@ -1099,16 +1098,16 @@ maxterms, or set zeroprec."""
             >>> fdiv(2, 3, dps=3)    # Should be accurate to at least 3 digits
             mpf('0.6666259765625')
             >>> fdiv(2, 3, rounding='d')
-            mpf('0.66666666666666663')
+            mpf('0.6666666666666666')
             >>> fdiv(2, 3, prec=60)
-            mpf('0.66666666666666667')
+            mpf('0.6666666666666666')
             >>> fdiv(2, 3, rounding='u')
-            mpf('0.66666666666666674')
+            mpf('0.6666666666666667')
 
         Checking the error of a division by performing it at higher precision::
 
             >>> fdiv(2, 3) - fdiv(2, 3, prec=100)
-            mpf('-3.7007434154172148e-17')
+            mpf('-3.700743415417215e-17')
 
         Unlike :func:`~mpmath.fadd`, :func:`~mpmath.fmul`, etc., exact division is not
         allowed since the quotient of two floating-point numbers generally
@@ -1286,7 +1285,7 @@ maxterms, or set zeroprec."""
             >>> print(a)      # a will be accurate
             0.01
             >>> print(b)
-            0.0100000000000000002081668171172
+            0.010000000000000000208166817117217
         """
         return ctx.constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
             '%s/%s' % (p, q))

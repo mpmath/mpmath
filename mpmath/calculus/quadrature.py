@@ -553,9 +553,9 @@ class QuadratureMethods:
         `\int_{\infty}^{\infty} \exp(-x^2)\,dx = \sqrt{\pi}`::
 
             >>> quad(lambda x: 2/(x**2+1), [0, inf])
-            3.14159265358979
+            3.141592653589793
             >>> quad(lambda x: exp(-x**2), [-inf, inf])**2
-            3.14159265358979
+            3.1415926535897936
 
         Integrals can typically be resolved to high precision.
         The following computes 50 digits of `\pi` by integrating the
@@ -564,13 +564,13 @@ class QuadratureMethods:
 
             >>> mp.dps = 50
             >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])
-            3.1415926535897932384626433832795028841971693993751
+            3.141592653589793238462643383279502884197169399375107
 
         One can just as well compute 1000 digits (output truncated)::
 
             >>> mp.dps = 1000
             >>> 2*quad(lambda x: sqrt(1-x**2), [-1, 1])
-            3.141592653589793238462643383279502884...216420199
+            3.141592653589793238462643383279502884197169399375...85778053217122680661300192787661119590921642019893
 
         Complex integrals are supported. The following computes
         a residue at `z = 0` by integrating counterclockwise along the
@@ -578,7 +578,7 @@ class QuadratureMethods:
 
             >>> mp.dps = 15
             >>> chop(quad(lambda z: 1/z, [1,j,-1,-j,1]))
-            (0.0 + 6.28318530717959j)
+            6.283185307179586j
 
         **Examples of 2D and 3D integrals**
 
@@ -589,34 +589,34 @@ class QuadratureMethods:
             >>> mp.dps = 30
             >>> f = lambda x, y: (x-1)/((1-x*y)*log(x*y))
             >>> quad(f, [0, 1], [0, 1])
-            0.577215664901532860606512090082
+            0.5772156649015328606065120900824
             >>> +euler
-            0.577215664901532860606512090082
+            0.5772156649015328606065120900824
 
             >>> f = lambda x, y: 1/sqrt(1+x**2+y**2)
             >>> quad(f, [-1, 1], [-1, 1])
-            3.17343648530607134219175646705
+            3.1734364853060713421917564670455
             >>> 4*log(2+sqrt(3))-2*pi/3
-            3.17343648530607134219175646705
+            3.1734364853060713421917564670455
 
             >>> f = lambda x, y: 1/(1-x**2 * y**2)
             >>> quad(f, [0, 1], [0, 1])
-            1.23370055013616982735431137498
+            1.2337005501361698273543113749845
             >>> pi**2 / 8
-            1.23370055013616982735431137498
+            1.2337005501361698273543113749845
 
             >>> quad(lambda x, y: 1/(1-x*y), [0, 1], [0, 1])
-            1.64493406684822643647241516665
+            1.644934066848226436472415166646
             >>> pi**2 / 6
-            1.64493406684822643647241516665
+            1.644934066848226436472415166646
 
         Multiple integrals may be done over infinite ranges::
 
             >>> mp.dps = 15
             >>> print(quad(lambda x,y: exp(-x-y), [0, inf], [1, inf]))
-            0.367879441171442
+            0.36787944117144233
             >>> print(1/e)
-            0.367879441171442
+            0.36787944117144233
 
         For nonrectangular areas, one can call :func:`~mpmath.quad` recursively.
         For example, we can replicate the earlier example of calculating
@@ -625,16 +625,16 @@ class QuadratureMethods:
 
             >>> f = lambda x: quad(lambda y: 1, [-sqrt(1-x**2), sqrt(1-x**2)])
             >>> quad(f, [-1, 1])
-            3.14159265358979
+            3.141592653589793
 
         Here is a simple triple integral::
 
             >>> mp.dps = 15
             >>> f = lambda x,y,z: x*y/(1+z)
             >>> quad(f, [0,1], [0,1], [1,2], method='gauss-legendre')
-            0.101366277027041
+            0.1013662770270411
             >>> (log(3)-log(2))/4
-            0.101366277027041
+            0.10136627702704112
 
         **Singularities**
 
@@ -657,12 +657,12 @@ class QuadratureMethods:
             >>> quad(log, [0, 1], method='tanh-sinh')  # Good
             -1.0
             >>> quad(log, [0, 1], method='gauss-legendre')  # Bad
-            -0.999932197413801
+            -0.9999321974138008
 
         However, the result may still be inaccurate for some functions::
 
             >>> quad(lambda x: 1/sqrt(x), [0, 1], method='tanh-sinh')
-            1.99999999946942
+            1.999999999469417
 
         This problem is not due to the quadrature rule per se, but to
         numerical amplification of errors in the nodes. The problem can be
@@ -684,13 +684,13 @@ class QuadratureMethods:
         length 1000::
 
             >>> quad(sin, [0, 100])  # Good
-            0.137681127712316
+            0.13768112771231608
             >>> 1-cos(100)
-            0.137681127712316
+            0.1376811277123161
             >>> quad(sin, [0, 1000])  # Bad
-            -37.8587612408485
+            -37.85876124084847
             >>> 1-cos(1000)
-            0.437620923709297
+            0.43762092370929706
 
         One solution is to break the integration into 10 intervals of
         length 100::
@@ -701,7 +701,7 @@ class QuadratureMethods:
         Another is to increase the degree of the quadrature::
 
             >>> quad(sin, [0, 1000], maxdegree=10)   # Also good
-            0.437620923709297
+            0.43762092370929695
 
         Whether splitting the interval or increasing the degree is
         more efficient differs from case to case. Another example is the
@@ -710,11 +710,11 @@ class QuadratureMethods:
 
             >>> f = lambda x: 1/(1+x**2)
             >>> quad(f, [-100, 100])   # Bad
-            3.64804647105268
+            3.6480464710526754
             >>> quad(f, [-100, 100], maxdegree=10)   # Good
-            3.12159332021646
+            3.121593320216463
             >>> quad(f, [-100, 0, 100])   # Also good
-            3.12159332021646
+            3.121593320216463
 
         **References**
 
@@ -847,13 +847,13 @@ class QuadratureMethods:
             >>> mp.pretty = True
             >>> f = lambda x: sin(3*x)/(x**2+1)
             >>> quadosc(f, [0,inf], omega=3)
-            0.37833007080198
+            0.3783300708019799
             >>> quadosc(f, [0,inf], period=2*pi/3)
-            0.37833007080198
+            0.3783300708019799
             >>> quadosc(f, [0,inf], zeros=lambda n: pi*n/3)
-            0.37833007080198
+            0.3783300708019799
             >>> (ei(3)*exp(-3)-exp(3)*ei(-3))/2  # Computed by Mathematica
-            0.37833007080198
+            0.3783300708019799
 
         Note that *zeros* was specified to multiply `n` by the
         *half-period*, not the full period. In theory, it does not matter
@@ -866,25 +866,25 @@ class QuadratureMethods:
         and a half-infinite integration starting at `-\infty`::
 
             >>> quadosc(lambda x: cos(x)/(1+x**2), [-inf, inf], omega=1)
-            1.15572734979092
+            1.1557273497909217
             >>> pi/e
-            1.15572734979092
+            1.1557273497909217
             >>> quadosc(lambda x: cos(x)/x**2, [-inf, -1], period=2*pi)
-            -0.0844109505595739
+            -0.08441095055957389
             >>> cos(1)+si(1)-pi/2
-            -0.0844109505595738
+            -0.08441095055957382
 
         Of course, the integrand may contain a complex exponential just as
         well as a real sine or cosine::
 
             >>> quadosc(lambda x: exp(3*j*x)/(1+x**2), [-inf,inf], omega=3)
-            (0.156410688228254 + 0.0j)
+            (0.15641068822825413+0j)
             >>> pi/e**3
-            0.156410688228254
+            0.15641068822825416
             >>> quadosc(lambda x: exp(3*j*x)/(2+x+x**2), [-inf,inf], omega=3)
-            (0.00317486988463794 - 0.0447701735209082j)
+            (0.003174869884637943-0.04477017352090823j)
             >>> 2*pi/sqrt(7)/exp(3*(j+sqrt(7))/2)
-            (0.00317486988463794 - 0.0447701735209082j)
+            (0.0031748698846379396-0.044770173520908216j)
 
         **Non-periodic functions**
 
@@ -926,12 +926,12 @@ class QuadratureMethods:
             >>> mp.dps = 30
             >>> f = lambda x: cos(x**2)
             >>> quadosc(f, [0,inf], zeros=lambda n:sqrt(pi*n))
-            0.626657068657750125603941321203
+            0.6266570686577501256039413212029
             >>> f = lambda x: sin(x**2)
             >>> quadosc(f, [0,inf], zeros=lambda n:sqrt(pi*n))
-            0.626657068657750125603941321203
+            0.6266570686577501256039413212028
             >>> sqrt(pi/8)
-            0.626657068657750125603941321203
+            0.6266570686577501256039413212027
 
         (Interestingly, these integrals can still be evaluated if one
         places some other constant than `\pi` in the square root sign.)
@@ -942,9 +942,9 @@ class QuadratureMethods:
             >>> mp.dps = 15
             >>> f = lambda x: sin(exp(x))
             >>> quadosc(f, [1,inf], zeros=lambda n: log(n))
-            -0.25024394235267
+            -0.25024394235267045
             >>> pi/2-si(e)
-            -0.250243942352671
+            -0.25024394235267056
 
         **Non-alternating functions**
 
@@ -954,11 +954,11 @@ class QuadratureMethods:
 
             >>> f = lambda x: 1/x**2+sin(x)/x**4
             >>> quadosc(f, [1,inf], omega=1)  # Bad
-            1.28642190869861
+            1.2864219086986093
             >>> quadosc(f, [1,inf], omega=0.5)  # Perfect
-            1.28652953559617
+            1.2865295355961675
             >>> 1+(cos(1)+ci(1)+sin(1))/6
-            1.28652953559617
+            1.2865295355961675
 
         **Fast decay**
 
@@ -1028,11 +1028,11 @@ class QuadratureMethods:
             >>> quadsubdiv(sin, [0, 1000])
             0.437620923709297
             >>> quadsubdiv(lambda x: 1/(1+x**2), [-100, 100])
-            3.12159332021646
+            3.121593320216463
             >>> quadsubdiv(lambda x: ceil(x), [0, 100])
             5050.0
             >>> quadsubdiv(lambda x: sin(x+exp(x)), [0,8])
-            0.347400172657248
+            0.3474001726572478
 
         The argument *maxintervals* can be set to limit the permissible
         subdivision::
@@ -1040,23 +1040,23 @@ class QuadratureMethods:
             >>> quadsubdiv(lambda x: sin(x**2), [0,100], maxintervals=5, error=True)
             (-5.40487904307774, 5.011)
             >>> quadsubdiv(lambda x: sin(x**2), [0,100], maxintervals=100, error=True)
-            (0.631417921866934, 1.10101120134116e-17)
+            (0.6314179218669337, 1.101011201341161e-17)
 
         Subdivision does not guarantee a correct answer since, the error
         estimate on subintervals may be inaccurate::
 
             >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, [0,1], error=True)
-            (0.210802735500549, 1.0001111101e-17)
+            (0.2108027355005493, 1.0001111101000012e-17)
             >>> mp.dps = 20
             >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, [0,1], error=True)
-            (0.21080273550054927738, 2.200000001e-24)
+            (0.2108027355005492773756, 2.200000001e-24)
 
         The second answer is correct. We can get an accurate result at lower
         precision by forcing a finer initial subdivision::
 
             >>> mp.dps = 15
             >>> quadsubdiv(lambda x: sech(10*x-2)**2 + sech(100*x-40)**4 + sech(1000*x-600)**6, linspace(0,1,5))
-            0.210802735500549
+            0.2108027355005493
 
         The following integral is too oscillatory for convergence, but we can get a
         reasonable estimate::
@@ -1065,7 +1065,7 @@ class QuadratureMethods:
             >>> round(v, 6), round(err, 6)
             (0.504067, 1e-06)
             >>> sin(1) - ci(1)
-            0.504067061906928
+            0.5040670619069283
 
         """
         queue = []
