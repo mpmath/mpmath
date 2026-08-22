@@ -372,8 +372,6 @@ class MPContext(BaseMPContext, StandardBaseContext):
             ("  mp.dps = %s" % ctx.dps).ljust(30) + f"[default: {sys.float_info.dig}]",
             ("  mp.rounding = '%s'" % ctx.rounding).ljust(30) + f"[default: 'n']",
             ("  mp.trap_complex = %s" % ctx.trap_complex).ljust(30) + "[default: False]",
-            ("  mp.pretty_dps = '%s'" % ctx.pretty_dps).ljust(30) + "[default: 'str']",
-            ("  mp.shortest_str = %s" % ctx.shortest_str).ljust(30) + "[default: False]",
         ]
         return "\n".join(lines)
 

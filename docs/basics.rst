@@ -82,8 +82,6 @@ Mpmath uses a global working precision; it does not keep track of the precision 
       mp.dps = 15                 [default: 15]
       mp.rounding = 'n'           [default: 'n']
       mp.trap_complex = False     [default: False]
-      mp.pretty_dps = 'str'       [default: 'str']
-      mp.shortest_str = False     [default: False]
 
 The term **prec** denotes the binary precision (measured in bits) while **dps** (short for *decimal places*) is the decimal precision. Binary and decimal precision are related roughly according to the formula ``prec = 3.33*dps``. For example, it takes a precision of roughly 333 bits to hold an approximation of pi that is accurate to 100 decimal places (actually slightly more than 333 bits is used).
 
@@ -217,7 +215,7 @@ By default, the ``repr()`` of a number includes its type signature. This way ``e
     >>> eval(repr(mpf(2.5)))
     mpf('2.5')
 
-Prettier output can be obtained by using ``str()`` or ``print``, which hide the ``mpf`` and ``mpc`` signatures and also suppress rounding artifacts in the last few digits:
+Prettier output can be obtained by using ``str()`` or ``print``, which hide the ``mpf`` and ``mpc`` signatures:
 
     >>> mpf("3.14159")
     mpf('3.1415899999999999')
@@ -235,41 +233,13 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
     >>> mpf(0.6)
     mpf('0.59999999999999998')
 
-To use enough digits to be able recreate value exactly, enable
-``mp.shortest_str`` option.  With this, repr/str and the new-style string
+repr/str and the new-style string
 formatting *without format specifier* will use *minimal* number of decimal
 digits that will preserve value on string input, like repr for CPython's
-builtin floats:
-
-    >>> mp.shortest_str = True
-    >>> mp.pretty = True
-    >>> mpf(10.9) == mpf("10.9")
-    True
-    >>> mpf(10.9)
-    10.9
-    >>> f"{_}"
-    '10.9'
-    >>> mp.pretty = False
-    >>> mpf(10.9)
-    mpf('10.9')
-    >>> mp.shortest_str = False
-
-Alternatively, set ``mp.pretty_dps``
-to ``"repr"`` (default value is ``"str"``).  Same option is used to control
-default number of digits in the new-style string formatting *without format
-specifier*, i.e. ``format(exp(mpf(1)))``.
-
-    >>> mp.pretty = True
-    >>> mpf(0.1)
-    0.1
-    >>> mp.pretty_dps = "repr"
-    >>> mpf(0.1)
-    0.10000000000000001
-    >>> mp.pretty_dps = "str"
-    >>> mp.pretty = False
+builtin floats.
 
 The number of digits with which numbers are printed by default is determined by
-the working precision.  To specify the number of digits to show without
+the working precision and the given value.  To specify the number of digits to show without
 changing the working precision, use :func:`format syntax support
 <mpmath.mpf.__format__>` or functions :func:`mpmath.nstr` and
 :func:`mpmath.nprint`:

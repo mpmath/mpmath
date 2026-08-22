@@ -469,10 +469,7 @@ def test_mpf_fmt_cpython():
     # No formatting code.
 
     assert f'{mp.mpf(0.0):.0}' == '0e+00'
-    assert f'{mp.pi}' == '3.14159265358979'
-    mp.pretty_dps = 'repr'
-    assert f'{mp.pi}' == '3.1415926535897931'
-    mp.shortest_str = True
+    assert f'{mp.pi}' == '3.141592653589793'
     assert f'{mp.mpf("1e100000")}' == '1e+100000'
 
 
@@ -495,12 +492,10 @@ def test_mpf_floats_bulk(fmt, x):
     the same results for default precision.
     '''
 
-    mp.pretty_dps = "repr"
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
     if spec['frac_separators'] and sys.version_info < (3, 14):
-        mp.pretty_dps = "str"
         return  # see also python/cpython#130860
     if not spec['type'] and spec['precision'] < 0 and math.isfinite(x):
         # The mpmath could choose a different decimal
@@ -519,7 +514,6 @@ def test_mpf_floats_bulk(fmt, x):
                  allow_subnormal=False))
 @example('', 1000000000000000.0)
 def test_mpf_floats_default_bulk(fmt, x):
-    mp.shortest_str = True
     if not x and math.copysign(1, x) == -1:
         return  # skip negative zero
     spec = read_format_spec(fmt)
@@ -531,7 +525,6 @@ def test_mpf_floats_default_bulk(fmt, x):
                           allow_infinity=True,
                           allow_subnormal=True))
 def test_mpc_complexes_bulk(fmt, z):
-    mp.pretty_dps = "repr"
     if ((not z.real and math.copysign(1, z.real) == -1)
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
@@ -555,7 +548,6 @@ def test_mpc_complexes_bulk(fmt, z):
 @example(fmt='', z=complex(0))
 @example(fmt='#', z=complex(0))
 def test_mpc_complexes_default_bulk(fmt, z):
-    mp.shortest_str = True
     if ((not z.real and math.copysign(1, z.real) == -1)
             or (not z.imag and math.copysign(1, z.imag) == -1)):
         return  # skip negative zero
