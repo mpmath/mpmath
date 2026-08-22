@@ -122,7 +122,7 @@ Local contexts, created on demand, could be used just as the global ``mp``:
     mpf('0.8414709848078965')
     >>> ctx.prec = 113
     >>> ctx.sin(1)
-    mpf('0.841470984807896506652502321630298954')
+    mpf('0.841470984807896506652502321630299')
 
 Arbitrary-precision interval arithmetic (``iv``)
 ------------------------------------------------
@@ -249,7 +249,7 @@ Naive use of ``mp`` arithmetic may result in wrong conclusions, such as the foll
     >>> x = mp.exp(mp.pi*mp.sqrt(163))
     >>> y = mp.mpf(640320**3+744)
     >>> print(x)
-    262537412640768744.0000001
+    262537412640768744.00000008
     >>> print(y)
     262537412640768744.0
     >>> x > y
@@ -260,7 +260,7 @@ seen by increasing the precision::
 
     >>> mp.dps = 50
     >>> print(mp.exp(mp.pi*mp.sqrt(163)))
-    262537412640768743.99999999999925007259719818568888
+    262537412640768743.9999999999992500725971981856888754
 
 With interval arithmetic, the comparison raises :exc:`ValueError` until the
 precision is large enough for `x-y` to have a definite sign::
@@ -294,7 +294,7 @@ To take advantage of this feature, simply use the ``fp`` prefix, i.e. write ``fp
     <class 'float'>
     >>> mp.dps = 16
     >>> print(mp.erfc(0.5))
-    0.4795001221869535
+    0.47950012218695346
     >>> fp.matrix([[1,2],[3,4]]) ** 2
     matrix(
     [['7.0', '10.0'],

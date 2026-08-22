@@ -68,7 +68,7 @@ You can mix ``mpf`` and ``mpc`` instances with each other and with Python number
     mpf('9.0')
     >>> mp.dps = 15      # Set precision (see below)
     >>> mpc(1j)**0.5
-    mpc(real='0.70710678118654757', imag='0.70710678118654757')
+    mpc(real='0.7071067811865476', imag='0.7071067811865476')
 
 
 Setting the precision
@@ -106,18 +106,18 @@ The precision of complex arithmetic is also controlled by the ``mp`` object:
 
     >>> mp.dps = 10
     >>> mpc(1,2) / 3
-    mpc(real='0.3333333333321', imag='0.6666666666642')
+    mpc(real='0.333333333332', imag='0.666666666664')
 
 There is no restriction on the magnitude of numbers. An ``mpf`` can for example hold an approximation of a large Mersenne prime:
 
     >>> mp.dps = 15
     >>> print(mpf(2)**32582657 - 1)
-    1.24575026015369e+9808357
+    1.2457502601536946e+9808357
 
 Or why not 1 googolplex:
 
     >>> print(mpf(10) ** (10**100))
-    1.0e+100000000000000000000000000000000000000000000000000...
+    1e+100000000000000000000000000000000000000000000000000...
 
 The (binary) exponent is stored exactly and is independent of the precision.
 
@@ -129,7 +129,7 @@ The ``rounding`` property control default rounding mode for the context:
     mpf('0.8414709848078965')
     >>> mp.rounding = 'u'  # round up
     >>> sin(1)
-    mpf('0.84147098480789662')
+    mpf('0.8414709848078966')
     >>> mp.rounding = 'n'
 
 Temporarily changing the precision
@@ -149,8 +149,8 @@ The ``with`` statement along with the mpmath functions ``workprec``, ``workdps``
     ...     with extradps(10):
     ...         print(mpf(1)/7)
     ...
-    0.14285714285714285714
-    0.142857142857142857142857142857
+    0.1428571428571428571428
+    0.14285714285714285714285714285714
     >>> mp.dps
     15
 
@@ -163,7 +163,7 @@ The ``workprec`` family of functions can also be used as function decorators:
     ...     return mpf(1)/3
     ...
     >>> f()
-    mpf('0.33333331346511841')
+    mpf('0.3333333134651184')
 
 
 Some functions accept the ``prec`` and ``dps`` keyword arguments and this will override the global working precision. Note that this will not affect the precision at which the result is printed, so to get all digits, you must either use increase precision afterward when printing or use ``nstr``/``nprint``:
@@ -171,9 +171,9 @@ Some functions accept the ``prec`` and ``dps`` keyword arguments and this will o
     >>> from mpmath import exp, nprint
     >>> mp.dps = 15
     >>> print(exp(1))
-    2.71828182845905
+    2.718281828459045
     >>> print(exp(1, dps=50))      # Extra digits won't be printed
-    2.71828182845905
+    2.718281828459045
     >>> nprint(exp(1, dps=50), 50)
     2.7182818284590452353602874713526624977572470937
 
@@ -183,9 +183,9 @@ Finally, instead of using the global context object ``mp``, you can create custo
     >>> mp.dps = 10
     >>> mp2.dps = 20
     >>> print(mp.mpf(1) / 3)
-    0.3333333333
+    0.333333333332
     >>> print(mp2.mpf(1) / 3)
-    0.33333333333333333333
+    0.3333333333333333333335
 
 **Note**: the ability to create multiple contexts is a new feature that is only partially implemented. Not all mpmath functions are yet available as context-local methods. In the present version, you are likely to encounter bugs if you try mixing different contexts.
 
@@ -196,13 +196,13 @@ Note that when creating a new ``mpf``, the value will at most be as accurate as 
 
     >>> mp.dps = 30
     >>> mpf(10.9)   # bad
-    mpf('10.9000000000000003552713678800501')
+    mpf('10.90000000000000035527136788005')
     >>> mpf(1090/100)  # bad, beware Python's true division produces floats
-    mpf('10.9000000000000003552713678800501')
+    mpf('10.90000000000000035527136788005')
     >>> mpf('10.9')  # good
-    mpf('10.8999999999999999999999999999997')
+    mpf('10.9')
     >>> mpf(109) / mpf(10)   # also good
-    mpf('10.8999999999999999999999999999997')
+    mpf('10.9')
     >>> mp.dps = 15
 
 (Binary fractions such as 0.5, 1.5, 0.75, 0.125, etc, are generally safe as input, however, since those can be represented exactly by Python floats.)
@@ -218,11 +218,11 @@ By default, the ``repr()`` of a number includes its type signature. This way ``e
 Prettier output can be obtained by using ``str()`` or ``print``, which hide the ``mpf`` and ``mpc`` signatures:
 
     >>> mpf("3.14159")
-    mpf('3.1415899999999999')
+    mpf('3.14159')
     >>> print(mpf("3.14159"))
     3.14159
     >>> print(mpc(1j)**0.5)
-    (0.707106781186548 + 0.707106781186548j)
+    (0.7071067811865476+0.7071067811865476j)
 
 Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr()`` as well:
 
@@ -231,7 +231,7 @@ Setting the ``mp.pretty`` option will use the ``str()``-style output for ``repr(
     0.6
     >>> mp.pretty = False
     >>> mpf(0.6)
-    mpf('0.59999999999999998')
+    mpf('0.6')
 
 repr/str and the new-style string
 formatting *without format specifier* will use *minimal* number of decimal
