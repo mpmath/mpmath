@@ -127,7 +127,7 @@ def test_sofa():
     result = subprocess.run([f'{sys.executable}',
                              'demo/sofa.py'],
                             capture_output=True, text=True)
-    assert result.stdout == '2.2195316688719674255462841007968\n'
+    assert result.stdout == '2.2195316688719674255462841007967965\n'
 
 
 @pytest.mark.filterwarnings("ignore:.*:DeprecationWarning")

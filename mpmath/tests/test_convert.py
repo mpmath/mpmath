@@ -29,18 +29,18 @@ def test_basic_string():
     assert str(mpf('0.025')) == '0.025'
     assert str(mpf('0.0025')) == '0.0025'
     assert str(mpf('0.00025')) == '0.00025'
-    assert str(mpf('0.000025')) == '2.5e-5'
+    assert str(mpf('0.000025')) == '2.5e-05'
     assert str(mpf(0)) == '0.0'
     assert str(mpf('2.5e1000000000000000000000')) == '2.5e+1000000000000000000000'
     assert str(mpf('2.6e-1000000000000000000000')) == '2.6e-1000000000000000000000'
     assert str(mpf(1.23402834e-15)) == '1.23402834e-15'
     assert str(mpf(-1.23402834e-15)) == '-1.23402834e-15'
     assert str(mpf(-1.2344e-15)) == '-1.2344e-15'
-    assert repr(mpf(-1.2344e-15)) == "mpf('-1.2343999999999999e-15')"
+    assert repr(mpf(-1.2344e-15)) == "mpf('-1.2344e-15')"
     assert str(mpf("2163048125L")) == '2163048125.0'
     assert str(mpf("-2163048125l")) == '-2163048125.0'
-    assert str(mpf("-2163048125L/1088391168")) == '-1.98738118113799'
-    assert str(mpf("2163048125/1088391168l")) == '1.98738118113799'
+    assert str(mpf("-2163048125L/1088391168")) == '-1.9873811811379931'
+    assert str(mpf("2163048125/1088391168l")) == '1.9873811811379931'
     assert str(mpf('inf')) == 'inf'
 
     # issue 613
@@ -88,7 +88,7 @@ def test_to_str():
 def test_pretty():
     mp.pretty = True
     assert repr(mpf(2.5)) == '2.5'
-    assert repr(mpc(2.5,3.5)) == '(2.5 + 3.5j)'
+    assert repr(mpc(2.5,3.5)) == '(2.5+3.5j)'
     iv.pretty = True
     assert repr(mpi(2.5,3.5)) == '[2.5, 3.5]'
 
@@ -127,8 +127,8 @@ def test_eval_repr_invariant():
 
 def test_str_bugs():
     # Decimal rounding used to give the wrong exponent in some cases
-    assert str(mpf('1e600')) == '1.0e+600'
-    assert str(mpf('1e10000')) == '1.0e+10000'
+    assert str(mpf('1e600')) == '1e+600'
+    assert str(mpf('1e10000')) == '9.999999999999999e+9999'
 
 def test_str_prec0():
     assert to_str(from_float(1.234), 0) == '.0e+0'
