@@ -232,10 +232,8 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
     `q, m, k, \tau, \bar{q}`, both Weierstrass invariants
     `g_2, g_3`, or both half-periods `\omega_1, \omega_2`.
 
-    For `g_2, g_3`, this function uses optimized direct formulas where
-    applicable and falls back to :func:`~mpmath.kleinjinv` otherwise. In
-    either case, it returns the representative in the standard modular
-    fundamental domain, with the boundary conventions documented there.
+    For `g_2, g_3`, this function returns the representative in the standard modular
+    fundamental domain, with the boundary conventions documented in :func:`~mpmath.kleinjinv`.
 
     **Examples**
 
@@ -639,41 +637,6 @@ def kleinjinv(ctx, J):
     See https://en.wikipedia.org/wiki/J-invariant for background on this
     correspondence and the standard fundamental domain.
 
-    The implementation uses the classical inverse construction via the
-    modular lambda function, described as Method 1 in the Wikipedia article
-    at https://en.wikipedia.org/wiki/J-invariant#Inverse_functions.
-
-    It first converts from the normalized invariant `J` to `j = 1728 J`,
-    then solves
-
-    .. math ::
-
-        j = 256 (1 - x)^3 / x^2, \quad x = \lambda (1 - \lambda),
-
-    for `\lambda`.  The half-period ratio is then obtained from
-
-    .. math ::
-
-        \tau = i K(1 - \lambda) / K(\lambda),
-
-    where `K` is the complete elliptic integral.  Using
-
-    .. math ::
-
-        K(m) = \pi / (2 \operatorname{AGM}(1, \sqrt{1 - m})),
-
-    this is evaluated by the arithmetic-geometric mean formula
-
-    .. math ::
-
-        \tau =
-        i \operatorname{AGM}(1, \sqrt{1 - \lambda}) /
-        \operatorname{AGM}(1, \sqrt{\lambda}).
-
-    The algebraic construction initially produces one modularly equivalent
-    value using principal roots. That value is then reduced to the
-    fundamental domain described above.
-
     **Examples**
 
         >>> from mpmath import mp, kleinj, kleinjinv, chop
@@ -691,6 +654,28 @@ def kleinjinv(ctx, J):
         (-0.2 + 1.6j)
 
     """
+
+    # The implementation uses the classical inverse construction via the
+    # modular lambda function, described as Method 1 in the Wikipedia article
+    # at https://en.wikipedia.org/wiki/J-invariant#Inverse_functions.
+    # It first converts from the normalized invariant `J` to `j = 1728 J`,
+    # then solves
+    # .. math ::
+    #     j = 256 (1 - x)^3 / x^2, \quad x = \lambda (1 - \lambda),
+    # for `\lambda`.  The half-period ratio is then obtained from
+    # .. math ::
+    #     \tau = i K(1 - \lambda) / K(\lambda),
+    # where `K` is the complete elliptic integral.  Using
+    # .. math ::
+    #     K(m) = \pi / (2 \operatorname{AGM}(1, \sqrt{1 - m})),
+    # this is evaluated by the arithmetic-geometric mean formula
+    # .. math ::
+    #     \tau =
+    #     i \operatorname{AGM}(1, \sqrt{1 - \lambda}) /
+    #     \operatorname{AGM}(1, \sqrt{\lambda}).
+    # The algebraic construction initially produces one modularly equivalent
+    # value using principal roots. That value is then reduced to the
+    # fundamental domain described above.
     J = ctx.convert(J)
     if J == 0:
         tau = ctx.mpc(-ctx.mpf(1)/2, ctx.sqrt(3)/2)
