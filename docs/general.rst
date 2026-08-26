@@ -230,6 +230,10 @@ Performance and debugging
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.memoize
 
+:func:`~mpmath.memoize_last`
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.. autofunction:: mpmath.memoize_last
+
 :func:`~mpmath.maxcalls`
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.maxcalls

@@ -1838,9 +1838,8 @@ def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                    j3**12))
     return +g2, +g3
 
-@defun
-def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
-                     g2=None, g3=None, omega1=None, omega2=None):
+def _omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
+                      g2=None, g3=None, omega1=None, omega2=None):
     r"""
     Returns the Weierstrass half-periods `(\omega_1, \omega_2)`, given
     any of `q, m, k, \tau, \bar{q}`, both invariants `g_2, g_3`, or both
@@ -2026,6 +2025,24 @@ def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
     return +omega1, +omega2
 
 
+@defun
+def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
+                     g2=None, g3=None, omega1=None, omega2=None):
+    try:
+        cached = ctx._omega1omega2from_cached
+    except AttributeError:
+        def compute(q=None, m=None, k=None, tau=None, qbar=None,
+                    g2=None, g3=None, omega1=None, omega2=None):
+            return _omega1omega2from(
+                ctx, q, m, k, tau, qbar, g2, g3, omega1, omega2)
+        cached = ctx.memoize_last(compute)
+        ctx._omega1omega2from_cached = cached
+    return cached(q, m, k, tau, qbar, g2, g3, omega1, omega2)
+
+
+omega1omega2from.__doc__ = _omega1omega2from.__doc__
+
+
 # ============================================================================
 # Main Weierstrass Elliptic Functions
 # ============================================================================
@@ -2049,10 +2066,6 @@ def weierp(ctx, z, g2=None, g3=None, tau=None, omega1=None, omega2=None):
 
     The periods of `\wp` are `2\omega_1` and `2\omega_2`. Thus the
     `\tau` parameterization corresponds to periods `1` and `\tau`.
-
-    For repeated evaluation with the same invariants, it is faster to compute
-    the half-periods once with :func:`~mpmath.omega1omega2from` and pass
-    them using the ``omega1`` and ``omega2`` keywords.
 
     **Examples**
 
