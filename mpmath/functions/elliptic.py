@@ -230,7 +230,12 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
     r"""
     Returns the elliptic half-period ratio `\tau`, given any of
     `q, m, k, \tau, \bar{q}`, both Weierstrass invariants
-    `g_2, g_3`, or both half-periods `\omega_1, \omega_2`::
+    `g_2, g_3`, or both half-periods `\omega_1, \omega_2`.
+
+    For `g_2, g_3`, this function returns the representative in the standard modular
+    fundamental domain, with the boundary conventions documented in :func:`~mpmath.kleinjinv`.
+
+    **Examples**
 
         >>> from mpmath import mp, taufrom, qfrom, mfrom, kfrom, qbarfrom
         >>> mp.dps = 25
@@ -264,8 +269,36 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
         qbar = ctx.convert(qbar)
         return ctx.log(qbar) / (2*ctx.pi*ctx.j)
     if g2 is not None:
-        J = ctx.kleinj(g2=g2, g3=g3)
-        return ctx.kleinjinv(J)
+        g2 = ctx.convert(g2)
+        g3 = ctx.convert(g3)
+        if g2 == 0:
+            return ctx.mpc(ctx.one/2, ctx.sqrt(3)/2)
+        if g3 == 0:
+            return ctx.j
+        discriminant = g2**3 - 27*g3**2
+        g2_term = abs(g2)**3
+        g3_term = 27*abs(g3)**2
+        shape_ratio = min(g2_term, g3_term) / max(g2_term, g3_term)
+        if (ctx.im(g2) == 0 and ctx.im(g3) == 0 and
+                discriminant != 0 and
+                shape_ratio >= ctx.ldexp(1, -20)):
+            real_g2 = ctx.re(g2)
+            real_g3 = ctx.re(g3)
+            real_discriminant = ctx.re(discriminant)
+            K, K_complement, _ = _real_elliptic_data(
+                ctx, real_g2, real_g3, real_discriminant)
+            if real_discriminant > 0:
+                if real_g3 > 0:
+                    return ctx.j*K_complement/K
+                return ctx.j*K/K_complement
+            if real_g2 > 0:
+                if real_g3 > 0:
+                    return ctx.one/2 + ctx.j*K_complement/(2*K)
+                return ctx.one/2 + ctx.j*K/(2*K_complement)
+            if real_g3 > 0:
+                return (-K+ctx.j*K_complement)/(K+ctx.j*K_complement)
+            return (K+ctx.j*K_complement)/(K-ctx.j*K_complement)
+        return ctx.kleinjinv(g2**3/discriminant)
     if omega1 is not None:
         omega1 = ctx.convert(omega1)
         omega2 = ctx.convert(omega2)
@@ -562,51 +595,47 @@ def kleinj(ctx, tau=None, q=None, m=None, k=None, qbar=None,
     return P/Q
 
 
+def _fundamental_domain_tau(ctx, tau):
+    """Reduce an upper-half-plane tau using the Weierstrass conventions."""
+    a, b, c, d = ctx._reduce_psl2z(tau)
+    tau = (a*tau + b) / (c*tau + d)
+    if ctx.almosteq(ctx.re(tau), -ctx.one/2):
+        tau += 1
+    if ctx.almosteq(abs(tau), ctx.one) and ctx.re(tau) < 0:
+        tau = -1/tau
+    return tau
+
+
 @defun_wrapped
 def kleinjinv(ctx, J):
     r"""
-    Evaluates a branch of the inverse Klein j-invariant.
+    Evaluates the canonical inverse Klein j-invariant.
 
-    Given a value `J`, returns a half-period ratio `\tau` in the upper
-    half-plane such that ``kleinj(tau)`` equals `J`, up to numerical error.
-    Since ``kleinj`` is invariant under modular transformations, the inverse
-    is multivalued; this function returns one representative.
-    The branch is determined by principal square/cube roots in the formula
-    below; the returned value is one modularly equivalent preimage and is not
-    canonicalized to a fundamental domain.
-
-    The implementation uses the classical inverse construction via the
-    modular lambda function, described as Method 1 in the Wikipedia article
-    at https://en.wikipedia.org/wiki/J-invariant#Inverse_functions.
-
-    It first converts from the normalized invariant `J` to `j = 1728 J`,
-    then solves
+    Given a value `J`, returns a half-period ratio `\tau` such that
+    ``kleinj(tau)`` equals `J`, up to numerical error. Since ``kleinj`` is
+    invariant under modular transformations, its inverse on the upper
+    half-plane is multivalued. Klein's invariant identifies the modular
+    quotient `\mathbb{H}/\operatorname{PSL}(2,\mathbb{Z})` with the complex
+    plane. Here `\mathbb{H}` is the upper half-plane
+    `\operatorname{Im}(\tau)>0`, and `\operatorname{PSL}(2,\mathbb{Z})` is the
+    modular group, acting by
 
     .. math ::
 
-        j = 256 (1 - x)^3 / x^2, \quad x = \lambda (1 - \lambda),
+        \tau \mapsto \frac{a\tau+b}{c\tau+d}, \qquad
+        a,b,c,d \in \mathbb{Z}, \quad ad-bc=1.
 
-    for `lambda`.  The half-period ratio is then obtained from
+    The quotient means that values of `\tau` related by these transformations
+    are treated as equivalent. Thus every finite `J` has a unique
+    representative once a boundary convention is fixed. This function
+    returns that representative in the standard modular fundamental domain
+    `|\operatorname{Re}(\tau)| \leq 1/2`, `|\tau| \geq 1`. On its boundary,
+    `\operatorname{Re}(\tau)=1/2` is preferred to `-1/2`, and the right half
+    of the circle `|\tau|=1` is preferred. In particular, `J=0` returns
+    `1/2+i\sqrt{3}/2`, and `J=1` returns `i`.
 
-    .. math ::
-
-        \tau = i K(1 - \lambda) / K(\lambda),
-
-    where `K` is the complete elliptic integral.  Using
-
-    .. math ::
-
-        K(m) = \pi / (2 \operatorname{AGM}(1, \sqrt{1 - m})),
-
-    this is evaluated by the arithmetic-geometric mean formula
-
-    .. math ::
-
-        \tau =
-        i \operatorname{AGM}(1, \sqrt{1 - \lambda}) /
-        \operatorname{AGM}(1, \sqrt{\lambda}).
-
-    Different root choices give different modularly equivalent branches.
+    See https://en.wikipedia.org/wiki/J-invariant for background on this
+    correspondence and the standard fundamental domain.
 
     **Examples**
 
@@ -618,21 +647,53 @@ def kleinjinv(ctx, J):
         0.0
         >>> kleinjinv(1)
         (0.0 + 1.0j)
+        >>> kleinjinv(0)
+        (0.5 + 0.8660254037844386467637232j)
+        >>> tau = mp.mpc('2.3', '0.4')
+        >>> chop(kleinjinv(kleinj(tau)))
+        (-0.2 + 1.6j)
 
     """
+
+    # The implementation uses the classical inverse construction via the
+    # modular lambda function, described as Method 1 in the Wikipedia article
+    # at https://en.wikipedia.org/wiki/J-invariant#Inverse_functions.
+    # It first converts from the normalized invariant `J` to `j = 1728 J`,
+    # then solves
+    #     j = 256 (1 - x)^3 / x^2, \quad x = \lambda (1 - \lambda),
+    # for `\lambda`.  The half-period ratio is then obtained from
+    #     \tau = i K(1 - \lambda) / K(\lambda),
+    # where `K` is the complete elliptic integral.  Using
+    #     K(m) = \pi / (2 \operatorname{AGM}(1, \sqrt{1 - m})),
+    # this is evaluated by the arithmetic-geometric mean formula
+    #     \tau =
+    #     i \operatorname{AGM}(1, \sqrt{1 - \lambda}) /
+    #     \operatorname{AGM}(1, \sqrt{\lambda}).
+    # The algebraic construction initially produces one modularly equivalent
+    # value using principal roots. That value is then reduced to the
+    # fundamental domain described above.
     J = ctx.convert(J)
     if J == 0:
-        return ctx.mpc(-ctx.mpf(1)/2, ctx.sqrt(3)/2)
-    _j = 1728 * J
-    sqrt_arg = 3*(1728*_j**2 - _j**3)
-    exponent = ctx.mpf(1) / ctx.mpf(3)
-    t = (-_j**3 + 2304*_j**2 - 884736*_j +
-         12288*ctx.sqrt(sqrt_arg))**exponent
-    x = ctx.mpf(1)/768*t + (1 - _j/768) - (1536*_j - _j**2) / (768*t)
+        tau = ctx.mpc(-ctx.mpf(1)/2, ctx.sqrt(3)/2)
+    else:
+        _j = 1728 * J
+        sqrt_arg = 3*(1728*_j**2 - _j**3)
+        exponent = ctx.mpf(1) / ctx.mpf(3)
+        t = (-_j**3 + 2304*_j**2 - 884736*_j +
+             12288*ctx.sqrt(sqrt_arg))**exponent
+        x = (ctx.mpf(1)/768*t + (1 - _j/768) -
+             (1536*_j - _j**2)/(768*t))
+        lbd = (1 + ctx.sqrt(1 - 4*x))/2
 
-    lbd = (1 + ctx.sqrt(1 - 4*x)) / 2
-    tau = ctx.j * ctx.agm(1, ctx.sqrt(1-lbd)) / ctx.agm(1, ctx.sqrt(lbd))
-    return tau
+        # For real J > 1 the selected lambda is real. Principal-root rounding
+        # can leave a sub-precision imaginary part, needlessly making both AGM
+        # evaluations use substantially slower complex arithmetic.
+        if ctx.im(J) == 0 and ctx.re(J) > 1:
+            lbd = ctx.re(lbd)
+        agm_m = ctx.agm(1, ctx.sqrt(1-lbd))
+        agm_complement = ctx.agm(1, ctx.sqrt(lbd))
+        tau = ctx.j*agm_m/agm_complement
+    return _fundamental_domain_tau(ctx, tau)
 
 
 def RF_calc(ctx, x, y, z, r):
@@ -1660,6 +1721,36 @@ def _roots_from_omega(ctx, omega1, omega2):
     return e1, e2, e3
 
 
+def _real_elliptic_data(ctx, g2, g3, discriminant):
+    """Return K(m), K(1-m), and the real period-scale denominator."""
+    if discriminant > 0:
+        # Three ordered real roots, obtained without complex Cardano values.
+        root_scale = ctx.sqrt(g2/3)
+        cosine = 3*ctx.sqrt(3)*g3/(g2*ctx.sqrt(g2))
+        cosine = min(ctx.one, max(-ctx.one, cosine))
+        theta = ctx.acos(cosine)/3
+        e1 = root_scale*ctx.cos(theta)
+        e2 = root_scale*ctx.cos(theta-2*ctx.pi/3)
+        e3 = root_scale*ctx.cos(theta+2*ctx.pi/3)
+        period_scale = e1-e3
+        m = (e2-e3)/period_scale
+    else:
+        # One real root and a conjugate pair, using real Cardano radicals.
+        root_discriminant = ctx.sqrt(-discriminant/1728)
+        exponent = ctx.mpf(1)/3
+        u3 = g3/8 + root_discriminant
+        v3 = g3/8 - root_discriminant
+        u = ctx.sign(u3)*abs(u3)**exponent
+        v = ctx.sign(v3)*abs(v3)**exponent
+        real_root = u+v
+        root_real_part = 3*real_root/2
+        root_imaginary_part = ctx.sqrt(3)*(u-v)/2
+        period_scale = ctx.sqrt(
+            root_real_part**2 + root_imaginary_part**2)
+        m = (period_scale-root_real_part)/(2*period_scale)
+    return ctx.ellipk(m), ctx.ellipk(1-m), period_scale
+
+
 def _eisenstein_E4_E6(ctx, tau):
     """
     Eisenstein E-series of weight 4 and 6.
@@ -1838,51 +1929,24 @@ def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                 real_g2 = ctx.re(g2)
                 real_g3 = ctx.re(g3)
                 real_discriminant = ctx.re(discriminant)
+                K, K_complement, period_scale = _real_elliptic_data(
+                    ctx, real_g2, real_g3, real_discriminant)
                 if real_discriminant > 0:
-                    # Three real roots. A trigonometric solution avoids the
-                    # complex intermediate values in Cardano's formula. The
-                    # ordered roots give a real elliptic parameter m.
-                    root_scale = ctx.sqrt(real_g2/3)
-                    cosine = (3*ctx.sqrt(3)*real_g3 /
-                              (real_g2*ctx.sqrt(real_g2)))
-                    cosine = min(ctx.one, max(-ctx.one, cosine))
-                    theta = ctx.acos(cosine)/3
-                    e1 = root_scale*ctx.cos(theta)
-                    e2 = root_scale*ctx.cos(theta-2*ctx.pi/3)
-                    e3 = root_scale*ctx.cos(theta+2*ctx.pi/3)
-                    D = e1-e3
-                    m = (e2-e3)/D
-                    sqrt_D = ctx.sqrt(D)
-                    real_period = ctx.ellipk(m)/sqrt_D
-                    imaginary_period = ctx.ellipk(1-m)/sqrt_D
+                    sqrt_D = ctx.sqrt(period_scale)
+                    real_period = K/sqrt_D
+                    imaginary_period = K_complement/sqrt_D
 
-                    # For m <= 1/2 the standard rectangular basis is already
-                    # reduced. For m > 1/2 apply its S-transform directly.
-                    if m <= ctx.one/2:
+                    # For positive g3 the standard rectangular basis is
+                    # already reduced. For negative g3 apply its S-transform.
+                    if real_g3 > 0:
                         periods = (real_period,
                                    ctx.j*imaginary_period)
                     else:
                         periods = (-ctx.j*imaginary_period, real_period)
                 else:
-                    # One real root and a conjugate pair. Real Cardano radicals
-                    # followed by a quadratic transformation express both
-                    # periods using complete elliptic integrals with real
-                    # parameters.
-                    root_discriminant = ctx.sqrt(-real_discriminant/1728)
-                    exponent = ctx.mpf(1)/3
-                    u3 = real_g3/8 + root_discriminant
-                    v3 = real_g3/8 - root_discriminant
-                    u = ctx.sign(u3)*abs(u3)**exponent
-                    v = ctx.sign(v3)*abs(v3)**exponent
-                    real_root = u+v
-                    root_real_part = 3*real_root/2
-                    root_imaginary_part = ctx.sqrt(3)*(u-v)/2
-                    H = ctx.sqrt(root_real_part**2 +
-                                 root_imaginary_part**2)
-                    m = (H-root_real_part)/(2*H)
-                    sqrt_H = ctx.sqrt(H)
-                    real_period = ctx.ellipk(m)/sqrt_H
-                    imaginary_part = ctx.ellipk(1-m)/(2*sqrt_H)
+                    sqrt_H = ctx.sqrt(period_scale)
+                    real_period = K/sqrt_H
+                    imaginary_part = K_complement/(2*sqrt_H)
 
                     # These bases directly implement the documented
                     # fundamental-domain and simultaneous-sign conventions in
