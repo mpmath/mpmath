@@ -7,12 +7,15 @@ class SpecialFunctions:
     "builtins" or "low-level" functions.
     """
     defined_functions = {}
+    memoized_last_functions = set()
 
     def __init__(self):
         cls = self.__class__
         for name in cls.defined_functions:
             f, wrap = cls.defined_functions[name]
             cls._wrap_specfun(name, f, wrap)
+            if name in cls.memoized_last_functions:
+                setattr(self, name, self.memoize_last(getattr(self, name)))
 
         self._misc_const_cache = {}
 
@@ -59,6 +62,11 @@ def defun_wrapped(f):
 
 def defun(f):
     SpecialFunctions.defined_functions[f.__name__] = f, False
+    return f
+
+def defun_memoized_last(f):
+    SpecialFunctions.defined_functions[f.__name__] = f, False
+    SpecialFunctions.memoized_last_functions.add(f.__name__)
     return f
 
 def defun_static(f):

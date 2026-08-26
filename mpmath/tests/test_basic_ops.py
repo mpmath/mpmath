@@ -346,6 +346,35 @@ def test_monitor():
     assert a[0] == ((3,), {})
     assert b[0] == 9
 
+
+def test_memoize_last():
+    ctx = mp.clone()
+    calls = []
+
+    def f(x):
+        calls.append(x)
+        return ctx.mpf(x) / 3
+
+    cached = ctx.memoize_last(f)
+    ctx.prec = 80
+    first = cached(2)
+    assert cached(2) == first
+    assert calls == [2]
+
+    third = cached(x=3)
+    assert cached(x=3) == third
+    cached(2)
+    assert calls == [2, 3, 2]
+
+    ctx.prec = 60
+    assert cached(2) == +first
+    assert calls == [2, 3, 2]
+
+    ctx.prec = 100
+    cached(2)
+    assert calls == [2, 3, 2, 2]
+
+
 def test_nint_distance():
     assert nint_distance(mpf(-3)) == (-3, -inf)
     assert nint_distance(mpc(-3)) == (-3, -inf)

@@ -68,7 +68,7 @@ applicable (:func:`~mpmath.qfrom`, :func:`~mpmath.mfrom`,
 
 """
 
-from .functions import defun, defun_wrapped
+from .functions import defun, defun_memoized_last, defun_wrapped
 
 @defun_wrapped
 def eta(ctx, tau):
@@ -1838,7 +1838,7 @@ def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                    j3**12))
     return +g2, +g3
 
-@defun
+@defun_memoized_last
 def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                      g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -2049,10 +2049,6 @@ def weierp(ctx, z, g2=None, g3=None, tau=None, omega1=None, omega2=None):
 
     The periods of `\wp` are `2\omega_1` and `2\omega_2`. Thus the
     `\tau` parameterization corresponds to periods `1` and `\tau`.
-
-    For repeated evaluation with the same invariants, it is faster to compute
-    the half-periods once with :func:`~mpmath.omega1omega2from` and pass
-    them using the ``omega1`` and ``omega2`` keywords.
 
     **Examples**
 

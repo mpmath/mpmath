@@ -1,5 +1,6 @@
 import random
 from operator import gt, lt
+from typing import Any
 
 from . import libmp
 from .calculus.calculus import CalculusMethods
@@ -517,6 +518,53 @@ class StandardBaseContext(Context,
                     return +cvalue
             value = f(*args, **kwargs)
             f_cache[key] = (prec, value)
+            return value
+        f_cached.__name__ = f.__name__
+        f_cached.__doc__ = f.__doc__
+        return f_cached
+
+    def memoize_last(ctx, f):
+        """
+        Return a wrapped copy of *f* that caches only its most recently
+        computed value. Values are reused only if the cached precision is
+        equal to or higher than the working precision.
+
+        Unlike :meth:`memoize`, which retains a value for every distinct set
+        of arguments, this method replaces the cached value whenever the
+        arguments change. It is useful when repeated consecutive calls are
+        expected but an unbounded cache is undesirable::
+
+            >>> from mpmath import maxcalls, memoize_last, mp, sin
+            >>> mp.pretty = True
+            >>> f = memoize_last(maxcalls(sin, 2))
+            >>> f(2)
+            0.909297426825682
+            >>> f(2)
+            0.909297426825682
+            >>> f(3)
+            0.141120008059867
+            >>> f(2)
+            Traceback (most recent call last):
+              ...
+            NoConvergence: maxcalls: function evaluated 2 times
+        """
+        last: tuple[Any, int, Any] | None = None
+
+        def f_cached(*args, **kwargs):
+            nonlocal last
+            if kwargs:
+                key = args, tuple(kwargs.items())
+            else:
+                key = args
+            prec = ctx.prec
+            if last is not None:
+                ckey, cprec, cvalue = last
+                if key == ckey and cprec >= prec:
+                    if type(cvalue) is tuple:
+                        return tuple(+value for value in cvalue)
+                    return +cvalue
+            value = f(*args, **kwargs)
+            last = key, prec, value
             return value
         f_cached.__name__ = f.__name__
         f_cached.__doc__ = f.__doc__

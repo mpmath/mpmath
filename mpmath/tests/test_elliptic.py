@@ -1202,6 +1202,44 @@ def test_weierstrass_conversions_with_weierp():
     assert mpc_ae(weierp(z, g2=g2, g3=g3),
                   weierp(z, omega1=omega1, omega2=omega2), eps=eps*1000)
 
+
+def test_omega1omega2from_last_value_cache(monkeypatch):
+    from mpmath.functions import elliptic
+
+    ctx = mp.clone()
+    calls = []
+    original = elliptic._validate_weierstrass_parameter_args
+
+    def counted(*args, **kwargs):
+        calls.append(None)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(
+        elliptic, "_validate_weierstrass_parameter_args", counted)
+
+    first = ctx.omega1omega2from(g2=60, g3=140)
+    second = ctx.omega1omega2from(g2=60, g3=140)
+    assert first == second
+    assert len(calls) == 1
+
+    ctx.prec -= 10
+    ctx.omega1omega2from(g2=60, g3=140)
+    assert len(calls) == 1
+    ctx.prec += 10
+
+    ctx.omega1omega2from(g2=4, g3=1)
+    ctx.omega1omega2from(g2=60, g3=140)
+    assert len(calls) == 3
+
+    ctx.prec += 10
+    ctx.omega1omega2from(g2=60, g3=140)
+    assert len(calls) == 4
+
+    other_ctx = mp.clone()
+    other_ctx.omega1omega2from(g2=60, g3=140)
+    assert len(calls) == 5
+
+
 def test_weierstrass_periodicity():
     mp.dps = 30
 
