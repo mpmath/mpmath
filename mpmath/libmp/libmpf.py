@@ -59,7 +59,7 @@ fninf = (1, MPZ_ZERO, -789, -3)
 
 math_float_inf = math.inf
 math_float_nan = math.nan
-blog2_10 = 3.3219280948873626
+blog2_10 = 3.321928094887362
 
 float_mant_dig = sys.float_info.mant_dig
 float_min_exp = sys.float_info.min_exp
