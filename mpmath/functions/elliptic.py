@@ -660,16 +660,12 @@ def kleinjinv(ctx, J):
     # at https://en.wikipedia.org/wiki/J-invariant#Inverse_functions.
     # It first converts from the normalized invariant `J` to `j = 1728 J`,
     # then solves
-    # .. math ::
     #     j = 256 (1 - x)^3 / x^2, \quad x = \lambda (1 - \lambda),
     # for `\lambda`.  The half-period ratio is then obtained from
-    # .. math ::
     #     \tau = i K(1 - \lambda) / K(\lambda),
     # where `K` is the complete elliptic integral.  Using
-    # .. math ::
     #     K(m) = \pi / (2 \operatorname{AGM}(1, \sqrt{1 - m})),
     # this is evaluated by the arithmetic-geometric mean formula
-    # .. math ::
     #     \tau =
     #     i \operatorname{AGM}(1, \sqrt{1 - \lambda}) /
     #     \operatorname{AGM}(1, \sqrt{\lambda}).
