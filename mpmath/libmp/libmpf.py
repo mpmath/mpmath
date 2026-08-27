@@ -1136,30 +1136,30 @@ def to_digits_exp(s, dps, base=10):
     if not man:
         return '', '0'*int(dps), 0
 
-    if base == 10:
-        blog2 = blog2_10
-    elif pow(2, blog2 := int(math.log2(base))) == base:
+    if pow(2, blog2 := int(math.log2(base))) == base:
         pass
     else:
-        raise NotImplementedError
+        blog2 = blog2_10 if base == 10 else math.log2(base)
 
     bitprec = int(dps * blog2) + 10
 
     # Cut down to size
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
-    if base == 10 and abs(exp_from_1) > 3500:
-        from .libelefun import mpf_ln2, mpf_ln10
+    if abs(exp_from_1) > 3500:
+        from .libelefun import mpf_ln2, mpf_ln10, mpf_log
 
-        # Set b = int(exp * log(2)/log(10))
+        # Set b = int(exp * log(2)/log(base))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
         expprec = exp.bit_length() + 5
         tmp = from_int(exp)
+        fbase = from_int(base)
+        logb = mpf_ln10(expprec) if base == 10 else mpf_log(fbase, expprec)
         tmp = mpf_mul(tmp, mpf_ln2(expprec))
-        tmp = mpf_div(tmp, mpf_ln10(expprec), expprec)
+        tmp = mpf_div(tmp, logb, expprec)
         b = to_int(tmp)
-        s = mpf_div(s, mpf_pow_int(ften, b, bitprec), bitprec)
+        s = mpf_div(s, mpf_pow_int(fbase, b, bitprec), bitprec)
         _sign, man, exp, bc = s
         exponent = b
     else:
@@ -1167,7 +1167,7 @@ def to_digits_exp(s, dps, base=10):
 
     # First, calculate mantissa digits by converting to a binary
     # fixed-point number and then converting that number to
-    # a decimal fixed-point number.
+    # a fixed-point number in a specified base.
     fixprec = max(bitprec - exp - bc, 0)
     fixdps = int(fixprec / blog2 + 0.5)
     sf = to_fixed(s, fixprec)
