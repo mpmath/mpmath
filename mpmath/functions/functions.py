@@ -1,3 +1,28 @@
+from functools import lru_cache, wraps
+from inspect import signature
+from typing import Any, cast
+
+
+def _ctx_lru_cache(ctx, f, maxsize):
+    """Cache *f* by its arguments and the context's current precision."""
+    @lru_cache(maxsize=maxsize)
+    def cached(_prec, /, *args, **kwargs):
+        # lru_cache includes _prec in its key, preventing a value computed at
+        # one precision from being reused at another. The calculation itself
+        # reads the same precision from ctx, so it need not otherwise use it.
+        _ = _prec
+        return f(*args, **kwargs)
+
+    @wraps(f)
+    def f_cached(*args, **kwargs):
+        return cached(ctx.prec, *args, **kwargs)
+
+    # This wrapper is stored directly on a context instance, so wraps alone
+    # would expose the unbound function's leading ctx parameter.
+    cast(Any, f_cached).__signature__ = signature(f)
+    return f_cached
+
+
 class SpecialFunctions:
     """
     This class implements special functions using high-level code.
@@ -7,12 +32,17 @@ class SpecialFunctions:
     "builtins" or "low-level" functions.
     """
     defined_functions = {}
+    lru_cache_functions = {}
 
     def __init__(self):
         cls = self.__class__
         for name in cls.defined_functions:
             f, wrap = cls.defined_functions[name]
             cls._wrap_specfun(name, f, wrap)
+            if name in cls.lru_cache_functions:
+                maxsize = cls.lru_cache_functions[name]
+                setattr(self, name, _ctx_lru_cache(
+                    self, getattr(self, name), maxsize))
 
         self._misc_const_cache = {}
 
@@ -60,6 +90,14 @@ def defun_wrapped(f):
 def defun(f):
     SpecialFunctions.defined_functions[f.__name__] = f, False
     return f
+
+def defun_lru_cache(maxsize):
+    """Register a function with a per-context LRU cache."""
+    def decorator(f):
+        SpecialFunctions.defined_functions[f.__name__] = f, False
+        SpecialFunctions.lru_cache_functions[f.__name__] = maxsize
+        return f
+    return decorator
 
 def defun_static(f):
     setattr(SpecialFunctions, f.__name__, f)
