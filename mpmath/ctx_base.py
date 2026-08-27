@@ -1,3 +1,4 @@
+import inspect
 import random
 from operator import gt, lt
 from typing import Any
@@ -568,4 +569,8 @@ class StandardBaseContext(Context,
             return value
         f_cached.__name__ = f.__name__
         f_cached.__doc__ = f.__doc__
+        try:
+            f_cached.__signature__ = inspect.signature(f)
+        except (TypeError, ValueError):  # pragma: no cover
+            pass
         return f_cached

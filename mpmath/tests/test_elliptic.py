@@ -11,7 +11,9 @@ Author of the first version: M.T. Taschuk
 
 """
 
+import inspect
 import random
+from typing import Any
 
 import pytest
 
@@ -1206,7 +1208,11 @@ def test_weierstrass_conversions_with_weierp():
 def test_omega1omega2from_last_value_cache(monkeypatch):
     from mpmath.functions import elliptic
 
-    ctx = mp.clone()
+    ctx: Any = mp.clone()
+    cached = ctx.omega1omega2from
+    expected_signature = inspect.signature(
+        elliptic.omega1omega2from.__get__(ctx, type(ctx)))
+    assert inspect.signature(cached) == expected_signature
     calls = []
     original = elliptic._validate_weierstrass_parameter_args
 
@@ -1217,25 +1223,25 @@ def test_omega1omega2from_last_value_cache(monkeypatch):
     monkeypatch.setattr(
         elliptic, "_validate_weierstrass_parameter_args", counted)
 
-    first = ctx.omega1omega2from(g2=60, g3=140)
-    second = ctx.omega1omega2from(g2=60, g3=140)
+    first = cached(g2=60, g3=140)
+    second = cached(g2=60, g3=140)
     assert first == second
     assert len(calls) == 1
 
     ctx.prec -= 10
-    ctx.omega1omega2from(g2=60, g3=140)
+    cached(g2=60, g3=140)
     assert len(calls) == 1
     ctx.prec += 10
 
-    ctx.omega1omega2from(g2=4, g3=1)
-    ctx.omega1omega2from(g2=60, g3=140)
+    cached(g2=4, g3=1)
+    cached(g2=60, g3=140)
     assert len(calls) == 3
 
     ctx.prec += 10
-    ctx.omega1omega2from(g2=60, g3=140)
+    cached(g2=60, g3=140)
     assert len(calls) == 4
 
-    other_ctx = mp.clone()
+    other_ctx: Any = mp.clone()
     other_ctx.omega1omega2from(g2=60, g3=140)
     assert len(calls) == 5
 

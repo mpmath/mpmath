@@ -1,5 +1,6 @@
 import collections
 import decimal
+import inspect
 import math
 import operator
 import random
@@ -356,6 +357,7 @@ def test_memoize_last():
         return ctx.mpf(x) / 3
 
     cached = ctx.memoize_last(f)
+    assert inspect.signature(cached) == inspect.signature(f)
     ctx.prec = 80
     first = cached(2)
     assert cached(2) == first
