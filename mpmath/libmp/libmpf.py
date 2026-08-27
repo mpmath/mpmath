@@ -1283,6 +1283,10 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     The literal is formatted so that it can be parsed back to a number
     by from_str, float(), float.fromhex() or Decimal().
     """
+    base = int(base)
+    if base < 2 or base > 36:
+        raise ValueError("ValueError: base must be >= 2 and <= 36")
+
     sep = '@' if base > 10 else 'e'
 
     if binary_exp:
@@ -1446,24 +1450,23 @@ def from_str(x, prec=0, rnd=round_down, base=0):
 
     man, exp = str_to_man_exp(x, base)
 
-    if base == 10:
-        # XXX: appropriate cutoffs & track direction
-        # note no factors of 5
-        if abs(exp) > 400:
-            s = from_int(man, prec+10)
-            s = mpf_mul(s, mpf_pow_int(ften, exp, prec+10), prec, rnd)
-        else:
-            if exp >= 0:
-                s = from_int(man * 10**exp, prec, rnd)
-            else:
-                s = from_rational(man, 10**-exp, prec, rnd)
-    elif pow(2, e2 := int(math.log2(base))) == base:
+    if pow(2, e2 := int(math.log2(base))) == base:
         if x.find('p') < 0:
             s = from_man_exp(man, exp*e2, prec, rnd)
         else:
             s = from_man_exp(man, exp, prec, rnd)
     else:
-        raise NotImplementedError
+        # XXX: appropriate cutoffs & track direction
+        # note no factors of 5
+        if abs(exp) > 400:
+            s = from_int(man, prec+10)
+            fbase = from_int(base)
+            s = mpf_mul(s, mpf_pow_int(fbase, exp, prec+10), prec, rnd)
+        else:
+            if exp >= 0:
+                s = from_int(man * base**exp, prec, rnd)
+            else:
+                s = from_rational(man, base**-exp, prec, rnd)
     return s
 
 
