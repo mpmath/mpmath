@@ -1,4 +1,5 @@
 import cmath
+import inspect
 import math
 import random
 
@@ -15,6 +16,7 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     nthroot, phi, pi, power, powm1, radians, rand, re, root,
                     sec, sech, sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan,
                     tanh, twinprime, unitroots)
+from mpmath.functions.functions import _ctx_lru_cache
 from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
                           mpf_mul, mpf_pow_int, mpf_sqrt, round_ceiling,
                           round_down, round_nearest, round_up)
@@ -26,6 +28,41 @@ def mpc_ae(a, b, eps=eps):
     res = res and a.real.ae(b.real, eps)
     res = res and a.imag.ae(b.imag, eps)
     return res
+
+
+def test_ctx_lru_cache():
+    ctx = mp.clone()
+    ctx.prec = 80
+    calls = []
+
+    def f(x):
+        calls.append(x)
+        return ctx.mpf(x) / 3
+
+    cached = _ctx_lru_cache(ctx, f, maxsize=2)
+    assert inspect.signature(cached) == inspect.signature(f)
+
+    first = cached(1)
+    assert cached(1) == first
+    cached(2)
+    cached(1)
+    cached(3)
+    cached(1)
+    cached(2)
+    assert calls == [1, 2, 3, 2]
+
+    ctx.prec = 60
+    cached(2)
+    cached(2)
+    assert calls == [1, 2, 3, 2, 2]
+
+    ctx.prec = 80
+    cached(2)
+    assert calls == [1, 2, 3, 2, 2]
+
+    ctx.prec = 100
+    cached(2)
+    assert calls == [1, 2, 3, 2, 2, 2]
 
 #----------------------------------------------------------------------------
 # Constants and functions

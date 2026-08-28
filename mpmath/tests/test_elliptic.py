@@ -1205,7 +1205,7 @@ def test_weierstrass_conversions_with_weierp():
                   weierp(z, omega1=omega1, omega2=omega2), eps=eps*1000)
 
 
-def test_omega1omega2from_last_value_cache(monkeypatch):
+def test_omega1omega2from_lru_cache(monkeypatch):
     from mpmath.functions import elliptic
 
     ctx: Any = mp.clone()
@@ -1230,20 +1230,30 @@ def test_omega1omega2from_last_value_cache(monkeypatch):
 
     ctx.prec -= 10
     cached(g2=60, g3=140)
-    assert len(calls) == 1
+    assert len(calls) == 2
     ctx.prec += 10
+    cached(g2=60, g3=140)
+    assert len(calls) == 2
 
     cached(g2=4, g3=1)
     cached(g2=60, g3=140)
     assert len(calls) == 3
 
-    ctx.prec += 10
-    cached(g2=60, g3=140)
-    assert len(calls) == 4
-
     other_ctx: Any = mp.clone()
     other_ctx.omega1omega2from(g2=60, g3=140)
-    assert len(calls) == 5
+    assert len(calls) == 4
+
+    capacity_ctx: Any = mp.clone()
+    capacity_cached = capacity_ctx.omega1omega2from
+    taus = [mpc(k, 1) for k in range(17)]
+    before = len(calls)
+    for tau in taus[:16]:
+        capacity_cached(tau=tau)
+    capacity_cached(tau=taus[0])
+    capacity_cached(tau=taus[16])
+    capacity_cached(tau=taus[0])
+    capacity_cached(tau=taus[1])
+    assert len(calls) - before == 18
 
 
 def test_weierstrass_periodicity():
