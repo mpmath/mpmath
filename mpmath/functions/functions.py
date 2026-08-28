@@ -4,18 +4,27 @@ from typing import Any, cast
 
 
 def _ctx_lru_cache(ctx, f, maxsize):
-    """Cache *f* by its arguments and the context's current precision."""
+    """Cache *f* by its arguments and the context's numerical state."""
+    has_rounding = hasattr(ctx, 'rounding')
+    has_trap_complex = hasattr(ctx, 'trap_complex')
+
     @lru_cache(maxsize=maxsize)
-    def cached(_prec, /, *args, **kwargs):
-        # lru_cache includes _prec in its key, preventing a value computed at
-        # one precision from being reused at another. The calculation itself
-        # reads the same precision from ctx, so it need not otherwise use it.
-        _ = _prec
+    def cached(_ctx_state, /, *args, **kwargs):
+        # lru_cache includes the context state in its key, preventing a value
+        # computed with one numerical setting from being reused with another.
+        # The calculation reads the same state from ctx, so it need not
+        # otherwise use this argument.
+        _ = _ctx_state
         return f(*args, **kwargs)
 
     @wraps(f)
     def f_cached(*args, **kwargs):
-        return cached(ctx.prec, *args, **kwargs)
+        # Fixed-precision and interval contexts do not expose rounding or
+        # trap_complex, so use a stable placeholder for those contexts.
+        rounding = ctx.rounding if has_rounding else None
+        trap_complex = ctx.trap_complex if has_trap_complex else None
+        ctx_state = (ctx.prec, rounding, trap_complex)
+        return cached(ctx_state, *args, **kwargs)
 
     # This wrapper is stored directly on a context instance, so wraps alone
     # would expose the unbound function's leading ctx parameter.

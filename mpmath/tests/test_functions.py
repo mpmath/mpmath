@@ -64,6 +64,45 @@ def test_ctx_lru_cache():
     cached(2)
     assert calls == [1, 2, 3, 2, 2, 2]
 
+
+def test_ctx_lru_cache_context_state():
+    ctx = mp.clone()
+    calls = []
+
+    def f():
+        calls.append((ctx.prec, ctx.rounding, ctx.trap_complex))
+        return len(calls)
+
+    cached = _ctx_lru_cache(ctx, f, maxsize=8)
+    assert cached() == 1
+    assert cached() == 1
+
+    ctx.rounding = 'd'
+    assert cached() == 2
+    assert cached() == 2
+
+    ctx.trap_complex = True
+    assert cached() == 3
+    assert cached() == 3
+
+    ctx.rounding = 'n'
+    assert cached() == 4
+    ctx.trap_complex = False
+    assert cached() == 1
+
+    class FixedContext:
+        prec = 53
+
+    fixed_calls = []
+
+    def fixed_f():
+        fixed_calls.append(None)
+        return 1
+
+    fixed_cached = _ctx_lru_cache(FixedContext(), fixed_f, maxsize=1)
+    assert fixed_cached() == fixed_cached() == 1
+    assert len(fixed_calls) == 1
+
 #----------------------------------------------------------------------------
 # Constants and functions
 #
