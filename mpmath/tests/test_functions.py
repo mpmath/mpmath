@@ -16,7 +16,7 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     nthroot, phi, pi, power, powm1, radians, rand, re, root,
                     sec, sech, sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan,
                     tanh, twinprime, unitroots)
-from mpmath.functions.functions import _ctx_lru_cache
+from mpmath.functions.functions import SpecialFunctions, defun_lru_cache
 from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
                           mpf_mul, mpf_pow_int, mpf_sqrt, round_ceiling,
                           round_down, round_nearest, round_up)
@@ -30,78 +30,51 @@ def mpc_ae(a, b, eps=eps):
     return res
 
 
-def test_ctx_lru_cache():
-    ctx = mp.clone()
-    ctx.prec = 80
+def test_defun_lru_cache(monkeypatch):
+    monkeypatch.setattr(
+        SpecialFunctions, 'defined_functions',
+        SpecialFunctions.defined_functions.copy())
+    monkeypatch.setattr(
+        SpecialFunctions, 'lru_cache_functions',
+        SpecialFunctions.lru_cache_functions.copy())
     calls = []
 
-    def f(x):
-        calls.append(x)
-        return ctx.mpf(x) / 3
-
-    cached = _ctx_lru_cache(ctx, f, maxsize=2)
-    assert inspect.signature(cached) == inspect.signature(f)
-
-    first = cached(1)
-    assert cached(1) == first
-    cached(2)
-    cached(1)
-    cached(3)
-    cached(1)
-    cached(2)
-    assert calls == [1, 2, 3, 2]
-
-    ctx.prec = 60
-    cached(2)
-    cached(2)
-    assert calls == [1, 2, 3, 2, 2]
-
-    ctx.prec = 80
-    cached(2)
-    assert calls == [1, 2, 3, 2, 2]
-
-    ctx.prec = 100
-    cached(2)
-    assert calls == [1, 2, 3, 2, 2, 2]
-
-
-def test_ctx_lru_cache_context_state():
-    ctx = mp.clone()
-    calls = []
-
-    def f():
-        calls.append((ctx.prec, ctx.rounding, ctx.trap_complex))
+    @defun_lru_cache(maxsize=2)
+    def _test_lru_cache(ctx, x):
+        calls.append((ctx, x))
         return len(calls)
 
-    cached = _ctx_lru_cache(ctx, f, maxsize=8)
-    assert cached() == 1
-    assert cached() == 1
+    name = _test_lru_cache.__name__
+    assert SpecialFunctions.lru_cache_functions[name] == 2
+    context_classes = (type(mp), type(fp))
+    try:
+        ctx = mp.clone()
+        cached = vars(ctx)['_test_lru_cache']
+        expected_signature = inspect.signature(
+            _test_lru_cache.__get__(ctx, type(ctx)))
+        assert inspect.signature(cached) == expected_signature
 
-    ctx.rounding = 'd'
-    assert cached() == 2
-    assert cached() == 2
+        assert cached(1) == cached(1) == 1
+        assert cached(2) == 2
+        assert cached(1) == 1
+        assert cached(3) == 3
+        assert cached(1) == 1
+        assert cached(2) == 4
 
-    ctx.trap_complex = True
-    assert cached() == 3
-    assert cached() == 3
+        ctx.prec -= 10
+        assert cached(2) == cached(2) == 5
+        ctx.rounding = 'd'
+        assert cached(2) == cached(2) == 6
+        ctx.trap_complex = True
+        assert cached(2) == cached(2) == 7
 
-    ctx.rounding = 'n'
-    assert cached() == 4
-    ctx.trap_complex = False
-    assert cached() == 1
-
-    class FixedContext:
-        prec = 53
-
-    fixed_calls = []
-
-    def fixed_f():
-        fixed_calls.append(None)
-        return 1
-
-    fixed_cached = _ctx_lru_cache(FixedContext(), fixed_f, maxsize=1)
-    assert fixed_cached() == fixed_cached() == 1
-    assert len(fixed_calls) == 1
+        fixed_ctx = type(fp)()
+        fixed_cached = vars(fixed_ctx)['_test_lru_cache']
+        assert fixed_cached(1) == fixed_cached(1) == 8
+    finally:
+        for context_class in context_classes:
+            if name in vars(context_class):
+                delattr(context_class, name)
 
 #----------------------------------------------------------------------------
 # Constants and functions

@@ -13,7 +13,6 @@ Author of the first version: M.T. Taschuk
 
 import inspect
 import random
-from typing import Any
 
 import pytest
 
@@ -1205,11 +1204,35 @@ def test_weierstrass_conversions_with_weierp():
                   weierp(z, omega1=omega1, omega2=omega2), eps=eps*1000)
 
 
+def test_g2g3from_lru_cache(monkeypatch):
+    from mpmath.functions import elliptic
+
+    ctx = mp.clone()
+    cached = vars(ctx)['g2g3from']
+    calls = []
+    original = elliptic._validate_weierstrass_parameter_args
+
+    def counted(*args, **kwargs):
+        calls.append(None)
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(
+        elliptic, "_validate_weierstrass_parameter_args", counted)
+
+    first = cached(omega1=1, omega2=0.5j)
+    assert cached(omega1=1, omega2=0.5j) == first
+    assert len(calls) == 1
+
+    cached(omega1=2, omega2=1j)
+    cached(omega1=1, omega2=0.5j)
+    assert len(calls) == 2
+
+
 def test_omega1omega2from_lru_cache(monkeypatch):
     from mpmath.functions import elliptic
 
-    ctx: Any = mp.clone()
-    cached = ctx.omega1omega2from
+    ctx = mp.clone()
+    cached = vars(ctx)['omega1omega2from']
     expected_signature = inspect.signature(
         elliptic.omega1omega2from.__get__(ctx, type(ctx)))
     assert inspect.signature(cached) == expected_signature
@@ -1255,12 +1278,12 @@ def test_omega1omega2from_lru_cache(monkeypatch):
     cached(g2=60, g3=140)
     assert len(calls) == 5
 
-    other_ctx: Any = mp.clone()
-    other_ctx.omega1omega2from(g2=60, g3=140)
+    other_ctx = mp.clone()
+    vars(other_ctx)['omega1omega2from'](g2=60, g3=140)
     assert len(calls) == 6
 
-    capacity_ctx: Any = mp.clone()
-    capacity_cached = capacity_ctx.omega1omega2from
+    capacity_ctx = mp.clone()
+    capacity_cached = vars(capacity_ctx)['omega1omega2from']
     taus = [mpc(k, 1) for k in range(17)]
     before = len(calls)
     for tau in taus[:16]:

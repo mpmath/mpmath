@@ -1782,7 +1782,7 @@ def _eisenstein_G4_G6(ctx, tau):
 # Weierstrass parameter conversion functions
 # ============================================================================
 
-@defun
+@defun_lru_cache(maxsize=16)
 def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
              g2=None, g3=None, omega1=None, omega2=None):
     r"""
