@@ -33,11 +33,47 @@ def dps_to_prec(n):
     accurately."""
     return max(1, round((int(n) + 1)*blog2_10))
 
-def repr_dps(n):
-    """Return the number of decimal digits required to represent
+blog2 = [1.0,
+ 1.584962500721156,
+ 2.0,
+ 2.321928094887362,
+ 2.584962500721156,
+ 2.807354922057604,
+ 3.0,
+ 3.169925001442312,
+ 3.321928094887362,
+ 3.4594316186372973,
+ 3.584962500721156,
+ 3.700439718141092,
+ 3.807354922057604,
+ 3.9068905956085187,
+ 4.0,
+ 4.087462841250339,
+ 4.169925001442312,
+ 4.247927513443585,
+ 4.321928094887363,
+ 4.392317422778761,
+ 4.459431618637297,
+ 4.523561956057013,
+ 4.584962500721156,
+ 4.643856189774724,
+ 4.700439718141092,
+ 4.754887502163468,
+ 4.807354922057604,
+ 4.857980995127572,
+ 4.906890595608519,
+ 4.954196310386875,
+ 5.0,
+ 5.044394119358453,
+ 5.087462841250339,
+ 5.129283016944966,
+ 5.169925001442312]
+
+def repr_dps(n, base=10):
+    """Return the number of digits required to represent
     a number with n-bit precision so that it can be uniquely
     reconstructed from the representation."""
-    return 1 + math.ceil(int(n)/blog2_10)
+    return 1 + math.ceil(int(n)/blog2[base-2])
 
 #----------------------------------------------------------------------------#
 #                    Some commonly needed float values                       #
@@ -59,7 +95,7 @@ fninf = (1, MPZ_ZERO, -789, -3)
 
 math_float_inf = math.inf
 math_float_nan = math.nan
-blog2_10 = 3.3219280948873626
+blog2_10 = 3.321928094887362
 
 float_mant_dig = sys.float_info.mant_dig
 float_min_exp = sys.float_info.min_exp
@@ -1136,30 +1172,30 @@ def to_digits_exp(s, dps, base=10):
     if not man:
         return '', '0'*int(dps), 0
 
-    if base == 10:
-        blog2 = blog2_10
-    elif pow(2, blog2 := int(math.log2(base))) == base:
+    if pow(2, blog2 := int(math.log2(base))) == base:
         pass
     else:
-        raise NotImplementedError
+        blog2 = blog2_10 if base == 10 else math.log2(base)
 
     bitprec = int(dps * blog2) + 10
 
     # Cut down to size
     # TODO: account for precision when doing this
     exp_from_1 = exp + bc
-    if base == 10 and abs(exp_from_1) > 3500:
-        from .libelefun import mpf_ln2, mpf_ln10
+    if abs(exp_from_1) > 3500:
+        from .libelefun import mpf_ln2, mpf_ln10, mpf_log
 
-        # Set b = int(exp * log(2)/log(10))
+        # Set b = int(exp * log(2)/log(base))
         # If exp is huge, we must use high-precision arithmetic to
         # find the nearest power of ten
         expprec = exp.bit_length() + 5
         tmp = from_int(exp)
+        fbase = from_int(base)
+        logb = mpf_ln10(expprec) if base == 10 else mpf_log(fbase, expprec)
         tmp = mpf_mul(tmp, mpf_ln2(expprec))
-        tmp = mpf_div(tmp, mpf_ln10(expprec), expprec)
+        tmp = mpf_div(tmp, logb, expprec)
         b = to_int(tmp)
-        s = mpf_div(s, mpf_pow_int(ften, b, bitprec), bitprec)
+        s = mpf_div(s, mpf_pow_int(fbase, b, bitprec), bitprec)
         _sign, man, exp, bc = s
         exponent = b
     else:
@@ -1167,7 +1203,7 @@ def to_digits_exp(s, dps, base=10):
 
     # First, calculate mantissa digits by converting to a binary
     # fixed-point number and then converting that number to
-    # a decimal fixed-point number.
+    # a fixed-point number in a specified base.
     fixprec = max(bitprec - exp - bc, 0)
     fixdps = int(fixprec / blog2 + 0.5)
     sf = to_fixed(s, fixprec)
@@ -1283,6 +1319,10 @@ def to_str(s, dps, strip_zeros=True, min_fixed=None, max_fixed=None,
     The literal is formatted so that it can be parsed back to a number
     by from_str, float(), float.fromhex() or Decimal().
     """
+    base = int(base)
+    if base < 2 or base > 36:
+        raise ValueError("ValueError: base must be >= 2 and <= 36")
+
     sep = '@' if base > 10 else 'e'
 
     if binary_exp:
@@ -1446,24 +1486,23 @@ def from_str(x, prec=0, rnd=round_down, base=0):
 
     man, exp = str_to_man_exp(x, base)
 
-    if base == 10:
-        # XXX: appropriate cutoffs & track direction
-        # note no factors of 5
-        if abs(exp) > 400:
-            s = from_int(man, prec+10)
-            s = mpf_mul(s, mpf_pow_int(ften, exp, prec+10), prec, rnd)
-        else:
-            if exp >= 0:
-                s = from_int(man * 10**exp, prec, rnd)
-            else:
-                s = from_rational(man, 10**-exp, prec, rnd)
-    elif pow(2, e2 := int(math.log2(base))) == base:
+    if pow(2, e2 := int(math.log2(base))) == base:
         if x.find('p') < 0:
             s = from_man_exp(man, exp*e2, prec, rnd)
         else:
             s = from_man_exp(man, exp, prec, rnd)
     else:
-        raise NotImplementedError
+        # XXX: appropriate cutoffs & track direction
+        # note no factors of 5
+        if abs(exp) > 400:
+            s = from_int(man, prec+10)
+            fbase = from_int(base)
+            s = mpf_mul(s, mpf_pow_int(fbase, exp, prec+10), prec, rnd)
+        else:
+            if exp >= 0:
+                s = from_int(man * base**exp, prec, rnd)
+            else:
+                s = from_rational(man, base**-exp, prec, rnd)
     return s
 
 
