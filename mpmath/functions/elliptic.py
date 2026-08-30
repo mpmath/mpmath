@@ -68,7 +68,7 @@ applicable (:func:`~mpmath.qfrom`, :func:`~mpmath.mfrom`,
 
 """
 
-from .functions import defun, defun_lru_cache, defun_wrapped
+from .functions import ctx_lru_cache, defun, defun_wrapped
 
 @defun_wrapped
 def eta(ctx, tau):
@@ -1782,7 +1782,8 @@ def _eisenstein_G4_G6(ctx, tau):
 # Weierstrass parameter conversion functions
 # ============================================================================
 
-@defun_lru_cache(maxsize=16)
+@defun
+@ctx_lru_cache(maxsize=16)
 def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
              g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -1838,7 +1839,8 @@ def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                    j3**12))
     return +g2, +g3
 
-@defun_lru_cache(maxsize=16)
+@defun
+@ctx_lru_cache(maxsize=16)
 def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                      g2=None, g3=None, omega1=None, omega2=None):
     r"""

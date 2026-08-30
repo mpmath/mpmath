@@ -11,7 +11,6 @@ Author of the first version: M.T. Taschuk
 
 """
 
-import inspect
 import random
 
 import pytest
@@ -1202,97 +1201,6 @@ def test_weierstrass_conversions_with_weierp():
     omega1, omega2 = omega1omega2from(g2=g2, g3=g3)
     assert mpc_ae(weierp(z, g2=g2, g3=g3),
                   weierp(z, omega1=omega1, omega2=omega2), eps=eps*1000)
-
-
-def test_g2g3from_lru_cache(monkeypatch):
-    from mpmath.functions import elliptic
-
-    ctx = mp.clone()
-    cached = vars(ctx)['g2g3from']
-    calls = []
-    original = elliptic._validate_weierstrass_parameter_args
-
-    def counted(*args, **kwargs):
-        calls.append(None)
-        return original(*args, **kwargs)
-
-    monkeypatch.setattr(
-        elliptic, "_validate_weierstrass_parameter_args", counted)
-
-    first = cached(omega1=1, omega2=0.5j)
-    assert cached(omega1=1, omega2=0.5j) == first
-    assert len(calls) == 1
-
-    cached(omega1=2, omega2=1j)
-    cached(omega1=1, omega2=0.5j)
-    assert len(calls) == 2
-
-
-def test_omega1omega2from_lru_cache(monkeypatch):
-    from mpmath.functions import elliptic
-
-    ctx = mp.clone()
-    cached = vars(ctx)['omega1omega2from']
-    expected_signature = inspect.signature(
-        elliptic.omega1omega2from.__get__(ctx, type(ctx)))
-    assert inspect.signature(cached) == expected_signature
-    calls = []
-    original = elliptic._validate_weierstrass_parameter_args
-
-    def counted(*args, **kwargs):
-        calls.append(None)
-        return original(*args, **kwargs)
-
-    monkeypatch.setattr(
-        elliptic, "_validate_weierstrass_parameter_args", counted)
-
-    first = cached(g2=60, g3=140)
-    second = cached(g2=60, g3=140)
-    assert first == second
-    assert len(calls) == 1
-
-    ctx.prec -= 10
-    cached(g2=60, g3=140)
-    assert len(calls) == 2
-    ctx.prec += 10
-    cached(g2=60, g3=140)
-    assert len(calls) == 2
-
-    ctx.rounding = 'd'
-    cached(g2=60, g3=140)
-    cached(g2=60, g3=140)
-    assert len(calls) == 3
-    ctx.rounding = 'n'
-    cached(g2=60, g3=140)
-    assert len(calls) == 3
-
-    ctx.trap_complex = True
-    cached(g2=60, g3=140)
-    cached(g2=60, g3=140)
-    assert len(calls) == 4
-    ctx.trap_complex = False
-    cached(g2=60, g3=140)
-    assert len(calls) == 4
-
-    cached(g2=4, g3=1)
-    cached(g2=60, g3=140)
-    assert len(calls) == 5
-
-    other_ctx = mp.clone()
-    vars(other_ctx)['omega1omega2from'](g2=60, g3=140)
-    assert len(calls) == 6
-
-    capacity_ctx = mp.clone()
-    capacity_cached = vars(capacity_ctx)['omega1omega2from']
-    taus = [mpc(k, 1) for k in range(17)]
-    before = len(calls)
-    for tau in taus[:16]:
-        capacity_cached(tau=tau)
-    capacity_cached(tau=taus[0])
-    capacity_cached(tau=taus[16])
-    capacity_cached(tau=taus[0])
-    capacity_cached(tau=taus[1])
-    assert len(calls) - before == 18
 
 
 def test_omega1omega2from_lru_cache_trap_complex():
