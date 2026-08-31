@@ -1203,18 +1203,6 @@ def test_weierstrass_conversions_with_weierp():
                   weierp(z, omega1=omega1, omega2=omega2), eps=eps*1000)
 
 
-def test_omega1omega2from_lru_cache_trap_complex():
-    ctx = mp.clone()
-    periods = ctx.omega1omega2from(g2=0, g3=-1)
-
-    ctx.trap_complex = True
-    with pytest.raises(ctx.ComplexResult):
-        ctx.omega1omega2from(g2=0, g3=-1)
-
-    ctx.trap_complex = False
-    assert ctx.omega1omega2from(g2=0, g3=-1) == periods
-
-
 def test_weierstrass_periodicity():
     mp.dps = 30
 

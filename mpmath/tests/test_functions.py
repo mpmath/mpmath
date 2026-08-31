@@ -45,7 +45,7 @@ def test_ctx_lru_cache(monkeypatch):
     @ctx_lru_cache(maxsize=2)
     def _test_lru_cache(ctx, x):
         calls.append((ctx, x))
-        return len(calls)
+        return ctx.sqrt(x)
 
     @defun_wrapped
     @ctx_lru_cache(maxsize=2)
@@ -61,7 +61,6 @@ def test_ctx_lru_cache(monkeypatch):
     assert SpecialFunctions.defined_functions[wrapped_name][1] is True
     try:
         ctx = mp.clone()
-        fixed_ctx = type(fp)()
         cached = ctx._test_lru_cache
         expected_signature = inspect.signature(cached.__wrapped__)
         assert inspect.signature(cached) == expected_signature
@@ -80,32 +79,38 @@ def test_ctx_lru_cache(monkeypatch):
         assert cached(1) == cached(1) == 1
         assert cached.cache_info().hits == 1
         assert cached.cache_info().misses == 1
-        assert cached(2) == 2
+        assert cached(2) == sqrt(2)
         assert cached(1) == 1
-        assert cached(3) == 3
+        assert cached(3) == sqrt(3)
         assert cached(1) == 1
-        assert cached(2) == 4
+        assert cached(2) == sqrt(2)
+        assert len(calls) == 4
 
         ctx.prec -= 10
-        assert cached(2) == cached(2) == 5
+        assert cached(2) == cached(2)
+        assert len(calls) == 5
         ctx.rounding = 'd'
-        assert cached(2) == cached(2) == 6
-        ctx.trap_complex = True
-        assert cached(2) == cached(2) == 7
+        assert cached(2) == cached(2)
+        assert len(calls) == 6
 
-        fixed_cached = fixed_ctx._test_lru_cache
-        assert fixed_cached(1) == fixed_cached(1) == 8
+        complex_value = cached(-1)
+        assert len(calls) == 7
+        ctx.trap_complex = True
+        with pytest.raises(ctx.ComplexResult):
+            cached(-1)
+        assert len(calls) == 8
+        ctx.trap_complex = False
+        assert cached(-1) == complex_value
+        assert len(calls) == 8
 
         cached.cache_clear()
         assert cached.cache_info().hits == 0
         assert cached.cache_info().misses == 0
         assert cached.cache_info().currsize == 0
-        assert cached(1) == 9
+        assert cached(1) == 1
     finally:
         del type(mp)._test_lru_cache
         del type(mp)._test_wrapped_lru_cache
-        del type(fp)._test_lru_cache
-        del type(fp)._test_wrapped_lru_cache
 
 #----------------------------------------------------------------------------
 # Constants and functions

@@ -24,12 +24,39 @@ for test in cases.splitlines():
 import pytest
 
 from mpmath import fp
+from mpmath.functions.functions import SpecialFunctions, ctx_lru_cache, defun
 
 
 def ae(x, y, tol=1e-12):
     if x == y:
         return True
     return abs(x-y) <= tol*abs(y)
+
+
+def test_fp_ctx_lru_cache(monkeypatch):
+    monkeypatch.setattr(
+        SpecialFunctions, 'defined_functions',
+        SpecialFunctions.defined_functions.copy())
+    monkeypatch.setattr(
+        SpecialFunctions, 'lru_cache_functions',
+        SpecialFunctions.lru_cache_functions.copy())
+    calls = []
+
+    @defun
+    @ctx_lru_cache(maxsize=2)
+    def _test_fp_lru_cache(ctx, x):
+        calls.append(x)
+        return ctx.sqrt(x)
+
+    try:
+        ctx = type(fp)()
+        cached = ctx._test_fp_lru_cache
+        assert cached(4) == cached(4) == 2.0
+        assert calls == [4]
+        assert cached.cache_info().hits == 1
+        assert cached.cache_info().misses == 1
+    finally:
+        del type(fp)._test_fp_lru_cache
 
 def test_conj():
     assert fp.conj(4) == 4
