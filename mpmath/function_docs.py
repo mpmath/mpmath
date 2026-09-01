@@ -2,7 +2,6 @@
 Extended docstrings for functions.py
 """
 
-
 pi = r"""
 `\pi`, roughly equal to 3.141592654, represents the area of the unit
 circle, the half-period of trigonometric functions, and many other
@@ -1021,7 +1020,6 @@ acsch = r"""Computes the inverse hyperbolic cosecant of `x`,
 `\mathrm{csch}^{-1}(x) = \sinh^{-1}(1/x)`."""
 
 
-
 sinpi = r"""
 Computes `\sin(\pi x)`, more accurately than the expression
 ``sin(pi*x)``::
@@ -1417,7 +1415,6 @@ Computes `\log(1+x)`, accurately for small `x`.
 
 """
 
-
 powm1 = r"""
 Computes `x^y - 1`, accurately when `x^y` is very close to 1.
 
@@ -1629,7 +1626,6 @@ The number of primitive roots equals the Euler totient function `\phi(n)`::
     [1, 1, 2, 2, 4, 2, 6, 4, 6, 4, 10, 4, 12, 6, 8, 8, 16, 6, 18]
 
 """
-
 
 log = r"""
 Computes the base-`b` logarithm of `x`, `\log_b(x)`. If `b` is
@@ -3547,7 +3543,6 @@ The coefficients of the polynomials can be recovered using Taylor expansion::
 [1] http://people.math.sfu.ca/~cbm/aands/page_504.htm
 """
 
-
 gammainc = r"""
 ``gammainc(z, a=0, b=inf)`` computes the (generalized) incomplete
 gamma function with integration limits `[a, b]`:
@@ -3803,7 +3798,6 @@ Complex arguments are supported::
     (1.19739830969552e-107492 + 1.46072418957528e-107491j)
 
 """
-
 
 erfi = r"""
 Computes the imaginary error function, `\mathrm{erfi}(x)`.
@@ -5103,7 +5097,6 @@ asymptotically approach the rays `z = R \exp(\pm i \pi /3)`::
 
 """
 
-
 ellipk = r"""
 Evaluates the complete elliptic integral of the first kind,
 `K(m)`, defined by
@@ -5721,7 +5714,6 @@ We can verify this numerically::
     9.0e-16
 
 """
-
 
 legenp = r"""
 Calculates the (associated) Legendre function of the first kind of
@@ -6673,7 +6665,6 @@ Evaluation is supported for arbitrary arguments::
 1. [OEIS]_ http://oeis.org/A000178
 
 """
-
 
 hyperfac = r"""
 Computes the hyperfactorial, defined for integers as the product
@@ -9835,7 +9826,6 @@ The dn-function is doubly periodic with periods `2 K(m)` and `4 i K(1-m)`::
 
 """
 
-
 jtheta = r"""
 Computes the Jacobi theta function `\vartheta_n(z, q)`, where
 `n = 1, 2, 3, 4`, defined by the infinite series:
@@ -10403,7 +10393,6 @@ Verifying the integral representation::
     0.6095559998265972956089949
 
 """
-
 
 stirling1 = r"""
 Gives the Stirling number of the first kind `s(n,k)`, defined by
