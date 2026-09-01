@@ -55,7 +55,7 @@ Represents one degree of angle, `1^{\circ} = \pi/180`, or
 about 0.01745329. This constant may be evaluated to arbitrary
 precision::
 
-    >>> from mpmath import mp, degree, sin
+    >>> from mpmath import mp, degree, sin, asin
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +degree
@@ -139,7 +139,7 @@ number (see :func:`~mpmath.harmonic`).
 Evaluation of `\gamma` is supported at arbitrary precision::
 
     >>> from mpmath import (mp, euler, harmonic, limit, log, inf, exp,
-    ...                     zeta, gamma, nsum, diff, nprod)
+    ...                     zeta, gamma, nsum, diff, nprod, pi, quad)
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +euler
@@ -203,7 +203,7 @@ series
 Mpmath can evaluate it to arbitrary precision::
 
     >>> from mpmath import (mp, catalan, nsum, inf, quad, log, atan,
-    ...                     ellipk, pi, zeta)
+    ...                     ellipk, pi, zeta, sqrt, fac)
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +catalan
@@ -249,7 +249,7 @@ Khinchin's constant `K` = 2.68542... is a number that
 appears in the theory of continued fractions. Mpmath can evaluate
 it to arbitrary precision::
 
-    >>> from mpmath import mp, khinchin, log, quad, sincpi, exp, nsum, mpf
+    >>> from mpmath import mp, khinchin, log, quad, sincpi, exp, nsum, mpf, inf, zeta
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +khinchin
@@ -282,7 +282,7 @@ The constant is defined  as `A = \exp(1/12-\zeta'(-1))` where
 
 Mpmath can evaluate Glaisher's constant to arbitrary precision:
 
-    >>> from mpmath import mp, glaisher, quad, log, gamma, pi, mpf, zeta
+    >>> from mpmath import mp, glaisher, quad, log, gamma, pi, mpf, zeta, exp, diff
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +glaisher
@@ -602,7 +602,7 @@ sinh = r"""
 Computes the hyperbolic sine of `x`,
 `\sinh(x) = (e^x - e^{-x})/2`. Values and limits include::
 
-    >>> from mpmath import mp, sinh, inf, chop, taylor, nprint, j
+    >>> from mpmath import mp, sinh, inf, chop, taylor, nprint, j, sin
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> sinh(0)
@@ -632,7 +632,7 @@ tanh = r"""
 Computes the hyperbolic tangent of `x`,
 `\tanh(x) = \sinh(x)/\cosh(x)`. Values and limits include::
 
-    >>> from mpmath import mp, tanh, inf, nprint, chop, taylor, j
+    >>> from mpmath import mp, tanh, inf, nprint, chop, taylor, j, tan
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> tanh(0)
@@ -689,7 +689,7 @@ Intervals are supported via ``mpmath.iv.cos()``::
 sin = r"""
 Computes the sine of `x`, `\sin(x)`.
 
-    >>> from mpmath import mp, sin, inf, nprint, chop, taylor, iv
+    >>> from mpmath import mp, sin, inf, nprint, chop, taylor, iv, pi
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> sin(pi/3)
@@ -841,7 +841,7 @@ function assuming values between `+\pi` and `0`.
 
 Basic values are::
 
-    >>> from mpmath import mp, acos, nprint, chop, taylort, cos
+    >>> from mpmath import mp, acos, nprint, chop, taylor, cos
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> acos(-1)
@@ -931,7 +931,7 @@ This is a real-valued function for all real `x`, with range
 
 Basic values are::
 
-    >>> from mpmath import mp, inf, atan, nprint, chop
+    >>> from mpmath import mp, inf, atan, nprint, chop, taylor, tan
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> atan(-inf)
@@ -1786,7 +1786,7 @@ For convenience, ``fib()`` is available as an alias for
 
 Some small Fibonacci numbers are::
 
-    >>> from mpmath import mp, fibonacci, fib, pi, findroot, nsum, sqrt, inf
+    >>> from mpmath import mp, fibonacci, fib, pi, findroot, nsum, sqrt, inf, phi, jtheta
     >>> mp.pretty = True
     >>> for i in range(10):
     ...     print(fibonacci(i))
@@ -1988,7 +1988,7 @@ is defined for real or complex `x` by `x! = \Gamma(x+1)`.
 
 Basic values and limits::
 
-    >>> from mpmath import mp, fac, sqrt, inf, pi, exp, nsum
+    >>> from mpmath import mp, fac, sqrt, inf, pi, exp, nsum, e
     >>> mp.pretty = True
     >>> for k in range(6):
     ...     print("%s %s" % (k, fac(k)))
@@ -6828,7 +6828,7 @@ instead of :func:`~mpmath.gamma` for extremely large arguments.
 Comparing with `\ln(\Gamma(z))`::
 
     >>> from mpmath import (mp, log, loggamma, pi, j, ln2, sqrt, inf, quad,
-    ...                     diff, psi)
+    ...                     diff, psi, gamma)
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> loggamma('13.2')
