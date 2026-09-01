@@ -806,7 +806,7 @@ maxterms, or set zeroprec."""
         """
         x = ctx.convert(x)
         *_, e, bc = x._mpf_
-        return ctx.make_mpf((0, 1, e + bc - ctx.prec, 1))
+        return ctx.make_mpf((0, MPZ_ONE, e + bc - ctx.prec, 1))
 
     def fneg(ctx, x, prec=None, dps=None, rounding=round_nearest, exact=False):
         """

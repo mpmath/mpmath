@@ -2,7 +2,6 @@
 Extended docstrings for functions.py
 """
 
-
 pi = r"""
 `\pi`, roughly equal to 3.141592654, represents the area of the unit
 circle, the half-period of trigonometric functions, and many other
@@ -56,7 +55,7 @@ Represents one degree of angle, `1^{\circ} = \pi/180`, or
 about 0.01745329. This constant may be evaluated to arbitrary
 precision::
 
-    >>> from mpmath import mp, degree, sin
+    >>> from mpmath import mp, degree, sin, asin
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +degree
@@ -140,7 +139,7 @@ number (see :func:`~mpmath.harmonic`).
 Evaluation of `\gamma` is supported at arbitrary precision::
 
     >>> from mpmath import (mp, euler, harmonic, limit, log, inf, exp,
-    ...                     zeta, gamma, nsum, diff, nprod)
+    ...                     zeta, gamma, nsum, diff, nprod, pi, quad)
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +euler
@@ -204,7 +203,7 @@ series
 Mpmath can evaluate it to arbitrary precision::
 
     >>> from mpmath import (mp, catalan, nsum, inf, quad, log, atan,
-    ...                     ellipk, pi, zeta)
+    ...                     ellipk, pi, zeta, sqrt, fac)
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +catalan
@@ -250,7 +249,7 @@ Khinchin's constant `K` = 2.68542... is a number that
 appears in the theory of continued fractions. Mpmath can evaluate
 it to arbitrary precision::
 
-    >>> from mpmath import mp, khinchin, log, quad, sincpi, exp, nsum, mpf
+    >>> from mpmath import mp, khinchin, log, quad, sincpi, exp, nsum, mpf, inf, zeta
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +khinchin
@@ -283,7 +282,7 @@ The constant is defined  as `A = \exp(1/12-\zeta'(-1))` where
 
 Mpmath can evaluate Glaisher's constant to arbitrary precision:
 
-    >>> from mpmath import mp, glaisher, quad, log, gamma, pi, mpf, zeta
+    >>> from mpmath import mp, glaisher, quad, log, gamma, pi, mpf, zeta, exp, diff
     >>> mp.dps = 50
     >>> mp.pretty = True
     >>> +glaisher
@@ -603,7 +602,7 @@ sinh = r"""
 Computes the hyperbolic sine of `x`,
 `\sinh(x) = (e^x - e^{-x})/2`. Values and limits include::
 
-    >>> from mpmath import mp, sinh, inf, chop, taylor, nprint, j
+    >>> from mpmath import mp, sinh, inf, chop, taylor, nprint, j, sin
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> sinh(0)
@@ -633,7 +632,7 @@ tanh = r"""
 Computes the hyperbolic tangent of `x`,
 `\tanh(x) = \sinh(x)/\cosh(x)`. Values and limits include::
 
-    >>> from mpmath import mp, tanh, inf, nprint, chop, taylor, j
+    >>> from mpmath import mp, tanh, inf, nprint, chop, taylor, j, tan
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> tanh(0)
@@ -690,7 +689,7 @@ Intervals are supported via ``mpmath.iv.cos()``::
 sin = r"""
 Computes the sine of `x`, `\sin(x)`.
 
-    >>> from mpmath import mp, sin, inf, nprint, chop, taylor, iv
+    >>> from mpmath import mp, sin, inf, nprint, chop, taylor, iv, pi
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> sin(pi/3)
@@ -842,7 +841,7 @@ function assuming values between `+\pi` and `0`.
 
 Basic values are::
 
-    >>> from mpmath import mp, acos, nprint, chop, taylort, cos
+    >>> from mpmath import mp, acos, nprint, chop, taylor, cos
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> acos(-1)
@@ -932,7 +931,7 @@ This is a real-valued function for all real `x`, with range
 
 Basic values are::
 
-    >>> from mpmath import mp, inf, atan, nprint, chop
+    >>> from mpmath import mp, inf, atan, nprint, chop, taylor, tan
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> atan(-inf)
@@ -1019,7 +1018,6 @@ asech = r"""Computes the inverse hyperbolic secant of `x`,
 
 acsch = r"""Computes the inverse hyperbolic cosecant of `x`,
 `\mathrm{csch}^{-1}(x) = \sinh^{-1}(1/x)`."""
-
 
 
 sinpi = r"""
@@ -1417,7 +1415,6 @@ Computes `\log(1+x)`, accurately for small `x`.
 
 """
 
-
 powm1 = r"""
 Computes `x^y - 1`, accurately when `x^y` is very close to 1.
 
@@ -1630,7 +1627,6 @@ The number of primitive roots equals the Euler totient function `\phi(n)`::
 
 """
 
-
 log = r"""
 Computes the base-`b` logarithm of `x`, `\log_b(x)`. If `b` is
 unspecified, :func:`~mpmath.log` computes the natural (base `e`) logarithm
@@ -1790,7 +1786,7 @@ For convenience, ``fib()`` is available as an alias for
 
 Some small Fibonacci numbers are::
 
-    >>> from mpmath import mp, fibonacci, fib, pi, findroot, nsum, sqrt, inf
+    >>> from mpmath import mp, fibonacci, fib, pi, findroot, nsum, sqrt, inf, phi, jtheta
     >>> mp.pretty = True
     >>> for i in range(10):
     ...     print(fibonacci(i))
@@ -1992,7 +1988,7 @@ is defined for real or complex `x` by `x! = \Gamma(x+1)`.
 
 Basic values and limits::
 
-    >>> from mpmath import mp, fac, sqrt, inf, pi, exp, nsum
+    >>> from mpmath import mp, fac, sqrt, inf, pi, exp, nsum, e
     >>> mp.pretty = True
     >>> for k in range(6):
     ...     print("%s %s" % (k, fac(k)))
@@ -3547,7 +3543,6 @@ The coefficients of the polynomials can be recovered using Taylor expansion::
 [1] http://people.math.sfu.ca/~cbm/aands/page_504.htm
 """
 
-
 gammainc = r"""
 ``gammainc(z, a=0, b=inf)`` computes the (generalized) incomplete
 gamma function with integration limits `[a, b]`:
@@ -3803,7 +3798,6 @@ Complex arguments are supported::
     (1.19739830969552e-107492 + 1.46072418957528e-107491j)
 
 """
-
 
 erfi = r"""
 Computes the imaginary error function, `\mathrm{erfi}(x)`.
@@ -5103,7 +5097,6 @@ asymptotically approach the rays `z = R \exp(\pm i \pi /3)`::
 
 """
 
-
 ellipk = r"""
 Evaluates the complete elliptic integral of the first kind,
 `K(m)`, defined by
@@ -5721,7 +5714,6 @@ We can verify this numerically::
     9.0e-16
 
 """
-
 
 legenp = r"""
 Calculates the (associated) Legendre function of the first kind of
@@ -6674,7 +6666,6 @@ Evaluation is supported for arbitrary arguments::
 
 """
 
-
 hyperfac = r"""
 Computes the hyperfactorial, defined for integers as the product
 
@@ -6837,7 +6828,7 @@ instead of :func:`~mpmath.gamma` for extremely large arguments.
 Comparing with `\ln(\Gamma(z))`::
 
     >>> from mpmath import (mp, log, loggamma, pi, j, ln2, sqrt, inf, quad,
-    ...                     diff, psi)
+    ...                     diff, psi, gamma)
     >>> mp.dps = 25
     >>> mp.pretty = True
     >>> loggamma('13.2')
@@ -9835,7 +9826,6 @@ The dn-function is doubly periodic with periods `2 K(m)` and `4 i K(1-m)`::
 
 """
 
-
 jtheta = r"""
 Computes the Jacobi theta function `\vartheta_n(z, q)`, where
 `n = 1, 2, 3, 4`, defined by the infinite series:
@@ -10403,7 +10393,6 @@ Verifying the integral representation::
     0.6095559998265972956089949
 
 """
-
 
 stirling1 = r"""
 Gives the Stirling number of the first kind `s(n,k)`, defined by
