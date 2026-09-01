@@ -18,7 +18,7 @@ def _ctx_lru_cache(ctx, f, maxsize):
         # trap_complex, so use a stable placeholder for those contexts.
         rounding = getattr(ctx, 'rounding', None)
         trap_complex = getattr(ctx, 'trap_complex', None)
-        ctx_state = (ctx.prec, rounding, trap_complex)
+        ctx_state = ctx.prec, rounding, trap_complex
         return cached(ctx_state, *args, **kwargs)
 
     # This wrapper is stored directly on a context instance, so wraps alone

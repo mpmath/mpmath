@@ -108,9 +108,17 @@ def test_ctx_lru_cache(monkeypatch):
         assert cached.cache_info().misses == 0
         assert cached.cache_info().currsize == 0
         assert cached(1) == 1
+
+        fixed_ctx = type(fp)()
+        fixed_cached = fixed_ctx._test_lru_cache
+        assert fixed_cached(4) == fixed_cached(4) == 2.0
+        assert fixed_cached.cache_info().hits == 1
+        assert fixed_cached.cache_info().misses == 1
     finally:
         del type(mp)._test_lru_cache
         del type(mp)._test_wrapped_lru_cache
+        del type(fp)._test_lru_cache
+        del type(fp)._test_wrapped_lru_cache
 
 #----------------------------------------------------------------------------
 # Constants and functions

@@ -1202,7 +1202,6 @@ def test_weierstrass_conversions_with_weierp():
     assert mpc_ae(weierp(z, g2=g2, g3=g3),
                   weierp(z, omega1=omega1, omega2=omega2), eps=eps*1000)
 
-
 def test_weierstrass_periodicity():
     mp.dps = 30
 
