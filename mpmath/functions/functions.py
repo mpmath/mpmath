@@ -1,3 +1,34 @@
+from functools import lru_cache, wraps
+from inspect import signature
+
+
+def _ctx_lru_cache(ctx, f, maxsize):
+    """Cache *f* by its arguments and the context's numerical state."""
+    @lru_cache(maxsize=maxsize)
+    def cached(_ctx_state, /, *args, **kwargs):
+        # lru_cache includes the context state in its key, preventing a value
+        # computed with one numerical setting from being reused with another.
+        # The calculation reads the same state from ctx, so it need not
+        # otherwise use this argument.
+        return f(*args, **kwargs)
+
+    @wraps(f)
+    def f_cached(*args, **kwargs):
+        # Fixed-precision and interval contexts do not expose rounding or
+        # trap_complex, so use a stable placeholder for those contexts.
+        rounding = getattr(ctx, 'rounding', None)
+        trap_complex = getattr(ctx, 'trap_complex', None)
+        ctx_state = ctx.prec, rounding, trap_complex
+        return cached(ctx_state, *args, **kwargs)
+
+    # This wrapper is stored directly on a context instance, so wraps alone
+    # would expose the unbound function's leading ctx parameter.
+    f_cached.__signature__ = signature(f)
+    f_cached.cache_info = cached.cache_info
+    f_cached.cache_clear = cached.cache_clear
+    return f_cached
+
+
 class SpecialFunctions:
     """
     This class implements special functions using high-level code.
@@ -7,12 +38,17 @@ class SpecialFunctions:
     "builtins" or "low-level" functions.
     """
     defined_functions = {}
+    lru_cache_functions = {}
 
     def __init__(self):
         cls = self.__class__
         for name in cls.defined_functions:
             f, wrap = cls.defined_functions[name]
             cls._wrap_specfun(name, f, wrap)
+            if name in cls.lru_cache_functions:
+                maxsize = cls.lru_cache_functions[name]
+                setattr(self, name, _ctx_lru_cache(
+                    self, getattr(self, name), maxsize))
 
         self._misc_const_cache = {}
 
@@ -60,6 +96,13 @@ def defun_wrapped(f):
 def defun(f):
     SpecialFunctions.defined_functions[f.__name__] = f, False
     return f
+
+def ctx_lru_cache(maxsize):
+    """Mark a context function for per-context LRU caching."""
+    def decorator(f):
+        SpecialFunctions.lru_cache_functions[f.__name__] = maxsize
+        return f
+    return decorator
 
 def defun_static(f):
     setattr(SpecialFunctions, f.__name__, f)

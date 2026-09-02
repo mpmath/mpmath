@@ -31,6 +31,7 @@ def ae(x, y, tol=1e-12):
         return True
     return abs(x-y) <= tol*abs(y)
 
+
 def test_conj():
     assert fp.conj(4) == 4
     assert fp.conj(3+4j) == 3-4j

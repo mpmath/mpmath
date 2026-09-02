@@ -68,7 +68,7 @@ applicable (:func:`~mpmath.qfrom`, :func:`~mpmath.mfrom`,
 
 """
 
-from .functions import defun, defun_wrapped
+from .functions import ctx_lru_cache, defun, defun_wrapped
 
 @defun_wrapped
 def eta(ctx, tau):
@@ -142,6 +142,7 @@ def _validate_weierstrass_parameter_args(
                          "parameterization" % funcname)
 
 @defun_wrapped
+@ctx_lru_cache(maxsize=16)
 def qfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
           g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -183,6 +184,7 @@ def qfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
         return ctx.qfrom(tau=ctx.taufrom(omega1=omega1, omega2=omega2))
 
 @defun_wrapped
+@ctx_lru_cache(maxsize=16)
 def qbarfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
              g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -225,6 +227,7 @@ def qbarfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
         return ctx.qbarfrom(tau=ctx.taufrom(omega1=omega1, omega2=omega2))
 
 @defun_wrapped
+@ctx_lru_cache(maxsize=16)
 def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
             g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -309,6 +312,7 @@ def taufrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
         return tau
 
 @defun_wrapped
+@ctx_lru_cache(maxsize=16)
 def kfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
           g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -365,6 +369,7 @@ def kfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
     return (ctx.jtheta(2,0,q)/ctx.jtheta(3,0,q))**2
 
 @defun_wrapped
+@ctx_lru_cache(maxsize=16)
 def mfrom(ctx, q=None, m=None, k=None, tau=None, qbar=None,
           g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -1783,6 +1788,7 @@ def _eisenstein_G4_G6(ctx, tau):
 # ============================================================================
 
 @defun
+@ctx_lru_cache(maxsize=16)
 def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
              g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -1839,6 +1845,7 @@ def g2g3from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
     return +g2, +g3
 
 @defun
+@ctx_lru_cache(maxsize=16)
 def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
                      g2=None, g3=None, omega1=None, omega2=None):
     r"""
@@ -2049,10 +2056,6 @@ def weierp(ctx, z, g2=None, g3=None, tau=None, omega1=None, omega2=None):
 
     The periods of `\wp` are `2\omega_1` and `2\omega_2`. Thus the
     `\tau` parameterization corresponds to periods `1` and `\tau`.
-
-    For repeated evaluation with the same invariants, it is faster to compute
-    the half-periods once with :func:`~mpmath.omega1omega2from` and pass
-    them using the ``omega1`` and ``omega2`` keywords.
 
     **Examples**
 

@@ -1,4 +1,5 @@
 import cmath
+import inspect
 import math
 import random
 
@@ -15,6 +16,8 @@ from mpmath import (acos, acosh, acot, acoth, acsc, acsch, arange, arg, asec,
                     nthroot, phi, pi, power, powm1, radians, rand, re, root,
                     sec, sech, sign, sin, sinc, sincpi, sinh, sinpi, sqrt, tan,
                     tanh, twinprime, unitroots)
+from mpmath.functions.functions import (SpecialFunctions, ctx_lru_cache, defun,
+                                        defun_wrapped)
 from mpmath.libmp import (MPZ, ComplexResult, from_int, mpf_gt, mpf_lt,
                           mpf_mul, mpf_pow_int, mpf_sqrt, round_ceiling,
                           round_down, round_nearest, round_up)
@@ -26,6 +29,96 @@ def mpc_ae(a, b, eps=eps):
     res = res and a.real.ae(b.real, eps)
     res = res and a.imag.ae(b.imag, eps)
     return res
+
+
+def test_ctx_lru_cache(monkeypatch):
+    monkeypatch.setattr(
+        SpecialFunctions, 'defined_functions',
+        SpecialFunctions.defined_functions.copy())
+    monkeypatch.setattr(
+        SpecialFunctions, 'lru_cache_functions',
+        SpecialFunctions.lru_cache_functions.copy())
+    calls = []
+    wrapped_calls = []
+
+    @defun
+    @ctx_lru_cache(maxsize=2)
+    def _test_lru_cache(ctx, x):
+        calls.append((ctx, x))
+        return ctx.sqrt(x)
+
+    @defun_wrapped
+    @ctx_lru_cache(maxsize=2)
+    def _test_wrapped_lru_cache(ctx, x):
+        wrapped_calls.append((ctx.prec, x))
+        return x
+
+    name = _test_lru_cache.__name__
+    assert SpecialFunctions.lru_cache_functions[name] == 2
+    assert SpecialFunctions.defined_functions[name][1] is False
+    wrapped_name = _test_wrapped_lru_cache.__name__
+    assert SpecialFunctions.lru_cache_functions[wrapped_name] == 2
+    assert SpecialFunctions.defined_functions[wrapped_name][1] is True
+    try:
+        ctx = mp.clone()
+        cached = ctx._test_lru_cache
+        expected_signature = inspect.signature(cached.__wrapped__)
+        assert inspect.signature(cached) == expected_signature
+        assert cached.cache_info().maxsize == 2
+        assert cached.cache_info().currsize == 0
+        wrapped_cached = ctx._test_wrapped_lru_cache
+        prec = ctx.prec
+        assert wrapped_cached(1) == wrapped_cached(1) == 1
+        assert len(wrapped_calls) == 1
+        wrapped_prec, wrapped_arg = wrapped_calls[0]
+        assert wrapped_prec == prec + 10
+        assert ctx._is_real_type(wrapped_arg)
+        assert wrapped_cached.cache_info().hits == 1
+        assert wrapped_cached.cache_info().misses == 1
+
+        assert cached(1) == cached(1) == 1
+        assert cached.cache_info().hits == 1
+        assert cached.cache_info().misses == 1
+        assert cached(2) == sqrt(2)
+        assert cached(1) == 1
+        assert cached(3) == sqrt(3)
+        assert cached(1) == 1
+        assert cached(2) == sqrt(2)
+        assert len(calls) == 4
+
+        ctx.prec -= 10
+        assert cached(2) == cached(2)
+        assert len(calls) == 5
+        ctx.rounding = 'd'
+        assert cached(2) == cached(2)
+        assert len(calls) == 6
+
+        complex_value = cached(-1)
+        assert len(calls) == 7
+        ctx.trap_complex = True
+        with pytest.raises(ctx.ComplexResult):
+            cached(-1)
+        assert len(calls) == 8
+        ctx.trap_complex = False
+        assert cached(-1) == complex_value
+        assert len(calls) == 8
+
+        cached.cache_clear()
+        assert cached.cache_info().hits == 0
+        assert cached.cache_info().misses == 0
+        assert cached.cache_info().currsize == 0
+        assert cached(1) == 1
+
+        fixed_ctx = type(fp)()
+        fixed_cached = fixed_ctx._test_lru_cache
+        assert fixed_cached(4) == fixed_cached(4) == 2.0
+        assert fixed_cached.cache_info().hits == 1
+        assert fixed_cached.cache_info().misses == 1
+    finally:
+        del type(mp)._test_lru_cache
+        del type(mp)._test_wrapped_lru_cache
+        del type(fp)._test_lru_cache
+        del type(fp)._test_wrapped_lru_cache
 
 #----------------------------------------------------------------------------
 # Constants and functions
