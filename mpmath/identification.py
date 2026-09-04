@@ -40,11 +40,11 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         >>> pslq([-1, pi], tol=0.001)
         [355, 113]
         >>> mpf(22)/7
-        3.14285714285714
+        3.142857142857143
         >>> mpf(355)/113
-        3.14159292035398
+        3.1415929203539825
         >>> +pi
-        3.14159265358979
+        3.141592653589793
 
     Pi is not a rational number with denominator less than 1000::
 
@@ -60,7 +60,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         >>> print(q)
         75888275702
         >>> mpf(p)/q
-        3.14159265358979
+        3.141592653589793
 
     The PSLQ algorithm can be applied to long vectors. For example,
     we can investigate the rational (in)dependence of integer square
@@ -119,9 +119,9 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     In other words, we found the following formula::
 
         >>> 8*acot(2) - 4*acot(7)
-        3.14159265358979323846264338328
+        3.1415926535897932384626433832793
         >>> +pi
-        3.14159265358979323846264338328
+        3.1415926535897932384626433832793
 
     **Algorithm**
 
@@ -352,8 +352,8 @@ def findpoly(ctx, x, n=1, asc=True, *,
         >>> for r in polyroots(findpoly(phi, 2)):
         ...     print(r)
         ...
-        -0.618033988749895
-        1.61803398874989
+        -0.6180339887498949
+        1.618033988749895
 
     Numbers of the form `m + n \sqrt p` for integers `(m, n, p)` are
     solutions to quadratic equations. As we find here, `1+\sqrt 2`
@@ -362,7 +362,7 @@ def findpoly(ctx, x, n=1, asc=True, *,
         >>> findpoly(1+sqrt(2), 2)
         [-1, -2, 1]
         >>> findroot(lambda x: x**2 - 2*x - 1, 1)
-        2.4142135623731
+        2.414213562373095
 
     Despite only containing square roots, the following number results
     in a polynomial of degree 4::
@@ -682,13 +682,13 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     specified tolerance:
 
         >>> e/log(6-4*e/3)
-        3.14157719846001
+        3.141577198460007
         >>> 135*e*catalan**2/98
-        3.14166950419369
+        3.141669504193692
         >>> sqrt(e-13+22*catalan)
-        3.14158000062992
+        3.141580000629916
         >>> log(24*e-6+4*catalan)-1
-        3.14158791577159
+        3.141587915771585
 
     **Symbolic processing**
 

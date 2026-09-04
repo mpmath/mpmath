@@ -11,11 +11,11 @@ def monitor(f, input='print', output='print'):
         >>> from mpmath import mp, diff, monitor, exp, findroot, sin
         >>> mp.dps = 5
         >>> diff(monitor(exp), 1)   # diff will eval f(x-h) and f(x+h)
-        in  0 (mpf('0.99999999906867742538452148'),) {}
-        out 0 mpf('2.7182818259274480055282064')
-        in  1 (mpf('1.0000000009313225746154785'),) {}
-        out 1 mpf('2.7182818309906424675501024')
-        mpf('2.7182808')
+        in  0 (mpf('0.9999999990686774253845215'),) {}
+        out 0 mpf('2.718281825927448005528206')
+        in  1 (mpf('1.000000000931322574615479'),) {}
+        out 1 mpf('2.718281830990642467550102')
+        mpf('2.71828')
 
     To disable either the input or the output handler, you may
     pass *None* as argument.
@@ -27,17 +27,17 @@ def monitor(f, input='print', output='print'):
         >>> input = []
         >>> output = []
         >>> findroot(monitor(sin, input.append, output.append), 3.0)
-        mpf('3.1415926535897932')
+        mpf('3.141592653589793')
         >>> len(input)  # Count number of evaluations
         9
         >>> print(input[3])
-        ((mpf('3.1415076583334066'),), {})
+        ((mpf('3.1415076583334067'),), {})
         >>> print(output[3])
-        8.49952562843408e-5
+        8.499525628434076e-05
         >>> print(input[4])
-        ((mpf('3.1415928201669122'),), {})
+        ((mpf('3.1415928201669123'),), {})
         >>> print(output[4])
-        -1.66577118985331e-7
+        -1.6657711898533127e-07
 
     """
     if not input:

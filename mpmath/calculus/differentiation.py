@@ -146,13 +146,13 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
     imaginary direction will be computed::
 
         >>> diff(abs, 0, direction=j)
-        (0.0 - 1.0j)
+        -1j
 
     With integration, the result may have a small imaginary part
     even even if the result is purely real::
 
         >>> diff(sqrt, 1, method='quad')
-        (0.5 - 4.59...e-26j)
+        (0.5-4.59...e-26j)
         >>> chop(_)
         0.5
 
@@ -163,7 +163,7 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
         >>> diff(cos, 1e-30, h=0.0001)
         -9.99999998328279e-31
         >>> diff(cos, 1e-30, addprec=100)
-        -1.0e-30
+        -1e-30
 
     """
     partial = False
@@ -248,12 +248,12 @@ def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
         >>> for i, d in zip(range(6), diffs(cos, 1)):
         ...     print("%s %s" % (i, d))
         ...
-        0 0.54030230586814
-        1 -0.841470984807897
-        2 -0.54030230586814
-        3 0.841470984807897
-        4 0.54030230586814
-        5 -0.841470984807897
+        0 0.5403023058681398
+        1 -0.8414709848078965
+        2 -0.5403023058681398
+        3 0.8414709848078965
+        4 0.5403023058681398
+        5 -0.8414709848078965
 
     """
     if n is None:
@@ -326,21 +326,21 @@ def diffs_prod(ctx, factors):
         >>> u = diffs(f, 1)
         >>> v = mp.diffs_prod([diffs(exp,1), diffs(cos,1), diffs(sin,1)])
         >>> next(u)
-        1.23586333600241
+        1.2358633360024094
         >>> next(v)
-        1.23586333600241
+        1.2358633360024096
         >>> next(u)
-        0.104658952245596
+        0.10465895224559582
         >>> next(v)
-        0.104658952245596
+        0.10465895224559629
         >>> next(u)
-        -5.96999877552086
+        -5.969998775520856
         >>> next(v)
-        -5.96999877552086
+        -5.969998775520855
         >>> next(u)
-        -12.4632923122697
+        -12.46329231226969
         >>> next(v)
-        -12.4632923122697
+        -12.463292312269694
 
     """
     N = len(factors)
@@ -429,17 +429,17 @@ def diffs_exp(ctx, fdiffs):
         >>> next(v)
         2.0
         >>> next(u)
-        1.84556867019693
+        1.8455686701969343
         >>> next(v)
-        1.84556867019693
+        1.8455686701969343
         >>> next(u)
-        2.49292999190269
+        2.492929991902693
         >>> next(v)
-        2.49292999190269
+        2.492929991902693
         >>> next(u)
-        3.44996501352367
+        3.4499650135236735
         >>> next(v)
-        3.44996501352367
+        3.4499650135236735
 
     """
     fn = iterable_to_function(fdiffs)
@@ -491,7 +491,7 @@ def differint(ctx, f, x, n=1, x0=0):
         >>> p = 2
         >>> n = 0.5
         >>> differint(lambda t: t**p, x, n)
-        7.81764019044672
+        7.817640190446718
         >>> gamma(p+1)/gamma(p-n+1) * x**(p-n)
         7.81764019044672
 
@@ -502,13 +502,13 @@ def differint(ctx, f, x, n=1, x0=0):
     is set to `-\infty` to avoid nonzero endpoint terms.)::
 
         >>> differint(lambda x: exp(pi*x), -1.5, 3)
-        0.278538406900792
+        0.2785384069007921
         >>> exp(pi*-1.5) * pi**3
-        0.278538406900792
+        0.2785384069007921
         >>> differint(lambda x: exp(pi*x), 3.5, -3, -inf)
-        1922.50563031149
+        1922.5056303114868
         >>> exp(pi*3.5) / pi**3
-        1922.50563031149
+        1922.5056303114861
 
     However, for noninteger `n`, the differentiation formula for the
     exponential function must be modified to give the same result as the
@@ -518,10 +518,9 @@ def differint(ctx, f, x, n=1, x0=0):
         >>> c = pi
         >>> n = 1+2*j
         >>> differint(lambda x: exp(c*x), x, n)
-        (-123295.005390743 + 140955.117867654j)
+        (-123295.00539074332+140955.1178676538j)
         >>> x**(-n) * exp(c)**x * (x*c)**n * lower_gamma(-n, x*c) / gamma(-n)
-        (-123295.005390743 + 140955.117867654j)
-
+        (-123295.00539074326+140955.11786765378j)
 
     """
     m = max(int(ctx.ceil(ctx.re(n)))+1, 1)
@@ -541,7 +540,7 @@ def diffun(ctx, f, n=1, *, method='step', direction=0, radius=0.25,
         >>> cos2 = diffun(sin)
         >>> sin2 = diffun(sin, 4)
         >>> cos(1.3), cos2(1.3)
-        (0.267498828624587, 0.267498828624587)
+        (0.26749882862458735, 0.26749882862458735)
         >>> sin(1.3), sin2(1.3)
         (0.963558185417193, 0.963558185417193)
 
@@ -581,9 +580,9 @@ def taylor(ctx, f, x, n, *, chop=True, method='step', direction=0, radius=0.25,
 
         >>> p = taylor(exp, 2.0, 10)
         >>> polyval(p, 2.5 - 2.0)
-        12.1824939606092
+        12.182493960609172
         >>> exp(2.5)
-        12.1824939607035
+        12.182493960703473
 
     """
     options = {'method': method, 'singular': singular,
@@ -628,9 +627,9 @@ def pade(ctx, a, L, M):
         >>> p, q = pade(a, 3, 3)
         >>> x = 10
         >>> polyval(p, x)/polyval(q, x)
-        1.38169105566806
+        1.381691055668055
         >>> f(x)
-        1.38169855941551
+        1.381698559415515
 
     """
     # To determine L+1 coefficients of P and M coefficients of Q

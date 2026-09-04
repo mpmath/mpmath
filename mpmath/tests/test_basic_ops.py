@@ -157,7 +157,7 @@ def test_mpf_init():
     a3 = mpf(0.3)
     assert a1 == a2
     assert a1 != a3
-    assert str(a1) == '0.300000190734863'
+    assert str(a1) == '0.3000001907348633'
     assert str(a3) == '0.3'
     pytest.raises(ValueError, lambda: mpf((1,)))
     pytest.raises(ValueError, lambda: mpf(mpi(1, 2)))
@@ -327,14 +327,14 @@ def test_odd_int_bug():
 def test_str_1000_digits():
     mp.dps = 1001
     # last digit may be wrong
-    assert str(mpf(2)**0.5)[-10:-1] == '9518488472'[:9]
-    assert str(pi)[-10:-1] == '2164201989'[:9]
+    assert str(mpf(2)**0.5)[-11:-1] == '9518488472'
+    assert str(pi)[-12:-2] == '2164201989'
 
 def test_str_10000_digits():
     mp.dps = 10001
     # last digit may be wrong
-    assert str(mpf(2)**0.5)[-10:-1] == '5873258351'[:9]
-    assert str(pi)[-10:-1] == '5256375678'[:9]
+    assert str(mpf(2)**0.5)[-12:-2] == '5873258351'
+    assert str(pi)[-12:-2] == '5256375678'
 
 def test_monitor():
     f = lambda x: x**2

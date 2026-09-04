@@ -616,8 +616,8 @@ def eighe(ctx, A, eigvals_only = False, overwrite_a = False):
       >>> A = mp.matrix([[1, -3 - 1j], [-3 + 1j, -2]])
       >>> E = mp.eighe(A, eigvals_only = True)
       >>> print(E)
-      [-4.0]
-      [ 3.0]
+      [              -4.0]
+      [3.0000000000000004]
 
       >>> A = mp.matrix([[1, 2 + 5j], [2 - 5j, 3]])
       >>> E, Q = mp.eighe(A)
@@ -1569,9 +1569,9 @@ def svd_r(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False)
        >>> A = mp.matrix([[2, -2, -1], [3, 4, -2], [-2, -2, 0]])
        >>> S = mp.svd_r(A, compute_uv = False)
        >>> print(S)
-       [6.0]
-       [3.0]
-       [1.0]
+       [ 6.000000000000001]
+       [2.9999999999999982]
+       [               1.0]
 
        >>> U, S, V = mp.svd_r(A)
        >>> print(mp.chop(A - U * mp.diag(S) * V))
@@ -1781,9 +1781,9 @@ def svd(ctx, A, full_matrices = False, compute_uv = True, overwrite_a = False):
        >>> A = mp.matrix([[2, -2, -1], [3, 4, -2], [-2, -2, 0]])
        >>> S = mp.svd(A, compute_uv = False)
        >>> print(S)
-       [6.0]
-       [3.0]
-       [1.0]
+       [ 6.000000000000001]
+       [2.9999999999999982]
+       [               1.0]
 
        >>> U, S, V = mp.svd(A)
        >>> print(mp.chop(A - U * mp.diag(S) * V))

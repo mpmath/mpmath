@@ -4,7 +4,8 @@ high-precision input, from 5 to 200 digits. The reference values were
 verified with Mathematica.
 """
 
-from mpmath import cos, e, euler, exp, log, mp, mpc, mpf, pi, sin, sqrt, tan
+from mpmath import (cos, e, euler, exp, libmp, log, mp, mpc, mpf, pi, sin,
+                    sqrt, tan)
 
 
 precs = [5, 15, 28, 35, 57, 80, 100, 150, 200]
@@ -198,15 +199,15 @@ def test_hp():
         assert (tan(abi).real).ae(mpf(tan_abi_real), abs_eps=1e-205)
         assert (tan(abi).imag).ae(mpf(tan_abi_imag), abs_eps=1e-205)
     mp.dps = 460
-    assert str(log(3))[-20:] == '02166121184001409826'
+    assert str(log(3))[-21:] == '021661211840014098255'
 
 # Since str(a) can differ in the last digit from rounded a, and I want
 # to compare the last digits of big numbers with the results in Mathematica,
 # I made this hack to get the last 20 digits of rounded a
 
 def last_digits(a):
-    r = repr(a)
-    s = str(a)
+    r = libmp.to_str(a._mpf_, libmp.repr_dps(mp.prec))
+    s = libmp.to_str(a._mpf_, mp.dps)
     #dps = mp.dps
     #mp.dps += 3
     m = 10

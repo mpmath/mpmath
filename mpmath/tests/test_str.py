@@ -65,14 +65,8 @@ def test_matrix_str():
 @example(x=6.170920920537087e+17, rnd='f')
 def test_eval_repr_roundtrip(x, rnd):
     mp.rounding = rnd
-    mp.shortest_str = False
     mp.pretty = True
-    mp.pretty_dps = 'repr'
     mx = mp.mpf(x)
-    smx = repr(mx)
-    assert mx == mp.mpf(smx)
-    mp.pretty_dps = 'str'
-    mp.shortest_str = True
     smx = repr(mx)
     assert mx == mp.mpf(smx)
 
@@ -86,7 +80,6 @@ def test_eval_repr_roundtrip(x, rnd):
 @example(5.960464477539063e-08)
 @example(562949953421312.2)
 def test_float_short_repr(f):
-    mp.shortest_str = True
     if not f and math.copysign(1, f) == -1:
         return
     s = str(f)
@@ -102,7 +95,6 @@ def test_float_short_repr(f):
                           allow_infinity=False))
 @example(1+0.1j)
 def test_complex_short_repr(z):
-    mp.shortest_str = True
     mp.pretty = False
     if ((not z.real and math.copysign(1, z.real) == -1)
             or (not z.imag and math.copysign(1, z.imag) == -1)):
@@ -118,7 +110,6 @@ def test_complex_short_repr(z):
 
 
 def test_short_repr_specials():
-    mp.shortest_str = True
     assert str(mpf(0)) == '0.0'
     assert str(mpf('inf')) == 'inf'
     assert str(mpf('-inf')) == '-inf'
@@ -126,7 +117,6 @@ def test_short_repr_specials():
 
 
 def test_short_repr_roundtrip():
-    mp.shortest_str = True
     for dps in [15, 20, 30, 50, 100, 300]:
         with mp.workdps(dps):
             for _ in range(1000):

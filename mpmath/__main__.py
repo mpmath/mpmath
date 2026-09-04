@@ -43,8 +43,6 @@ parser.add_argument('--no-pretty', help='Disable pretty-printing',
 parser.add_argument('--int-limits',
                     help="Enable string conversion length limitation for int's",
                     action='store_true')
-parser.add_argument('--shortest-str', help='Use shortest str/repr',
-                    action='store_true')
 
 
 def main():
@@ -65,9 +63,6 @@ def main():
         lines.append(f'mp.prec = {args.prec}')
     if not args.no_pretty:
         lines.append('mp.pretty = True')
-        lines.append('mp.pretty_dps = "repr"')
-    if args.shortest_str:
-        lines.append('mp.shortest_str = True')
 
     try:
         import IPython

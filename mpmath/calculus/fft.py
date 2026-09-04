@@ -58,11 +58,11 @@ def fft(ctx, values):
     >>> from mpmath import mp
     >>> mp.pretty = True
     >>> mp.fft([1, 0, 0, 0])
-    [1.0, (1.0 + 0.0j), 1.0, (1.0 + 0.0j)]
+    [1.0, (1+0j), 1.0, (1+0j)]
     >>> mp.fft([1 + 2j, 1 + 2j])
-    [(2.0 + 4.0j), (0.0 + 0.0j)]
+    [(2+4j), 0j]
     >>> mp.fft([1, 2, 3, 4])
-    [10.0, (-2.0 + 2.0j), -2.0, (-2.0 - 2.0j)]
+    [10.0, (-2+2j), -2.0, (-2-2j)]
     """
     n = len(values)
     if n == 0:
@@ -90,10 +90,10 @@ def invfft(ctx, values):
     >>> from mpmath import mp
     >>> mp.pretty = True
     >>> mp.invfft([1, 1, 1, 1])
-    [1.0, (0.0 + 0.0j), 0.0, (0.0 + 0.0j)]
+    [1.0, 0j, 0.0, 0j]
     >>> x = [1, 2, 3, 4]
     >>> mp.invfft(mp.fft(x))
-    [(1.0 + 0.0j), (2.0 + 0.0j), (3.0 + 0.0j), (4.0 + 0.0j)]
+    [(1+0j), (2+0j), (3+0j), (4+0j)]
     """
     n = len(values)
     if n == 0:

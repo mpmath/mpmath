@@ -136,23 +136,14 @@ class _mpf(mpnumeric):
     def __repr__(self):
         ctx = self.context
         if ctx.pretty:
-            if ctx.shortest_str:
-                return str(self)
-            ndigits = (ctx._repr_digits
-                       if ctx._pretty_repr_dps else ctx._str_digits)
-            return to_str(self._mpf_, ndigits)
+            return str(self)
         prec, rounding = ctx._prec_rounding
-        if ctx.shortest_str:
-            return f"mpf({format_mpf(self._mpf_, '', prec, rounding, ctx._pretty_repr_dps, True)!r})"
-        return f"mpf({to_str(self._mpf_, ctx._repr_digits)!r})"
+        return f"mpf({format_mpf(self._mpf_, '', prec, rounding, True, True)!r})"
 
     def __str__(self):
         ctx = self.context
-        if ctx.shortest_str:
-            prec, rounding = ctx._prec_rounding
-            return format_mpf(self._mpf_, '', prec, rounding,
-                              ctx._pretty_repr_dps, True)
-        return to_str(self._mpf_, ctx._str_digits)
+        prec, rounding = ctx._prec_rounding
+        return format_mpf(self._mpf_, '', prec, rounding, True, True)
 
     def __hash__(self): return mpf_hash(self._mpf_)
     def __int__(self): return int(to_int(self._mpf_))
@@ -458,9 +449,7 @@ class _mpf(mpnumeric):
 
         _, _, (prec, rounding) = self._ctxdata
         ctx = self.context
-        return format_mpf(self._mpf_, format_spec, prec, rounding,
-                          ctx._pretty_repr_dps,
-                          ctx.shortest_str)
+        return format_mpf(self._mpf_, format_spec, prec, rounding, True, True)
 
     def sqrt(self):
         ctx = self.context
@@ -557,22 +546,15 @@ class _mpc(mpnumeric):
     def __repr__(self):
         ctx = self.context
         if ctx.pretty:
-            if ctx.shortest_str:
-                return str(self)
-            ndigits = (ctx._repr_digits
-                       if ctx._pretty_repr_dps else ctx._str_digits)
-            return f"({mpc_to_str(self._mpc_, ndigits)})"
+            return str(self)
         r = repr(self.real)[4:-1]
         i = repr(self.imag)[4:-1]
         return f"{type(self).__name__}(real={r}, imag={i})"
 
     def __str__(self):
         ctx = self.context
-        if ctx.shortest_str:
-            prec, rounding = ctx._prec_rounding
-            return format_mpc(self._mpc_, '', prec, rounding,
-                              ctx._pretty_repr_dps, True)
-        return f"({mpc_to_str(self._mpc_, ctx._str_digits)})"
+        prec, rounding = ctx._prec_rounding
+        return format_mpc(self._mpc_, '', prec, rounding, True, True)
 
     def __complex__(self):
         ctx = self.context
@@ -776,9 +758,7 @@ class _mpc(mpnumeric):
         """
         ctx = self.context
         _, _, (prec, rounding) = self._ctxdata
-        return format_mpc(self._mpc_, format_spec, prec, rounding,
-                          ctx._pretty_repr_dps,
-                          ctx.shortest_str)
+        return format_mpc(self._mpc_, format_spec, prec, rounding, True, True)
 
 
 complex_types = (complex, _mpc)
@@ -787,7 +767,6 @@ complex_types = (complex, _mpc)
 class PythonMPContext:
     def __init__(ctx):
         ctx._prec_rounding = [sys.float_info.mant_dig, round_nearest]
-        ctx._pretty_repr_dps = False
         ctx.mpf = type('mpf', (_mpf,), {})
         ctx.mpf._ctxdata = [ctx.mpf, new, ctx._prec_rounding]
         ctx.mpf.context = ctx
@@ -831,14 +810,6 @@ class PythonMPContext:
     dps = property(lambda ctx: ctx._dps, _set_dps)
     rounding = property(lambda ctx: ctx._prec_rounding[1], _set_rounding)
 
-    def _set_pretty_dps(ctx, v):
-        ctx._pretty_repr_dps = True if v == 'repr' else False
-
-    def _get_pretty_dps(ctx):
-        return 'repr' if ctx._pretty_repr_dps else 'str'
-
-    pretty_dps = property(_get_pretty_dps, _set_pretty_dps)
-
     def convert(ctx, x, strings=True):
         """
         Converts *x* to an ``mpf`` or ``mpc``. If *x* is of type ``mpf``,
@@ -853,7 +824,7 @@ class PythonMPContext:
             >>> mpmathify(3.5)
             mpf('3.5')
             >>> mpmathify('2.1')
-            mpf('2.1000000000000001')
+            mpf('2.1')
             >>> mpmathify('3/4')
             mpf('0.75')
             >>> mpmathify('2+3j')

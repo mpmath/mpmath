@@ -97,9 +97,9 @@ The *dps* value controls the number of digits to display when printing numbers w
 
     >>> from mpmath import pi
     >>> str(pi)
-    '3.14159265358979'
+    '3.141592653589793'
     >>> repr(+pi)
-    "mpf('3.1415926535897931')"
+    "mpf('3.141592653589793')"
 
 The extra digits in the output from ``repr`` ensure that ``x == eval(repr(x))`` holds, i.e. that numbers can be converted to strings and back losslessly.
 
