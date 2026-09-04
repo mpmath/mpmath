@@ -45,12 +45,16 @@ jobs:
             purepy: true
           - python-version: pypy3.11
             purepy: true
+          - python-version: graalpy-25
+            purepy: true
     env:
       PYTEST_ADDOPTS: -n auto --durations=20
     steps:
     - uses: actions/checkout@v7
       with:
         fetch-depth: 0
+    - run: sudo apt-get update
+    - run: sudo apt-get install zlib1g-dev libjpeg8-dev
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v7
       with:

@@ -13,6 +13,10 @@ if platform.python_implementation() == 'PyPy':
     pytest.skip("Don't run CLI tests on PyPy.",
                 allow_module_level=True)
 
+if platform.python_implementation() == 'GraalVM':
+    pytest.skip("Don't run CLI tests on GraalPy.",
+                allow_module_level=True)
+
 
 if sys.version_info >= (3, 15):
     pytestmark = pytest.mark.filterwarnings("ignore:.*:DeprecationWarning")
