@@ -455,6 +455,19 @@ jacobi_spec = {
 }
 
 @defun
+@ctx_lru_cache(maxsize=16)
+def _ellipfun_data(ctx, kind, q):
+    """Return the argument scale and constant factor for ``ellipfun``."""
+    S = jacobi_spec[kind]
+    t_scale = ctx.one / ctx.jtheta(3, 0, q)**2
+    factor = ctx.one
+    for a in S[0]:
+        factor *= ctx.jtheta(a, 0, q)
+    for b in S[1]:
+        factor /= ctx.jtheta(b, 0, q)
+    return t_scale, factor
+
+@defun
 def ellipfun(ctx, kind, u=None, m=None, q=None, k=None, tau=None):
     try:
         S = jacobi_spec[kind]
@@ -482,10 +495,8 @@ def ellipfun(ctx, kind, u=None, m=None, q=None, k=None, tau=None):
             else:           v = getattr(ctx, S[5])(u)
             v += 0*q*u
         else:
-            t = u / ctx.jtheta(3, 0, q)**2
-            v = ctx.one
-            for a in S[0]: v *= ctx.jtheta(a, 0, q)
-            for b in S[1]: v /= ctx.jtheta(b, 0, q)
+            t_scale, v = ctx._ellipfun_data(kind, q)
+            t = u * t_scale
             for c in S[2]: v *= ctx.jtheta(c, t, q)
             for d in S[3]: v /= ctx.jtheta(d, t, q)
     finally:
@@ -2037,6 +2048,55 @@ def omega1omega2from(ctx, q=None, m=None, k=None, tau=None, qbar=None,
 # Main Weierstrass Elliptic Functions
 # ============================================================================
 
+@defun
+@ctx_lru_cache(maxsize=16)
+def _weierp_data(ctx, omega1, omega2):
+    """Return the lattice-dependent data used by ``weierp``."""
+    q = ctx.qfrom(tau=omega2 / omega1)
+    j2 = ctx.jtheta(2, 0, q)
+    j3 = ctx.jtheta(3, 0, q)
+    z_scale = ctx.pi / (2 * omega1)
+    coefficient = (ctx.pi*j2*j3)**2 / (4 * omega1**2)
+    constant = -ctx.pi**2 * (j2**4 + j3**4) / (12 * omega1**2)
+    return q, z_scale, coefficient, constant
+
+@defun
+@ctx_lru_cache(maxsize=16)
+def _weierpprime_data(ctx, omega1, omega2):
+    """Return the lattice-dependent data used by ``weierpprime``."""
+    q = ctx.qfrom(tau=omega2 / omega1)
+    j10p = ctx.jtheta(1, 0, q, 1)
+    j20 = ctx.jtheta(2, 0, q)
+    j30 = ctx.jtheta(3, 0, q)
+    j40 = ctx.jtheta(4, 0, q)
+    k0 = j10p**3 / (j20 * j30 * j40)
+    z_scale = ctx.pi / (2 * omega1)
+    coefficient = -ctx.pi**3 * k0 / (4 * omega1**3)
+    return q, z_scale, coefficient
+
+@defun
+@ctx_lru_cache(maxsize=16)
+def _weiersigma_data(ctx, omega1, omega2):
+    """Return the lattice-dependent data used by ``weiersigma``."""
+    q = ctx.qfrom(tau=omega2 / omega1)
+    j10p = ctx.jtheta(1, 0, q, 1)
+    j10ppp = ctx.jtheta(1, 0, q, 3)
+    z_scale = ctx.pi / (2 * omega1)
+    coefficient = 2 * omega1 / (ctx.pi * j10p)
+    exponential_coefficient = -j10ppp / (6 * j10p)
+    return q, z_scale, coefficient, exponential_coefficient
+
+@defun
+@ctx_lru_cache(maxsize=16)
+def _weierzeta_data(ctx, omega1, omega2):
+    """Return the lattice-dependent data used by ``weierzeta``."""
+    q = ctx.qfrom(tau=omega2 / omega1)
+    w1 = -omega1 / ctx.pi
+    p = 1 / (2 * w1)
+    eta1 = (p / (6 * w1) * ctx.jtheta(1, 0, q, 3) /
+            ctx.jtheta(1, 0, q, 1))
+    return q, p, eta1
+
 @defun_wrapped
 def weierp(ctx, z, g2=None, g3=None, tau=None, omega1=None, omega2=None):
     r"""
@@ -2079,16 +2139,11 @@ def weierp(ctx, z, g2=None, g3=None, tau=None, omega1=None, omega2=None):
     z = ctx.convert(z)
     omega1, omega2 = ctx.omega1omega2from(
         g2=g2, g3=g3, tau=tau, omega1=omega1, omega2=omega2)
-    tau = omega2 / omega1
-    z_norm = z / (2 * omega1)
-    q = ctx.qfrom(tau=tau)
-    j1z = ctx.jtheta(1, ctx.pi*z_norm, q)
-    j2 = ctx.jtheta(2, 0, q)
-    j3 = ctx.jtheta(3, 0, q)
-    j4z = ctx.jtheta(4, ctx.pi*z_norm, q)
-    wp_theta = ((ctx.pi*j2*j3*j4z/j1z)**2 -
-                ctx.pi**2 * (j2**4 + j3**4) / 3)
-    return wp_theta / omega1**2 / 4
+    q, z_scale, coefficient, constant = ctx._weierp_data(omega1, omega2)
+    z1 = z * z_scale
+    j1z = ctx.jtheta(1, z1, q)
+    j4z = ctx.jtheta(4, z1, q)
+    return coefficient * (j4z / j1z)**2 + constant
 
 @defun_wrapped
 def weierpprime(ctx, z, g2=None, g3=None, tau=None,
@@ -2134,21 +2189,14 @@ def weierpprime(ctx, z, g2=None, g3=None, tau=None,
     z = ctx.convert(z)
     omega1, omega2 = ctx.omega1omega2from(
         g2=g2, g3=g3, tau=tau, omega1=omega1, omega2=omega2)
-    tau = omega2 / omega1
-    z_norm = z / (2 * omega1)
-    q = ctx.qfrom(tau=tau)
-    z1 = ctx.pi * z_norm
-    j10p = ctx.jtheta(1, 0, q, 1)
-    j20 = ctx.jtheta(2, 0, q)
-    j30 = ctx.jtheta(3, 0, q)
-    j40 = ctx.jtheta(4, 0, q)
-    k0 = j10p**3 / (j20 * j30 * j40)
+    q, z_scale, coefficient = ctx._weierpprime_data(omega1, omega2)
+    z1 = z * z_scale
     j1z1 = ctx.jtheta(1, z1, q)
     j2z1 = ctx.jtheta(2, z1, q)
     j3z1 = ctx.jtheta(3, z1, q)
     j4z1 = ctx.jtheta(4, z1, q)
     kz = j2z1 * j3z1 * j4z1 / j1z1**3
-    return -ctx.pi**3 / (4 * omega1**3) * k0 * kz
+    return coefficient * kz
 
 @defun_wrapped
 def weiersigma(ctx, z, g2=None, g3=None, tau=None,
@@ -2190,14 +2238,11 @@ def weiersigma(ctx, z, g2=None, g3=None, tau=None,
     z = ctx.convert(z)
     omega1, omega2 = ctx.omega1omega2from(
         g2=g2, g3=g3, tau=tau, omega1=omega1, omega2=omega2)
-    tau = omega2 / omega1
-    z1 = ctx.pi * z / (2 * omega1)
-    q = ctx.qfrom(tau=tau)
-    j10p = ctx.jtheta(1, 0, q, 1)
-    j10ppp = ctx.jtheta(1, 0, q, 3)
+    data = ctx._weiersigma_data(omega1, omega2)
+    q, z_scale, coefficient, exponential_coefficient = data
+    z1 = z * z_scale
     j1z1 = ctx.jtheta(1, z1, q)
-    return (2 * omega1 / (ctx.pi * j10p) *
-            ctx.exp(-z1**2 * j10ppp / (6 * j10p)) * j1z1)
+    return coefficient * ctx.exp(z1**2 * exponential_coefficient) * j1z1
 
 @defun_wrapped
 def weierzeta(ctx, z, g2=None, g3=None, tau=None,
@@ -2242,11 +2287,7 @@ def weierzeta(ctx, z, g2=None, g3=None, tau=None,
     z = ctx.convert(z)
     omega1, omega2 = ctx.omega1omega2from(
         g2=g2, g3=g3, tau=tau, omega1=omega1, omega2=omega2)
-    tau = omega2 / omega1
-    w1 = -omega1 / ctx.pi
-    q = ctx.qfrom(tau=tau)
-    p = 1 / 2 / w1
-    eta1 = p / 6 / w1 * ctx.jtheta(1, 0, q, 3) / ctx.jtheta(1, 0, q, 1)
+    q, p, eta1 = ctx._weierzeta_data(omega1, omega2)
     j1pz = ctx.jtheta(1, p*z, q, 1)
     j1z = ctx.jtheta(1, p*z, q)
     return -eta1 * z + p * j1pz / j1z
