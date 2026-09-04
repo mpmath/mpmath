@@ -20,7 +20,8 @@ classifiers = ['Topic :: Scientific/Engineering :: Mathematics',
                'Programming Language :: Python :: 3.15',
                'Programming Language :: Python :: Free Threading :: 2 - Beta',
                'Programming Language :: Python :: Implementation :: CPython',
-               'Programming Language :: Python :: Implementation :: PyPy']
+               'Programming Language :: Python :: Implementation :: PyPy',
+               'Programming Language :: Python :: Implementation :: GraalPy']
 dynamic = ['version']
 requires-python = '>=3.10'
 readme = 'README.rst'
@@ -35,9 +36,9 @@ Documentation = 'http://mpmath.org/doc/current/'
 tests = ['pytest>=6', 'numpy', 'packaging', 'pytest-timeout',
          'matplotlib; python_version<"3.15"', 'pexpect', 'ipython<9.17', 'hypothesis']
 develop = ['mpmath[tests]', 'flake518>=1.5', 'pytest-cov>=7', 'wheel', 'build']
-gmpy2 = ['gmpy2>=2.3']
+gmpy2 = ["gmpy2>=2.3; python_implementation != 'GraalVM'"]
 gmpy = ['mpmath[gmpy2]']
-gmp = ['python-gmp']
+gmp = ["python-gmp; python_implementation != 'GraalVM'"]
 docs = ['sphinx', 'matplotlib', 'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist', 'diff_cover']
 
