@@ -237,12 +237,34 @@ def test_float_sqrt():
     pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**mp2.mpf(0.5))
 
 def test_sqrt_special():
-    assert sqrt(mpc(+inf, +inf)) == mpc(inf, +inf)
-    assert sqrt(mpc(-inf, +inf)) == mpc(inf, +inf)
-    assert sqrt(mpc( nan, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc(+inf, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc(-inf, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc( nan, -inf)) == mpc(inf, -inf)
+
+    # Special cases:
+    # https://data-apis.org/array-api/2025.12/API_specification/generated/array_api.sqrt.html
+    # Real-valued cases
+    assert isnan(sqrt(mpf(nan)))
+    # Negative real inputs are omitted because mpmath returns complex analytic
+    # continuations instead of NaN.
+    assert sqrt(mpf(0)).ae(0)
+    # The -0 case is omitted because mpmath does not preserve signed zero.
+    assert sqrt(mpf(inf)).ae(inf)
+    # Complex-valued cases
+    assert sqrt(mpc(0, 0)).ae(mpc(0, 0))
+    assert sqrt(mpc(nan, inf)).ae(mpc(inf, inf))
+    r = sqrt(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert sqrt(mpc(-inf, 1)).ae(mpc(0, inf))
+    assert sqrt(mpc(inf, 1)).ae(mpc(inf, 0))
+    r = sqrt(mpc(-inf, nan))
+    assert isnan(r.real) and abs(r.imag) == inf
+    r = sqrt(mpc(inf, nan))
+    assert r.real == inf and isnan(r.imag)
+    r = sqrt(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
 
 def test_hypot():
     assert hypot(0, 0) == 0
