@@ -1042,12 +1042,8 @@ def test_tan():
     assert tan(mpc(nan, -inf)) == mpc(0, -1)
 
 def test_atanh():
-    assert atanh(0) == 0
     assert atanh(0.5).ae(0.54930614433405484570)
     assert atanh(-0.5).ae(-0.54930614433405484570)
-    assert atanh(1) == inf
-    assert atanh(-1) == -inf
-    assert isnan(atanh(nan))
     assert isinstance(atanh(1), mpf)
     assert isinstance(atanh(-1), mpf)
     # Limits at infinity
@@ -1056,8 +1052,6 @@ def test_atanh():
     assert atanh(-inf).ae(jpi2)
     assert atanh(mpc(inf,-1)).ae(-jpi2)
     assert atanh(mpc(inf,0)).ae(-jpi2)
-    assert atanh(mpc(inf,1)).ae(jpi2)
-    assert atanh(mpc(1,inf)).ae(jpi2)
     assert atanh(mpc(0,inf)).ae(jpi2)
     assert atanh(mpc(-1,inf)).ae(jpi2)
     assert atanh(mpc(-inf,1)).ae(jpi2)
@@ -1066,6 +1060,35 @@ def test_atanh():
     assert atanh(mpc(-1,-inf)).ae(-jpi2)
     assert atanh(mpc(0,-inf)).ae(-jpi2)
     assert atanh(mpc(1,-inf)).ae(-jpi2)
+
+    # Special cases:
+    # https://data-apis.org/array-api/2025.12/API_specification/generated/array_api.atanh.html
+    # Real-valued cases
+    assert isnan(atanh(mpf(nan)))
+    # Real inputs outside [-1, 1] are omitted because mpmath returns complex
+    # analytic continuations instead of NaN.
+    assert atanh(mpf(-1)).ae(-inf)
+    assert atanh(mpf(1)).ae(inf)
+    assert atanh(mpf(0)).ae(0)
+    # The -0 case is omitted because mpmath does not preserve signed zero.
+    # Complex-valued cases
+    assert atanh(mpc(0, 0)).ae(mpc(0, 0))
+    r = atanh(mpc(0, nan))
+    assert r.real == 0 and isnan(r.imag)
+    assert atanh(mpc(1, 0)).ae(mpc(inf, 0))
+    assert atanh(mpc(1, inf)).ae(mpc(0, pi/2))
+    r = atanh(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert atanh(mpc(inf, 1)).ae(mpc(0, pi/2))
+    assert atanh(mpc(inf, inf)).ae(mpc(0, pi/2))
+    r = atanh(mpc(inf, nan))
+    assert r.real == 0 and isnan(r.imag)
+    r = atanh(mpc(nan, 0))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atanh(mpc(nan, inf))
+    assert r.real == 0 and r.imag.ae(pi/2)
+    r = atanh(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
 
 def test_expm1():
     assert expm1(0) == 0

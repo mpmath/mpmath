@@ -789,6 +789,9 @@ def mpc_acosh(z, prec, rnd=round_down):
 
 def mpc_atanh(z, prec, rnd=round_down):
     # atanh(z) = (log(1+z)-log(1-z))/2
+    a, b = z
+    if a == fzero and b == fnan:
+        return fzero, fnan
     wp = prec + 15
     a = mpc_add(z, mpc_one, wp)
     b = mpc_sub(mpc_one, z, wp)
