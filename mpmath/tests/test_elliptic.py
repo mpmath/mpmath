@@ -331,6 +331,59 @@ def test_jtheta_modular_translation():
     assert mpc_ae(jtheta(3, z, q), jtheta(3, -z, q))
     assert mpc_ae(jtheta(4, z, q), jtheta(4, -z, q))
 
+def test_jtheta_modular_boundaries():
+    z = mpc('0.3', '0.2')
+    delta = mpf(2)**-20
+
+    for dps in (15, 30, 50, 100):
+        with mp.workdps(dps):
+            omega1, omega2 = omega1omega2from(g2=-4, g3=1)
+            circle_tau = omega2/omega1
+            assert not mp._jtheta_needs_modular(
+                z, qfrom(tau=circle_tau))
+            assert mp._jtheta_needs_modular(
+                z, qfrom(tau=circle_tau*(1-delta)))
+            assert not mp._jtheta_needs_modular(
+                z, qfrom(tau=circle_tau*(1+delta)))
+
+            corner_imag = sqrt(3)/2
+            for real in (mpf('-0.5'), mpf('0.5')):
+                corner_tau = real + j*corner_imag
+                assert not mp._jtheta_needs_modular(
+                    z, qfrom(tau=corner_tau))
+
+                vertical_tau = real + mpf('1.2')*j
+                assert not mp._jtheta_needs_modular(
+                    z, qfrom(tau=vertical_tau))
+                outside_tau = vertical_tau + mp.sign(real)*delta
+                assert mp._jtheta_needs_modular(
+                    z, qfrom(tau=outside_tau))
+
+def test_jtheta_modular_boundary_recursion(monkeypatch):
+    calls = []
+    original = mp._jtheta_modular
+
+    def record_modular_call(*args):
+        calls.append(args)
+        return original(*args)
+
+    monkeypatch.setattr(mp, '_jtheta_modular', record_modular_call)
+    with mp.workdps(50):
+        omega1, omega2 = omega1omega2from(g2=-4, g3=1)
+        tau = omega2/omega1
+        q = qfrom(tau=tau)
+        z = mpc('0.3', '2.0')
+
+        assert not mp._jtheta_needs_modular(z, q)
+        with mp.extraprec(10):
+            assert mp._jtheta_needs_modular(z, q)
+        jtheta(3, z, q)
+        assert len(calls) == 0
+
+        inside_q = qfrom(tau=tau*(1-mpf(2)**-20))
+        jtheta(3, mpc('0.3', '0.2'), inside_q)
+        assert len(calls) == 1
+
 def test_jtheta_identities():
     """
     Tests the some of the jacobi identidies found in Abramowitz,
