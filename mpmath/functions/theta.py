@@ -483,8 +483,7 @@ def _jtheta_modular(ctx, g, n, z, q, nd):
         a2z = a2*z
         for i in range(nd + 1):
             yield (ctx.binomial(nd, i) * Hi * v**(nd - i)
-                   * ctx._jtheta(
-                       new_n, new_z, new_q, nd - i, tau_reduced=True))
+                   * ctx._jtheta(new_n, new_z, new_q, nd - i))
             Him1, Hi = Hi, a2z*Hi + a2*i*Him1
 
     C = ctx._jtheta_eps(n, -d, b, c, -a)*ctx.sqrt(v/1j)
@@ -492,25 +491,12 @@ def _jtheta_modular(ctx, g, n, z, q, nd):
     return C*ctx.exp(X)*sum(terms())
 
 @defun
-def _jtheta(ctx, n, z, q, nd, tau_reduced=False):
-    # We use Fourier series (DLMF, §20.2(i)) to compute functions, when
-    # |q| is not near 1.  Else, transform τ to the fundamental
-    # domain (|Re(τ)| ≤ 0.5 and |τ| ≥ 1), applying transformations
-    # of lattice parameter (DLMF, §20.7(viii)).
-
-    if not tau_reduced and ctx._jtheta_needs_modular(z, q):
-        tau = ctx.taufrom(q=q)
-        g = ctx._reduce_psl2z(tau)
-
-        # Estimate exponential factor
-        c, d = g[2:]
-        extra = 10*(nd + 1) + max(0, ctx.mag(c/(c*tau + d)*z**2))
-
-        return ctx.extraprec(extra, True)(ctx._jtheta_modular)(g, n, z, q, nd)
-
-    # At that point, τ is in the fundamental domain and thus Im(τ) ≥ √3π/2.
-    # Using quasi-periodicity property (see DLMF, §20.2(ii)) brings
-    # z to the domain |Im(z)| ≤ π |Im(τ)|/2.
+def _jtheta(ctx, n, z, q, nd):
+    """Evaluate jtheta after the modular-reduction decision is made."""
+    # No modular transformation is required at the caller's precision.
+    # Use quasi-periodicity (DLMF, §20.2(ii)) to bring z to the domain
+    # |Im(z)| ≤ π |Im(τ)|/2 before evaluating the Fourier series
+    # (DLMF, §20.2(i)).
 
     if abs(z.imag) > abs(ctx.log(q).real)/2:
         with ctx.extraprec(10):
@@ -527,8 +513,7 @@ def _jtheta(ctx, n, z, q, nd, tau_reduced=False):
             def terms():
                 for i in range(nd + 1):
                     yield (ctx.binomial(nd, i) * beta**i
-                           * ctx._jtheta(
-                               n, new_z, q, nd - i, tau_reduced=True))
+                           * ctx._jtheta(n, new_z, q, nd - i))
 
             res = C*sum(terms())
         return +res
@@ -558,5 +543,19 @@ def jtheta(ctx, n, z, q, derivative=0):
         raise ValueError("First argument expected to be 1, 2, 3 or 4")
     if abs(q) >= 1:
         raise ValueError(f"abs(q) >= 1")
+
+    # Transform τ to the fundamental domain when needed. Make this
+    # decision once at the caller's precision so recursive evaluation under
+    # guard precision does not reclassify the same finite-precision nome.
+    if ctx._jtheta_needs_modular(z, q):
+        tau = ctx.taufrom(q=q)
+        g = ctx._reduce_psl2z(tau)
+
+        # Estimate exponential factor
+        c, d = g[2:]
+        extra = 10*(nd + 1) + max(0, ctx.mag(c/(c*tau + d)*z**2))
+
+        return ctx.extraprec(extra, True)(ctx._jtheta_modular)(
+            g, n, z, q, nd)
 
     return ctx._jtheta(n, z, q, nd)
