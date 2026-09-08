@@ -456,10 +456,10 @@ def _jtheta_needs_modular(ctx, z, q):
     tau = ctx.taufrom(q=q)
     assert abs(q) < 1 and tau.imag > 0
     real = abs(tau.real)
-    if real > ctx.one/2 and not ctx.almosteq(real, ctx.one/2):
+    if real > 0.5 and not ctx.almosteq(real, 0.5):
         return True
     norm = tau.real**2 + tau.imag**2
-    return norm < ctx.one and not ctx.almosteq(norm, ctx.one)
+    return norm < 1 and not ctx.almosteq(norm, 1)
 
 @defun
 def _jtheta_modular(ctx, g, n, z, q, nd):
