@@ -285,10 +285,6 @@ def mpc_sqrt(z, prec, rnd=round_down):
     We have sqrt(a+bi) = sqrt((r+a)/2) + b/sqrt(2*(r+a))*i where
     r = abs(a+bi), when a+bi is not a negative real number."""
     a, b = z
-    if a == fninf and b == fnan:
-        return fnan, finf
-    if a == finf and b == fnan:
-        return finf, fnan
     if b == fzero:
         if a == fzero:
             return (a, b)
@@ -301,6 +297,11 @@ def mpc_sqrt(z, prec, rnd=round_down):
             return (re, fzero)
     if b in (finf, fninf):
         return (finf, b)
+    if b == fnan:
+        if a == fninf:
+            return fnan, finf
+        if a == finf:
+            return finf, fnan
     wp = prec+20
     if not a[0]:                               # case a positive
         t  = mpf_add(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a
