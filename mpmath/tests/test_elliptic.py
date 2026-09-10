@@ -844,6 +844,20 @@ def test_weierstrass_g2g3_differential_equation():
         pp = weierpprime(z, g2=g2, g3=g3)
         assert mpc_ae(pp**2, 4*p**3 - g2*p - g3, eps=eps*1000)
 
+def test_weierstrass_pprime_sigma_duplication():
+    # https://dlmf.nist.gov/23.10#E10
+    mp.dps = 30
+
+    cases = [
+        (mpf('0.3'), mpf(60), mpf(140)),
+        (mpf('0.2') + j/10, mpc(1, 2), mpc(3, -4)),
+    ]
+    for z, g2, g3 in cases:
+        expected = -weiersigma(2*z, g2=g2, g3=g3)
+        expected /= weiersigma(z, g2=g2, g3=g3)**4
+        assert mpc_ae(weierpprime(z, g2=g2, g3=g3), expected,
+                      eps=eps*1000)
+
 def test_weierstrass_parameter_conversions():
     mp.dps = 30
 
@@ -1185,11 +1199,18 @@ def test_weierstrass_half_period_values_are_cubic_roots():
         weierp(omega2, omega1=omega1, omega2=omega2),
         weierp(omega1 + omega2, omega1=omega1, omega2=omega2),
     ]
+    half_period_derivatives = [
+        weierpprime(omega1, omega1=omega1, omega2=omega2),
+        weierpprime(omega2, omega1=omega1, omega2=omega2),
+        weierpprime(omega1 + omega2, omega1=omega1, omega2=omega2),
+    ]
 
     for value in half_period_values:
         assert mpc_ae(4*value**3 - g2*value - g3, 0,
                       eps=eps*1000)
         assert min(abs(value - root) for root in roots) < eps*1000
+    for value in half_period_derivatives:
+        assert mpc_ae(value, 0, eps=eps*1000)
     for root in roots:
         assert min(abs(value - root) for value in half_period_values) < eps*1000
 

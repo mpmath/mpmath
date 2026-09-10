@@ -455,6 +455,22 @@ def test_asin():
     assert asin(mpc(0, 1e-220)).ae(1e-220j)
     mp.prec = 53
 
+    # Special cases:
+    # https://en.cppreference.com/c/numeric/math/asin
+    assert isnan(asin(nan))
+    assert asin(0) == 0
+    # https://en.cppreference.com/c/numeric/complex/casin
+    assert asin(0j) == 0
+    r = asin(mpc(nan, 0))
+    assert isnan(r.real) and isnan(r.imag)
+    assert asin(mpc(1, -inf)) == mpc(0, -inf)
+    r = asin(mpc(0, nan))
+    assert r.real == 0 and isnan(r.imag)
+    r = asin(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = asin(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
 def test_acos():
     pi4 = pi/4
     assert acos(mpc(+inf, +inf)) == mpc(+pi4, -inf)
@@ -485,6 +501,83 @@ def test_acos():
     assert acos(mpc(-2, 0)).ae(mpc(pi, log(2 - sqrt(3))))
     assert acos(mpc(+2, 0)).ae(mpc(0, log(2 + sqrt(3))))
     assert acos(mpc(0.5, 0)).ae(pi/3)
+
+    # Special cases:
+    # https://en.cppreference.com/c/numeric/math/acos
+    assert isnan(acos(nan))
+    assert acos(1) == 0
+    # https://en.cppreference.com/c/numeric/complex/cacos
+    assert acos(0j).ae(mpc(pi2, 0))
+    r = acos(mpc(0, nan))
+    assert r.real.ae(pi2) and isnan(r.imag)
+    r = acos(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = acos(mpc(nan, 0))
+    assert isnan(r.real) and isnan(r.imag)
+    r = acos(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+def test_asinh():
+    pi2 = pi/2
+    pi4 = pi/4
+
+    # Special cases:
+    # https://en.cppreference.com/c/numeric/math/asinh
+    assert isnan(asinh(nan))
+    assert asinh(0) == 0
+    assert asinh(inf) == inf
+    assert asinh(-inf) == -inf
+    # https://en.cppreference.com/c/numeric/complex/casinh
+    assert asinh(0j) == 0
+    assert asinh(mpc(1, inf)).ae(mpc(inf, pi2))
+    r = asinh(mpc(0, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = asinh(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert asinh(mpc(inf, 1)) == mpc(inf, 0)
+    assert asinh(mpc(inf, inf)).ae(mpc(inf, pi4))
+    r = asinh(mpc(nan, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = asinh(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = asinh(mpc(nan, inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = asinh(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+def test_acosh():
+    pi2 = pi/2
+    pi4 = pi/4
+
+    # Special cases:
+    # https://en.cppreference.com/c/numeric/math/acosh
+    assert isnan(acosh(nan))
+    assert acosh(1) == 0
+    assert acosh(inf) == inf
+    # https://en.cppreference.com/c/numeric/complex/cacosh
+    assert acosh(0j).ae(mpc(0, pi2))
+    assert acosh(mpc(0, inf)).ae(mpc(inf, pi2))
+    assert acosh(mpc(1, inf)).ae(mpc(inf, pi2))
+    r = acosh(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = acosh(mpc(0, nan))
+    assert isnan(r.real) and abs(r.imag).ae(pi2)
+    assert acosh(mpc(-inf, 1)).ae(mpc(inf, pi))
+    assert acosh(mpc(inf, 1)) == mpc(inf, 0)
+    assert acosh(mpc(-inf, inf)).ae(mpc(inf, 3*pi4))
+    assert acosh(mpc(inf, inf)).ae(mpc(inf, pi4))
+    r = acosh(mpc(-inf, nan))
+    assert r.real == inf and isnan(r.imag)
+    r = acosh(mpc(inf, nan))
+    assert r.real == inf and isnan(r.imag)
+    r = acosh(mpc(nan, 0))
+    assert isnan(r.real) and isnan(r.imag)
+    r = acosh(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = acosh(mpc(nan, inf))
+    assert r.real == inf and isnan(r.imag)
+    r = acosh(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
 
 def test_atan():
     assert atan(-2.3).ae(math.atan(-2.3))

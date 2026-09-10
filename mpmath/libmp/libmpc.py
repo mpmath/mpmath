@@ -5,12 +5,12 @@ Low-level functions for complex arithmetic.
 import sys
 
 from .backend import MPZ
-from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
-                        mpf_cos, mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi,
-                        mpf_cosh, mpf_cosh_sinh, mpf_exp, mpf_fibonacci,
-                        mpf_ln, mpf_log1p, mpf_log_hypot, mpf_nthroot, mpf_phi,
-                        mpf_pi, mpf_pow_int, mpf_sin, mpf_sin_pi, mpf_sinh,
-                        mpf_tan, mpf_tanh)
+from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_asinh, mpf_atan,
+                        mpf_atan2, mpf_cos, mpf_cos_pi, mpf_cos_sin,
+                        mpf_cos_sin_pi, mpf_cosh, mpf_cosh_sinh, mpf_exp,
+                        mpf_fibonacci, mpf_ln, mpf_log1p, mpf_log_hypot,
+                        mpf_nthroot, mpf_phi, mpf_pi, mpf_pow_int, mpf_sin,
+                        mpf_sin_pi, mpf_sinh, mpf_tan, mpf_tanh)
 from .libintmath import giant_steps, lshift, rshift
 from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fone,
                      from_float, from_int, from_man_exp, ftwo, fzero, mpf_abs,
@@ -632,9 +632,9 @@ def acos_asin(z, prec, rnd, n):
         # case abs(a) <= 1
         if not am[0]:
             if n == 0:
-                return mpf_acos(a, prec, rnd), fzero
+                return mpf_acos(a, prec, rnd), fzero if a != fnan else a
             else:
-                return mpf_asin(a, prec, rnd), fzero
+                return mpf_asin(a, prec, rnd), fzero if a != fnan else a
         # cases abs(a) > 1
         else:
             # case a < -1
@@ -653,6 +653,12 @@ def acos_asin(z, prec, rnd, n):
                 else:
                     pi = mpf_pi(prec, rnd)
                     return mpf_shift(pi, -1), mpf_neg(c)
+    # special cases with pure imaginary argument
+    if a == fzero:
+        c = mpf_asinh(b, prec, rnd)
+        if n == 0:
+            return mpf_shift(mpf_pi(prec, rnd), -1), mpf_neg(c)
+        return fzero, c
     asign = bsign = 0
     if a[0]:
         a = mpf_neg(a)
