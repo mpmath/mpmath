@@ -424,6 +424,8 @@ def mpc_exp(z, prec, rnd=round_down):
         return mpf_cos_sin(b, prec, rnd)
     if b == fzero:
         return mpf_exp(a, prec, rnd), fzero
+    if a in _infs and b in _infs_nan:
+        return (fzero, fzero) if a == fninf else (finf, fnan)
     mag = mpf_exp(a, prec+4, rnd)
     c, s = mpf_cos_sin(b, prec+4, rnd)
     re = mpf_mul(mag, c, prec, rnd)
