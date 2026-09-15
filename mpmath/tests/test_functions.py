@@ -323,6 +323,26 @@ def test_issue_73():
     assert (+a).ae(0.36787944117144233)
     assert (+b).ae(2.7182818284590451)
 
+def test_issue_1181():
+    # return correctly rounded results
+    x = mpf('3.4584999999999999')
+    assert exp(x, rounding='f') == mpf('31.769286826103926')
+    assert exp(x, rounding='c') == mpf('31.769286826103929')
+    x = mpf('7.2902616151231614')
+    assert exp(x, rounding='f') == mpf('1465.9541628204504')
+    assert exp(x, rounding='c') == mpf('1465.9541628204506')
+    x = mpf('898.34761958821457')
+    assert exp(x, rounding='f') == mpf('1.4041516611568077e+390')
+    assert exp(x, rounding='c') == mpf('1.404151661156808e+390')
+    x = mpf('487.97156390105067')
+    assert exp(x, rounding='f') == mpf('8.3821905233836813e+211')
+    assert exp(x, rounding='c') == mpf('8.3821905233836822e+211')
+
+    mp.prec = 113
+    x = mpf('19.6372200390653546264729811809957027')
+    assert exp(x, rounding='f') == mpf('337548593.639065733181444072201225156')
+    assert exp(x, rounding='c') == mpf('337548593.639065733181444072201225208')
+
 def test_log():
     assert log(1) == 0
     for x in [0.5, 1.5, 2.0, 3.0, 100, 10**50, 1e-50]:

@@ -1177,7 +1177,7 @@ def mpf_exp(x, prec, rnd=round_down):
     sign, man, exp, bc = x
     if man:
         mag = bc + exp
-        wp = prec + 14
+        wp = prec + 25
         if sign:
             man = -man
         # TODO: the best cutoff depends on both x and the precision.
