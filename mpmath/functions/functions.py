@@ -212,7 +212,37 @@ def log1p(ctx, x):
     cmag = ctx.mag(c)
     a, b = c.real, c.imag
     wp = ctx.prec
-    if cmag >= -wp or ctx.isnan(cmag):
+    if cmag < -wp:
+        # c is "very small", and we use a series expansion,
+        # c - c**2/2. The real part of that is a+(b*b-a*a)/2,
+        # and the imag part b-a*b. Given that cmag < -prec, it
+        # can be shown that "a*b" is numerically insignifcant in
+        # the imag part, and _usually_ the "a*a/2" in the real
+        # part. What remains is cheap to compute. In the real
+        # part, though, if `a` is negative, the remaining
+        # a+b**2/2 can suffer massive cancellation - even total.
+        real = a + b*b*0.5 # usually the real part of the result
+        if (a < 0.0
+            and ctx.mag(real) <= ctx.mag(a) - LOG1P_EXTRAPREC):
+            # The guard bits were lost to cancellation. Rare. At
+            # the contrived
+            # -1.999999873062092e-40+1.999999936531045e-20j
+            # _all_ bits cancel out. Since a ~= -b*b/2 in this
+            # case, and |b| is at largest (worst case) about
+            # 2**-prec, |a| is about 2**(-2*prec), and the true
+            # result may be as small as a**2/2, which is about
+            # 2**(-4*prec), of which we want the leading prec
+            # bits. To get the leading prec bits starting at
+            # 2**(-4**prec) from addends starting at
+            # 2**-(2*prec), we need the subtraction to handle
+            # 3*prec bits (the first 2*prec of which may cancel
+            # to exactly 0).
+            a2 = a*a # only need at worst prec bits
+            b2 = ctx.fmul(b, b, prec=2*wp)
+            diff = ctx.fsub(b2, a2, prec=3*wp)
+            real = a + ctx.ldexp(diff, -1)
+        result = real if ctx._is_real_type(x) else ctx.mpc(real, b)
+    else:
         # |c| isn't very small. We call log(1+c) instead, but
         # are careful about the precision used by the add. The
         # real part of the result is log(|c+1|). That's
@@ -247,36 +277,6 @@ def log1p(ctx, x):
         # return a rexult too large by 2), So leave wp alone.
         arg = ctx.fadd(1.0, c, prec=wp)
         result = ctx.log(arg)
-    else:
-        # Else c is "very small", and we use a series expansion,
-        # c - c**2/2. The real part of that is a+(b*b-a*a)/2,
-        # and the imag part b-a*b. Given that cmag < -prec, it
-        # can be shown that "a*b" is numerically insignifcant in
-        # the imag part, and _usually_ the "a*a/2" in the real
-        # part. What remains is cheap to compute. In the real
-        # part, though, if `a` is negative, the remaining
-        # a+b**2/2 can suffer massive cancellation - even total.
-        real = a + b*b*0.5 # usually the real part of the result
-        if (a < 0.0
-            and ctx.mag(real) <= ctx.mag(a) - LOG1P_EXTRAPREC):
-            # The guard bits were lost to cancellation. Rare. At
-            # the contrived
-            # -1.999999873062092e-40+1.999999936531045e-20j
-            # _all_ bits cancel out. Since a ~= -b*b/2 in this
-            # case, and |b| is at largest (worst case) about
-            # 2**-prec, |a| is about 2**(-2*prec), and the true
-            # result may be as small as a**2/2, which is about
-            # 2**(-4*prec), of which we want the leading prec
-            # bits. To get the leading prec bits starting at
-            # 2**(-4**prec) from addends starting at
-            # 2**-(2*prec), we need the subtraction to handle
-            # 3*prec bits (the first 2*prec of which may cancel
-            # to exactly 0).
-            a2 = a*a # only need at worst prec bits
-            b2 = ctx.fmul(b, b, prec=2*wp)
-            diff = ctx.fsub(b2, a2, prec=3*wp)
-            real = a + ctx.ldexp(diff, -1)
-        result = real if ctx._is_real_type(x) else ctx.mpc(real, b)
     return result
 
 @defun_wrapped
