@@ -1,5 +1,5 @@
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 from hypothesis import strategies as st
 
 from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
@@ -346,7 +346,6 @@ def signals(draw):
     ))
 
 @given(x=signals())
-@settings(deadline=None)
 def test_fft_randomized_complex(x):
     # test that fft and invfft are inverses of each other for random complex inputs
     recovered = invfft(fft(x))

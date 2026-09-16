@@ -4,8 +4,10 @@ from .calculus import defun
 def _is_power_of_two(n):
     return (n & (n - 1)) == 0
 
+
 def _next_power_of_two(n):
     return 1 << (n - 1).bit_length()
+
 
 def _fft_cooley_tuckey(ctx, values, inverse=False):
     """
@@ -68,12 +70,13 @@ def _fft_convolve(ctx, values_a, values_b):
     result = _fft_cooley_tuckey(ctx, spectrum_product, True)
     return [value / size for value in result]
 
+
 def _fft_bluestein(ctx, values, inverse=False):
     """
-    This function implements Bluestein's algorithm for computing the Fast Fourier Transform (or Inverse Fast Fourier Transform) of a sequence of complex numbers of arbitrary length.
+    This function implements Bluestein's algorithm for FFT
+    (or Inverse FFT) calulation.
 
-    https://en.wikipedia.org/wiki/Chirp_Z-transform
-    https://edukatesengkang.com/2026/09/01/how-to-learn-bluesteins-fft-algorithm-chirp-multiplication-convolution-arbitrary-length-dfts-and-prime-size-fourier-transforms/
+    https://en.wikipedia.org/wiki/Chirp_Z-transform#Bluestein's_algorithm
     """
     n = len(values)
 
@@ -90,12 +93,14 @@ def _fft_bluestein(ctx, values, inverse=False):
     convolution = _fft_convolve(ctx, a, b)
     return [convolution[n - 1 + k] * chirp[k] for k in range(n)]
 
+
 @defun
 def fft(ctx, values):
     r"""
     Computes the Discrete Fourier Transform (DFT) of a sequence.
 
-    Uses the radix-2 Cooley-Tukey algorithm for power-of-two lengths and Bluestein's algorithm for all other lengths.
+    It uses the radix-2 Cooley-Tukey algorithm for power-of-two lengths
+    and Bluestein's algorithm for all other lengths.
 
     **Examples**
 
@@ -122,12 +127,14 @@ def fft(ctx, values):
             result = _fft_bluestein(ctx, converted_values)
     return [+v for v in result]
 
+
 @defun
 def invfft(ctx, values):
     r"""
     Computes the inverse Discrete Fourier Transform (IDFT) of a sequence.
 
-    Uses the radix-2 Cooley-Tukey algorithm for power-of-two lengths and Bluestein's algorithm for all other lengths.
+    It uses the radix-2 Cooley-Tukey algorithm for power-of-two lengths
+    and Bluestein's algorithm for all other lengths.
 
     **Examples**
 
