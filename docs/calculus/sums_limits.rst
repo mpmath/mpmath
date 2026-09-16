@@ -64,4 +64,3 @@ properties of the algorithms.
 :func:`~mpmath.cohen_alt`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.cohen_alt
-
