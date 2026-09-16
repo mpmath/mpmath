@@ -364,6 +364,8 @@ def test_sin():
     assert isnan(r.real) and r.imag == 0
     r = sin(mpc(inf, 1))
     assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(-inf, 1))
+    assert isnan(r.real) and isnan(r.imag)
     r = sin(mpc(nan, 1))
     assert isnan(r.real) and isnan(r.imag)
     assert sin(mpc(0, inf)) == mpc(0, inf)
@@ -385,6 +387,8 @@ def test_sin():
     assert isnan(r.real) and abs(r.imag) == inf
     r = sin(mpc(nan, -inf))
     assert isnan(r.real) and r.imag == -inf
+    r = sin(mpc(inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
     r = sin(mpc(0, nan))
     assert r.real == 0 and isnan(r.imag)
     r = sin(mpc(1, nan))
@@ -533,6 +537,8 @@ def test_cosh():
     r = cosh(mpc(nan, 0))
     assert isnan(r.real) and r.imag == 0
     r = cosh(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cosh(mpc(nan, inf))
     assert isnan(r.real) and isnan(r.imag)
     r = cosh(mpc(nan, -inf))
     assert isnan(r.real) and isnan(r.imag)
