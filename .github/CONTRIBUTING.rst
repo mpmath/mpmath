@@ -35,7 +35,7 @@ All work should be submitted via `Pull Requests (PR)`_.
 
 4. Please conform to `PEP 8`_; run::
 
-       flake518
+       ruff check
 
    to check formatting.
 
