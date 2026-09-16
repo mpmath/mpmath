@@ -396,6 +396,17 @@ def test_sin():
     r = sin(mpc(nan, nan))
     assert isnan(r.real) and isnan(r.imag)
 
+    # Conjugate cases:
+    r = sin(mpc(inf, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(-inf, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    assert sin(mpc(3*pi/4, -inf)) == mpc(inf, inf)
+    assert sin(mpc(-3*pi/4, -inf)) == mpc(-inf, inf)
+    assert sin(mpc(-pi/4, -inf)) == mpc(-inf, -inf)
+
 def test_cos():
     # Real special cases:
     # https://en.cppreference.com/c/numeric/math/cos
@@ -442,6 +453,15 @@ def test_cos():
     assert isnan(r.real) and isnan(r.imag)
     r = cos(mpc(nan, nan))
     assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    r = cos(mpc(inf, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    assert cos(mpc(3*pi/4, -inf)) == mpc(-inf, inf)
+    assert cos(mpc(-3*pi/4, -inf)) == mpc(-inf, -inf)
+    assert cos(mpc(-pi/4, -inf)) == mpc(inf, -inf)
 
 def test_sinh():
     # Real special cases:
@@ -493,6 +513,12 @@ def test_sinh():
     r = sinh(mpc(nan, nan))
     assert isnan(r.real) and isnan(r.imag)
 
+    # Conjugate cases:
+    r = sinh(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sinh(mpc(nan, inf))
+    assert isnan(r.real) and isnan(r.imag)
+
 def test_cosh():
     # Real special cases:
     # https://en.cppreference.com/c/numeric/math/cosh
@@ -538,11 +564,15 @@ def test_cosh():
     assert isnan(r.real) and r.imag == 0
     r = cosh(mpc(nan, 1))
     assert isnan(r.real) and isnan(r.imag)
-    r = cosh(mpc(nan, inf))
-    assert isnan(r.real) and isnan(r.imag)
     r = cosh(mpc(nan, -inf))
     assert isnan(r.real) and isnan(r.imag)
     r = cosh(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    r = cosh(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cosh(mpc(nan, inf))
     assert isnan(r.real) and isnan(r.imag)
 
 def test_degrees():
