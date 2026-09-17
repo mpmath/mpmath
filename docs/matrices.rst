@@ -268,6 +268,12 @@ Determinant and Rank
 .. autofunction :: mpmath.rank
 
 
+Lattice reduction
+.................
+
+.. autofunction :: mpmath.lll_gram
+
+
 Decompositions
 ..............
 

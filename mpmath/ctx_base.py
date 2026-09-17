@@ -12,6 +12,7 @@ from .functions.rszeta import RSCache
 from .identification import IdentificationMethods
 from .matrices.calculus import MatrixCalculusMethods
 from .matrices.eigen import Eigen
+from .matrices.lattice import LatticeMethods
 from .matrices.linalg import LinearAlgebraMethods
 from .matrices.matrices import MatrixMethods
 from .visualization import VisualizationMethods
@@ -29,6 +30,7 @@ class StandardBaseContext(Context,
     MatrixMethods,
     MatrixCalculusMethods,
     LinearAlgebraMethods,
+    LatticeMethods,
     Eigen,
     IdentificationMethods,
     OptimizationMethods,

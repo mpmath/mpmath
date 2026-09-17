@@ -169,6 +169,7 @@ residual = mp.residual
 qr_solve = mp.qr_solve
 cholesky = mp.cholesky
 cholesky_solve = mp.cholesky_solve
+lll_gram = mp.lll_gram
 det = mp.det
 cond = mp.cond
 hessenberg = mp.hessenberg
