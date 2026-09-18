@@ -426,6 +426,8 @@ def test_cos():
     assert isnan(r.real) and r.imag == 0
     r = cos(mpc(inf, 1))
     assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(-inf, 1))
+    assert isnan(r.real) and isnan(r.imag)
     r = cos(mpc(nan, 1))
     assert isnan(r.real) and isnan(r.imag)
     assert cos(mpc(0, inf)) == mpc(inf, 0)
@@ -456,6 +458,8 @@ def test_cos():
 
     # Conjugate cases:
     r = cos(mpc(inf, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(-inf, -1))
     assert isnan(r.real) and isnan(r.imag)
     r = cos(mpc(nan, -1))
     assert isnan(r.real) and isnan(r.imag)
