@@ -452,6 +452,8 @@ def mpc_cos(z, prec, rnd=round_down):
         return mpf_cos(a, prec, rnd), fzero
     if a == fzero:
         return mpf_cosh(b, prec, rnd), fzero
+    if a in _infs_nan and b in _infs:
+        return finf, fnan
     wp = prec + 6
     c, s = mpf_cos_sin(a, wp)
     ch, sh = mpf_cosh_sinh(b, wp)
@@ -468,6 +470,8 @@ def mpc_sin(z, prec, rnd=round_down):
         return mpf_sin(a, prec, rnd), fzero
     if a == fzero:
         return fzero, mpf_sinh(b, prec, rnd)
+    if a in _infs_nan and b in _infs:
+        return fnan, b
     wp = prec + 6
     c, s = mpf_cos_sin(a, wp)
     ch, sh = mpf_cosh_sinh(b, wp)
