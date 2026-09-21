@@ -62,11 +62,15 @@ if gmpy and hasattr(MPZ, 'bit_scan1'):
 # Used to avoid slow function calls as far as possible
 bctable = [n.bit_length() for n in range(1024)]
 
-# TODO: speed up for bases 2, 4, 8, 16, ...
-
 def bin_to_radix(x, xbits, base, bdigits):
     """Changes radix of a fixed-point number; i.e., converts
     x * 2**xbits to floor(x * base**bdigits)."""
+    # For power-of-two bases, base**bdigits is itself a power of two, so the
+    # whole conversion reduces to a single bit shift and the (potentially
+    # very large) multiplication by base**bdigits can be avoided entirely.
+    if base & (base - 1) == 0:
+        shift = (base.bit_length() - 1) * bdigits - xbits
+        return x << shift if shift >= 0 else x >> (-shift)
     return x * (MPZ(base)**bdigits) >> xbits
 
 stddigits = '0123456789abcdefghijklmnopqrstuvwxyz'

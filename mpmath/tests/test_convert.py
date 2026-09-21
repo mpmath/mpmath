@@ -290,3 +290,31 @@ def test_compatibility():
 
 def test_issue465():
     assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')
+
+
+def test_bin_to_radix_power_of_two():
+    """The power-of-two fast path in bin_to_radix must return exactly the
+    same result as the general multiply-and-shift formula."""
+    from mpmath.libmp.libintmath import bin_to_radix
+
+    def reference(x, xbits, base, bdigits):
+        return x * (base**bdigits) >> xbits
+
+    random.seed(1234)
+    # Power-of-two bases go through the fast (shift-only) path.
+    for base in [2, 4, 8, 16, 32, 64]:
+        for _ in range(500):
+            xbits = random.randint(0, 400)
+            bdigits = random.randint(0, 200)
+            x = random.getrandbits(random.randint(0, 800))
+            assert bin_to_radix(x, xbits, base, bdigits) == \
+                reference(x, xbits, base, bdigits)
+
+    # Non-power-of-two bases must still use the general path unchanged.
+    for base in [3, 5, 7, 10, 12, 100]:
+        for _ in range(500):
+            xbits = random.randint(0, 400)
+            bdigits = random.randint(0, 200)
+            x = random.getrandbits(random.randint(0, 800))
+            assert bin_to_radix(x, xbits, base, bdigits) == \
+                reference(x, xbits, base, bdigits)
