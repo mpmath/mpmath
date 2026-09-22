@@ -47,7 +47,7 @@ jobs:
             purepy: true
           - python-version: graalpy-25
             purepy: true
-          - python-version: pypy3.11-nightly
+          - python-version: pypy3.12
             nogmpy: true
     env:
       PYTEST_ADDOPTS: -n auto --durations=20
@@ -68,7 +68,7 @@ jobs:
         ./configure -q
         make
         sudo make install
-      if: matrix.nogmpy && (matrix.python-version == 'pypy3.11-nightly')
+      if: matrix.nogmpy && (matrix.python-version == 'pypy3.12')
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v7
       with:
