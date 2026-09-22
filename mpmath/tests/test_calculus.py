@@ -1,5 +1,3 @@
-import platform
-
 import pytest
 from hypothesis import given
 from hypothesis import strategies as st
@@ -347,8 +345,6 @@ def signals(draw):
         max_size=size,
     ))
 
-@pytest.mark.skipif(platform.python_implementation() == 'PyPy',
-                    reason="XXX")
 @given(x=signals())
 def test_fft_randomized_complex(x):
     # test that fft and invfft are inverses of each other for random complex inputs
