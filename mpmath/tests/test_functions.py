@@ -449,6 +449,10 @@ def test_sin():
     assert isnan(r.real) and r.imag == inf
     r = sin(mpc(-inf, -inf))
     assert isnan(r.real) and r.imag == -inf
+    r = sin(mpc(inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(-inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
     r = sin(mpc(nan, inf))
     assert isnan(r.real) and abs(r.imag) == inf
     r = sin(mpc(nan, -inf))
@@ -511,6 +515,10 @@ def test_cos():
     assert abs(r.real) == inf and isnan(r.imag)
     r = cos(mpc(-inf, -inf))
     assert abs(r.real) == inf and isnan(r.imag)
+    r = cos(mpc(inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(-inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
     r = cos(mpc(nan, inf))
     assert r.real == inf and isnan(r.imag)
     r = cos(mpc(nan, -inf))
