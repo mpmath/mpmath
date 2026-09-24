@@ -292,7 +292,6 @@ def test_compatibility():
 def test_issue465():
     assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')
 
-
 def test_bin_to_radix_power_of_two():
     """The power-of-two fast path in bin_to_radix must return exactly the
     same result as the general multiply-and-shift formula, covering the
@@ -301,7 +300,6 @@ def test_bin_to_radix_power_of_two():
         return x * (base**bdigits) >> xbits
 
     x = (1 << 200) | 1
-    # (base, xbits, bdigits) chosen so the net shift is >0, ==0 and <0.
     cases = [
         (2, 4, 40),    # shift = 40 - 4  > 0
         (16, 4, 10),   # shift = 40 - 4  > 0

@@ -66,7 +66,7 @@ def bin_to_radix(x, xbits, base, bdigits):
     """Changes radix of a fixed-point number; i.e., converts
     x * 2**xbits to floor(x * base**bdigits)."""
     # For power-of-two bases, base**bdigits is itself a power of two, so the
-    # whole conversion reduces to a single bit shift and the (potentially
+    # whole conversion reduces to a bit shift and the (potentially
     # very large) multiplication by base**bdigits can be avoided entirely.
     if base & (base - 1) == 0:
         shift = (base.bit_length() - 1) * bdigits - xbits
