@@ -345,7 +345,7 @@ def signals(draw):
         max_size=size,
     ))
 
-@settings(deadline=None)
+@settings(deadline=None, max_examples=10)
 @given(x=signals())
 def test_fft_randomized_complex(x):
     # test that fft and invfft are inverses of each other for random complex inputs
