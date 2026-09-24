@@ -765,10 +765,9 @@ def mpf_log_hypot(a, b, prec, rnd):
         if not b[1]:
             if a == b == fzero:
                 return fninf
-            if fnan in (a, b):
-                return fnan
-            # at least one term is (+/- inf)^2
-            return finf
+            if a in (finf, fninf) or b in (finf, fninf):
+                return finf  # at least one term is (+/- inf)^2
+            return fnan
         # only a is inf/nan/0
         if a == fzero:
             # log(sqrt(0+b^2)) = log(|b|)
@@ -897,7 +896,7 @@ def mpf_atan2(y, x, prec, rnd=round_down):
             if mpf_sign(x) >= 0:
                 return fzero
             return mpf_pi(prec, rnd)
-        if y in (finf, fninf):
+        if y in (finf, fninf) and x != fnan:
             if x == finf:
                 if y == finf:
                     return mpf_shift(mpf_pi(prec, rnd), -2)

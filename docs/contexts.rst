@@ -334,7 +334,7 @@ Due to intermediate rounding and cancellation errors, results computed with ``fp
 
 Beware that the ``fp`` context has signed zero, that can be used to distinguish
 different sides of branch cuts.  For example, ``fp.mpc(-1, -0.0)`` is treated
-as though it lies *below* the branch cut for :func:`~mpmath.sqrt()`::
+as though it lies *below* the branch cut for :func:`~mpmath.sqrt`::
 
     >>> fp.sqrt(fp.mpc(-1, -0.0))
     -1j
@@ -366,5 +366,5 @@ one has no signed zeros and allows to specify result *on the branch cut*
     >>> fp.mpc(mp.sqrt(-1))
     1j
 
-Here it's continuous from the above of the :func:`~mpmath.sqrt()` branch
+Here it's continuous from the above of the :func:`~mpmath.sqrt` branch
 cut (from ``0`` along the negative real axis to the negative infinity).
