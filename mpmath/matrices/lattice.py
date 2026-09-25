@@ -36,8 +36,9 @@ class LatticeMethods:
         r"""
         Return an LLL-reducing change of basis for the Gram matrix *Y*.
 
-        *Y* must be a nonempty, real, symmetric positive-definite matrix or
-        nested sequence. Symmetry is required exactly, rather than to a
+        *Y* must be a nonempty Gram matrix for a linearly independent real
+        basis, supplied as a matrix or nested sequence. It must be symmetric
+        and positive definite. Symmetry is required exactly, rather than to a
         tolerance. Invalid inputs raise ``ValueError``.
 
         The result *U* is a tuple of row tuples of Python integers with
@@ -91,18 +92,20 @@ class LatticeMethods:
             raise ValueError("maxsteps must be a positive integer") from None
         if maxsteps <= 0:
             raise ValueError("maxsteps must be a positive integer")
+        delta_error = "delta must be real and satisfy 0.25 < delta < 1"
+        # convert preserves an existing mpf; mpf(...) would round it to ctx.prec.
         try:
             delta = ctx.convert(delta)
-            if not ctx.isfinite(delta) or ctx.im(delta):
-                raise ValueError
-            delta = delta.real
-            if not ctx.mpf('0.25') < delta < 1:
-                raise ValueError
         except (TypeError, ValueError):
-            raise ValueError("delta must be real and satisfy 0.25 < delta < 1") from None
+            raise ValueError(delta_error) from None
+        if delta.imag != 0 or not 0.25 < delta.real < 1:
+            raise ValueError(delta_error)
+        delta = delta.real
+        # The matrix constructor can treat missing entries in short rows as zero.
         if isinstance(Y, (list, tuple)) and any(
                 not isinstance(row, (list, tuple)) or len(row) != len(Y) for row in Y):
             raise ValueError("Y must be a nonempty square matrix")
+        # ctx.matrix uses ctx.convert, preserving existing high-precision mpf values.
         try:
             Y = ctx.matrix(Y)
         except (TypeError, ValueError, IndexError):
