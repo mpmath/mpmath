@@ -288,6 +288,8 @@ def mpc_sqrt(z, prec, rnd=round_down):
     if b == fzero:
         if a == fzero:
             return (a, b)
+        if a == fnan:
+            return fnan, fnan
         # When a+bi is a negative real number, we get a real sqrt times i
         if a[0]:
             im = mpf_sqrt(mpf_neg(a), prec, rnd)
@@ -297,11 +299,8 @@ def mpc_sqrt(z, prec, rnd=round_down):
             return (re, fzero)
     if b in (finf, fninf):
         return (finf, b)
-    if b == fnan:
-        if a == fninf:
-            return fnan, finf
-        if a == finf:
-            return finf, fnan
+    if b == fnan and a in _infs:
+        return (finf, fnan) if a == finf else (fnan, finf)
     wp = prec+20
     if not a[0]:                               # case a positive
         t  = mpf_add(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a
