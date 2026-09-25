@@ -1,4 +1,4 @@
-name: Linting with flake8, etc
+name: Linting with ruff, etc
 on: [workflow_dispatch, workflow_call]
 jobs:
   linter:
@@ -10,6 +10,4 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.x"
-      - run: pip install --upgrade .[develop]
-      - run: python -We:invalid -m compileall -f mpmath -q
-      - run: flake518 mpmath
+      - uses: j178/prek-action@v3.0.0

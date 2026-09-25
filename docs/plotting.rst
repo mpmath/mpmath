@@ -37,4 +37,3 @@ Complex function plots
    splot(f, [0, 2*pi], [0, 2*pi])
 
 .. autofunction:: mpmath.splot
-

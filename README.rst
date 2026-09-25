@@ -74,8 +74,8 @@ Credit also goes to:
 * The authors of the GMP library and the Python wrapper
   gmpy, enabling mpmath to become much faster at
   high precision
-* The authors of MPFR, pari/gp, MPFUN, and other arbitrary-
-  precision libraries, whose documentation has been helpful
+* The authors of MPFR, pari/gp, MPFUN, and other arbitrary-precision
+  libraries, whose documentation has been helpful
   for implementing many of the algorithms in mpmath
 * Wikipedia contributors; Abramowitz & Stegun; Gradshteyn & Ryzhik;
   Wolfram Research for MathWorld and the Wolfram Functions site.

@@ -1,0 +1,22 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+    - id: check-yaml
+    - id: check-toml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+    - id: name-tests-test
+      args: [--pytest-test-first]
+      exclude: ^tests/utils.py$
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.8.3
+    hooks:
+      - id: ruff
+        name: Run ruff
+        args: [--exit-non-zero-on-fix]
+  - repo: https://github.com/sphinx-contrib/sphinx-lint
+    rev: v1.0.0
+    hooks:
+      - id: sphinx-lint
+        name: Run sphinx-lint
