@@ -903,14 +903,27 @@ def test_atan():
     r = atan(mpc(nan, 0))
     assert isnan(r.real) and r.imag == 0
     assert atan(mpc(0, -1)) == mpc(0, -inf)
+    assert atan(mpc(0, 1)) == mpc(0, inf)
+    r = atan(mpc(0, nan))
+    assert isnan(r.real) and isnan(r.imag)
     r = atan(mpc(nan, -1))
     assert isnan(r.real) and isnan(r.imag)
+    r = atan(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
     assert atan(mpc(inf, -inf)).ae(mpc(pi2, 0))
+    assert atan(mpc(inf, inf)).ae(mpc(pi2, 0))
+    assert atan(mpc(-inf, inf)).ae(mpc(-pi2, 0))
+    assert atan(mpc(-inf, -inf)).ae(mpc(-pi2, 0))
     r = atan(mpc(nan, -inf))
+    assert isnan(r.real) and r.imag == 0
+    r = atan(mpc(nan, inf))
     assert isnan(r.real) and r.imag == 0
     r = atan(mpc(1, nan))
     assert isnan(r.real) and isnan(r.imag)
+    r = atan(mpc(-1, nan))
+    assert isnan(r.real) and isnan(r.imag)
     assert atan(mpc(inf, nan)).ae(mpc(pi2, 0))
+    assert atan(mpc(-inf, nan)).ae(mpc(-pi2, 0))
     r = atan(mpc(nan, nan))
     assert isnan(r.real) and isnan(r.imag)
 
@@ -1475,7 +1488,7 @@ def test_tan():
     assert tan(mpc(nan, -inf)) == mpc(0, -1)
 
 def test_atanh():
-    # Real special cases:
+    # Real cases:
     # https://en.cppreference.com/c/numeric/math/atanh
     # For abs(x) > 1, mpmath returns a complex analytic continuation rather
     # than NaN.
@@ -1488,8 +1501,6 @@ def test_atanh():
     assert isinstance(atanh(1), mpf)
     assert isinstance(atanh(-1), mpf)
 
-    # Complex special cases:
-    # https://en.cppreference.com/c/numeric/complex/catanh
     # Limits at infinity
     jpi2 = j*pi/2
     assert atanh(inf).ae(-jpi2)
@@ -1507,21 +1518,39 @@ def test_atanh():
     assert atanh(mpc(0,-inf)).ae(-jpi2)
     assert atanh(mpc(1,-inf)).ae(-jpi2)
 
+    # Complex special cases:
+    # https://en.cppreference.com/c/numeric/complex/catanh
     assert atanh(mpc(0, 0)) == mpc(0, 0)
     r = atanh(mpc(0, nan))
     assert r.real == 0 and isnan(r.imag)
     assert atanh(mpc(1, 0)) == mpc(inf, 0)
     r = atanh(mpc(1, nan))
     assert isnan(r.real) and isnan(r.imag)
+    r = atanh(mpc(-1, nan))
+    assert isnan(r.real) and isnan(r.imag)
     assert atanh(mpc(inf, inf)).ae(mpc(0, pi/2))
     r = atanh(mpc(inf, nan))
     assert r.real == 0 and isnan(r.imag)
     r = atanh(mpc(nan, 0))
     assert isnan(r.real) and isnan(r.imag)
+    r = atanh(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
     r = atanh(mpc(nan, inf))
     assert r.real == 0 and r.imag.ae(pi/2)
     r = atanh(mpc(nan, nan))
     assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate and odd cases:
+    assert atanh(mpc(-1, 0)) == mpc(-inf, 0)
+    assert atanh(mpc(inf, -inf)).ae(mpc(0, -pi/2))
+    assert atanh(mpc(-inf, inf)).ae(mpc(0, pi/2))
+    assert atanh(mpc(-inf, -inf)).ae(mpc(0, -pi/2))
+    r = atanh(mpc(-inf, nan))
+    assert r.real == 0 and isnan(r.imag)
+    r = atanh(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atanh(mpc(nan, -inf))
+    assert r.real == 0 and r.imag.ae(-pi/2)
 
 def test_expm1():
     assert expm1(0) == 0

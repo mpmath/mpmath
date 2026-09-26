@@ -590,7 +590,7 @@ def mpc_atan(z, prec, rnd=round_down):
     # atan(z) = -I * atanh(I*z)
     a, b = z
     a, b = mpc_atanh((mpf_neg(b), a), prec, rnd)
-    return b, mpf_neg(a)
+    return mpc_pos((b, mpf_neg(a)), prec, rnd)
 
 beta_crossover = from_float(0.6417)
 alpha_crossover = from_float(1.5)
@@ -791,14 +791,19 @@ def mpc_atanh(z, prec, rnd=round_down):
     if a == fzero and b == fnan:
         return fzero, fnan
     wp = prec + 15
-    a = mpc_add(z, mpc_one, wp)
-    b = mpc_sub(mpc_one, z, wp)
-    a = mpc_ln(a, wp)
-    b = mpc_ln(b, wp)
-    v = mpc_shift(mpc_sub(a, b, wp), -1)
+    x = mpc_add(z, mpc_one, wp)
+    y = mpc_sub(mpc_one, z, wp)
+    x = mpc_ln(x, wp)
+    y = mpc_ln(y, wp)
+    v = mpc_shift(mpc_sub(x, y, wp), -1)
     # Subtraction at infinity gives correct imaginary part but
     # wrong real part (should be zero)
     if v[0] == fnan and mpc_is_inf(z):
+        if a == fnan:
+            im = mpf_shift(mpf_pi(prec, rnd), -1)
+            if b == fninf:
+                im = mpf_neg(im)
+            return fzero, im
         v = (fzero, v[1])
     return v
 
