@@ -800,11 +800,9 @@ def mpc_atanh(z, prec, rnd=round_down):
     # wrong real part (should be zero)
     if v[0] == fnan and mpc_is_inf(z):
         if a == fnan:
-            im = mpf_shift(mpf_pi(prec, rnd), -1)
-            if b == fninf:
-                im = mpf_neg(im)
-            return fzero, im
-        v = (fzero, v[1])
+            pi2 = mpf_shift(mpf_pi(prec, rnd), -1)
+            return fzero, pi2 if b == finf else mpf_neg(pi2)
+        return fzero, v[1]
     return v
 
 def mpc_fibonacci(z, prec, rnd=round_down):
