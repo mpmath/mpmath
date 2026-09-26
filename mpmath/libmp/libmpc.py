@@ -299,8 +299,6 @@ def mpc_sqrt(z, prec, rnd=round_down):
             return (re, fzero)
     if b in (finf, fninf):
         return (finf, b)
-    if b == fnan and a in _infs:
-        return (finf, fnan) if a == finf else (fnan, finf)
     wp = prec+20
     if not a[0]:                               # case a positive
         t  = mpf_add(mpc_abs((a, b), wp), a, wp)  # t = abs(a+bi) + a

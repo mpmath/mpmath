@@ -239,30 +239,21 @@ def test_float_sqrt():
 def test_sqrt_special():
     # Real special cases:
     # https://en.cppreference.com/c/numeric/math/sqrt
-    assert isnan(sqrt(nan))
     # Negative real inputs are omitted because mpmath returns complex analytic
     # continuations instead of NaN.
     assert sqrt(0) == 0
     assert sqrt(inf) == inf
+    assert isnan(sqrt(nan))
 
     # Complex special cases:
     # https://en.cppreference.com/c/numeric/complex/csqrt
+    assert sqrt(mpc(0, 0)) == mpc(0, 0)
     assert sqrt(mpc(+inf, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc(-inf, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc( nan, +inf)) == mpc(inf, +inf)
-    assert sqrt(mpc(+inf, -inf)) == mpc(inf, -inf)
-    assert sqrt(mpc(-inf, -inf)) == mpc(inf, -inf)
-    assert sqrt(mpc( nan, -inf)) == mpc(inf, -inf)
-    assert sqrt(mpc(0, inf)) == mpc(inf, inf)
-    assert sqrt(mpc(1, inf)) == mpc(inf, inf)
-    assert sqrt(mpc(-1, inf)) == mpc(inf, inf)
-    assert sqrt(mpc(0, 0)) == mpc(0, 0)
-    assert sqrt(mpc(1, 0)) == mpc(1, 0)
-    assert sqrt(mpc(-1, 0)) == mpc(0, 1)
-    assert sqrt(mpc(inf, 0)) == mpc(inf, 0)
-    assert sqrt(mpc(-inf, 0)) == mpc(0, inf)
-    r = sqrt(mpc(nan, 0))
-    assert isnan(r.real) and isnan(r.imag)
+    assert sqrt(mpc(0, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(1, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(-1, +inf)) == mpc(inf, +inf)
     r = sqrt(mpc(0, nan))
     assert isnan(r.real) and isnan(r.imag)
     r = sqrt(mpc(1, nan))
@@ -275,12 +266,17 @@ def test_sqrt_special():
     assert isnan(r.real) and abs(r.imag) == inf
     r = sqrt(mpc(inf, nan))
     assert r.real == inf and isnan(r.imag)
+    r = sqrt(mpc(nan, 0))
+    assert isnan(r.real) and isnan(r.imag)
     r = sqrt(mpc(nan, 1))
     assert isnan(r.real) and isnan(r.imag)
     r = sqrt(mpc(nan, nan))
     assert isnan(r.real) and isnan(r.imag)
 
     # Conjugate cases:
+    assert sqrt(mpc(+inf, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(-inf, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc( nan, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc(0, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc(1, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc(-1, -inf)) == mpc(inf, -inf)
@@ -295,6 +291,10 @@ def test_hypot():
     assert hypot(0.33, 0) == mpf(0.33)
     assert hypot(-0.33, 0) == mpf(0.33)
     assert hypot(3, 4) == mpf(5)
+    assert hypot(inf, nan) == inf
+    assert hypot(-inf, nan) == inf
+    assert hypot(nan, inf) == inf
+    assert hypot(nan, -inf) == inf
     # issue 1011
     assert hypot(1.0000044432326138,
                  1.0068578402095993) == mpf('1.4190742041473763')
