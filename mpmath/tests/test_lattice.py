@@ -98,7 +98,9 @@ def test_lll_gram_rational_inputs_are_converted_to_context_precision():
     Y = [[1, rational], [rational, 1]]
     converted = ctx.matrix(Y).tolist()
     assert converted[0][1] == ctx.mpf('0.5')
-    assert_reduced(converted, ctx.lll_gram(Y))
+    exact_converted = [[Fraction(*x.as_integer_ratio()) for x in row]
+                       for row in converted]
+    assert_reduced(exact_converted, ctx.lll_gram(Y))
 
 
 @pytest.mark.parametrize('power', [60, 200])
