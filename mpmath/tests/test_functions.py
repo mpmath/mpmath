@@ -288,16 +288,33 @@ def test_sqrt_special():
 def test_hypot():
     assert hypot(0, 0) == 0
     assert hypot(0, 0.33) == mpf(0.33)
+    assert hypot(0, -0.33) == mpf(0.33)
     assert hypot(0.33, 0) == mpf(0.33)
     assert hypot(-0.33, 0) == mpf(0.33)
     assert hypot(3, 4) == mpf(5)
+    # issue 1011
+    assert hypot(1.0000044432326138,
+                 1.0068578402095993) == mpf('1.4190742041473763')
+
+def test_hypot_special():
+    # https://en.cppreference.com/w/c/numeric/math/hypot
+    assert hypot(inf, 0) == inf
+    assert hypot(-inf, 0) == inf
+    assert hypot(0, inf) == inf
+    assert hypot(0, -inf) == inf
+    assert hypot(inf, 1) == inf
+    assert hypot(-inf, 1) == inf
+    assert hypot(1, inf) == inf
+    assert hypot(1, -inf) == inf
     assert hypot(inf, nan) == inf
     assert hypot(-inf, nan) == inf
     assert hypot(nan, inf) == inf
     assert hypot(nan, -inf) == inf
-    # issue 1011
-    assert hypot(1.0000044432326138,
-                 1.0068578402095993) == mpf('1.4190742041473763')
+    assert isnan(hypot(0, nan))
+    assert isnan(hypot(nan, 0))
+    assert isnan(hypot(1, nan))
+    assert isnan(hypot(nan, 1))
+    assert isnan(hypot(nan, nan))
 
 def test_exact_cbrt():
     for i in range(0, 20000, 200):
