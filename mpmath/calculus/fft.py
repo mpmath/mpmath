@@ -1,5 +1,14 @@
 from .calculus import defun
 
+
+def _is_power_of_two(n):
+    return (n & (n - 1)) == 0
+
+
+def _next_power_of_two(n):
+    return 1 << (n - 1).bit_length()
+
+
 def _fft_cooley_tuckey(ctx, values, inverse=False):
     """
     This function implements the Radix-2 Cooley-Tukey FFT algorithm iteratively.
@@ -46,12 +55,52 @@ def _fft_cooley_tuckey(ctx, values, inverse=False):
 
     return transformed
 
+
+def _fft_convolve(ctx, values_a, values_b):
+    """
+    Computes the convolution of two sequences using the Fast Fourier Transform (FFT).
+    """
+    size = _next_power_of_two(len(values_a) + len(values_b) - 1)
+    padded_a = values_a + [ctx.zero] * (size - len(values_a))
+    padded_b = values_b + [ctx.zero] * (size - len(values_b))
+
+    spectrum_a = _fft_cooley_tuckey(ctx, padded_a)
+    spectrum_b = _fft_cooley_tuckey(ctx, padded_b)
+    spectrum_product = [a * b for a, b in zip(spectrum_a, spectrum_b)]
+    result = _fft_cooley_tuckey(ctx, spectrum_product, True)
+    return [value / size for value in result]
+
+
+def _fft_bluestein(ctx, values, inverse=False):
+    """
+    This function implements Bluestein's algorithm for FFT
+    (or Inverse FFT) calulation.
+
+    https://en.wikipedia.org/wiki/Chirp_Z-transform#Bluestein's_algorithm
+    """
+    n = len(values)
+
+    sign = ctx.one if inverse else -ctx.one
+    chirp = [ctx.expjpi(sign * j * j / n) for j in range(n)]
+
+    a = [values[j] * chirp[j] for j in range(n)]
+    b = [ctx.zero] * (2 * n - 1)
+    center = n - 1
+    for j in range(n):
+        b[center + j] = ctx.expjpi(-sign * j * j / n)
+        b[center - j] = ctx.expjpi(-sign * j * j / n)
+
+    convolution = _fft_convolve(ctx, a, b)
+    return [convolution[n - 1 + k] * chirp[k] for k in range(n)]
+
+
 @defun
 def fft(ctx, values):
     r"""
     Computes the Discrete Fourier Transform (DFT) of a sequence.
 
-    Raises NotImplementedError if the input sequence length is not a power of 2.
+    It uses the radix-2 Cooley-Tukey algorithm for power-of-two lengths
+    and Bluestein's algorithm for all other lengths.
 
     **Examples**
 
@@ -63,27 +112,29 @@ def fft(ctx, values):
     [(2.0 + 4.0j), (0.0 + 0.0j)]
     >>> mp.fft([1, 2, 3, 4])
     [10.0, (-2.0 + 2.0j), -2.0, (-2.0 - 2.0j)]
+    >>> [mp.chop(x) for x in mp.fft([1, 2, 1])]
+    [4.0, (-0.5 - 0.866025403784439j), (-0.5 + 0.866025403784439j)]
     """
     n = len(values)
     if n == 0:
         return []
 
-    is_power_of_two = (n & (n - 1)) == 0
-    if not is_power_of_two:
-        raise NotImplementedError("FFT is only implemented for lengths that "
-                                  f"are powers of 2, got length: {n}")
-
     converted_values = [ctx.convert(v) for v in values]
     with ctx.extraprec(10):
-        result = _fft_cooley_tuckey(ctx, converted_values)
+        if _is_power_of_two(n):
+            result = _fft_cooley_tuckey(ctx, converted_values)
+        else:
+            result = _fft_bluestein(ctx, converted_values)
     return [+v for v in result]
+
 
 @defun
 def invfft(ctx, values):
     r"""
     Computes the inverse Discrete Fourier Transform (IDFT) of a sequence.
 
-    Raises NotImplementedError if the input sequence length is not a power of 2.
+    It uses the radix-2 Cooley-Tukey algorithm for power-of-two lengths
+    and Bluestein's algorithm for all other lengths.
 
     **Examples**
 
@@ -94,17 +145,17 @@ def invfft(ctx, values):
     >>> x = [1, 2, 3, 4]
     >>> mp.invfft(mp.fft(x))
     [(1.0 + 0.0j), (2.0 + 0.0j), (3.0 + 0.0j), (4.0 + 0.0j)]
+    >>> mp.invfft(mp.fft([1.0 + 1.0j, 2.0 + 2.0j, 3.0 + 3.0j]))
+    [(1.0 + 1.0j), (2.0 + 2.0j), (3.0 + 3.0j)]
     """
     n = len(values)
     if n == 0:
         return []
 
-    is_power_of_two = (n & (n - 1)) == 0
-    if not is_power_of_two:
-        raise NotImplementedError("Inverse FFT is only implemented for lengths that "
-                                  f"are powers of 2, got length: {n}")
-
     converted_values = [ctx.convert(v) for v in values]
     with ctx.extraprec(10):
-        result = _fft_cooley_tuckey(ctx, converted_values, True)
+        if _is_power_of_two(n):
+            result = _fft_cooley_tuckey(ctx, converted_values, True)
+        else:
+            result = _fft_bluestein(ctx, converted_values, True)
     return [val / n for val in result]

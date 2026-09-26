@@ -9,6 +9,7 @@ from mpmath import inf, isnan, iv, mp, mpc, mpf, mpi, mpmathify, sqrt
 from mpmath.libmp import (fhalf, from_float, from_rational, from_str,
                           round_ceiling, round_floor, round_nearest,
                           to_rational, to_str)
+from mpmath.libmp.libintmath import bin_to_radix
 
 
 def test_basic_string():
@@ -290,3 +291,22 @@ def test_compatibility():
 
 def test_issue465():
     assert mpf(Fraction(1, 3)) == mpf('0.33333333333333331')
+
+def test_bin_to_radix_power_of_two():
+    """The power-of-two fast path in bin_to_radix must return exactly the
+    same result as the general multiply-and-shift formula, covering the
+    positive, zero and negative net-shift cases."""
+    def reference(x, xbits, base, bdigits):
+        return x * (base**bdigits) >> xbits
+
+    x = (1 << 200) | 1
+    cases = [
+        (2, 4, 40),    # shift = 40 - 4  > 0
+        (16, 4, 10),   # shift = 40 - 4  > 0
+        (8, 6, 2),     # shift = 6 - 6  == 0
+        (2, 40, 4),    # shift = 4 - 40  < 0
+        (32, 400, 10), # shift = 50 - 400 < 0
+    ]
+    for base, xbits, bdigits in cases:
+        assert bin_to_radix(x, xbits, base, bdigits) == \
+            reference(x, xbits, base, bdigits)

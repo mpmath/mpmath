@@ -5,12 +5,12 @@ Low-level functions for complex arithmetic.
 import sys
 
 from .backend import MPZ
-from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
-                        mpf_cos, mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi,
-                        mpf_cosh, mpf_cosh_sinh, mpf_exp, mpf_fibonacci,
-                        mpf_ln, mpf_log1p, mpf_log_hypot, mpf_nthroot, mpf_phi,
-                        mpf_pi, mpf_pow_int, mpf_sin, mpf_sin_pi, mpf_sinh,
-                        mpf_tan, mpf_tanh)
+from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_asinh, mpf_atan,
+                        mpf_atan2, mpf_cos, mpf_cos_pi, mpf_cos_sin,
+                        mpf_cos_sin_pi, mpf_cosh, mpf_cosh_sinh, mpf_exp,
+                        mpf_fibonacci, mpf_ln, mpf_log1p, mpf_log_hypot,
+                        mpf_nthroot, mpf_phi, mpf_pi, mpf_pow_int, mpf_sin,
+                        mpf_sin_pi, mpf_sinh, mpf_tan, mpf_tanh)
 from .libintmath import giant_steps, lshift, rshift
 from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fone,
                      from_float, from_int, from_man_exp, ftwo, fzero, mpf_abs,
@@ -424,6 +424,8 @@ def mpc_exp(z, prec, rnd=round_down):
         return mpf_cos_sin(b, prec, rnd)
     if b == fzero:
         return mpf_exp(a, prec, rnd), fzero
+    if a in _infs and b in _infs_nan:
+        return (fzero, fzero) if a == fninf else (finf, fnan)
     mag = mpf_exp(a, prec+4, rnd)
     c, s = mpf_cos_sin(b, prec+4, rnd)
     re = mpf_mul(mag, c, prec, rnd)
@@ -450,6 +452,8 @@ def mpc_cos(z, prec, rnd=round_down):
         return mpf_cos(a, prec, rnd), fzero
     if a == fzero:
         return mpf_cosh(b, prec, rnd), fzero
+    if a in _infs_nan and b in _infs:
+        return finf, fnan
     wp = prec + 6
     c, s = mpf_cos_sin(a, wp)
     ch, sh = mpf_cosh_sinh(b, wp)
@@ -466,6 +470,8 @@ def mpc_sin(z, prec, rnd=round_down):
         return mpf_sin(a, prec, rnd), fzero
     if a == fzero:
         return fzero, mpf_sinh(b, prec, rnd)
+    if a in _infs_nan and b in _infs:
+        return fnan, b
     wp = prec + 6
     c, s = mpf_cos_sin(a, wp)
     ch, sh = mpf_cosh_sinh(b, wp)
@@ -614,9 +620,9 @@ def acos_asin(z, prec, rnd, n):
         # case abs(a) <= 1
         if not am[0]:
             if n == 0:
-                return mpf_acos(a, prec, rnd), fzero
+                return mpf_acos(a, prec, rnd), fzero if a != fnan else a
             else:
-                return mpf_asin(a, prec, rnd), fzero
+                return mpf_asin(a, prec, rnd), fzero if a != fnan else a
         # cases abs(a) > 1
         else:
             # case a < -1
@@ -635,6 +641,12 @@ def acos_asin(z, prec, rnd, n):
                 else:
                     pi = mpf_pi(prec, rnd)
                     return mpf_shift(pi, -1), mpf_neg(c)
+    # special cases with pure imaginary argument
+    if a == fzero:
+        c = mpf_asinh(b, prec, rnd)
+        if n == 0:
+            return mpf_shift(mpf_pi(prec, rnd), -1), mpf_neg(c)
+        return fzero, c
     asign = bsign = 0
     if a[0]:
         a = mpf_neg(a)
