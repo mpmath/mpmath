@@ -880,10 +880,10 @@ def test_atan():
 
     # Real special cases:
     # https://en.cppreference.com/c/numeric/math/atan
-    assert isnan(atan(nan))
     assert atan(0) == 0
     assert atan(inf).ae(pi2)
     assert atan(-inf).ae(-pi2)
+    assert isnan(atan(nan))
 
     # Complex special cases:
     # https://en.cppreference.com/c/numeric/complex/catan
@@ -1540,17 +1540,21 @@ def test_atanh():
     r = atanh(mpc(nan, nan))
     assert isnan(r.real) and isnan(r.imag)
 
-    # Conjugate and odd cases:
-    assert atanh(mpc(-1, 0)) == mpc(-inf, 0)
+    # Conjugate cases:
     assert atanh(mpc(inf, -inf)).ae(mpc(0, -pi/2))
-    assert atanh(mpc(-inf, inf)).ae(mpc(0, pi/2))
-    assert atanh(mpc(-inf, -inf)).ae(mpc(0, -pi/2))
-    r = atanh(mpc(-inf, nan))
-    assert r.real == 0 and isnan(r.imag)
     r = atanh(mpc(nan, -1))
     assert isnan(r.real) and isnan(r.imag)
     r = atanh(mpc(nan, -inf))
     assert r.real == 0 and r.imag.ae(-pi/2)
+
+    # Negative cases:
+    assert atanh(mpc(-1, 0)) == mpc(-inf, 0)
+    assert atanh(mpc(-inf, -inf)).ae(mpc(0, -pi/2))
+    r = atanh(mpc(-inf, nan))
+    assert r.real == 0 and isnan(r.imag)
+
+    # Negative conjugate case:
+    assert atanh(mpc(-inf, inf)).ae(mpc(0, pi/2))
 
 def test_expm1():
     assert expm1(0) == 0
