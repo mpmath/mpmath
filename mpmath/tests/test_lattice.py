@@ -8,14 +8,6 @@ import math
 import pytest
 
 from mpmath import fp, lll_gram, mp
-from mpmath.matrices import lattice
-
-
-@pytest.fixture(params=['automatic', 'numerical'], autouse=True)
-def reduction_path(request, monkeypatch):
-    """Keep the complete public-contract corpus exercising both implementations."""
-    if request.param == 'numerical':
-        monkeypatch.setattr(lattice, '_use_exact', lambda *args, **kwargs: False)
 
 
 def determinant(A):
@@ -99,6 +91,16 @@ def test_lll_gram_noninteger_inputs(dps):
     assert_reduced(Y, lll_gram([[mp.mpf(x.numerator) / x.denominator for x in row] for row in Y]))
 
 
+def test_lll_gram_rational_inputs_are_converted_to_context_precision():
+    ctx = mp.clone()
+    ctx.prec = 53
+    rational = Fraction(1, 2) + Fraction(1, 2 ** 100)
+    Y = [[1, rational], [rational, 1]]
+    converted = ctx.matrix(Y).tolist()
+    assert converted[0][1] == ctx.mpf('0.5')
+    assert_reduced(converted, ctx.lll_gram(Y))
+
+
 @pytest.mark.parametrize('power', [60, 200])
 def test_lll_gram_inequality_boundaries(power):
     a = 2 ** power
@@ -180,11 +182,17 @@ def test_lll_gram_high_precision_input_at_low_working_precision():
 
 
 @pytest.mark.parametrize('Y', [[], [1, 2], [[1, 2, 3], [2, 4, 5]],
-                               [[1, 0], [0]], None])
+                               [[1, 0], [0]]])
 @pytest.mark.parametrize('ctx', [mp, fp])
 def test_lll_gram_invalid_shape(ctx, Y):
     with pytest.raises(ValueError, match='square'):
         ctx.lll_gram(Y)
+
+
+@pytest.mark.parametrize('ctx', [mp, fp])
+def test_lll_gram_invalid_matrix_type(ctx):
+    with pytest.raises(TypeError):
+        ctx.lll_gram(None)
 
 
 @pytest.mark.parametrize('Y, message', [
@@ -203,17 +211,30 @@ def test_lll_gram_invalid_entries(ctx, Y, message):
         ctx.lll_gram(Y)
 
 
-@pytest.mark.parametrize('delta', [0.25, 1, 2, -1, mp.nan, mp.inf, 1j, 'bad', None])
+@pytest.mark.parametrize('delta', [0.25, 1, 2, -1, mp.nan, mp.inf, 1j])
 @pytest.mark.parametrize('ctx', [mp, fp])
 def test_lll_gram_invalid_delta(ctx, delta):
     with pytest.raises(ValueError, match='delta'):
         ctx.lll_gram([[1]], delta=delta)
 
 
-@pytest.mark.parametrize('limit', [0, -1, 1.5, None])
+@pytest.mark.parametrize('ctx', [mp, fp])
+def test_lll_gram_invalid_delta_type(ctx):
+    with pytest.raises(TypeError):
+        ctx.lll_gram([[1]], delta=None)
+
+
+@pytest.mark.parametrize('limit', [0, -1])
 @pytest.mark.parametrize('ctx', [mp, fp])
 def test_lll_gram_invalid_step_limit(ctx, limit):
     with pytest.raises(ValueError, match='maxsteps'):
+        ctx.lll_gram([[1]], maxsteps=limit)
+
+
+@pytest.mark.parametrize('limit', [1.5, None])
+@pytest.mark.parametrize('ctx', [mp, fp])
+def test_lll_gram_invalid_step_limit_type(ctx, limit):
+    with pytest.raises(TypeError):
         ctx.lll_gram([[1]], maxsteps=limit)
 
 
@@ -225,7 +246,6 @@ def test_lll_gram_step_limit_restores_precision():
 
 
 def test_lll_gram_persistent_numerical_failure(monkeypatch):
-    monkeypatch.setattr(lattice, '_use_exact', lambda *args, **kwargs: False)
     ctx = mp.clone()
     before = ctx.prec
     precisions = []
@@ -281,13 +301,12 @@ def test_lll_gram_fp_input_rounding():
     assert_reduced(Y, mp.lll_gram(Y))
 
 
-def test_lll_gram_fp_rejects_unverified_reduction(monkeypatch):
+def test_lll_gram_fp_rejects_unverified_reduction():
     s = 2 ** 27
     Y = [[s, 1, 0], [1, s, s // 2], [0, s // 2, s]]
     # mu[2,1] = s**2 / (2*(s**2-1)) is just above 1/2, but fp
     # rounds it to 1/2 and leaves the basis unchanged. Verification must
     # reject it even though no arithmetic operation raised an exception.
-    monkeypatch.setattr(lattice, '_use_exact', lambda *args, **kwargs: False)
     with pytest.raises(fp.NoConvergence, match='could not be verified'):
         fp.lll_gram(Y)
     assert_reduced(Y, mp.lll_gram(Y))
@@ -299,13 +318,13 @@ def test_lll_gram_large_dimension(ctx):
                                            for i in range(17))
 
 
-def test_lll_gram_exact_normalization_sign():
+def test_lll_gram_nonpositive_input():
     for x in (0, -1, -2, -mp.mpf(2)**-2000):
         with pytest.raises(ValueError, match='positive definite'):
             mp.lll_gram([[x]])
 
 
-def test_lll_gram_exact_fallback():
+def test_lll_gram_high_precision_fallback():
     ctx = mp.clone()
     s = 2 ** 1000
     with ctx.workprec(2030):

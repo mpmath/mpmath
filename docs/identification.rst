@@ -29,3 +29,8 @@ Integer relations (PSLQ)
 :func:`~mpmath.pslq`
 ^^^^^^^^^^^^^^^^^^^^^
 .. autofunction:: mpmath.pslq
+
+Lattice reduction (LLL)
+-----------------------
+
+.. autofunction:: mpmath.lll_gram

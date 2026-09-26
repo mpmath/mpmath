@@ -1,9 +1,12 @@
 """
-Implements the PSLQ algorithm for integer relation detection,
-and derivative algorithms for constant recognition.
+Implements PSLQ for integer relation detection, LLL lattice reduction,
+and algorithms for constant recognition.
 """
 
+from operator import index
+
 from .libmp import int_types
+from .libmp.backend import MPQ
 from .libmp.libintmath import sqrt_fixed
 
 
@@ -13,7 +16,6 @@ def round_fixed(x, prec):
 
 class IdentificationMethods:
     pass
-
 
 def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     r"""
@@ -841,6 +843,259 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     else:
         return None
 
+
+
+
+# LLL reduction from a Gram matrix.
+
+
+def lll_gram(ctx, Y, delta=0.75, *, maxsteps=10000):
+    r"""
+    Return an LLL-reducing change of basis for the Gram matrix *Y*.
+
+    *Y* must be a nonempty Gram matrix for a linearly independent real
+    basis, supplied as a matrix or nested sequence. It must be symmetric
+    and positive definite. Symmetry is required exactly, rather than to a
+    tolerance. Invalid matrix values raise ``ValueError``.
+
+    The result *U* is a tuple of row tuples of Python integers with
+    determinant +1, such that :math:`U^T Y U` is reduced. For a basis *B*
+    stored in columns, the reduced basis is :math:`B U`. Reduced bases
+    are not unique. *U* contains exact integers. Applying it through
+    mpmath matrix multiplication uses the current working precision; for
+    badly conditioned inputs, increase precision before multiplying.
+
+    The parameter ``delta`` specifies :math:`\delta`, with
+    :math:`1/4 < \delta < 1` and default :math:`\delta = 3/4`.
+    Larger values demand stronger reduction and may take longer.
+    The Gram-Schmidt coefficients and vectors satisfy
+
+    .. math ::
+
+        |\mu_{i,j}| \leq \tfrac12 \quad (j < i),
+        \qquad
+        \|b_i^*\|^2 \geq
+        (\delta - \mu_{i,i-1}^2)\|b_{i-1}^*\|^2 \quad (i > 0).
+
+    These conditions are verified exactly for the values after conversion
+    to the context. Existing ``mpf`` values and Python integers retain
+    their precision in the ``mp`` context. Other inputs, including
+    rational numbers, can be rounded on conversion. A higher working
+    precision when calling ``lll_gram`` retains more of their digits.
+    ``maxsteps`` must be a positive integer and limits iterations per
+    reduction attempt.
+    Failure to obtain a verified reduction within the work limits raises
+    ``mp.NoConvergence``.
+    The ``mp`` and ``fp`` contexts are supported. If fixed precision is
+    insufficient, ``fp.lll_gram`` raises ``fp.NoConvergence``; use
+    ``mp.lll_gram`` with the original inputs to compute at higher precision.
+
+    **Examples**
+
+    Reduce a skewed basis::
+
+        >>> from mpmath import mp, lll_gram
+        >>> Y = mp.matrix([[1, 10], [10, 101]])
+        >>> U = lll_gram(Y)
+        >>> U
+        ((1, -10), (0, 1))
+        >>> V = mp.matrix(U)
+        >>> V.T * Y * V == mp.eye(2)
+        True
+
+    **References**
+
+    A. K. Lenstra, H. W. Lenstra Jr. and L. Lovasz,
+    "Factoring polynomials with rational coefficients", Mathematische
+    Annalen 261 (1982), 515-534.
+    """
+    maxsteps = index(maxsteps)
+    if maxsteps <= 0:
+        raise ValueError("maxsteps must be a positive integer")
+    delta_error = "delta must be real and satisfy 0.25 < delta < 1"
+    # convert preserves an existing mpf; mpf(...) would round it to ctx.prec.
+    delta = ctx.convert(delta)
+    if delta.imag != 0 or not 0.25 < delta.real < 1:
+        raise ValueError(delta_error)
+    delta = delta.real
+    # The matrix constructor can treat missing entries in short rows as zero.
+    if isinstance(Y, (list, tuple)) and any(
+            not isinstance(row, (list, tuple)) or len(row) != len(Y) for row in Y):
+        raise ValueError("Y must be a nonempty square matrix")
+    # ctx.matrix uses ctx.convert, preserving existing high-precision mpf values.
+    Y = ctx.matrix(Y)
+    n = Y.rows
+    if not n or n != Y.cols:
+        raise ValueError("Y must be a nonempty square matrix")
+    if any(not ctx.isfinite(x) or ctx.im(x) for x in Y):
+        raise ValueError("Y entries must be finite and real")
+    # Avoid ctx.re here: unary operations can round an existing mpf.
+    gram = [[Y[i, j].real for j in range(n)] for i in range(n)]
+    if any(gram[i][j] != gram[j][i] for i in range(n) for j in range(i)):
+        raise ValueError("Y must be symmetric")
+    return _reduce_gram(ctx, gram, delta, maxsteps)
+
+
+# Method selection and numerical recovery.
+
+
+def _reduce_gram(ctx, gram, delta, maxsteps):
+    """Generate a numerical candidate and verify it against the converted input."""
+    exact = [[MPQ(*x.as_integer_ratio()) for x in row] for row in gram]
+    exact_delta = MPQ(*delta.as_integer_ratio())
+    if ctx._fixed_precision:
+        return _reduce_with_precision(ctx, gram, delta, maxsteps, exact, exact_delta)
+
+    # A cheap candidate may suffice even when the input carries many digits.
+    transform = _try_float_reduction(gram, delta, maxsteps, exact, exact_delta)
+    if transform is not None:
+        return transform
+    return _reduce_with_precision(ctx, gram, delta, maxsteps, exact, exact_delta)
+
+
+def _try_float_reduction(gram, delta, maxsteps, exact, exact_delta):
+    """Return a verified machine-precision candidate, or None to try another method."""
+    from . import fp
+    try:
+        transform = _lll_numerical(fp, [[float(x) for x in row] for row in gram],
+                                   float(delta), maxsteps)
+        # Check the original input, not its float approximation. Since U is
+        # unimodular, successful verification also proves positive definiteness.
+        if _is_reduced(exact, transform, exact_delta):
+            return transform
+    except (ValueError, ZeroDivisionError, OverflowError, fp.NoConvergence):
+        pass
+    return None
+
+
+def _reduce_with_precision(ctx, gram, delta, maxsteps, exact, exact_delta):
+    """Use the requested context, retrying with more precision when available."""
+    # Distinguish invalid input from a valid matrix that needs more precision.
+    _gram_schmidt(exact)
+    if ctx._fixed_precision:
+        try:
+            transform = _lll_numerical(ctx, gram, delta, maxsteps)
+        except (ValueError, ZeroDivisionError, OverflowError):
+            raise ctx.NoConvergence(
+                "LLL reduction failed at fixed precision; use mp.lll_gram") from None
+        if _is_reduced(exact, transform, exact_delta):
+            return transform
+        raise ctx.NoConvergence(
+            "LLL reduction could not be verified at fixed precision; use mp.lll_gram")
+
+    # Retain precision carried by the input, even if ctx.prec was lowered.
+    # Guard bits reduce retries; exact verification decides acceptance.
+    precision = max([ctx.prec, delta._mpf_[3]]
+                    + [x._mpf_[3] for row in gram for x in row]) + 20
+    for attempt in range(5):
+        try:
+            with ctx.workprec(precision << attempt):
+                transform = _lll_numerical(ctx, gram, delta, maxsteps)
+        except (ValueError, ZeroDivisionError):
+            continue
+        if _is_reduced(exact, transform, exact_delta):
+            return transform
+    raise ctx.NoConvergence("LLL reduction could not be verified after five precision attempts")
+
+
+# Numerical reduction and exact verification.
+
+
+def _lll_numerical(ctx, gram, delta, maxsteps):
+    """Generate a candidate using incremental numerical Gram-Schmidt updates."""
+    n = len(gram)
+    transform = [[int(i == j) for j in range(n)] for i in range(n)]
+    orientation = 1
+    mu, lengths = _gram_schmidt(gram, ctx.fsum)
+    k = 1
+    steps = 0
+    while k < n:
+        if steps == maxsteps:
+            raise ctx.NoConvergence("LLL reduction exceeded maxsteps")
+        steps += 1
+        for j in range(k - 1, -1, -1):
+            # prec=0 preserves the entire integer, independently of ctx.prec.
+            q = (round(mu[k][j]) if ctx._fixed_precision
+                 else int(ctx.nint(mu[k][j], prec=0)))
+            if q:
+                for i in range(n):
+                    transform[i][k] -= q * transform[i][j]
+                # Subtracting an earlier basis vector leaves the orthogonal
+                # lengths unchanged; only these projection coefficients move.
+                for i in range(j):
+                    mu[k][i] -= q * mu[j][i]
+                mu[k][j] -= q
+        coefficient = mu[k][k - 1]
+        if lengths[k] >= (delta - coefficient ** 2) * lengths[k - 1]:
+            k += 1
+        else:
+            # Update the two swapped orthogonal vectors and the projections
+            # of later vectors, rather than rebuilding the entire Gram matrix.
+            previous, current = lengths[k - 1], lengths[k]
+            combined = ctx.fsum((current, coefficient ** 2 * previous))
+            new_coefficient = coefficient * previous / combined
+            lengths[k] = previous * (current / combined)
+            lengths[k - 1] = combined
+            for i in range(k - 1):
+                mu[k][i], mu[k - 1][i] = mu[k - 1][i], mu[k][i]
+            for i in range(k + 1, n):
+                old = mu[i][k]
+                mu[i][k] = mu[i][k - 1] - coefficient * old
+                mu[i][k - 1] = old + new_coefficient * mu[i][k]
+            mu[k][k - 1] = new_coefficient
+            for row in transform:
+                row[k], row[k - 1] = row[k - 1], row[k]
+            orientation = -orientation
+            k = max(1, k - 1)
+    if orientation < 0:
+        for row in transform:
+            row[-1] = -row[-1]
+    return tuple(tuple(row) for row in transform)
+
+
+def _gram_schmidt(gram, summation=sum):
+    """Compute Gram-Schmidt coefficients and squared lengths from a Gram matrix."""
+    n = len(gram)
+    mu = [[0] * n for _ in range(n)]
+    lengths = []
+    for i in range(n):
+        length = gram[i][i] - summation(
+            mu[i][j] ** 2 * lengths[j] for j in range(i))
+        if length <= 0:
+            raise ValueError("Y must be positive definite")
+        lengths.append(length)
+        for k in range(i + 1, n):
+            mu[k][i] = (gram[k][i] - summation(
+                mu[k][j] * mu[i][j] * lengths[j]
+                for j in range(i))) / length
+    return mu, lengths
+
+
+def _is_reduced(gram, transform, delta):
+    # Binary inputs have power-of-two denominators. A common positive scale
+    # leaves the reduction conditions unchanged and makes the transform integral.
+    denominator = max(x.denominator for row in gram for x in row)
+    integral = [[int(x.numerator) * (int(denominator) // int(x.denominator))
+                 for x in row] for row in gram]
+    reduced = _congruence(integral, transform)
+    mu, lengths = _gram_schmidt([[MPQ(x) for x in row] for row in reduced])
+    n = len(gram)
+    return (all(abs(mu[i][j]) <= MPQ(1, 2)
+                for i in range(n) for j in range(i))
+            and all(lengths[i] >= (delta - mu[i][i - 1] ** 2) * lengths[i - 1]
+                    for i in range(1, n)))
+
+
+def _congruence(gram, transform, summation=sum):
+    """Apply an integer change of basis without converting its coefficients."""
+    n = len(gram)
+    right = [[summation(gram[i][k] * transform[k][j] for k in range(n))
+              for j in range(n)] for i in range(n)]
+    return [[summation(transform[k][i] * right[k][j] for k in range(n))
+             for j in range(n)] for i in range(n)]
+
+
 IdentificationMethods.pslq = pslq
 IdentificationMethods.findpoly = findpoly
 IdentificationMethods.identify = identify
+IdentificationMethods.lll_gram = lll_gram
