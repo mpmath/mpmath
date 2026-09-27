@@ -247,7 +247,7 @@ def test_sqrt_special():
 
     # Complex special cases:
     # https://en.cppreference.com/c/numeric/complex/csqrt
-    assert sqrt(mpc(0, 0)) == mpc(0, 0)
+    assert sqrt(0j) == 0j
     assert sqrt(mpc(+inf, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc(-inf, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc( nan, +inf)) == mpc(inf, +inf)
