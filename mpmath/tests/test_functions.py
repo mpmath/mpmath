@@ -902,7 +902,7 @@ def test_atan():
     # Complex special cases derived from catanh:
     # https://en.cppreference.com/c/numeric/complex/catanh
     # per https://en.cppreference.com/c/numeric/complex/catan
-    assert atan(mpc(0, 0)) == mpc(0, 0)
+    assert atan(0j) == 0j
     r = atan(mpc(nan, 0))
     assert isnan(r.real) and r.imag == 0
     assert atan(mpc(0, -1)) == mpc(0, -inf)
@@ -924,7 +924,7 @@ def test_atan():
     assert isnan(r.real) and isnan(r.imag)
 
     # Conjugate cases:
-    assert atan(mpc(0, 1)) == mpc(0, inf)
+    assert atan(1j) == mpc(0, inf)
     assert atan(mpc(inf, inf)).ae(mpc(pi2, 0))
     r = atan(mpc(nan, inf))
     assert isnan(r.real) and r.imag == 0
@@ -1529,7 +1529,7 @@ def test_atanh():
 
     # Complex special cases:
     # https://en.cppreference.com/c/numeric/complex/catanh
-    assert atanh(mpc(0, 0)) == mpc(0, 0)
+    assert atanh(0j) == 0j
     r = atanh(mpc(0, nan))
     assert r.real == 0 and isnan(r.imag)
     assert atanh(mpc(1, 0)) == mpc(inf, 0)
@@ -1557,7 +1557,7 @@ def test_atanh():
     assert r.real == 0 and r.imag.ae(-pi/2)
 
     # Negative cases:
-    assert atanh(mpc(-1, 0)) == mpc(-inf, 0)
+    assert atanh(-1+0j) == mpc(-inf, 0)
     assert atanh(mpc(-inf, -inf)).ae(mpc(0, -pi/2))
     r = atanh(mpc(-inf, nan))
     assert r.real == 0 and isnan(r.imag)
