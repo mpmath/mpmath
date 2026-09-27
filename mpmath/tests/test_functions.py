@@ -885,8 +885,7 @@ def test_atan():
     assert atan(-inf).ae(-pi2)
     assert isnan(atan(nan))
 
-    # Complex special cases:
-    # https://en.cppreference.com/c/numeric/complex/catan
+    # Limits at infinity
     assert atan(mpc(inf,-1)).ae(pi2)
     assert atan(mpc(inf,0)).ae(pi2)
     assert atan(mpc(inf,1)).ae(pi2)
@@ -899,33 +898,43 @@ def test_atan():
     assert atan(mpc(-1,-inf)).ae(-pi2)
     assert atan(mpc(0,-inf)).ae(-pi2)
     assert atan(mpc(1,-inf)).ae(pi2)
+
+    # Complex special cases derived from catanh:
+    # https://en.cppreference.com/c/numeric/complex/catanh
+    # per https://en.cppreference.com/c/numeric/complex/catan
     assert atan(mpc(0, 0)) == mpc(0, 0)
     r = atan(mpc(nan, 0))
     assert isnan(r.real) and r.imag == 0
     assert atan(mpc(0, -1)) == mpc(0, -inf)
-    assert atan(mpc(0, 1)) == mpc(0, inf)
-    r = atan(mpc(0, nan))
-    assert isnan(r.real) and isnan(r.imag)
     r = atan(mpc(nan, -1))
     assert isnan(r.real) and isnan(r.imag)
     r = atan(mpc(nan, 1))
     assert isnan(r.real) and isnan(r.imag)
     assert atan(mpc(inf, -inf)).ae(mpc(pi2, 0))
-    assert atan(mpc(inf, inf)).ae(mpc(pi2, 0))
-    assert atan(mpc(-inf, inf)).ae(mpc(-pi2, 0))
-    assert atan(mpc(-inf, -inf)).ae(mpc(-pi2, 0))
     r = atan(mpc(nan, -inf))
     assert isnan(r.real) and r.imag == 0
-    r = atan(mpc(nan, inf))
-    assert isnan(r.real) and r.imag == 0
+    r = atan(mpc(0, nan))
+    assert isnan(r.real) and isnan(r.imag)
     r = atan(mpc(1, nan))
     assert isnan(r.real) and isnan(r.imag)
     r = atan(mpc(-1, nan))
     assert isnan(r.real) and isnan(r.imag)
     assert atan(mpc(inf, nan)).ae(mpc(pi2, 0))
-    assert atan(mpc(-inf, nan)).ae(mpc(-pi2, 0))
     r = atan(mpc(nan, nan))
     assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    assert atan(mpc(0, 1)) == mpc(0, inf)
+    assert atan(mpc(inf, inf)).ae(mpc(pi2, 0))
+    r = atan(mpc(nan, inf))
+    assert isnan(r.real) and r.imag == 0
+
+    # Negative cases:
+    assert atan(mpc(-inf, inf)).ae(mpc(-pi2, 0))
+    assert atan(mpc(-inf, nan)).ae(mpc(-pi2, 0))
+
+    # Negative conjugate case:
+    assert atan(mpc(-inf, -inf)).ae(mpc(-pi2, 0))
 
 def test_atan2():
     assert atan2(1,1).ae(pi/4)

@@ -586,6 +586,7 @@ def mpc_tanh(z, prec, rnd=round_down):
     b, a = mpc_tan((b, a), prec, rnd)
     return a, b
 
+# TODO: avoid loss of accuracy
 def mpc_atan(z, prec, rnd=round_down):
     # atan(z) = -I * atanh(I*z)
     a, b = z
