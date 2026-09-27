@@ -939,6 +939,15 @@ def test_atan():
         assert (4*atan(1)).ae(pi)
     mp.dps = 15
     pi2 = pi/2
+
+    # Real special cases:
+    # https://en.cppreference.com/c/numeric/math/atan
+    assert atan(0) == 0
+    assert atan(inf).ae(pi2)
+    assert atan(-inf).ae(-pi2)
+    assert isnan(atan(nan))
+
+    # Limits at infinity
     assert atan(mpc(inf,-1)).ae(pi2)
     assert atan(mpc(inf,0)).ae(pi2)
     assert atan(mpc(inf,1)).ae(pi2)
@@ -951,6 +960,43 @@ def test_atan():
     assert atan(mpc(-1,-inf)).ae(-pi2)
     assert atan(mpc(0,-inf)).ae(-pi2)
     assert atan(mpc(1,-inf)).ae(pi2)
+
+    # Complex special cases derived from catanh:
+    # https://en.cppreference.com/c/numeric/complex/catanh
+    # per https://en.cppreference.com/c/numeric/complex/catan
+    assert atan(0j) == 0j
+    r = atan(mpc(nan, 0))
+    assert isnan(r.real) and r.imag == 0
+    assert atan(mpc(0, -1)) == mpc(0, -inf)
+    r = atan(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atan(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    assert atan(mpc(inf, -inf)).ae(mpc(pi2, 0))
+    r = atan(mpc(nan, -inf))
+    assert isnan(r.real) and r.imag == 0
+    r = atan(mpc(0, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atan(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atan(mpc(-1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert atan(mpc(inf, nan)).ae(mpc(pi2, 0))
+    r = atan(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    assert atan(1j) == mpc(0, inf)
+    assert atan(mpc(inf, inf)).ae(mpc(pi2, 0))
+    r = atan(mpc(nan, inf))
+    assert isnan(r.real) and r.imag == 0
+
+    # Negative cases:
+    assert atan(mpc(-inf, inf)).ae(mpc(-pi2, 0))
+    assert atan(mpc(-inf, nan)).ae(mpc(-pi2, 0))
+
+    # Negative conjugate case:
+    assert atan(mpc(-inf, -inf)).ae(mpc(-pi2, 0))
 
 def test_atan2():
     assert atan2(1,1).ae(pi/4)
@@ -1513,6 +1559,10 @@ def test_tan():
     assert tan(mpc(nan, -inf)) == mpc(0, -1)
 
 def test_atanh():
+    # Real cases:
+    # https://en.cppreference.com/c/numeric/math/atanh
+    # For abs(x) > 1, mpmath returns a complex analytic continuation rather
+    # than NaN.
     assert atanh(0) == 0
     assert atanh(0.5).ae(0.54930614433405484570)
     assert atanh(-0.5).ae(-0.54930614433405484570)
@@ -1521,6 +1571,7 @@ def test_atanh():
     assert isnan(atanh(nan))
     assert isinstance(atanh(1), mpf)
     assert isinstance(atanh(-1), mpf)
+
     # Limits at infinity
     jpi2 = j*pi/2
     assert atanh(inf).ae(-jpi2)
@@ -1537,6 +1588,44 @@ def test_atanh():
     assert atanh(mpc(-1,-inf)).ae(-jpi2)
     assert atanh(mpc(0,-inf)).ae(-jpi2)
     assert atanh(mpc(1,-inf)).ae(-jpi2)
+
+    # Complex special cases:
+    # https://en.cppreference.com/c/numeric/complex/catanh
+    assert atanh(0j) == 0j
+    r = atanh(mpc(0, nan))
+    assert r.real == 0 and isnan(r.imag)
+    assert atanh(mpc(1, 0)) == mpc(inf, 0)
+    r = atanh(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atanh(mpc(-1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert atanh(mpc(inf, inf)).ae(mpc(0, pi/2))
+    r = atanh(mpc(inf, nan))
+    assert r.real == 0 and isnan(r.imag)
+    r = atanh(mpc(nan, 0))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atanh(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atanh(mpc(nan, inf))
+    assert r.real == 0 and r.imag.ae(pi/2)
+    r = atanh(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    assert atanh(mpc(inf, -inf)).ae(mpc(0, -pi/2))
+    r = atanh(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = atanh(mpc(nan, -inf))
+    assert r.real == 0 and r.imag.ae(-pi/2)
+
+    # Negative cases:
+    assert atanh(-1+0j) == mpc(-inf, 0)
+    assert atanh(mpc(-inf, -inf)).ae(mpc(0, -pi/2))
+    r = atanh(mpc(-inf, nan))
+    assert r.real == 0 and isnan(r.imag)
+
+    # Negative conjugate case:
+    assert atanh(mpc(-inf, inf)).ae(mpc(0, pi/2))
 
 def test_expm1():
     assert expm1(0) == 0

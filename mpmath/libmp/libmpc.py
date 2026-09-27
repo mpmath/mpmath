@@ -588,23 +588,10 @@ def mpc_tanh(z, prec, rnd=round_down):
 
 # TODO: avoid loss of accuracy
 def mpc_atan(z, prec, rnd=round_down):
+    # atan(z) = -I * atanh(I*z)
     a, b = z
-    # atan(z) = (I/2)*(log(1-I*z) - log(1+I*z))
-    # x = 1-I*z = 1 + b - I*a
-    # y = 1+I*z = 1 - b + I*a
-    wp = prec + 15
-    x = mpf_add(fone, b, wp), mpf_neg(a)
-    y = mpf_sub(fone, b, wp), a
-    l1 = mpc_ln(x, wp)
-    l2 = mpc_ln(y, wp)
-    a, b = mpc_sub(l1, l2, prec, rnd)
-    # (I/2) * (a+b*I) = (-b/2 + a/2*I)
-    v = mpf_neg(mpf_shift(b,-1)), mpf_shift(a,-1)
-    # Subtraction at infinity gives correct real part but
-    # wrong imaginary part (should be zero)
-    if v[1] == fnan and mpc_is_inf(z):
-        v = (v[0], fzero)
-    return v
+    a, b = mpc_atanh((mpf_neg(b), a), prec, rnd)
+    return mpc_pos((b, mpf_neg(a)), prec, rnd)
 
 beta_crossover = from_float(0.6417)
 alpha_crossover = from_float(1.5)
@@ -801,16 +788,22 @@ def mpc_acosh(z, prec, rnd=round_down):
 
 def mpc_atanh(z, prec, rnd=round_down):
     # atanh(z) = (log(1+z)-log(1-z))/2
+    a, b = z
+    if a == fzero and b == fnan:
+        return fzero, fnan
     wp = prec + 15
-    a = mpc_add(z, mpc_one, wp)
-    b = mpc_sub(mpc_one, z, wp)
-    a = mpc_ln(a, wp)
-    b = mpc_ln(b, wp)
-    v = mpc_shift(mpc_sub(a, b, wp), -1)
+    x = mpc_add(z, mpc_one, wp)
+    y = mpc_sub(mpc_one, z, wp)
+    x = mpc_ln(x, wp)
+    y = mpc_ln(y, wp)
+    v = mpc_shift(mpc_sub(x, y, wp), -1)
     # Subtraction at infinity gives correct imaginary part but
     # wrong real part (should be zero)
     if v[0] == fnan and mpc_is_inf(z):
-        v = (fzero, v[1])
+        if a == fnan:
+            pi2 = mpf_shift(mpf_pi(prec, rnd), -1)
+            return fzero, pi2 if b == finf else mpf_neg(pi2)
+        return fzero, v[1]
     return v
 
 def mpc_fibonacci(z, prec, rnd=round_down):
