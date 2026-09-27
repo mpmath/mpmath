@@ -237,22 +237,84 @@ def test_float_sqrt():
     pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**mp2.mpf(0.5))
 
 def test_sqrt_special():
+    # Real special cases:
+    # https://en.cppreference.com/c/numeric/math/sqrt
+    # Negative real inputs are omitted because mpmath returns complex analytic
+    # continuations instead of NaN.
+    assert sqrt(0) == 0
+    assert sqrt(inf) == inf
+    assert isnan(sqrt(nan))
+
+    # Complex special cases:
+    # https://en.cppreference.com/c/numeric/complex/csqrt
+    assert sqrt(0j) == 0j
     assert sqrt(mpc(+inf, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc(-inf, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc( nan, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(0, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(1, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(-1, +inf)) == mpc(inf, +inf)
+    r = sqrt(mpc(0, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(-1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert sqrt(mpc(-inf, 1)) == mpc(0, inf)
+    assert sqrt(mpc(inf, 1)) == mpc(inf, 0)
+    r = sqrt(mpc(-inf, nan))
+    assert isnan(r.real) and abs(r.imag) == inf
+    r = sqrt(mpc(inf, nan))
+    assert r.real == inf and isnan(r.imag)
+    r = sqrt(mpc(nan, 0))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
     assert sqrt(mpc(+inf, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc(-inf, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc( nan, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(0, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(1, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(-1, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(-inf, -1)) == mpc(0, -inf)
+    assert sqrt(mpc(inf, -1)) == mpc(inf, 0)
+    r = sqrt(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
 
 def test_hypot():
     assert hypot(0, 0) == 0
     assert hypot(0, 0.33) == mpf(0.33)
+    assert hypot(0, -0.33) == mpf(0.33)
     assert hypot(0.33, 0) == mpf(0.33)
     assert hypot(-0.33, 0) == mpf(0.33)
     assert hypot(3, 4) == mpf(5)
     # issue 1011
     assert hypot(1.0000044432326138,
                  1.0068578402095993) == mpf('1.4190742041473763')
+
+def test_hypot_special():
+    # https://en.cppreference.com/w/c/numeric/math/hypot
+    assert hypot(inf, 0) == inf
+    assert hypot(-inf, 0) == inf
+    assert hypot(0, inf) == inf
+    assert hypot(0, -inf) == inf
+    assert hypot(inf, 1) == inf
+    assert hypot(-inf, 1) == inf
+    assert hypot(1, inf) == inf
+    assert hypot(1, -inf) == inf
+    assert hypot(inf, nan) == inf
+    assert hypot(-inf, nan) == inf
+    assert hypot(nan, inf) == inf
+    assert hypot(nan, -inf) == inf
+    assert isnan(hypot(0, nan))
+    assert isnan(hypot(nan, 0))
+    assert isnan(hypot(1, nan))
+    assert isnan(hypot(nan, 1))
+    assert isnan(hypot(nan, nan))
 
 def test_exact_cbrt():
     for i in range(0, 20000, 200):

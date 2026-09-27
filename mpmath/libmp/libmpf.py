@@ -1990,5 +1990,7 @@ def mpf_hypot(x, y, prec, rnd=round_down):
     x and y."""
     if y == fzero: return mpf_abs(x, prec, rnd)
     if x == fzero: return mpf_abs(y, prec, rnd)
+    if x in (finf, fninf) or y in (finf, fninf):
+        return finf
     hypot2 = mpf_add(mpf_mul(x,x), mpf_mul(y,y), prec+10, rnd)
     return mpf_sqrt(hypot2, prec, rnd)
