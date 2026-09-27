@@ -237,22 +237,84 @@ def test_float_sqrt():
     pytest.raises(ComplexResult, lambda: mp2.mpf(-1)**mp2.mpf(0.5))
 
 def test_sqrt_special():
+    # Real special cases:
+    # https://en.cppreference.com/c/numeric/math/sqrt
+    # Negative real inputs are omitted because mpmath returns complex analytic
+    # continuations instead of NaN.
+    assert sqrt(0) == 0
+    assert sqrt(inf) == inf
+    assert isnan(sqrt(nan))
+
+    # Complex special cases:
+    # https://en.cppreference.com/c/numeric/complex/csqrt
+    assert sqrt(0j) == 0j
     assert sqrt(mpc(+inf, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc(-inf, +inf)) == mpc(inf, +inf)
     assert sqrt(mpc( nan, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(0, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(1, +inf)) == mpc(inf, +inf)
+    assert sqrt(mpc(-1, +inf)) == mpc(inf, +inf)
+    r = sqrt(mpc(0, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(-1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert sqrt(mpc(-inf, 1)) == mpc(0, inf)
+    assert sqrt(mpc(inf, 1)) == mpc(inf, 0)
+    r = sqrt(mpc(-inf, nan))
+    assert isnan(r.real) and abs(r.imag) == inf
+    r = sqrt(mpc(inf, nan))
+    assert r.real == inf and isnan(r.imag)
+    r = sqrt(mpc(nan, 0))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sqrt(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
     assert sqrt(mpc(+inf, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc(-inf, -inf)) == mpc(inf, -inf)
     assert sqrt(mpc( nan, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(0, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(1, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(-1, -inf)) == mpc(inf, -inf)
+    assert sqrt(mpc(-inf, -1)) == mpc(0, -inf)
+    assert sqrt(mpc(inf, -1)) == mpc(inf, 0)
+    r = sqrt(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
 
 def test_hypot():
     assert hypot(0, 0) == 0
     assert hypot(0, 0.33) == mpf(0.33)
+    assert hypot(0, -0.33) == mpf(0.33)
     assert hypot(0.33, 0) == mpf(0.33)
     assert hypot(-0.33, 0) == mpf(0.33)
     assert hypot(3, 4) == mpf(5)
     # issue 1011
     assert hypot(1.0000044432326138,
                  1.0068578402095993) == mpf('1.4190742041473763')
+
+def test_hypot_special():
+    # https://en.cppreference.com/w/c/numeric/math/hypot
+    assert hypot(inf, 0) == inf
+    assert hypot(-inf, 0) == inf
+    assert hypot(0, inf) == inf
+    assert hypot(0, -inf) == inf
+    assert hypot(inf, 1) == inf
+    assert hypot(-inf, 1) == inf
+    assert hypot(1, inf) == inf
+    assert hypot(1, -inf) == inf
+    assert hypot(inf, nan) == inf
+    assert hypot(-inf, nan) == inf
+    assert hypot(nan, inf) == inf
+    assert hypot(nan, -inf) == inf
+    assert isnan(hypot(0, nan))
+    assert isnan(hypot(nan, 0))
+    assert isnan(hypot(1, nan))
+    assert isnan(hypot(nan, 1))
+    assert isnan(hypot(nan, nan))
 
 def test_exact_cbrt():
     for i in range(0, 20000, 200):
@@ -410,6 +472,248 @@ def test_trig_hyperb_basic():
     assert sin(-4-3.6j).ae(cmath.sin(-4-3.6j))
     assert cos(1+1j).ae(cmath.cos(1+1j))
     assert cos(-4-3.6j).ae(cmath.cos(-4-3.6j))
+
+def test_sin():
+    # Real special cases:
+    # https://en.cppreference.com/c/numeric/math/sin
+    assert isnan(sin(nan))
+    assert sin(0) == 0
+    assert isnan(sin(inf))
+    assert isnan(sin(-inf))
+
+    # Complex special cases:
+    # https://en.cppreference.com/c/numeric/complex/csin
+    assert sin(mpc(0, 0)) == mpc(0, 0)
+    r = sin(mpc(inf, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = sin(mpc(-inf, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = sin(mpc(nan, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = sin(mpc(inf, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(-inf, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    assert sin(mpc(0, inf)) == mpc(0, inf)
+    assert sin(mpc(0, -inf)) == mpc(0, -inf)
+    assert sin(mpc(pi/4, inf)) == mpc(inf, inf)
+    assert sin(mpc(3*pi/4, inf)) == mpc(inf, -inf)
+    assert sin(mpc(-3*pi/4, inf)) == mpc(-inf, -inf)
+    assert sin(mpc(-pi/4, inf)) == mpc(-inf, inf)
+    assert sin(mpc(pi/4, -inf)) == mpc(inf, -inf)
+    r = sin(mpc(inf, inf))
+    assert isnan(r.real) and abs(r.imag) == inf
+    r = sin(mpc(inf, -inf))
+    assert isnan(r.real) and r.imag == -inf
+    r = sin(mpc(-inf, inf))
+    assert isnan(r.real) and r.imag == inf
+    r = sin(mpc(-inf, -inf))
+    assert isnan(r.real) and r.imag == -inf
+    r = sin(mpc(inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(-inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(nan, inf))
+    assert isnan(r.real) and abs(r.imag) == inf
+    r = sin(mpc(nan, -inf))
+    assert isnan(r.real) and r.imag == -inf
+    r = sin(mpc(inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(0, nan))
+    assert r.real == 0 and isnan(r.imag)
+    r = sin(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    r = sin(mpc(inf, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(-inf, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sin(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    assert sin(mpc(3*pi/4, -inf)) == mpc(inf, inf)
+    assert sin(mpc(-3*pi/4, -inf)) == mpc(-inf, inf)
+    assert sin(mpc(-pi/4, -inf)) == mpc(-inf, -inf)
+
+def test_cos():
+    # Real special cases:
+    # https://en.cppreference.com/c/numeric/math/cos
+    assert isnan(cos(nan))
+    assert cos(0) == 1
+    assert isnan(cos(inf))
+    assert isnan(cos(-inf))
+
+    # Complex special cases:
+    # https://en.cppreference.com/c/numeric/complex/ccos
+    assert cos(mpc(0, 0)) == mpc(1, 0)
+    r = cos(mpc(inf, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = cos(mpc(-inf, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = cos(mpc(nan, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = cos(mpc(inf, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(-inf, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    assert cos(mpc(0, inf)) == mpc(inf, 0)
+    assert cos(mpc(0, -inf)) == mpc(inf, 0)
+    assert cos(mpc(pi/4, inf)) == mpc(inf, -inf)
+    assert cos(mpc(3*pi/4, inf)) == mpc(-inf, -inf)
+    assert cos(mpc(-3*pi/4, inf)) == mpc(-inf, inf)
+    assert cos(mpc(-pi/4, inf)) == mpc(inf, inf)
+    assert cos(mpc(pi/4, -inf)) == mpc(inf, inf)
+    r = cos(mpc(inf, inf))
+    assert r.real == inf and isnan(r.imag)
+    r = cos(mpc(inf, -inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = cos(mpc(-inf, inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = cos(mpc(-inf, -inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = cos(mpc(inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(-inf, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(nan, inf))
+    assert r.real == inf and isnan(r.imag)
+    r = cos(mpc(nan, -inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = cos(mpc(0, nan))
+    assert isnan(r.real) and r.imag == 0
+    r = cos(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    r = cos(mpc(inf, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(-inf, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cos(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    assert cos(mpc(3*pi/4, -inf)) == mpc(-inf, inf)
+    assert cos(mpc(-3*pi/4, -inf)) == mpc(-inf, -inf)
+    assert cos(mpc(-pi/4, -inf)) == mpc(inf, -inf)
+
+def test_sinh():
+    # Real special cases:
+    # https://en.cppreference.com/c/numeric/math/sinh
+    assert isnan(sinh(nan))
+    assert sinh(0) == 0
+    assert sinh(inf) == inf
+    assert sinh(-inf) == -inf
+
+    # Complex special cases:
+    # https://en.cppreference.com/c/numeric/complex/csinh
+    assert sinh(mpc(0, 0)) == mpc(0, 0)
+    r = sinh(mpc(0, inf))
+    assert r.real == 0 and isnan(r.imag)
+    r = sinh(mpc(0, -inf))
+    assert r.real == 0 and isnan(r.imag)
+    r = sinh(mpc(0, nan))
+    assert r.real == 0 and isnan(r.imag)
+    r = sinh(mpc(1, inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sinh(mpc(1, -inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sinh(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert sinh(mpc(inf, 0)) == mpc(inf, 0)
+    assert sinh(mpc(-inf, 0)) == mpc(-inf, 0)
+    assert sinh(mpc(inf, pi/4)) == mpc(inf, inf)
+    assert sinh(mpc(inf, 3*pi/4)) == mpc(-inf, inf)
+    assert sinh(mpc(inf, -3*pi/4)) == mpc(-inf, -inf)
+    assert sinh(mpc(inf, -pi/4)) == mpc(inf, -inf)
+    r = sinh(mpc(inf, inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = sinh(mpc(inf, -inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = sinh(mpc(-inf, inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = sinh(mpc(-inf, -inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = sinh(mpc(inf, nan))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = sinh(mpc(-inf, nan))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = sinh(mpc(nan, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = sinh(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sinh(mpc(nan, -inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sinh(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    r = sinh(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = sinh(mpc(nan, inf))
+    assert isnan(r.real) and isnan(r.imag)
+
+def test_cosh():
+    # Real special cases:
+    # https://en.cppreference.com/c/numeric/math/cosh
+    assert isnan(cosh(nan))
+    assert cosh(0) == 1
+    assert cosh(inf) == inf
+    assert cosh(-inf) == inf
+
+    # Complex special cases:
+    # https://en.cppreference.com/c/numeric/complex/ccosh
+    assert cosh(mpc(0, 0)) == mpc(1, 0)
+    r = cosh(mpc(0, inf))
+    assert isnan(r.real) and r.imag == 0
+    r = cosh(mpc(0, -inf))
+    assert isnan(r.real) and r.imag == 0
+    r = cosh(mpc(0, nan))
+    assert isnan(r.real) and r.imag == 0
+    r = cosh(mpc(1, inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cosh(mpc(1, -inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cosh(mpc(1, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    assert cosh(mpc(inf, 0)) == mpc(inf, 0)
+    assert cosh(mpc(-inf, 0)) == mpc(inf, 0)
+    assert cosh(mpc(inf, pi/4)) == mpc(inf, inf)
+    assert cosh(mpc(inf, 3*pi/4)) == mpc(-inf, inf)
+    assert cosh(mpc(inf, -3*pi/4)) == mpc(-inf, -inf)
+    assert cosh(mpc(inf, -pi/4)) == mpc(inf, -inf)
+    r = cosh(mpc(inf, inf))
+    assert r.real == inf and isnan(r.imag)
+    r = cosh(mpc(inf, -inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = cosh(mpc(-inf, inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = cosh(mpc(-inf, -inf))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = cosh(mpc(inf, nan))
+    assert r.real == inf and isnan(r.imag)
+    r = cosh(mpc(-inf, nan))
+    assert abs(r.real) == inf and isnan(r.imag)
+    r = cosh(mpc(nan, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = cosh(mpc(nan, 1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cosh(mpc(nan, -inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cosh(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
+
+    # Conjugate cases:
+    r = cosh(mpc(nan, -1))
+    assert isnan(r.real) and isnan(r.imag)
+    r = cosh(mpc(nan, inf))
+    assert isnan(r.real) and isnan(r.imag)
 
 def test_degrees():
     assert cos(0*degree) == 1

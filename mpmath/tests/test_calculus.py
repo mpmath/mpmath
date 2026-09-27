@@ -5,7 +5,7 @@ from hypothesis import strategies as st
 from mpmath import (arange, chebyfit, cos, cosm, differint, e, euler, exp,
                     expm, fft, fourier, fourierval, inf, invertlaplace, invfft,
                     j, limit, log, logm, matrix, mp, mpf, norm, pade, pi,
-                    polyroots, polyval, sin, sinm, sqrt)
+                    polyroots, polyval, sin, sinm, sqrt, libmp)
 
 
 def test_approximation():
