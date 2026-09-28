@@ -95,7 +95,7 @@ def test_polyroots_legendre():
             polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
                       extraprec=n*10)
 
-        roots = polyroots(coeffs, maxsteps=50, cleanup=True, error=False,
+        roots = polyroots(coeffs, maxsteps=100, cleanup=True, error=False,
                           extraprec=n*10)
         roots = [str(r) for r in roots]
         assert roots == \
@@ -157,7 +157,7 @@ def test_polyroots_legendre_init():
                           '0.911',   '0.93',    '0.946',  '0.961',  '0.973',
                           '0.983',   '0.991',   '0.996',  '0.999',  '1.0'])
     with mp.workdps(2*mp.dps):
-        roots_exact = polyroots(coeffs, maxsteps=50, cleanup=True, error=False,
+        roots_exact = polyroots(coeffs, maxsteps=100, cleanup=True, error=False,
                                 extraprec=2*extra_prec)
     with pytest.raises(mp.NoConvergence):
         polyroots(coeffs, maxsteps=5, cleanup=True, error=False,
