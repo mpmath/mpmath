@@ -49,7 +49,7 @@ def polyval(ctx, coeffs, x, derivative=False, asc=True):
         return p
 
 @defun
-def polyroots(ctx, coeffs, maxsteps=80, cleanup=True, extraprec=10,
+def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
               error=False, roots_init=None, asc=True):
     """
     Computes all roots (real or complex) of a given polynomial.
