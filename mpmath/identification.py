@@ -843,13 +843,9 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
     else:
         return None
 
-
-
-
 # LLL reduction from a Gram matrix.
 
-
-def lll_gram(ctx, Y, delta=0.75, *, maxsteps=10000):
+def lll_gram(ctx, Y, *, delta=0.75, maxsteps=10000):
     r"""
     Return an LLL-reducing change of basis for the Gram matrix *Y*.
 
@@ -861,7 +857,8 @@ def lll_gram(ctx, Y, delta=0.75, *, maxsteps=10000):
     The result *U* is a tuple of row tuples of Python integers with
     determinant +1, such that :math:`U^T Y U` is reduced. For a basis *B*
     stored in columns, the reduced basis is :math:`B U`. Reduced bases
-    are not unique. *U* contains exact integers. Applying it through
+    are not unique. The tuple keeps the integer entries of *U* exact,
+    even when they exceed the working precision. Applying it through
     mpmath matrix multiplication uses the current working precision; for
     badly conditioned inputs, increase precision before multiplying.
 
@@ -903,6 +900,21 @@ def lll_gram(ctx, Y, delta=0.75, *, maxsteps=10000):
         >>> V.T * Y * V == mp.eye(2)
         True
 
+    A short lattice vector can reveal an integer relation. For
+    :math:`a = \sqrt{2}`, use the Gram matrix of the vectors
+    :math:`(e_i, 10 a^i)` for :math:`i = 0, 1, 2`::
+
+        >>> with mp.workdps(30):
+        ...     a = mp.sqrt(2)
+        ...     v = mp.matrix([1, a, a*a])
+        ...     Y = mp.eye(3) + 100 * (v * v.T)
+        ...     U = lll_gram(Y)
+        ...     tuple(row[0] for row in U)
+        (-2, 0, 1)
+
+    The first column gives the coefficients of :math:`x^2 - 2`, the
+    minimal polynomial of :math:`\sqrt{2}`.
+
     **References**
 
     A. K. Lenstra, H. W. Lenstra Jr. and L. Lovasz,
@@ -912,16 +924,10 @@ def lll_gram(ctx, Y, delta=0.75, *, maxsteps=10000):
     maxsteps = index(maxsteps)
     if maxsteps <= 0:
         raise ValueError("maxsteps must be a positive integer")
-    delta_error = "delta must be real and satisfy 0.25 < delta < 1"
     # convert preserves an existing mpf; mpf(...) would round it to ctx.prec.
     delta = ctx.convert(delta)
-    if delta.imag != 0 or not 0.25 < delta.real < 1:
-        raise ValueError(delta_error)
-    delta = delta.real
-    # The matrix constructor can treat missing entries in short rows as zero.
-    if isinstance(Y, (list, tuple)) and any(
-            not isinstance(row, (list, tuple)) or len(row) != len(Y) for row in Y):
-        raise ValueError("Y must be a nonempty square matrix")
+    if not ctx._is_real_type(delta) or not 0.25 < delta < 1:
+        raise ValueError("delta must be real and satisfy 0.25 < delta < 1")
     # ctx.matrix uses ctx.convert, preserving existing high-precision mpf values.
     Y = ctx.matrix(Y)
     n = Y.rows
@@ -937,7 +943,6 @@ def lll_gram(ctx, Y, delta=0.75, *, maxsteps=10000):
 
 
 # Method selection and numerical recovery.
-
 
 def _reduce_gram(ctx, gram, delta, maxsteps):
     """Generate a numerical candidate and verify it against the converted input."""
@@ -965,7 +970,6 @@ def _try_float_reduction(gram, delta, maxsteps, exact, exact_delta):
             return transform
     except (ValueError, ZeroDivisionError, OverflowError, fp.NoConvergence):
         pass
-    return None
 
 
 def _reduce_with_precision(ctx, gram, delta, maxsteps, exact, exact_delta):
@@ -999,7 +1003,6 @@ def _reduce_with_precision(ctx, gram, delta, maxsteps, exact, exact_delta):
 
 
 # Numerical reduction and exact verification.
-
 
 def _lll_numerical(ctx, gram, delta, maxsteps):
     """Generate a candidate using incremental numerical Gram-Schmidt updates."""

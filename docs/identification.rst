@@ -9,6 +9,11 @@ Automated number recognition based on PSLQ is not a silver bullet. Any occurring
 
 The number identification facilities in mpmath are inspired by the `Inverse Symbolic Calculator <http://wayback.cecm.sfu.ca/projects/ISC/ISCmain.html>`_ (ISC). The ISC is more powerful than mpmath, as it uses a lookup table of millions of precomputed constants (thereby mitigating the problem with exponential complexity).
 
+LLL lattice reduction is also documented below. A basis generates a lattice
+from all its integer linear combinations; ``lll_gram`` reduces that basis
+using its Gram matrix, without requiring the basis vectors themselves. The
+reduced basis can reveal integer relations, as the example below illustrates.
+
 Constant recognition
 -----------------------------------
 

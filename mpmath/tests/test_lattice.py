@@ -70,6 +70,7 @@ def test_lll_gram_examples_and_orientation(ctx):
 @pytest.mark.parametrize('ctx', [mp, fp])
 @pytest.mark.parametrize('delta', ['0.26', '0.5', '0.75', '0.99'])
 def test_lll_gram_random_bases(ctx, delta):
+    # Keep generated cases reproducible when a reduction fails.
     rng = random.Random(1182)
     d = ctx.mpf(delta)
     exact_delta = Fraction(*d.as_integer_ratio())
@@ -183,12 +184,18 @@ def test_lll_gram_high_precision_input_at_low_working_precision():
     assert ctx.prec == before
 
 
-@pytest.mark.parametrize('Y', [[], [1, 2], [[1, 2, 3], [2, 4, 5]],
-                               [[1, 0], [0]]])
+@pytest.mark.parametrize('Y', [[], [1, 2], [[1, 2, 3], [2, 4, 5]]])
 @pytest.mark.parametrize('ctx', [mp, fp])
 def test_lll_gram_invalid_shape(ctx, Y):
     with pytest.raises(ValueError, match='square'):
         ctx.lll_gram(Y)
+
+
+@pytest.mark.parametrize('ctx', [mp, fp])
+def test_lll_gram_uses_matrix_constructor_for_short_rows(ctx):
+    # ctx.matrix pads the short row with zero, making this matrix singular.
+    with pytest.raises(ValueError, match='positive definite'):
+        ctx.lll_gram([[1, 0], [0]])
 
 
 @pytest.mark.parametrize('ctx', [mp, fp])
@@ -213,7 +220,8 @@ def test_lll_gram_invalid_entries(ctx, Y, message):
         ctx.lll_gram(Y)
 
 
-@pytest.mark.parametrize('delta', [0.25, 1, 2, -1, mp.nan, mp.inf, 1j])
+@pytest.mark.parametrize('delta', [0.25, 1, 2, -1, mp.nan, mp.inf,
+                                   1j, complex(0.75, 0)])
 @pytest.mark.parametrize('ctx', [mp, fp])
 def test_lll_gram_invalid_delta(ctx, delta):
     with pytest.raises(ValueError, match='delta'):
@@ -224,6 +232,12 @@ def test_lll_gram_invalid_delta(ctx, delta):
 def test_lll_gram_invalid_delta_type(ctx):
     with pytest.raises(TypeError):
         ctx.lll_gram([[1]], delta=None)
+
+
+@pytest.mark.parametrize('ctx', [mp, fp])
+def test_lll_gram_delta_is_keyword_only(ctx):
+    with pytest.raises(TypeError):
+        ctx.lll_gram([[1]], 0.75)
 
 
 @pytest.mark.parametrize('limit', [0, -1])
