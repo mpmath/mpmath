@@ -2,9 +2,9 @@
 
 from fractions import Fraction
 from itertools import permutations
-import random
 import math
 
+from hypothesis import given, settings, strategies as st
 import pytest
 
 from mpmath import fp, lll_gram, mp
@@ -69,18 +69,19 @@ def test_lll_gram_examples_and_orientation(ctx):
 
 @pytest.mark.parametrize('ctx', [mp, fp])
 @pytest.mark.parametrize('delta', ['0.26', '0.5', '0.75', '0.99'])
-def test_lll_gram_random_bases(ctx, delta):
-    # Keep generated cases reproducible when a reduction fails.
-    rng = random.Random(1182)
+@pytest.mark.parametrize('n', [2, 3, 4, 5])
+@settings(max_examples=6, deadline=None)
+@given(st.data())
+def test_lll_gram_random_bases(ctx, delta, n, data):
     d = ctx.mpf(delta)
     exact_delta = Fraction(*d.as_integer_ratio())
-    for n in range(2, 6):
-        for unused in range(3):
-            B = [[rng.randint(-8, 8) for j in range(n)] for i in range(n)]
-            # Appending I ensures independent columns without a rank filter.
-            B += [[int(i == j) for j in range(n)] for i in range(n)]
-            Y = gram(B)
-            assert_reduced(Y, ctx.lll_gram(Y, delta=d), exact_delta)
+    B = data.draw(st.lists(
+        st.lists(st.integers(min_value=-8, max_value=8), min_size=n, max_size=n),
+        min_size=n, max_size=n))
+    # Appending I ensures independent columns without a rank filter.
+    B += [[int(i == j) for j in range(n)] for i in range(n)]
+    Y = gram(B)
+    assert_reduced(Y, ctx.lll_gram(Y, delta=d), exact_delta)
 
 
 @pytest.mark.parametrize('dps', [15, 30, 60])
