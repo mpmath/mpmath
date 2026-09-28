@@ -186,6 +186,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
             roots[:deg_init] = list(roots_init[:deg_init])
             roots[deg_init:] = [ctx.mpc((0.4+0.9j)**n) for n
                                 in range(deg_init,deg)]
+        new_roots = roots.copy()
         err = [ctx.one for n in range(deg)]
         # Durand-Kerner iteration until convergence
         for step in range(maxsteps):
@@ -200,8 +201,9 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
                             x /= (p-roots[j])
                         except ZeroDivisionError:
                             continue
-                roots[i] = p - x
+                new_roots[i] = p - x
                 err[i] = abs(x)
+            roots = new_roots.copy()
         if abs(max(err)) >= tol:
             raise ctx.NoConvergence("Didn't converge in maxsteps=%d steps." \
                     % maxsteps)
