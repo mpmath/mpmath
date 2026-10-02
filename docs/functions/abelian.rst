@@ -28,6 +28,8 @@ Riemann theta functions
 
 .. autofunction:: mpmath.rtheta
 
+.. autofunction:: mpmath.rtheta_jet
+
 The following plots show two real slices and the modulus over two real
 variables for genus-two period matrices. Similar slices and surfaces are
 illustrated in `DLMF section 21.4 <https://dlmf.nist.gov/21.4>`_.
@@ -57,9 +59,3 @@ illustrated in `DLMF section 21.4 <https://dlmf.nist.gov/21.4>`_.
    splot(surface, [-1, 1], [-1, 1], points=35, keep_aspect=False,
          axes=ax, plot3d_kwargs={"cmap": "viridis"})
    ax.set_zlabel(r"$|\theta(z\mid\tau)|$")
-
-
-Riemann theta jets
-..................
-
-.. autofunction:: mpmath.rtheta_jet
