@@ -2066,12 +2066,8 @@ def _weierpprime_data(ctx, omega1, omega2):
     """Return the lattice-dependent data used by ``weierpprime``."""
     q = ctx.qfrom(tau=omega2 / omega1)
     j10p = ctx.jtheta(1, 0, q, 1)
-    j20 = ctx.jtheta(2, 0, q)
-    j30 = ctx.jtheta(3, 0, q)
-    j40 = ctx.jtheta(4, 0, q)
-    k0 = j10p**3 / (j20 * j30 * j40)
     z_scale = ctx.pi / (2 * omega1)
-    coefficient = -ctx.pi**3 * k0 / (4 * omega1**3)
+    coefficient = -(ctx.pi * j10p / (2 * omega1))**3
     return q, z_scale, coefficient
 
 @defun
@@ -2192,11 +2188,8 @@ def weierpprime(ctx, z, g2=None, g3=None, tau=None,
     q, z_scale, coefficient = ctx._weierpprime_data(omega1, omega2)
     z1 = z * z_scale
     j1z1 = ctx.jtheta(1, z1, q)
-    j2z1 = ctx.jtheta(2, z1, q)
-    j3z1 = ctx.jtheta(3, z1, q)
-    j4z1 = ctx.jtheta(4, z1, q)
-    kz = j2z1 * j3z1 * j4z1 / j1z1**3
-    return coefficient * kz
+    j1z2 = ctx.jtheta(1, 2 * z1, q)
+    return coefficient * j1z2 / j1z1**4
 
 @defun_wrapped
 def weiersigma(ctx, z, g2=None, g3=None, tau=None,

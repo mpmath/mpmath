@@ -5,12 +5,12 @@ Low-level functions for complex arithmetic.
 import sys
 
 from .backend import MPZ
-from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_atan, mpf_atan2,
-                        mpf_cos, mpf_cos_pi, mpf_cos_sin, mpf_cos_sin_pi,
-                        mpf_cosh, mpf_cosh_sinh, mpf_exp, mpf_fibonacci,
-                        mpf_ln, mpf_log1p, mpf_log_hypot, mpf_nthroot, mpf_phi,
-                        mpf_pi, mpf_pow_int, mpf_sin, mpf_sin_pi, mpf_sinh,
-                        mpf_tan, mpf_tanh)
+from .libelefun import (mpf_acos, mpf_acosh, mpf_asin, mpf_asinh, mpf_atan,
+                        mpf_atan2, mpf_cos, mpf_cos_pi, mpf_cos_sin,
+                        mpf_cos_sin_pi, mpf_cosh, mpf_cosh_sinh, mpf_exp,
+                        mpf_fibonacci, mpf_ln, mpf_log1p, mpf_log_hypot,
+                        mpf_nthroot, mpf_phi, mpf_pi, mpf_pow_int, mpf_sin,
+                        mpf_sin_pi, mpf_sinh, mpf_tan, mpf_tanh)
 from .libintmath import giant_steps, lshift, rshift
 from .libmpf import (ComplexResult, fhalf, finf, fnan, fninf, fnone, fone,
                      from_float, from_int, from_man_exp, ftwo, fzero, mpf_abs,
@@ -285,7 +285,7 @@ def mpc_sqrt(z, prec, rnd=round_down):
     We have sqrt(a+bi) = sqrt((r+a)/2) + b/sqrt(2*(r+a))*i where
     r = abs(a+bi), when a+bi is not a negative real number."""
     a, b = z
-    if b == fzero:
+    if b == fzero and a != fnan:
         if a == fzero:
             return (a, b)
         # When a+bi is a negative real number, we get a real sqrt times i
@@ -424,6 +424,8 @@ def mpc_exp(z, prec, rnd=round_down):
         return mpf_cos_sin(b, prec, rnd)
     if b == fzero:
         return mpf_exp(a, prec, rnd), fzero
+    if a in _infs and b in _infs_nan:
+        return (fzero, fzero) if a == fninf else (finf, fnan)
     mag = mpf_exp(a, prec+4, rnd)
     c, s = mpf_cos_sin(b, prec+4, rnd)
     re = mpf_mul(mag, c, prec, rnd)
@@ -450,6 +452,8 @@ def mpc_cos(z, prec, rnd=round_down):
         return mpf_cos(a, prec, rnd), fzero
     if a == fzero:
         return mpf_cosh(b, prec, rnd), fzero
+    if a in _infs_nan and b in _infs:
+        return finf, fnan
     wp = prec + 6
     c, s = mpf_cos_sin(a, wp)
     ch, sh = mpf_cosh_sinh(b, wp)
@@ -466,6 +470,8 @@ def mpc_sin(z, prec, rnd=round_down):
         return mpf_sin(a, prec, rnd), fzero
     if a == fzero:
         return fzero, mpf_sinh(b, prec, rnd)
+    if a in _infs_nan and b in _infs:
+        return fnan, b
     wp = prec + 6
     c, s = mpf_cos_sin(a, wp)
     ch, sh = mpf_cosh_sinh(b, wp)
@@ -582,23 +588,10 @@ def mpc_tanh(z, prec, rnd=round_down):
 
 # TODO: avoid loss of accuracy
 def mpc_atan(z, prec, rnd=round_down):
+    # atan(z) = -I * atanh(I*z)
     a, b = z
-    # atan(z) = (I/2)*(log(1-I*z) - log(1+I*z))
-    # x = 1-I*z = 1 + b - I*a
-    # y = 1+I*z = 1 - b + I*a
-    wp = prec + 15
-    x = mpf_add(fone, b, wp), mpf_neg(a)
-    y = mpf_sub(fone, b, wp), a
-    l1 = mpc_ln(x, wp)
-    l2 = mpc_ln(y, wp)
-    a, b = mpc_sub(l1, l2, prec, rnd)
-    # (I/2) * (a+b*I) = (-b/2 + a/2*I)
-    v = mpf_neg(mpf_shift(b,-1)), mpf_shift(a,-1)
-    # Subtraction at infinity gives correct real part but
-    # wrong imaginary part (should be zero)
-    if v[1] == fnan and mpc_is_inf(z):
-        v = (v[0], fzero)
-    return v
+    a, b = mpc_atanh((mpf_neg(b), a), prec, rnd)
+    return mpc_pos((b, mpf_neg(a)), prec, rnd)
 
 beta_crossover = from_float(0.6417)
 alpha_crossover = from_float(1.5)
@@ -628,9 +621,9 @@ def acos_asin(z, prec, rnd, n):
         # case abs(a) <= 1
         if not am[0]:
             if n == 0:
-                return mpf_acos(a, prec, rnd), fzero
+                return mpf_acos(a, prec, rnd), fzero if a != fnan else a
             else:
-                return mpf_asin(a, prec, rnd), fzero
+                return mpf_asin(a, prec, rnd), fzero if a != fnan else a
         # cases abs(a) > 1
         else:
             # case a < -1
@@ -649,6 +642,12 @@ def acos_asin(z, prec, rnd, n):
                 else:
                     pi = mpf_pi(prec, rnd)
                     return mpf_shift(pi, -1), mpf_neg(c)
+    # special cases with pure imaginary argument
+    if a == fzero:
+        c = mpf_asinh(b, prec, rnd)
+        if n == 0:
+            return mpf_shift(mpf_pi(prec, rnd), -1), mpf_neg(c)
+        return fzero, c
     asign = bsign = 0
     if a[0]:
         a = mpf_neg(a)
@@ -789,16 +788,22 @@ def mpc_acosh(z, prec, rnd=round_down):
 
 def mpc_atanh(z, prec, rnd=round_down):
     # atanh(z) = (log(1+z)-log(1-z))/2
+    a, b = z
+    if a == fzero and b == fnan:
+        return fzero, fnan
     wp = prec + 15
-    a = mpc_add(z, mpc_one, wp)
-    b = mpc_sub(mpc_one, z, wp)
-    a = mpc_ln(a, wp)
-    b = mpc_ln(b, wp)
-    v = mpc_shift(mpc_sub(a, b, wp), -1)
+    x = mpc_add(z, mpc_one, wp)
+    y = mpc_sub(mpc_one, z, wp)
+    x = mpc_ln(x, wp)
+    y = mpc_ln(y, wp)
+    v = mpc_shift(mpc_sub(x, y, wp), -1)
     # Subtraction at infinity gives correct imaginary part but
     # wrong real part (should be zero)
     if v[0] == fnan and mpc_is_inf(z):
-        v = (fzero, v[1])
+        if a == fnan:
+            pi2 = mpf_shift(mpf_pi(prec, rnd), -1)
+            return fzero, pi2 if b == finf else mpf_neg(pi2)
+        return fzero, v[1]
     return v
 
 def mpc_fibonacci(z, prec, rnd=round_down):

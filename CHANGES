@@ -723,7 +723,7 @@ General changes:
   use of alternative contexts (the mpmath.mp object provides the default
   implementation)
 * Implemented a context for fast double-precision arithmetic using Python
-  types (mpmath.fp) 
+  types (mpmath.fp)
 * Implemented hooks for importing a faster version of mp arithmetic from Sage
 * Implemented optimized fp versions of certain functions (including erf, erfc,
   gamma, digamma, ei, e1)
