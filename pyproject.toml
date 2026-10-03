@@ -38,7 +38,7 @@ tests = ['pytest>=6', 'numpy', 'packaging', 'pytest-timeout',
 develop = ['mpmath[tests]', 'pytest-cov>=7', 'wheel', 'build']
 gmpy2 = ["gmpy2>=2.3; python_implementation != 'GraalVM'"]
 gmpy = ['mpmath[gmpy2]']
-gmp = ["python-gmp; python_implementation != 'GraalVM'"]
+gmp = ["python-gmp"]
 docs = ['sphinx', 'matplotlib', 'sphinxcontrib-autoprogram']
 ci = ['pytest-xdist', 'diff_cover']
 
