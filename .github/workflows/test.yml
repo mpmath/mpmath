@@ -57,18 +57,6 @@ jobs:
         fetch-depth: 0
     - run: sudo apt-get update
     - run: sudo apt-get install zlib1g-dev libjpeg8-dev
-    - run: |
-        ZZ_VERSION=0.8.0
-        ZZ_DIR=zz-${ZZ_VERSION}
-        GITHUB_URL=https://github.com/diofant/zz/releases/download/
-        ZZ_URL=${GITHUB_URL}v${ZZ_VERSION}/${ZZ_DIR}.tar.gz
-        wget ${ZZ_URL}
-        tar xzf ${ZZ_DIR}.tar.gz
-        cd ${ZZ_DIR}
-        ./configure -q
-        make
-        sudo make install
-        sudo ldconfig
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v7
       with:
@@ -79,11 +67,6 @@ jobs:
     - name: Install dependencies
       run: |
         pip install --upgrade .[develop,gmpy2,gmp,ci]
-      if: ${{ matrix.nogmpy != true && matrix.purepy != true }}
-    - run: pip install --upgrade .[develop,gmp,ci]
-      if: matrix.nogmpy
-    - run: pip install --upgrade .[develop,ci]
-      if: matrix.purepy
     - run: pip uninstall -y gmpy2
       if: matrix.nogmpy
     - run: pip uninstall -y gmpy2 python-gmp
