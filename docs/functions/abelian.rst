@@ -29,33 +29,3 @@ Riemann theta functions
 .. autofunction:: mpmath.rtheta
 
 .. autofunction:: mpmath.rtheta_jet
-
-The following plots show two real slices and the modulus over two real
-variables for genus-two period matrices. Similar slices and surfaces are
-illustrated in `DLMF section 21.4 <https://dlmf.nist.gov/21.4>`_.
-
-.. plot::
-
-   import matplotlib.pyplot as plt
-   from mpmath import j, plot, re, rtheta
-
-   tau = [[j, -0.5], [-0.5, j]]
-   curves = [
-       lambda x: re(rtheta([x, x/2], tau)),
-       lambda x: re(rtheta([x, 2*x], tau)),
-   ]
-   fig, ax = plt.subplots()
-   plot(curves, [-2, 2], axes=ax)
-   ax.legend([r"$z=(x,x/2)$", r"$z=(x,2x)$"])
-
-.. plot::
-
-   import matplotlib.pyplot as plt
-   from mpmath import j, rtheta, splot
-
-   tau = [[j, 0.5], [0.5, j]]
-   fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-   surface = lambda x, y: abs(rtheta([x, y], tau))
-   splot(surface, [-1, 1], [-1, 1], points=35, keep_aspect=False,
-         axes=ax, plot3d_kwargs={"cmap": "viridis"})
-   ax.set_zlabel(r"$|\theta(z\mid\tau)|$")

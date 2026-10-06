@@ -35,21 +35,17 @@ from .functions import ctx_lru_cache, defun
 
 def _matrix_tuple(A):
     """Return a matrix as an immutable tuple of row tuples."""
-    return tuple(tuple(A[i, j] for j in range(A.cols))
-                 for i in range(A.rows))
+    return tuple(map(tuple, A.tolist()))
 
 
 def _as_vector(ctx, value, name, length=None):
     """Convert a public vector argument to a tuple of scalars."""
-    try:
-        vector = ctx.matrix(value)
-    except (TypeError, ValueError):
-        raise ValueError(f"{name} must be a vector")
+    vector = ctx.matrix(value)
     if vector.cols != 1:
         raise ValueError(f"{name} must be a vector")
     if length is not None and vector.rows != length:
         raise ValueError(f"{name} must have length {length}")
-    result = tuple(ctx.convert(vector[i]) for i in range(vector.rows))
+    result = tuple(vector)
     if not all(ctx.isfinite(x) for x in result):
         raise ValueError(f"{name} entries must be finite")
     return result
@@ -57,16 +53,11 @@ def _as_vector(ctx, value, name, length=None):
 
 def _normalise_tau(ctx, tau):
     """Validate and symmetrise a Riemann matrix."""
-    try:
-        tau = ctx.matrix(tau)
-    except (TypeError, ValueError):
-        raise ValueError("tau must be a square matrix")
+    tau = ctx.matrix(tau)
     if not tau.rows or tau.rows != tau.cols:
         raise ValueError("tau must be a nonempty square matrix")
-    tau = tau.copy()
     for i in range(tau.rows):
         for j in range(tau.cols):
-            tau[i, j] = ctx.convert(tau[i, j])
             if not ctx.isfinite(tau[i, j]):
                 raise ValueError("tau entries must be finite")
     for i in range(tau.rows):
@@ -98,10 +89,7 @@ def _normalise_derivative(derivative, genus):
         if derivative < 0 or genus != 1 and derivative != 0:
             raise ValueError("integer derivative orders require genus 1")
         return (derivative,) if genus == 1 else (0,) * genus
-    try:
-        derivative = tuple(derivative)
-    except TypeError:
-        raise ValueError("derivative must be a nonnegative multi-index")
+    derivative = tuple(derivative)
     if len(derivative) != genus:
         raise ValueError(f"derivative must have length {genus}")
     if any(not isinstance(d, int) or d < 0 for d in derivative):
@@ -121,11 +109,8 @@ def _rtheta_tau_data(ctx, tau_key):
         for j in range(genus):
             X[i, j] = ctx.re(tau_key[i][j])
             Y[i, j] = ctx.im(tau_key[i][j])
-    try:
-        # mpmath returns Y = L L^T; the enumeration uses T = L^T.
-        T = ctx.cholesky(Y).T
-    except (ValueError, ZeroDivisionError):
-        raise ValueError("imaginary part of tau must be positive definite")
+    # mpmath returns Y = L L^T; the enumeration uses T = L^T.
+    T = ctx.cholesky(Y).T
     invT = ctx.inverse(T)
     invT_frob = ctx.norm(invT)
     # ||sqrt(pi) T n|| >= sqrt(pi)/||T^-1||_F for nonzero integer n.
@@ -366,6 +351,28 @@ def _rtheta_reduction_data(ctx, tau_key):
             _point_estimate(ctx, reduced_key))
 
 
+def _invert_argument(z, t, coupling):
+    """Apply the argument map of a first-coordinate symplectic inversion.
+
+    With column vectors z and c = coupling, this is the block matrix product
+    H*z, where H = [[1/t, 0], [-c/t, I]]. Equivalently, in matrix code::
+
+        H = ctx.eye(len(z))
+        H[0, 0] = 1 / t
+        for i in range(1, len(z)):
+            H[i, 0] = -coupling[i - 1] / t
+        return tuple(H * ctx.matrix(z))
+
+    Scalar entries avoid constructing and multiplying matrices on every
+    warm jet evaluation. The Jacobian uses the same map, J_new = H*J;
+    its argument-independent updates are cached by _rtheta_jet_reduction_data.
+    """
+    first = z[0]
+    return ((first / t,)
+            + tuple(z[i] - coupling[i - 1] * first / t
+                    for i in range(1, len(z))))
+
+
 def _apply_reduction(ctx, z, operations):
     """Transform a zero-characteristic argument through Siegel generators."""
     z = tuple(z)
@@ -381,9 +388,7 @@ def _apply_reduction(ctx, z, operations):
             first = z[0]
             factor *= (ctx.exp(-ctx.pi * ctx.j * first ** 2 / t)
                        / ctx.sqrt(-ctx.j * t))
-            z = ((first / t,)
-                 + tuple(z[i] - coupling[i - 1] * first / t
-                         for i in range(1, len(z))))
+            z = _invert_argument(z, t, coupling)
     return z, factor
 
 
@@ -429,7 +434,11 @@ def _reduce_zero_argument(ctx, z, tau_key):
 # ---------------------------------------------
 
 def _add_polynomial_term(ctx, polynomial, index, value):
-    """Add one coefficient to a sparse multivariate polynomial."""
+    """Add a coefficient in an exponent-tuple -> scalar polynomial dict.
+
+    For example, {(2, 1): c} represents c*h[0]**2*h[1]. These local
+    polynomials store Taylor coefficients, rather than raw derivatives.
+    """
     polynomial[index] = polynomial.get(index, ctx.zero) + value
 
 
@@ -493,7 +502,14 @@ def _linear_power(ctx, coefficients, order, bounds):
 @defun
 @ctx_lru_cache(maxsize=16)
 def _rtheta_jet_reduction_data(ctx, genus, operations):
-    """Cache the argument-independent part of derivative reduction."""
+    """Cache the argument-independent part of derivative reduction.
+
+    The Jacobian J maps local increments h to J*h. Basis changes apply
+    J_new = U.T*J; partial inversions apply J_new = H*J, with H defined in
+    _invert_argument. The latter product is computed by updating its rows
+    from a saved first row. Immutable rows are retained for subsequent
+    polynomial composition, avoiding matrix conversions on warm calls.
+    """
     jacobian = ctx.eye(genus)
     steps = []
     quadratic = {}
@@ -558,10 +574,7 @@ def _reduced_jet_data(ctx, z, tau_key, a, b, operations, reduced_key):
                 _add_polynomial_term(
                     ctx, exponent, linear_index,
                     2 * scale * first * first_row[i])
-            transformed = ((first / t,)
-                           + tuple(transformed[i]
-                                   - coupling[i - 1] * first / t
-                                   for i in range(1, genus)))
+            transformed = _invert_argument(transformed, t, coupling)
 
     transformed, argument_factor, period_shift = _reduce_zero_argument(
         ctx, transformed, reduced_key)
@@ -904,16 +917,11 @@ def _normalise_rtheta_inputs(ctx, z, tau, characteristic):
 
 
 def _rtheta_derivatives(ctx, z, tau, characteristic, derivatives):
-    """Evaluate several public-format derivative requests in one traversal."""
+    """Evaluate a nonempty batch of public-format derivative requests."""
     z, tau_key, a, b = _normalise_rtheta_inputs(
         ctx, z, tau, characteristic)
     genus = len(z)
-    try:
-        derivatives = tuple(derivatives)
-    except TypeError:
-        raise ValueError("derivatives must be a nonempty sequence")
-    if not derivatives:
-        raise ValueError("derivatives must be a nonempty sequence")
+    derivatives = tuple(derivatives)
     derivatives = tuple(_normalise_derivative(derivative, genus)
                         for derivative in derivatives)
     return _rtheta_normalized_derivatives(
@@ -1010,6 +1018,17 @@ def rtheta(ctx, z, tau, characteristic=None, derivative=0):
         ...          jtheta(3, w, expjpi(tau1)))
         True
 
+    **Plots**
+
+    The following plots show two real slices and the modulus over two real
+    variables for genus-two period matrices. Similar slices and surfaces
+    are illustrated in `DLMF section 21.4 <https://dlmf.nist.gov/21.4>`_.
+
+    .. literalinclude :: /plots/rtheta.py
+    .. image :: /plots/rtheta.png
+    .. literalinclude :: /plots/rtheta_surface.py
+    .. image :: /plots/rtheta_surface.png
+
     **Accuracy**
 
     The truncation controls absolute error in the scaled series. Near a zero
@@ -1029,6 +1048,8 @@ def rtheta(ctx, z, tau, characteristic=None, derivative=0):
     2. B. Deconinck, M. Heil, A. Bobenko, M. van Hoeij and M. Schmies,
        *Computing Riemann Theta Functions*, Mathematics of Computation 73
        (2004), 1417-1442.
+    3. Wolfram Language, `SiegelTheta
+       <https://reference.wolfram.com/language/ref/SiegelTheta.html>`_.
 
     """
     return _rtheta_derivatives(
@@ -1060,12 +1081,7 @@ def rtheta_jet(ctx, z, tau, order, characteristic=None):
     ``order`` must be a nonnegative integer. The result is a dictionary
     mapping each derivative multi-index to its value. Its keys are inserted
     in graded reverse lexicographic order: total order first, then the
-    earlier coordinates first within each order. For example, an order-two
-    genus-two jet has the keys
-
-    .. code-block:: text
-
-        (0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2)
+    earlier coordinates first within each order.
 
     Values are ordinary derivatives, using the same convention as the
     ``derivative`` argument to :func:`~mpmath.rtheta`; they are not divided
