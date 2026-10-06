@@ -17,6 +17,7 @@ Mpmath implements the standard functions from Python's ``math`` and ``cmath`` mo
    orthogonal
    hypergeometric
    elliptic
+   abelian
    zeta
    numtheory
    qfunctions
