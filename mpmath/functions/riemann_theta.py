@@ -103,12 +103,9 @@ def _normalise_derivative(derivative, genus):
 def _rtheta_tau_data(ctx, tau_key):
     """Cache immutable Cholesky data depending only on tau."""
     genus = len(tau_key)
-    X = ctx.matrix(genus)
-    Y = ctx.matrix(genus)
-    for i in range(genus):
-        for j in range(genus):
-            X[i, j] = ctx.re(tau_key[i][j])
-            Y[i, j] = ctx.im(tau_key[i][j])
+    tau = ctx.matrix(tau_key)
+    X = tau.apply(ctx.re)
+    Y = tau.apply(ctx.im)
     # mpmath returns Y = L L^T; the enumeration uses T = L^T.
     T = ctx.cholesky(Y).T
     invT = ctx.inverse(T)
@@ -278,11 +275,6 @@ def _congruence(ctx, matrix, transform):
     return result
 
 
-def _transform_vector(ctx, transform, vector):
-    """Return transform.T * vector as an immutable vector."""
-    return tuple(ctx.matrix(transform).T * ctx.matrix(vector))
-
-
 def _partial_inversion(ctx, tau):
     """Apply the first-coordinate symplectic inversion to tau."""
     genus = tau.rows
@@ -292,6 +284,8 @@ def _partial_inversion(ctx, tau):
     result[0, 0] = -1 / t
     for j in range(1, genus):
         result[0, j] = result[j, 0] = coupling[j - 1] / t
+    # Form the Schur complement entrywise: temporary block matrices add
+    # measurable setup cost when a period matrix is first reduced.
     for i in range(1, genus):
         for j in range(1, genus):
             result[i, j] = (tau[i, j]
@@ -312,6 +306,8 @@ def _rtheta_reduction_data(ctx, tau_key):
     tau = ctx.matrix(tau_key)
     genus = tau.rows
     operations = []
+    # LLL returns exact integer transformations. Keep their integer tuples
+    # in the operation metadata and cache keys; convert for numerical algebra.
     identity = tuple(tuple(int(i == j) for j in range(genus))
                      for i in range(genus))
     # This is a convergence guard. Raising it does not affect normal paths.
@@ -347,49 +343,53 @@ def _rtheta_reduction_data(ctx, tau_key):
     else:  # pragma: no cover
         raise ValueError("partial Siegel reduction did not converge")
     reduced_key = _matrix_tuple(tau)
-    return (reduced_key, tuple(operations),
-            _point_estimate(ctx, reduced_key))
+    return reduced_key, tuple(operations), _point_estimate(ctx, reduced_key)
 
 
-def _invert_argument(z, t, coupling):
-    """Apply the argument map of a first-coordinate symplectic inversion.
+def _inversion_matrix(ctx, t, coupling):
+    """Return the first-coordinate inversion map H = [[1/t, 0], [-c/t, I]]."""
+    H = ctx.eye(len(coupling) + 1)
+    H[0, 0] = 1 / t
+    if coupling:
+        H[1:, 0] = -ctx.matrix(coupling) / t
+    return H
 
-    With column vectors z and c = coupling, this is the block matrix product
-    H*z, where H = [[1/t, 0], [-c/t, I]]. Equivalently, in matrix code::
 
-        H = ctx.eye(len(z))
-        H[0, 0] = 1 / t
-        for i in range(1, len(z)):
-            H[i, 0] = -coupling[i - 1] / t
-        return tuple(H * ctx.matrix(z))
-
-    Scalar entries avoid constructing and multiplying matrices on every
-    warm jet evaluation. The Jacobian uses the same map, J_new = H*J;
-    its argument-independent updates are cached by _rtheta_jet_reduction_data.
-    """
-    first = z[0]
-    return ((first / t,)
-            + tuple(z[i] - coupling[i - 1] * first / t
-                    for i in range(1, len(z))))
+@defun
+@ctx_lru_cache(maxsize=16)
+def _rtheta_argument_reduction_data(ctx, genus, operations):
+    """Cache read-only argument maps and scalar prefactors for reduction."""
+    steps = []
+    for kind, data in operations:
+        if kind == "translate":
+            steps.append((kind, ctx.matrix(data) / 2))
+        elif kind == "basis":
+            steps.append((kind, ctx.matrix(data).T))
+        else:
+            t, coupling = data
+            H = _inversion_matrix(ctx, t, coupling)
+            scale = -ctx.pi * ctx.j / t
+            root = ctx.sqrt(-ctx.j * t)
+            steps.append((kind, (H, scale, root)))
+    return tuple(steps)
 
 
 def _apply_reduction(ctx, z, operations):
     """Transform a zero-characteristic argument through Siegel generators."""
-    z = tuple(z)
+    steps = ctx._rtheta_argument_reduction_data(len(z), operations)
+    z = ctx.matrix(z)
     factor = ctx.one
-    for kind, data in operations:
+    for kind, data in steps:
         if kind == "translate":
-            z = tuple(z[i] + ctx.mpf(data[i]) / 2
-                      for i in range(len(z)))
+            z += data
         elif kind == "basis":
-            z = _transform_vector(ctx, data, z)
+            z = data * z
         else:
-            t, coupling = data
+            H, scale, root = data
             first = z[0]
-            factor *= (ctx.exp(-ctx.pi * ctx.j * first ** 2 / t)
-                       / ctx.sqrt(-ctx.j * t))
-            z = _invert_argument(z, t, coupling)
-    return z, factor
+            factor *= ctx.exp(scale * first ** 2) / root
+            z = H * z
+    return tuple(z), factor
 
 
 def _zero_characteristic_form(ctx, z, tau_key, a, b):
@@ -407,31 +407,32 @@ def _zero_characteristic_form(ctx, z, tau_key, a, b):
 
 def _reduce_zero_argument(ctx, z, tau_key):
     """Reduce a zero-characteristic value argument modulo its periods."""
-    X_key, Y_key = ctx._rtheta_tau_data(tau_key)[:2]
-    genus = len(z)
-    coefficients = ctx.lu_solve(
-        ctx.matrix(Y_key), ctx.matrix([ctx.im(value) for value in z]))
-    n = tuple(int(ctx.nint(coefficients[i])) for i in range(genus))
-    real_residual = tuple(
-        ctx.re(z[i]) - ctx.fsum(X_key[i][j] * n[j]
-                                for j in range(genus))
-        for i in range(genus))
-    m = tuple(int(ctx.nint(value)) for value in real_residual)
-    reduced = tuple(ctx.mpc(
-        real_residual[i] - m[i],
-        ctx.im(z[i]) - ctx.fsum(Y_key[i][j] * n[j]
-                                for j in range(genus)))
-        for i in range(genus))
-    quadratic = ctx.fsum(n[i] * tau_key[i][j] * n[j]
-                         for i in range(genus) for j in range(genus))
-    linear = ctx.fsum(n[i] * reduced[i] for i in range(genus))
+    Y_key = ctx._rtheta_tau_data(tau_key)[1]
+    tau = ctx.matrix(tau_key)
+    z = ctx.matrix(z)
+    coefficients = ctx.lu_solve(ctx.matrix(Y_key), z.apply(ctx.im))
+    n = tuple(int(ctx.nint(value)) for value in coefficients)
+    period_shift = ctx.matrix(n)
+    tau_shift = tau * period_shift
+    residual = z - tau_shift
+    m = residual.apply(lambda value: ctx.nint(ctx.re(value)))
+    reduced = residual - m
+    quadratic = (period_shift.T * tau_shift)[0]
+    linear = (period_shift.T * reduced)[0]
     factor = ctx.exp(-ctx.pi * ctx.j * quadratic
                      - 2 * ctx.pi * ctx.j * linear)
-    return reduced, factor, n
+    return tuple(reduced), factor, n
 
 
-# Derivative transformation and jet composition
-# ---------------------------------------------
+# Private truncated power-series arithmetic
+# -----------------------------------------
+#
+# A series is a sparse dict mapping exponent tuples to Taylor coefficients:
+# {(2, 1): c} represents c*h[0]**2*h[1], so coefficients are derivatives
+# divided by their multi-index factorials. Missing entries represent zero.
+# Multiplication and expansion discard terms exceeding the componentwise
+# bounds of the requested derivative. These helpers support the chain and
+# product rules below; they are not a general polynomial API.
 
 def _add_polynomial_term(ctx, polynomial, index, value):
     """Add a coefficient in an exponent-tuple -> scalar polynomial dict.
@@ -455,25 +456,8 @@ def _multiply_polynomials(ctx, left, right, bounds):
     return result
 
 
-def _multiindices(genus, degree):
-    """Yield multi-indices through degree in graded reverse lexicographic order."""
-    index = [0] * genus
-
-    def generate(position, remaining):
-        if position == genus - 1:
-            index[position] = remaining
-            yield tuple(index)
-            return
-        for value in range(remaining, -1, -1):
-            index[position] = value
-            yield from generate(position + 1, remaining - value)
-
-    for total_degree in range(degree + 1):
-        yield from generate(0, total_degree)
-
-
 def _exp_polynomial(ctx, exponent, bounds):
-    """Return the truncated power series of exp(exponent)."""
+    """Expand exp(exponent), where exponent has zero constant term."""
     zero = (0,) * len(bounds)
     result = {zero: ctx.one}
     term = {zero: ctx.one}
@@ -499,33 +483,50 @@ def _linear_power(ctx, coefficients, order, bounds):
     return result
 
 
+# Derivative transformation and jet composition
+# ---------------------------------------------
+
+def _multiindices(genus, degree):
+    """Yield multi-indices through degree in graded reverse lexicographic order."""
+    index = [0] * genus
+
+    def generate(position, remaining):
+        if position == genus - 1:
+            index[position] = remaining
+            yield tuple(index)
+            return
+        for value in range(remaining, -1, -1):
+            index[position] = value
+            yield from generate(position + 1, remaining - value)
+
+    for total_degree in range(degree + 1):
+        yield from generate(0, total_degree)
+
+
 @defun
 @ctx_lru_cache(maxsize=16)
 def _rtheta_jet_reduction_data(ctx, genus, operations):
     """Cache the argument-independent part of derivative reduction.
 
     The Jacobian J maps local increments h to J*h. Basis changes apply
-    J_new = U.T*J; partial inversions apply J_new = H*J, with H defined in
-    _invert_argument. The latter product is computed by updating its rows
-    from a saved first row. Immutable rows are retained for subsequent
-    polynomial composition, avoiding matrix conversions on warm calls.
+    J_new = U.T*J; partial inversions apply J_new = H*J. Argument maps and
+    the final Jacobian are cached as matrices. Immutable Jacobian rows are
+    also retained for polynomial composition, avoiding repeated matrix row
+    slicing for each monomial of each requested derivative.
     """
     jacobian = ctx.eye(genus)
     steps = []
     quadratic = {}
-    for kind, data in operations:
+    for kind, data in ctx._rtheta_argument_reduction_data(genus, operations):
         if kind == "translate":
             steps.append((kind, data))
         elif kind == "basis":
-            basis = ctx.matrix(data).T
-            jacobian = basis * jacobian
-            steps.append((kind, basis))
+            jacobian = data * jacobian
+            steps.append((kind, data))
         else:
-            t, coupling = data
+            H, scale, root = data
             first_row = tuple(jacobian[0, :])
-            scale = -ctx.pi * ctx.j / t
-            root = ctx.sqrt(-ctx.j * t)
-            steps.append((kind, (t, coupling, first_row, scale, root)))
+            steps.append((kind, (H, first_row, scale, root)))
             for i in range(genus):
                 for j in range(genus):
                     index = tuple(int(i == k) + int(j == k)
@@ -533,13 +534,10 @@ def _rtheta_jet_reduction_data(ctx, genus, operations):
                     _add_polynomial_term(
                         ctx, quadratic, index,
                         scale * first_row[i] * first_row[j])
-            for i in range(1, genus):
-                for j in range(genus):
-                    jacobian[i, j] -= coupling[i - 1] * first_row[j] / t
-            for j in range(genus):
-                jacobian[0, j] = first_row[j] / t
-    # Only basis matrices remain mutable, and callers use them read-only.
-    return tuple(steps), _matrix_tuple(jacobian), tuple(quadratic.items())
+            jacobian = H * jacobian
+    # Cached matrices are read-only to callers.
+    return (tuple(steps), jacobian, _matrix_tuple(jacobian),
+            tuple(quadratic.items()))
 
 
 def _reduced_jet_data(ctx, z, tau_key, a, b, operations, reduced_key):
@@ -547,7 +545,8 @@ def _reduced_jet_data(ctx, z, tau_key, a, b, operations, reduced_key):
     genus = len(z)
     transformed, factor = _zero_characteristic_form(
         ctx, z, tau_key, a, b)
-    steps, jacobian, quadratic = ctx._rtheta_jet_reduction_data(
+    transformed = ctx.matrix(transformed)
+    steps, jacobian_matrix, jacobian, quadratic = ctx._rtheta_jet_reduction_data(
         genus, operations)
     # For a local increment h, transformed(z+h) = transformed(z) + J*h.
     # ``exponent`` stores the nonconstant part of the logarithm of every
@@ -560,13 +559,11 @@ def _reduced_jet_data(ctx, z, tau_key, a, b, operations, reduced_key):
 
     for kind, data in steps:
         if kind == "translate":
-            transformed = tuple(
-                transformed[i] + ctx.mpf(data[i]) / 2
-                for i in range(genus))
+            transformed += data
         elif kind == "basis":
-            transformed = tuple(data * ctx.matrix(transformed))
+            transformed = data * transformed
         else:
-            t, coupling, first_row, scale, root = data
+            H, first_row, scale, root = data
             first = transformed[0]
             factor *= ctx.exp(scale * first ** 2) / root
             for i in range(genus):
@@ -574,16 +571,15 @@ def _reduced_jet_data(ctx, z, tau_key, a, b, operations, reduced_key):
                 _add_polynomial_term(
                     ctx, exponent, linear_index,
                     2 * scale * first * first_row[i])
-            transformed = _invert_argument(transformed, t, coupling)
+            transformed = H * transformed
 
     transformed, argument_factor, period_shift = _reduce_zero_argument(
         ctx, transformed, reduced_key)
     factor *= argument_factor
+    linear = -2 * ctx.pi * ctx.j * (ctx.matrix(period_shift).T * jacobian_matrix)
     for j in range(genus):
         index = tuple(int(i == j) for i in range(genus))
-        coefficient = -2 * ctx.pi * ctx.j * ctx.fsum(
-            period_shift[i] * jacobian[i][j] for i in range(genus))
-        _add_polynomial_term(ctx, exponent, index, coefficient)
+        _add_polynomial_term(ctx, exponent, index, linear[j])
     return transformed, factor, jacobian, exponent
 
 
@@ -939,9 +935,9 @@ def rtheta(ctx, z, tau, characteristic=None, derivative=0):
         \theta(z\mid\tau) = \sum_{n\in\mathbb Z^g}
         \exp(\pi i n^T\tau n + 2\pi i n^Tz).
 
-    The argument :math:`z` must be a length-:math:`g` sequence or an mpmath
-    column matrix. The period matrix :math:`\tau` must be a square nested
-    sequence or mpmath matrix. It must be symmetric and its imaginary part
+    The argument :math:`z` must be a length-:math:`g` sequence.
+    The period matrix :math:`\tau` must be a square matrix.
+    It must be symmetric and its imaginary part
     must be positive definite. Entries opposite the diagonal that differ
     only by the current ``almosteq`` tolerance are averaged; materially
     asymmetric matrices raise ``ValueError``.
@@ -980,7 +976,6 @@ def rtheta(ctx, z, tau, characteristic=None, derivative=0):
     Evaluate a genus-two theta value::
 
         >>> from mpmath import mp, rtheta
-        >>> mp.dps = 15
         >>> mp.pretty = True
         >>> tau = [[1.0j, 0.05j], [0.05j, 1.2j]]
         >>> rtheta([0.1, 0.2], tau)
@@ -1012,8 +1007,8 @@ def rtheta(ctx, z, tau, characteristic=None, derivative=0):
     For example, the zero-characteristic identity can be checked directly::
 
         >>> from mpmath import almosteq, expjpi, jtheta, pi
-        >>> tau1 = mp.mpc('0.2', '0.9')
-        >>> w = mp.mpc('0.3', '0.1')
+        >>> tau1 = 0.2+0.9j
+        >>> w = 0.3+0.1j
         >>> almosteq(rtheta([w/pi], [[tau1]]),
         ...          jtheta(3, w, expjpi(tau1)))
         True

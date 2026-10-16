@@ -11,8 +11,8 @@ def test_rtheta_genus_one_jtheta_characteristics():
     # Classical-theta correspondence: DLMF 21.2.8-21.2.12.
     # https://dlmf.nist.gov/21.2.iii
     mp.dps = 30
-    w = mpc('0.3', '0.1')
-    tau = mpc('0.2', '0.9')
+    w = 0.3+0.1j
+    tau = 0.2+0.9j
     q = exp(pi * j * tau)
     z = w / pi
     cases = [
@@ -53,8 +53,8 @@ def test_rtheta_diagonal_factorisation():
     # A diagonal period matrix separates the defining sum in DLMF 21.2.1.
     # https://dlmf.nist.gov/21.2.E1
     mp.dps = 30
-    z = [mpc('0.1', '0.03'), mpc('-0.2', '0.04')]
-    tau = [[mpc('0.1', '0.8'), 0], [0, mpc('-0.2', '1.1')]]
+    z = [0.1+0.03j, -0.2+0.04j]
+    tau = [[0.1+0.8j, 0], [0, -0.2+1.1j]]
     value = rtheta(z, tau)
     expected = (rtheta([z[0]], [[tau[0][0]]])
                 * rtheta([z[1]], [[tau[1][1]]]))
@@ -66,9 +66,9 @@ def test_rtheta_parity_and_characteristic_zero():
     # https://dlmf.nist.gov/21.3.E1
     # https://dlmf.nist.gov/21.3.E6
     mp.dps = 30
-    tau = [[1j, mpc('0.1', '0.05')],
-           [mpc('0.1', '0.05'), mpc('0.2', '1.2')]]
-    z = [mpc('0.13', '0.02'), mpc('-0.07', '0.01')]
+    tau = [[1j, 0.1+0.05j],
+           [0.1+0.05j, 0.2+1.2j]]
+    z = [0.13+0.02j, -0.07+0.01j]
     assert mp.almosteq(rtheta(z, tau), rtheta([-z[0], -z[1]], tau))
     odd = ([0.5, 0], [0.5, 0])
     assert abs(rtheta([0, 0], tau, odd)) < mp.eps * 10
@@ -79,9 +79,9 @@ def test_rtheta_all_genus_two_half_characteristic_parities():
     # https://dlmf.nist.gov/21.3.E6
     mp.dps = 30
     half = 0.5
-    tau = [[mpc('0.13', '1.05'), mpc('-0.09', '0.06')],
-           [mpc('-0.09', '0.06'), mpc('-0.17', '1.2')]]
-    z = [mpc('0.14', '0.03'), mpc('-0.11', '0.02')]
+    tau = [[0.13+1.05j, -0.09+0.06j],
+           [-0.09+0.06j, -0.17+1.2j]]
+    z = [0.14+0.03j, -0.11+0.02j]
     for bits in product((0, 1), repeat=4):
         a = tuple(half * bits[i] for i in range(2))
         b = tuple(half * bits[i + 2] for i in range(2))
@@ -425,8 +425,8 @@ def test_rtheta_unreduced_genus_one_against_jtheta():
     # Classical-theta correspondence: DLMF 21.2.8-21.2.12.
     # https://dlmf.nist.gov/21.2.iii
     mp.dps = 35
-    tau = mpc('0.1', '0.1')
-    w = mpc('0.3', '0.17')
+    tau = 0.1+0.1j
+    w = 0.3+0.17j
     q = exp(pi * j * tau)
     cases = [
         (([0.5], [0.5]), -jtheta(1, w, q)),

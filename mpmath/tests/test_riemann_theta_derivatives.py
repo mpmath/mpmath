@@ -10,12 +10,12 @@ def test_rtheta_block_diagonal_factorisation_with_derivative():
     # differentiating the independent factors gives the asserted product.
     # https://dlmf.nist.gov/21.2.E1
     mp.dps = 35
-    z = [mpc('0.13', '0.02'), mpc('-0.08', '0.03'),
-         mpc('0.06', '-0.01')]
+    z = [0.13+0.02j, -0.08+0.03j,
+         0.06-0.01j]
     tau = [
-        [mpc('0.15', '0.85'), 0, 0],
-        [0, mpc('0.10', '0.95'), mpc('-0.07', '0.04')],
-        [0, mpc('-0.07', '0.04'), mpc('-0.12', '1.15')],
+        [0.15+0.85j, 0, 0],
+        [0, 0.10+0.95j, -0.07+0.04j],
+        [0, -0.07+0.04j, -0.12+1.15j],
     ]
     characteristic = (
         [0.5, 0, 0.5],
@@ -35,15 +35,15 @@ def test_rtheta_block_diagonal_factorisation_with_derivative():
 
 def test_rtheta_derivatives():
     mp.dps = 25
-    tau = [[mpc('0.1', '0.9'), mpc('0.05', '0.02')],
-           [mpc('0.05', '0.02'), mpc('-0.1', '1.1')]]
-    z = [mpc('0.12', '0.02'), mpc('-0.08', '0.03')]
+    tau = [[0.1+0.9j, 0.05+0.02j],
+           [0.05+0.02j, -0.1+1.1j]]
+    z = [0.12+0.02j, -0.08+0.03j]
     dz0 = rtheta(z, tau, derivative=(1, 0))
     expected = diff(lambda value: rtheta([value, z[1]], tau), z[0])
     assert mp.almosteq(dz0, expected)
 
-    w = mpc('0.2', '0.04')
-    tau1 = mpc('0.15', '0.85')
+    w = 0.2+0.04j
+    tau1 = 0.15+0.85j
     q = exp(pi * j * tau1)
     # DLMF 21.2.11 with w = pi*z, followed by the chain rule.
     # https://dlmf.nist.gov/21.2.E11
@@ -55,9 +55,9 @@ def test_rtheta_derivatives():
 
 def test_rtheta_mixed_derivative_order_independence():
     mp.dps = 25
-    tau = [[mpc('0.08', '0.92'), mpc('-0.06', '0.04')],
-           [mpc('-0.06', '0.04'), mpc('0.12', '1.08')]]
-    z = [mpc('0.13', '0.02'), mpc('-0.09', '0.03')]
+    tau = [[0.08+0.92j, -0.06+0.04j],
+           [-0.06+0.04j, 0.12+1.08j]]
+    z = [0.13+0.02j, -0.09+0.03j]
     actual = rtheta(z, tau, derivative=(1, 1))
     dz0_dz1 = diff(
         lambda x: diff(lambda y: rtheta([x, y], tau), z[1]), z[0])
@@ -69,9 +69,9 @@ def test_rtheta_mixed_derivative_order_independence():
 
 def test_rtheta_third_order_jet_matches_scalar_calls():
     mp.dps = 25
-    tau = ((mpc('0.08', '0.92'), mpc('-0.06', '0.04')),
-           (mpc('-0.06', '0.04'), mpc('0.12', '1.08')))
-    z = (mpc('0.13', '0.02'), mpc('-0.09', '0.03'))
+    tau = ((0.08+0.92j, -0.06+0.04j),
+           (-0.06+0.04j, 0.12+1.08j))
+    z = (0.13+0.02j, -0.09+0.03j)
     a = (0.5, 0)
     b = (0, 0.5)
     jet = rtheta_jet(z, tau, 3, (a, b))
@@ -86,9 +86,9 @@ def test_rtheta_third_order_jet_matches_scalar_calls():
 
 def test_rtheta_jet_public_api():
     mp.dps = 25
-    tau = ((mpc('0.08', '0.92'), mpc('-0.06', '0.04')),
-           (mpc('-0.06', '0.04'), mpc('0.12', '1.08')))
-    z = (mpc('0.13', '0.02'), mpc('-0.09', '0.03'))
+    tau = ((0.08+0.92j, -0.06+0.04j),
+           (-0.06+0.04j, 0.12+1.08j))
+    z = (0.13+0.02j, -0.09+0.03j)
     characteristic = ((0.5, 0), (0, 0.5))
     derivatives = (
         (0, 0), (1, 0), (0, 1), (2, 0), (1, 1), (0, 2))
@@ -102,10 +102,11 @@ def test_rtheta_jet_public_api():
             rtheta(z, tau, characteristic, derivative=derivative))
 
 
-def test_rtheta_jet_order_zero_and_genus_one():
+@pytest.mark.parametrize("period", [0.2+0.9j, 0.01+0.03j])
+def test_rtheta_jet_order_zero_and_genus_one(period):
     mp.dps = 25
-    z = [mpc('0.1', '0.02')]
-    tau = [[mpc('0.2', '0.9')]]
+    z = [0.1+0.02j]
+    tau = [[period]]
 
     zero_jet = rtheta_jet(z, tau, 0)
     second_jet = rtheta_jet(z, tau, 2)
@@ -115,6 +116,11 @@ def test_rtheta_jet_order_zero_and_genus_one():
     assert tuple(second_jet) == ((0,), (1,), (2,))
     assert mp.almosteq(
         second_jet[(2,)], rtheta(z, tau, derivative=2))
+    # Also check the reduced genus-one jet against the independent evaluator.
+    q = exp(pi * j * period)
+    for order in range(3):
+        assert mp.almosteq(second_jet[(order,)],
+                           pi ** order * jtheta(3, pi * z[0], q, order))
 
 
 def test_rtheta_precision_doubling_genus_three():
