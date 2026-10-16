@@ -1,6 +1,6 @@
 import pytest
 
-from mpmath import fp, zetazero
+from mpmath import fp, mp, mpf, zeta, zetazero
 
 
 @pytest.mark.parametrize("n,v",
@@ -35,3 +35,18 @@ def test_zeta_param(capsys):
     fp.zeta(0.5+100j, method="riemann-siegel", verbose=True)
     captured = capsys.readouterr()
     assert "Attempting to use the Riemann-Siegel algorithm" in captured.out
+
+
+def test_hurwitz_zeta_tiny_values():
+    # Issue #1198: the Euler-Maclaurin tail in _hurwitz_em stopped on an
+    # absolute 2**-prec tolerance, so values far below 2**-prec were only
+    # accurate to a few digits (2.8e-9 relative error for this case at 30 dps).
+    # Inputs are exact binary floats; the reference is direct summation of
+    # (q+k)**-s plus the integral tail, at 60 dps.
+    s = mpf(43.01303985093054)
+    q = mpf(305.4243263250737)
+    mp.dps = 30
+    ref = mpf('1.018131113260128483346694e-106')
+    assert abs(zeta(s, q) - ref) / ref < mpf(10)**-24
+    mp.dps = 15
+    assert abs(zeta(s, q) - ref) / ref < mpf(10)**-13

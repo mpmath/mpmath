@@ -729,7 +729,12 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
                 r *= rM2a
             t = ctx.fdot(U, logs) * r * ctx.bernoulli(j2)/(-fact)
             tailsum += t
-            if ctx.mag(t) < tol:
+            # Stop when the term is small relative to the running total, not
+            # in absolute terms: for tiny values (e.g. zeta(43, 305) ~ 1e-106)
+            # an absolute 2**-prec threshold is met by every correction term
+            # and the result is only accurate to a few digits.
+            total = lsum + (-1)**d * tailsum
+            if ctx.mag(t) < tol + (ctx.mag(total) if total else 0):
                 return lsum, (-1)**d * tailsum
             fact *= (j2+1)*(j2+2)
         if verbose:
