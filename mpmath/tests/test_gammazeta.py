@@ -705,3 +705,17 @@ def test_issue_471():
 def test_issue_472():
     assert bernpoly(4, mpc(inf, 1e-50)) == mpc(inf, 0)
     assert mpc(inf, 2)**4 == mpc(inf, 0)
+
+def test_issue_1198():
+    # Issue 1198: the Euler-Maclaurin tail in _hurwitz_em stopped on an
+    # absolute 2**-prec tolerance, so values far below 2**-prec were only
+    # accurate to a few digits (2.8e-9 relative error for this case at 30 dps).
+    # The reference is direct summation of (q+k)**-s plus the integral tail,
+    # computed at 60 dps.
+    s = 43.01303985093054
+    q = 305.4243263250737
+    mp.dps = 30
+    ref = mpf('1.018131113260128483346694e-106')
+    assert mp.almosteq(zeta(s, q), ref, rel_eps=mpf(10)**-24, abs_eps=0)
+    mp.dps = 15
+    assert mp.almosteq(zeta(s, q), ref, rel_eps=mpf(10)**-13, abs_eps=0)
