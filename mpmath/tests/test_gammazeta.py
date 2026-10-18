@@ -710,8 +710,15 @@ def test_issue_1198():
     # Issue 1198: the Euler-Maclaurin tail in _hurwitz_em stopped on an
     # absolute 2**-prec tolerance, so values far below 2**-prec were only
     # accurate to a few digits (2.8e-9 relative error for this case at 30 dps).
-    # The reference is direct summation of (q+k)**-s plus the integral tail,
-    # computed at 60 dps.
+    # Reference: the defining series summed directly, with the float inputs
+    # taken exactly (s = 43.0130398509305393872637..., q = 305.42432632507370726671...):
+    #   mp.dps = 60
+    #   s, q = mpf(43.01303985093054), mpf(305.4243263250737)
+    #   fsum((q + k)**(-s) for k in range(20000)) + (q + 20000)**(1 - s)/(s - 1)
+    #   = 1.01813111326012848334669424321e-106
+    # The last term, the integral bounding the omitted tail, is 2.5e-183
+    # (2.5e-77 relative), and 20000 terms at 60 dps round to < 1e-55 relative,
+    # so the reference is correct to the 25 digits quoted.
     s = 43.01303985093054
     q = 305.4243263250737
     mp.dps = 30
@@ -721,8 +728,9 @@ def test_issue_1198():
     assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-13, abs_eps=0)
     # The stopping test compares against the full result lsum + tailsum,
     # which can differ in sign and size from tailsum for complex or
-    # negative s: check those paths keep full relative accuracy too
-    # (references computed at 150 dps).
+    # negative s: check those paths keep full relative accuracy too.
+    # References: mp.zeta(s, a) at mp.dps = 150, where the old absolute
+    # tolerance is far below these O(1) values and plays no role.
     mp.dps = 30
     ref = mpc('1.2556364750065273991155195840269895277',
               '0.2374804534166297577343887313335098622602')
