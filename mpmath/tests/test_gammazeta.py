@@ -719,3 +719,17 @@ def test_issue_1198():
     assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-24, abs_eps=0)
     mp.dps = 15
     assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-13, abs_eps=0)
+    # The stopping test compares against the full result lsum + tailsum,
+    # which can differ in sign and size from tailsum for complex or
+    # negative s: check those paths keep full relative accuracy too
+    # (references computed at 150 dps).
+    mp.dps = 30
+    ref = mpc('1.2556364750065273991155195840269895277',
+              '0.2374804534166297577343887313335098622602')
+    assert mp.almosteq(zeta(mpc(0.5, 30), 1.3), ref, rel_eps=1e-28, abs_eps=0)
+    ref = mpf('-0.016485181950713754227408431107763560808')
+    assert mp.almosteq(zeta(-10.5, 1.7), ref, rel_eps=1e-28, abs_eps=0)
+    ref = mpc('-9.479344816411352215237530481672086520617',
+              '-5.524470284352936227774160788476933102109')
+    assert mp.almosteq(zeta(mpc(2, 50), 0.3), ref, rel_eps=1e-28, abs_eps=0)
+    mp.dps = 15
