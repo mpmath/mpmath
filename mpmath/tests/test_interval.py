@@ -309,6 +309,22 @@ def test_interval_complex():
         assert iv.cos(2+3j).ae(mp.cos(2+3j))
         assert iv.sin(2+3j).ae(mp.sin(2+3j))
 
+@pytest.mark.parametrize("real, imag, expected_imag", [
+    (1, 2, -2),
+    ([1, 3], [2, 5], [-5, -2]),
+    ([-3, 1], [-5, -2], [2, 5]),
+    ([1, 3], [-2, 5], [-5, 2]),
+])
+def test_interval_complex_conjugate(real, imag, expected_imag):
+    z = iv.mpc(real, imag)
+    expected = iv.mpc(real, expected_imag)
+    conjugate = z.conjugate()
+    assert conjugate == expected
+    assert conjugate.real == z.real
+    assert conjugate.conjugate() == z
+    assert iv.conj(z) == expected
+
+
 def test_interval_complex_arg():
     assert iv.arg(3) == 0
     assert iv.arg(0) == 0

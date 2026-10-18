@@ -207,7 +207,7 @@ class ivmpc:
 
     def conjugate(s):
         a, b = s._mpci_
-        return s.ctx.make_mpc((a, mpf_neg(b)))
+        return s.ctx.make_mpc((a, mpi_neg(b)))
 
     def overlap(s, t):
         t = s.ctx.convert(t)
