@@ -716,6 +716,6 @@ def test_issue_1198():
     q = 305.4243263250737
     mp.dps = 30
     ref = mpf('1.018131113260128483346694e-106')
-    assert mp.almosteq(zeta(s, q), ref, rel_eps=mpf(10)**-24, abs_eps=0)
+    assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-24, abs_eps=0)
     mp.dps = 15
-    assert mp.almosteq(zeta(s, q), ref, rel_eps=mpf(10)**-13, abs_eps=0)
+    assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-13, abs_eps=0)
