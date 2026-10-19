@@ -726,11 +726,12 @@ def test_issue_1198():
     assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-24, abs_eps=0)
     mp.dps = 15
     assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-13, abs_eps=0)
-    # The stopping test compares against the full result lsum + tailsum,
-    # which can differ in sign and size from tailsum for complex or
-    # negative s: check those paths keep full relative accuracy too.
-    # References: mp.zeta(s, a) at mp.dps = 150, where the old absolute
-    # tolerance is far below these O(1) values and plays no role.
+    # Complex and negative s take the same Euler-Maclaurin path: check they
+    # keep full relative accuracy.  References are independent of that code,
+    # from Hermite's integral (DLMF 25.11.27), evaluated at mp.dps = 100 with
+    # the float inputs taken exactly and agreeing with mp.dps = 80 to 1e-60:
+    #   f = lambda t: sin(s*atan(t/a)) / ((a*a + t*t)**(s/2) * expm1(2*pi*t))
+    #   a**(-s)/2 + a**(1-s)/(s-1) + 2*quad(f, [0, 1, 5, 20, inf])
     mp.dps = 30
     ref = mpc('1.2556364750065273991155195840269895277',
               '0.2374804534166297577343887313335098622602')

@@ -729,10 +729,14 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
                 r *= rM2a
             t = ctx.fdot(U, logs) * r * ctx.bernoulli(j2)/(-fact)
             tailsum += t
-            # Stop when the term is small relative to the running total, not
-            # in absolute terms: for tiny values (e.g. zeta(43, 305) ~ 1e-106)
+            # Stop when the term is small relative to the result, not in
+            # absolute terms: for tiny values (e.g. zeta(43, 305) ~ 1e-106)
             # an absolute 2**-prec threshold is met by every correction term
-            # and the result is only accurate to a few digits.
+            # and the result is only accurate to a few digits.  The result,
+            # not tailsum, is the right scale: for negative s the direct sum
+            # and the tail cancel almost completely (zeta(-10.5, 1.7): lsum and
+            # tailsum are 1.35e17, the result 0.016), and stopping relative to
+            # tailsum leaves a 3e-20 relative error at 30 dps.
             total = lsum + (-1)**d * tailsum
             if ctx.mag(t) < tol + ctx.mag(total):
                 return lsum, (-1)**d * tailsum
