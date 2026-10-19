@@ -34,7 +34,8 @@ Documentation = 'http://mpmath.org/doc/current/'
 
 [project.optional-dependencies]
 tests = ['pytest>=6', 'numpy', 'packaging', 'pytest-timeout',
-         'matplotlib; python_version<"3.15"', 'pexpect', 'ipython', 'hypothesis']
+         'matplotlib; python_implementation != "GraalVM"',
+         'pexpect', 'ipython', 'hypothesis']
 develop = ['mpmath[tests]', 'pytest-cov>=7', 'wheel', 'build']
 gmpy2 = ["gmpy2>=2.3; python_implementation != 'GraalVM'"]
 gmpy = ['mpmath[gmpy2]']
