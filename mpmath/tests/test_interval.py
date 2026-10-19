@@ -317,7 +317,7 @@ def test_interval_complex():
                          ])
 def test_interval_complex_conjugate(real, imag):
     z = iv.mpc(real, imag)
-    expected = iv.mpc(real, -imag)
+    expected = iv.mpc(real, -z.imag)
     conjugate = z.conjugate()
     assert conjugate == expected
     assert conjugate.conjugate() == z
