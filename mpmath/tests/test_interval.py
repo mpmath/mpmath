@@ -465,3 +465,24 @@ def test_issue_258():
 
 def test_mpi_mag():
     assert iv.mag(iv.mpc(3, 4)) == 4
+
+def test_interval_atan2_encloses():
+    # The enclosure of atan2() must contain the exact value, see also
+    # iv.arg() of complex intervals.
+    for y, x in ((-1.4003927969588088, 0.5), (1.4003927969588088, 0.5),
+                 (-1.4003927969588088, -0.5), (1.4003927969588088, -0.5),
+                 (0.3, 0.7), (-2.5, 1.25), (7.0, -3.0), (-1e-5, -2.0)):
+        r = iv.atan2(y, x)
+        with mp.workdps(50):
+            t = mp.atan2(y, x)
+        assert r.a <= t <= r.b
+        z = iv.arg(iv.mpc(x, y))
+        assert z.a <= t <= z.b
+
+def test_interval_atan2_real_line():
+    assert iv.atan2(0, iv.mpf([1, 2])) == 0
+    assert iv.atan2(0, iv.mpf([-2, -1])) == iv.pi
+    r = iv.atan2(0, iv.mpf([-1, 1]))
+    assert r.a == 0 and r.b == iv.pi.b
+    r = iv.arg(iv.mpf([-1, 0]))
+    assert r.a == 0 and r.b == iv.pi.b
