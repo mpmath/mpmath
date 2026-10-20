@@ -434,43 +434,43 @@ def _reduce_zero_argument(ctx, z, tau_key):
 # bounds of the requested derivative. These helpers support the chain and
 # product rules below; they are not a general polynomial API.
 
-def _add_polynomial_term(ctx, polynomial, index, value):
-    """Add a coefficient in an exponent-tuple -> scalar polynomial dict.
+def _series_add_term(ctx, series, index, value):
+    """Add a coefficient in an exponent-tuple -> scalar series dict.
 
-    For example, {(2, 1): c} represents c*h[0]**2*h[1]. These local
-    polynomials store Taylor coefficients, rather than raw derivatives.
+    For example, {(2, 1): c} represents c*h[0]**2*h[1]. These truncated
+    series store Taylor coefficients, rather than raw derivatives.
     """
-    polynomial[index] = polynomial.get(index, ctx.zero) + value
+    series[index] = series.get(index, ctx.zero) + value
 
 
-def _multiply_polynomials(ctx, left, right, bounds):
-    """Multiply sparse polynomials, truncating to componentwise bounds."""
+def _series_mul(ctx, left, right, bounds):
+    """Multiply sparse series, truncating to componentwise bounds."""
     result = {}
     for left_index, left_value in left.items():
         for right_index, right_value in right.items():
             index = tuple(left_index[i] + right_index[i]
                           for i in range(len(bounds)))
             if all(index[i] <= bounds[i] for i in range(len(bounds))):
-                _add_polynomial_term(
+                _series_add_term(
                     ctx, result, index, left_value * right_value)
     return result
 
 
-def _exp_polynomial(ctx, exponent, bounds):
+def _series_exp(ctx, exponent, bounds):
     """Expand exp(exponent), where exponent has zero constant term."""
     zero = (0,) * len(bounds)
     result = {zero: ctx.one}
     term = {zero: ctx.one}
     for order in range(1, sum(bounds) + 1):
-        term = _multiply_polynomials(ctx, term, exponent, bounds)
+        term = _series_mul(ctx, term, exponent, bounds)
         for index, value in term.items():
-            _add_polynomial_term(ctx, result, index,
-                                 value / ctx.factorial(order))
+            _series_add_term(ctx, result, index,
+                             value / ctx.factorial(order))
     return result
 
 
-def _linear_power(ctx, coefficients, order, bounds):
-    """Expand a power of a linear form as a truncated polynomial."""
+def _series_linear_power(ctx, coefficients, order, bounds):
+    """Expand a power of a linear form as a truncated series."""
     zero = (0,) * len(bounds)
     result = {zero: ctx.one}
     linear = {}
@@ -479,7 +479,7 @@ def _linear_power(ctx, coefficients, order, bounds):
             index = tuple(int(i == j) for j in range(len(bounds)))
             linear[index] = value
     for unused in range(order):
-        result = _multiply_polynomials(ctx, result, linear, bounds)
+        result = _series_mul(ctx, result, linear, bounds)
     return result
 
 
@@ -531,7 +531,7 @@ def _rtheta_jet_reduction_data(ctx, genus, operations):
                 for j in range(genus):
                     index = tuple(int(i == k) + int(j == k)
                                   for k in range(genus))
-                    _add_polynomial_term(
+                    _series_add_term(
                         ctx, quadratic, index,
                         scale * first_row[i] * first_row[j])
             jacobian = H * jacobian
@@ -554,7 +554,7 @@ def _reduced_jet_data(ctx, z, tau_key, a, b, operations, reduced_key):
     exponent = dict(quadratic)
     for i, value in enumerate(a):
         index = tuple(int(i == j) for j in range(genus))
-        _add_polynomial_term(
+        _series_add_term(
             ctx, exponent, index, 2 * ctx.pi * ctx.j * value)
 
     for kind, data in steps:
@@ -568,7 +568,7 @@ def _reduced_jet_data(ctx, z, tau_key, a, b, operations, reduced_key):
             factor *= ctx.exp(scale * first ** 2) / root
             for i in range(genus):
                 linear_index = tuple(int(i == j) for j in range(genus))
-                _add_polynomial_term(
+                _series_add_term(
                     ctx, exponent, linear_index,
                     2 * scale * first * first_row[i])
             transformed = H * transformed
@@ -579,7 +579,7 @@ def _reduced_jet_data(ctx, z, tau_key, a, b, operations, reduced_key):
     linear = -2 * ctx.pi * ctx.j * (ctx.matrix(period_shift).T * jacobian_matrix)
     for j in range(genus):
         index = tuple(int(i == j) for i in range(genus))
-        _add_polynomial_term(ctx, exponent, index, linear[j])
+        _series_add_term(ctx, exponent, index, linear[j])
     return transformed, factor, jacobian, exponent
 
 
@@ -594,18 +594,18 @@ def _compose_reduced_derivative(ctx, derivatives, values, factor, jacobian,
         denominator = ctx.one
         for i, order in enumerate(multiindex):
             if order:
-                polynomial = _multiply_polynomials(
+                polynomial = _series_mul(
                     ctx, polynomial,
-                    _linear_power(ctx, jacobian[i], order, derivative),
+                    _series_linear_power(ctx, jacobian[i], order, derivative),
                     derivative)
                 denominator *= ctx.factorial(order)
         for index, coefficient in polynomial.items():
-            _add_polynomial_term(
+            _series_add_term(
                 ctx, theta_polynomial, index,
                 value * coefficient / denominator)
 
-    prefactor_polynomial = _exp_polynomial(ctx, exponent, derivative)
-    result = _multiply_polynomials(
+    prefactor_polynomial = _series_exp(ctx, exponent, derivative)
+    result = _series_mul(
         ctx, prefactor_polynomial, theta_polynomial, derivative)
     derivative_factorial = ctx.fprod(
         ctx.factorial(order) for order in derivative)
@@ -927,18 +927,21 @@ def _rtheta_derivatives(ctx, z, tau, characteristic, derivatives):
 @defun
 def rtheta(ctx, z, tau, characteristic=None, derivative=0):
     r"""
-    Evaluates the Riemann theta function of the vector :math:`z` and Riemann
-    matrix :math:`\tau`. In genus :math:`g`, the convention is
+    Evaluates the Riemann theta function. In genus :math:`g`, the argument
+    :math:`\mathbf{z}\in\mathbb C^g` is a column vector and the period
+    matrix :math:`\boldsymbol{\tau}\in\mathbb C^{g\times g}` is symmetric
+    with positive-definite imaginary part. The convention is
 
     .. math ::
 
-        \theta(z\mid\tau) = \sum_{n\in\mathbb Z^g}
-        \exp(\pi i n^T\tau n + 2\pi i n^Tz).
+        \theta(\mathbf{z}\mid\boldsymbol{\tau})
+        = \sum_{\mathbf{n}\in\mathbb Z^g}
+        \exp\!\left(\pi i\,\mathbf{n}^{T}\boldsymbol{\tau}\,\mathbf{n}
+        + 2\pi i\,\mathbf{n}^{T}\mathbf{z}\right).
 
-    The argument :math:`z` must be a length-:math:`g` sequence.
-    The period matrix :math:`\tau` must be a square matrix.
-    It must be symmetric and its imaginary part
-    must be positive definite. Entries opposite the diagonal that differ
+    The argument :math:`\mathbf{z}` must be a length-:math:`g` sequence.
+    The period matrix :math:`\boldsymbol{\tau}` must be a square matrix
+    with :math:`g` rows and columns. Entries opposite the diagonal that differ
     only by the current ``almosteq`` tolerance are averaged; materially
     asymmetric matrices raise ``ValueError``.
 
@@ -948,14 +951,19 @@ def rtheta(ctx, z, tau, characteristic=None, derivative=0):
 
     .. math ::
 
-        \theta\!\begin{bmatrix}a\\b\end{bmatrix}(z\mid\tau)
-        = \sum_{n\in\mathbb Z^g}
-        \exp\!\left(\pi i(n+a)^T\tau(n+a)
-        +2\pi i(n+a)^T(z+b)\right).
+        \theta\!\begin{bmatrix}\mathbf{a}\\\mathbf{b}\end{bmatrix}
+        (\mathbf{z}\mid\boldsymbol{\tau})
+        = \sum_{\mathbf{n}\in\mathbb Z^g}
+        \exp\!\left(
+        \pi i\,(\mathbf{n}+\mathbf{a})^{T}\boldsymbol{\tau}\,
+        (\mathbf{n}+\mathbf{a})
+        + 2\pi i\,(\mathbf{n}+\mathbf{a})^{T}
+        (\mathbf{z}+\mathbf{b})\right).
 
-    Here :math:`a` and :math:`b` are literal length-:math:`g` real vectors,
-    rather than packed characteristic bits. Arbitrary real characteristics
-    are accepted; half-integer characteristics are the most common.
+    Here :math:`\mathbf{a},\mathbf{b}\in\mathbb R^g` are literal real
+    vectors, rather than packed characteristic bits.
+    Arbitrary real characteristics are accepted; half-integer
+    characteristics are the most common.
 
     **Derivatives**
 
@@ -968,8 +976,8 @@ def rtheta(ctx, z, tau, characteristic=None, derivative=0):
 
     The entries must be nonnegative integers. In genus one, an integer
     derivative order can be supplied directly for consistency with
-    ``jtheta``. Derivatives are with respect to the components of :math:`z`,
-    not the angular argument used by ``jtheta``.
+    ``jtheta``. Derivatives are with respect to the components of
+    :math:`\mathbf{z}`, not the angular argument used by ``jtheta``.
 
     **Examples**
 
@@ -1032,10 +1040,10 @@ def rtheta(ctx, z, tau, characteristic=None, derivative=0):
     **Performance**
 
     This implementation is intended primarily for low-genus applications.
-    Computation time depends strongly on :math:`\tau` and can increase
-    rapidly with the genus and requested precision. Automatic reduction can
-    make many otherwise slow inputs practical, but general high-genus
-    evaluation may remain expensive.
+    Computation time depends strongly on :math:`\boldsymbol{\tau}` and can
+    increase rapidly with the genus and requested precision. Automatic
+    reduction can make many otherwise slow inputs practical, but general
+    high-genus evaluation may remain expensive.
 
     **References**
 
@@ -1059,7 +1067,7 @@ def rtheta_jet(ctx, z, tau, order, characteristic=None):
     requested total order at the same point.
 
     For example, in genus two the order-two jet aligns the multi-indices and
-    derivatives as follows (all evaluated at the same :math:`z`):
+    derivatives as follows (all evaluated at the same :math:`\mathbf{z}`):
 
     .. math ::
 
