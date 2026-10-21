@@ -1543,7 +1543,8 @@ def gamma_fixed_taylor(xmpf, x, wp, prec, rnd, type):
             r = from_man_exp(x*p*r,-3*wp)
             if type == 0: return mpf_div(fone, r, prec, rnd)
             if type == 2: return mpf_pos(r, prec, rnd)
-            if type == 3: return mpf_neg(mpf_ln(mpf_abs(r), prec, negative_rnd[rnd]))
+            if type == 3: return mpf_neg(mpf_ln(mpf_abs(r), prec,
+                                                negative_rnd[rnd]))
 
 def stirling_coefficient(n):
     if n in gamma_stirling_cache:
@@ -1748,7 +1749,8 @@ def mpf_gamma(x, prec, rnd=round_down, type=0):
             return mpf_sub(mpf_div(fone,x, wp),mpf_shift(fone,-wp),prec,rnd)
         if type == 1: return mpf_sub(fone, x, prec, rnd)
         if type == 2: return mpf_add(x, mpf_shift(fone,mag-wp), prec, rnd)
-        if type == 3: return mpf_neg(mpf_ln(mpf_abs(x), prec, negative_rnd[rnd]))
+        if type == 3: return mpf_neg(mpf_ln(mpf_abs(x), prec,
+                                            negative_rnd[rnd]))
 
     # From now on, we assume having a gamma function
     if type == 1:
