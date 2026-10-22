@@ -1,5 +1,5 @@
-from mpmath import (chop, cos, diff, diffs, diffun, e, exp, j, log, sin, sqrt,
-                    taylor)
+from mpmath import (chop, cos, diff, diffs, diffun, e, exp, j, log, mpf, sin,
+                    sqrt, taylor)
 
 
 def test_diff():
@@ -22,6 +22,14 @@ def test_diffs():
     assert [chop(d) for d in diffs(sin, 0, 1, method='quad')] == [0, 1]
     assert [chop(d) for d in diffs(sin, 0, 2)] == [0, 1, 0]
     assert [chop(d) for d in diffs(sin, 0, 2, method='quad')] == [0, 1, 0]
+
+def test_diff_relative():
+    # relative=True must make the step proportional to |x|
+    for x in ['1e-30', '1e-5', '1', '1e10', '1e30']:
+        x = mpf(x)
+        assert diff(log, x, relative=True).ae(1/x)
+    # and must not fail at x = 0
+    assert diff(exp, 0, relative=True).ae(1)
 
 def test_taylor():
     # Easy to test since the coefficients are exact in floating-point
