@@ -6,6 +6,7 @@ from . import expintegrals
 from . import bessel
 from . import orthogonal
 from . import theta
+from . import riemann_theta
 from . import elliptic
 from . import signals
 from . import zeta
