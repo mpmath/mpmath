@@ -22,7 +22,7 @@ from .libmpf import (ComplexResult, bctable, finf, fnan, fninf, fnone, fone,
                      mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
                      mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
                      normalize, reciprocal_rnd, round_ceiling, round_down,
-                     round_up, to_fixed, to_int)
+                     round_floor, round_up, to_fixed, to_int)
 
 
 local = threading.local()
@@ -927,9 +927,12 @@ def mpf_atan2(y, x, prec, rnd=round_down):
         if y == fzero:
             return fzero
         return mpf_shift(mpf_pi(prec, rnd), -1)
-    tquo = mpf_atan(mpf_div(y, x, prec+4), prec+4)
+    # Here y > 0, so the result is positive and atan(y/x) is increasing
+    # in y/x: round every intermediate step in the requested direction.
+    rnd = {round_down: round_floor, round_up: round_ceiling}.get(rnd, rnd)
+    tquo = mpf_atan(mpf_div(y, x, prec+4, rnd), prec+4, rnd)
     if xsign:
-        return mpf_add(mpf_pi(prec+4), tquo, prec, rnd)
+        return mpf_add(mpf_pi(prec+4, rnd), tquo, prec, rnd)
     else:
         return mpf_pos(tquo, prec, rnd)
 

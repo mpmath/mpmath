@@ -1,6 +1,6 @@
 from mpmath import cos, ldexp, mp, mpf, pi, sin, tan
-from mpmath.libmp import (round_ceiling, round_down, round_floor,
-                          round_nearest, round_up)
+from mpmath.libmp import (from_float, mpf_atan2, round_ceiling, round_down,
+                          round_floor, round_nearest, round_up)
 
 
 def test_trig_misc_hard():
@@ -129,3 +129,21 @@ def test_trig_near_n_pi():
     assert cos(a[6], rounding=r) == 1
     assert cos(a[7], rounding=r) > -1
     assert cos(a[8], rounding=r) == 1
+
+def test_atan2_directed_rounding():
+    # For x < 0 every step of mpf_atan2() must round in the requested
+    # direction (round_down/round_up become floor/ceiling, since the
+    # result is positive), including the pi term.
+    for y, x, prec, rnd in [(4.51, -7.24, 24, round_down),
+                            (4.51, -7.24, 24, round_floor),
+                            (0.39, -2.29, 10, round_up),
+                            (0.39, -2.29, 10, round_ceiling),
+                            (2.27, -4.65, 53, round_up),
+                            (2.27, -4.65, 53, round_ceiling)]:
+        r = mp.make_mpf(mpf_atan2(from_float(y), from_float(x), prec, rnd))
+        with mp.workprec(200):
+            t = mp.atan2(y, x)
+        if rnd in (round_down, round_floor):
+            assert r <= t
+        else:
+            assert r >= t
