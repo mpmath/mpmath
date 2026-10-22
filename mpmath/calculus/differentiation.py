@@ -1,3 +1,7 @@
+import functools
+import math
+from fractions import Fraction
+
 from .calculus import defun
 
 
@@ -58,6 +62,133 @@ def hsteps(ctx, f, x, n, prec, *, method='step', direction=0, radius=0.25,
         return values, norm, workprec
     finally:
         ctx.prec = orig
+
+
+def _fornberg_weights(nodes, n):
+    r"""
+    Return exact weights `w_k` such that `f^{(n)}(0) \approx \sum_k w_k f(t_k)`
+    for the rational nodes `t_k`.  The formula is exact for polynomials of
+    degree less than ``len(nodes)``.
+
+    B. Fornberg, "Calculation of weights in finite difference formulas",
+    SIAM Review 40 (1998), 685-691.
+    """
+    N = len(nodes)
+    c = [[Fraction(0)]*N for _ in range(n+1)]
+    c[0][0] = Fraction(1)
+    c1 = Fraction(1)
+    c4 = nodes[0]
+    for i in range(1, N):
+        mn = min(i, n)
+        c2 = Fraction(1)
+        c5 = c4
+        c4 = nodes[i]
+        for j in range(i):
+            c3 = nodes[i] - nodes[j]
+            c2 *= c3
+            if j == i-1:
+                for k in range(mn, 0, -1):
+                    c[k][i] = c1*(k*c[k-1][i-1] - c5*c[k][i-1])/c2
+                c[0][i] = -c1*c5*c[0][i-1]/c2
+            for k in range(mn, 0, -1):
+                c[k][j] = (c4*c[k][j] - k*c[k-1][j])/c3
+            c[0][j] = c4*c[0][j]/c3
+        c1 = c2
+    return c[n]
+
+
+def _leading_error(nodes, weights, n):
+    """
+    Return ``(p, C)`` such that the stencil computes
+    `f^{(n)}(x) + C h^p f^{(n+p)}(x) + O(h^{p+1})`.
+
+    Raise ``ValueError`` if the stencil has no error term, which happens
+    only when all the weight sits on the node 0, as for ``n = 0`` with
+    integer nodes.
+    """
+    # For j > n the node 0 adds nothing to the sum. If some node t != 0 has
+    # a nonzero weight, the Vandermonde matrix of the nonzero nodes shows
+    # that one of the next len(nodes) sums is nonzero.
+    for j in range(n + 1, n + len(nodes) + 1):
+        C = sum(w*t**j for t, w in zip(nodes, weights)) / math.factorial(j)
+        if C:
+            return j - n, C
+    raise ValueError("the stencil uses only f(x), so it has no error term; "
+                     "evaluate f(x) directly or pass singular=True")
+
+
+@functools.lru_cache(maxsize=None)
+def _fixed_prec_stencil(n, one_sided, singular, eps, order=8):
+    """
+    Return ``(nodes, weights, h)`` for an order-``order`` finite difference
+    for the n-th derivative, used when the working precision is fixed.
+
+    Central stencils use the nodes -m, ..., m; one-sided stencils use
+    0, 1, 2, ...  With ``singular`` set, the nodes are shifted to
+    half-integers so that x itself is never used.  Nodes with zero weight
+    are dropped.
+
+    The step ``h`` is the power of two that minimizes the truncation error
+    plus the rounding error,
+
+        |C| * (n+p)! * h**p  +  eps * sum(|w|) / h**n,
+
+    where ``C*h**p*f^(n+p)(x)`` is the leading truncation error.  The
+    factor ``(n+p)!`` assumes ``|f^(j)(x)| <= j! * max|f|``, which holds
+    when f is analytic within distance 1 of x.
+    """
+    if one_sided:
+        start = Fraction(1, 2) if singular else Fraction(0)
+        nodes = [start + k for k in range(n + order)]
+        weights = _fornberg_weights(nodes, n)
+        p, C = _leading_error(nodes, weights, n)
+    else:
+        m = 1
+        while 1:
+            if singular:
+                nodes = [Fraction(2*k+1, 2) for k in range(-m, m)]
+            else:
+                nodes = [Fraction(k) for k in range(-m, m+1)]
+            if len(nodes) > n:
+                weights = _fornberg_weights(nodes, n)
+                p, C = _leading_error(nodes, weights, n)
+                if p >= order:
+                    break
+            m += 1
+    S = float(sum(abs(w) for w in weights))
+    h = (max(n, 1)*eps*S / (p*abs(float(C))*math.factorial(n+p))) ** (1.0/(n+p))
+    h = math.ldexp(1.0, round(math.log2(h)))
+    pairs = []
+    for t, w in zip(nodes, weights):
+        if w:
+            pairs.append((float(t), float(w)))
+    nodes_tuple = tuple(t for t, _ in pairs)
+    w_tuple = tuple(w for _, w in pairs)
+
+    return nodes_tuple, w_tuple, h
+
+
+def _diff_fixed_prec(ctx, f, x, n, direction, singular, relative):
+    """
+    Finite difference for a context whose precision cannot be raised
+    (the fp context); see :func:`_fixed_prec_stencil`.
+    """
+    nodes, weights, h = _fixed_prec_stencil(n, bool(direction), singular,
+                                            ctx.eps)
+    ax = abs(x)
+    if ax:
+        if relative:
+            h = ctx.ldexp(h, ctx.frexp(ax)[1])
+        # The nodes x + t*h must stay distinct from x and from each other.
+        h = max(h, 4*ctx.ulp(ax))
+    if direction:
+        h *= ctx.sign(direction)
+    terms = []
+    for t, w in zip(nodes, weights):
+        sample = f(x + t*h)
+        terms.append((w, sample))
+    s = ctx.fdot(terms)
+    return s / h**n
 
 
 @defun
@@ -128,6 +259,31 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
     derivatives, this method may thus be faster if f is very expensive to
     evaluate at high precision.
 
+    The ``fp`` context cannot raise the working precision. There, the
+    default finite difference (``method='step'`` without ``h``) is instead
+    a stencil of order 8, which uses `n + 7` or `n + 8` function
+    evaluations; ``addprec`` has no effect. The step `h` balances the
+    truncation and rounding errors for a function that is analytic within
+    distance 1 of `x`. It is `2^{-7}` for `n = 1`, so a central first
+    derivative evaluates `f` within `x \pm 0.032`, and it grows slowly
+    with `n`. With ``relative=True`` the step is multiplied by about
+    `|x|`, which suits functions such as `\log(x)` that vary on the
+    scale of `x`::
+
+        >>> from mpmath import fp
+        >>> round(fp.diff(fp.exp, 0), 14)
+        1.0
+        >>> round(fp.diff(fp.sin, 1, 3), 10)    # -cos(1)
+        -0.5403023059
+        >>> round(fp.diff(fp.log, 1e6, relative=True) * 1e6, 12)
+        1.0
+
+    Accuracy drops quickly for higher orders: for `\exp(x)` the relative
+    error is about `10^{-6}` at `n = 5` and `5 \cdot 10^{-2}` at `n = 8`. If `f`
+    accepts complex arguments, ``method='quad'`` is more accurate there.
+    Passing ``h`` explicitly in the ``fp`` context selects the `(n+1)`-point
+    difference described above, evaluated in floating-point arithmetic.
+
     **Further examples**
 
     The direction option is useful for computing left- or right-sided
@@ -181,6 +337,9 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
         return _partial_diff(ctx, f, x, orders, options)
     if n == 0 and method != 'quad' and not singular:
         return f(ctx.convert(x))
+    if method == 'step' and h is None and ctx._fixed_precision:
+        return _diff_fixed_prec(ctx, f, ctx.convert(x), n, direction,
+                                singular, relative)
     prec = ctx.prec
     try:
         if method == 'step':
@@ -263,7 +422,8 @@ def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
                'radius': radius, 'relative': relative, 'h': h}
-    if method != 'step':
+    if method != 'step' or (h is None and ctx._fixed_precision):
+        # In the fp context each order needs its own stencil and step.
         k = 0
         while k < n + 1:
             yield ctx.diff(f, x, k, **options)
