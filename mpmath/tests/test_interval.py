@@ -486,3 +486,13 @@ def test_interval_atan2_real_line():
     assert r.a == 0 and r.b == iv.pi.b
     r = iv.arg(iv.mpf([-1, 0]))
     assert r.a == 0 and r.b == iv.pi.b
+
+def test_interval_loggamma_encloses():
+    # loggamma() must honour directed rounding for 0 < x < 0.5 and
+    # for x close to the pole at 0.
+    for x in (0.39304457725914843, 0.1, 0.25, 0.49, 1e-30):
+        r = iv.loggamma(x)
+        with mp.workdps(50):
+            t = mp.loggamma(x)
+        assert r.a <= r.b
+        assert r.a <= t <= r.b
