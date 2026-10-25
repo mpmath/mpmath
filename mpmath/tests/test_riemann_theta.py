@@ -1,4 +1,8 @@
-"""Tests for Riemann theta values and period geometry."""
+"""Tests for Riemann theta values and period geometry.
+
+Decimal strings in the oracle tests preserve the inputs used to generate
+the reference values and the digits of those values.
+"""
 
 from itertools import product
 
@@ -32,17 +36,16 @@ def test_rtheta_genus_one_absolute_accuracy_near_theta1_zero():
     # https://dlmf.nist.gov/21.2.E8
     # https://dlmf.nist.gov/21.3.E6
     mp.dps = 30
-    tau = mpc('0.17', '0.003')
+    tau = 0.17+0.003j
     characteristic = ((0.5,), (0.5,))
-    arguments = ('0', '1e-5', '1e-20', '1e-40')
+    arguments = (0, 1e-5, 1e-20, 1e-40)
     values = [
         rtheta([mpf(w) / pi], [[tau]], characteristic)
         for w in arguments
     ]
 
     with mp.workdps(80):
-        reference_tau = mpc('0.17', '0.003')
-        q = exp(pi * j * reference_tau)
+        q = exp(pi * j * tau)
         references = [-jtheta(1, mpf(w), q) for w in arguments]
 
     for value, reference in zip(values, references):
@@ -102,23 +105,19 @@ def test_rtheta_absolute_accuracy_near_odd_characteristic_zero():
     # defining sum is evaluated by cancellation.
     # https://dlmf.nist.gov/21.3.E6
     mp.dps = 30
-    tau = [[mpc('0.13', '1.05'), mpc('-0.09', '0.06')],
-           [mpc('-0.09', '0.06'), mpc('-0.17', '1.2')]]
+    tau = [[0.13+1.05j, -0.09+0.06j],
+           [-0.09+0.06j, -0.17+1.2j]]
     characteristic = ((0.5, 0), (0.5, 0))
-    offsets = ('1e-5', '1e-20', '1e-40')
+    offsets = (1e-5, 1e-20, 1e-40)
     values = [
         rtheta([mpf(offset), 2 * mpf(offset)], tau, characteristic)
         for offset in offsets
     ]
 
     with mp.workdps(80):
-        reference_tau = [
-            [mpc('0.13', '1.05'), mpc('-0.09', '0.06')],
-            [mpc('-0.09', '0.06'), mpc('-0.17', '1.2')],
-        ]
         references = [
             rtheta(
-                [mpf(offset), 2 * mpf(offset)], reference_tau,
+                [mpf(offset), 2 * mpf(offset)], tau,
                 characteristic,
             )
             for offset in offsets
@@ -133,16 +132,17 @@ def test_rtheta_quasiperiodicity():
     # https://dlmf.nist.gov/21.3.E2
     # https://dlmf.nist.gov/21.3.E3
     mp.dps = 30
-    tau = [[mpc('0.1', '0.9'), mpc('0.05', '0.02')],
-           [mpc('0.05', '0.02'), mpc('-0.1', '1.1')]]
-    z = [mpc('0.12', '0.02'), mpc('-0.08', '0.03')]
+    # Convert before forming shifts so the arithmetic uses working precision.
+    tau = mp.matrix([[0.1+0.9j, 0.05+0.02j],
+                     [0.05+0.02j, -0.1+1.1j]])
+    z = mp.matrix([0.12+0.02j, -0.08+0.03j])
     value = rtheta(z, tau)
     assert mp.almosteq(rtheta([z[0] + 1, z[1] - 2], tau), value)
 
     k = [1, -1]
-    shifted = [z[i] + sum(tau[i][j_] * k[j_] for j_ in range(2))
+    shifted = [z[i] + sum(tau[i, j_] * k[j_] for j_ in range(2))
                for i in range(2)]
-    quadratic = sum(k[i] * tau[i][j_] * k[j_]
+    quadratic = sum(k[i] * tau[i, j_] * k[j_]
                     for i in range(2) for j_ in range(2))
     linear = sum(k[i] * z[i] for i in range(2))
     multiplier = exp(-pi * j * quadratic - 2 * pi * j * linear)
@@ -155,14 +155,14 @@ def test_rtheta_matches_defining_sum(genus, radius):
     # strongly damped periods make omitted terms negligible at 40 digits.
     mp.dps = 40
     tau = mp.matrix([
-        [mpc('0.11', '1.1'), mpc('-0.08', '0.05'), mpc('0.04', '0.03')],
-        [mpc('-0.08', '0.05'), mpc('-0.14', '1.2'), mpc('0.02', '0.04')],
-        [mpc('0.04', '0.03'), mpc('0.02', '0.04'), mpc('0.09', '1.3')],
+        [0.11+1.1j, -0.08+0.05j, 0.04+0.03j],
+        [-0.08+0.05j, -0.14+1.2j, 0.02+0.04j],
+        [0.04+0.03j, 0.02+0.04j, 0.09+1.3j],
     ])[:genus, :genus]
-    z = [mpc('0.17', '0.11'), mpc('-0.12', '0.07'),
-         mpc('0.05', '-0.02')][:genus]
-    a = [mpf('0.3'), mpf('-0.2'), mpf('0.1')][:genus]
-    b = [mpf('0.1'), mpf('0.4'), mpf('-0.3')][:genus]
+    z = [0.17+0.11j, -0.12+0.07j, 0.05-0.02j][:genus]
+    # Form n + a at working precision in the independent sum below.
+    a = mp.matrix([0.3, -0.2, 0.1][:genus])
+    b = [0.1, 0.4, -0.3][:genus]
     with mp.workdps(65):
         terms = []
         for point in product(range(-radius, radius + 1), repeat=genus):
@@ -171,7 +171,7 @@ def test_rtheta_matches_defining_sum(genus, radius):
                              + 2 * pi * j * (n.T * (mp.matrix(z) + mp.matrix(b)))[0]))
         reference = mp.fsum(terms)
     assert mp.almosteq(rtheta(z, tau, (a, b)), reference,
-                       rel_eps=mpf('1e-38'), abs_eps=mpf('1e-38'))
+                       rel_eps=1e-38, abs_eps=1e-38)
 
 
 def test_rtheta_wolfram_reference_values():
@@ -198,7 +198,7 @@ def test_rtheta_wolfram_reference_values():
 
     z3 = z2 + [mpc('0.05', '-0.01')]
     tau3 = [
-        [mpc('0.10', '1.00'), mpc('-0.12', '0.08'),
+        [mpc('0.10', 1), mpc('-0.12', '0.08'),
          mpc('0.05', '0.04')],
         [mpc('-0.12', '0.08'), mpc('0.20', '1.15'),
          mpc('0.08', '0.06')],
@@ -215,7 +215,7 @@ def test_rtheta_wolfram_reference_values():
             '0.015318780171864079253785680566109776307328372396748562810674785685663933968972735107125484955849153511806284150913864802098269822109827'),
     ]
 
-    tolerance = mpf('1e-98')
+    tolerance = 1e-98
     for z, tau, characteristic, references in [
             (z2, tau2, None, refs2[:1]),
             (z2, tau2, char2, refs2[1:]),
@@ -257,7 +257,7 @@ def test_rtheta_wolfram_unreduced_reference_values():
         '3.44042050000036293079504325661815829014001245512124516294720089024113963744406088834494220278232680204967316690887511458',
         '0.182598566348364806829149624629842477324789098204541555796804418499811344983007460195610367554313435739194325595031041258')
 
-    tolerance = mpf('1e-98')
+    tolerance = 1e-98
     assert mp.almosteq(rtheta(z2, tau2, characteristic2), reference2,
                        rel_eps=tolerance, abs_eps=tolerance)
     assert mp.almosteq(rtheta(z3, tau3, characteristic3), reference3,
@@ -280,7 +280,7 @@ def test_rtheta_wolfram_higher_genus_reference_values():
                 scale + mpf(i % 4) / 10,
             )
             if i + 1 < genus:
-                tau[i][i + 1] = tau[i + 1][i] = mpc('0.02', '0.25')
+                tau[i][i + 1] = tau[i + 1][i] = mpc('0.02', 0.25)
         z = [
             mpc(mpf((i % 5) - 2) / 100,
                    mpf((i % 3) - 1) / 200)
@@ -296,7 +296,7 @@ def test_rtheta_wolfram_higher_genus_reference_values():
             '1.0000000000000000000000000133796107582295982965475652944874',
             '2.0101530593695935374230689609606e-27')),
     )
-    tolerance = mpf('1e-33')
+    tolerance = 1e-33
     for genus, scale, reference in cases:
         z, tau = make_case(genus, scale)
         assert mp.almosteq(rtheta(z, tau), reference,
@@ -333,10 +333,10 @@ def test_rtheta_validation():
 def test_rtheta_nearly_symmetric_input():
     mp.dps = 20
     delta = mp.eps / 4
-    tau = [[1j, mpc('0.1', '0.02')],
-           [mpc('0.1', '0.02') + delta, 1.2j]]
-    symmetric = [[1j, mpc('0.1', '0.02') + delta / 2],
-                 [mpc('0.1', '0.02') + delta / 2, 1.2j]]
+    tau = [[1j, 0.1+0.02j],
+           [0.1+0.02j + delta, 1.2j]]
+    symmetric = [[1j, 0.1+0.02j + delta / 2],
+                 [0.1+0.02j + delta / 2, 1.2j]]
     assert mp.almosteq(rtheta([0.1, 0.2], tau),
                        rtheta([0.1, 0.2], symmetric))
 
@@ -348,10 +348,10 @@ def test_rtheta_symplectic_generator_identities():
     # https://dlmf.nist.gov/21.5.E4
     mp.dps = 35
     tau = mp.matrix([
-        [mpc('0.13', '1.1'), mpc('-0.17', '0.08')],
-        [mpc('-0.17', '0.08'), mpc('0.21', '1.3')],
+        [0.13+1.1j, -0.17+0.08j],
+        [-0.17+0.08j, 0.21+1.3j],
     ])
-    z = mp.matrix([mpc('0.12', '0.04'), mpc('-0.09', '0.03')])
+    z = mp.matrix([0.12+0.04j, -0.09+0.03j])
     value = rtheta(z, tau)
     translation = mp.matrix([[1, 2], [2, -1]])
     translated_tau = tau + translation
@@ -376,27 +376,27 @@ def test_rtheta_skewed_basis_invariance():
     # periods; the function must still agree at ordinary working precision.
     mp.dps = 15
     tau = mp.diag([1j, 1.5j, 2j])
-    z = mp.matrix([mpc(0.125, 0.0625), mpc(-0.0625, 0.03125),
-                   mpc(0.03125, -0.015625)])
+    z = mp.matrix([0.125+0.0625j, -0.0625+0.03125j,
+                   0.03125-0.015625j])
     U = mp.matrix([[1, 20, 100], [0, 1, 20], [0, 0, 1]])
     value = rtheta(U.T * z, U.T * tau * U)
     with mp.workdps(50):
         reference = mp.fprod(jtheta(3, pi * z[i], exp(pi * j * tau[i, i]))
                              for i in range(3))
     assert mp.almosteq(value, reference,
-                       rel_eps=mpf('1e-12'), abs_eps=mpf('1e-12'))
+                       rel_eps=1e-12, abs_eps=1e-12)
 
 
 def test_rtheta_quasiperiodicity_with_small_imaginary_periods():
     mp.dps = 35
-    tau = mp.matrix([[mpc('0.2', '0.15'), mpc('0.12', '0.03')],
-                     [mpc('0.12', '0.03'), mpc('-0.1', '0.2')]])
-    z = mp.matrix([mpc('0.13', '0.07'), mpc('-0.21', '0.04')])
-    characteristic = ([mpf('0.3'), mpf('-0.2')], [mpf('0.1'), mpf('0.4')])
+    tau = mp.matrix([[0.2+0.15j, 0.12+0.03j],
+                     [0.12+0.03j, -0.1+0.2j]])
+    z = mp.matrix([0.13+0.07j, -0.21+0.04j])
+    characteristic = ([0.3, -0.2], [0.1, 0.4])
     value = rtheta(z, tau, characteristic)
     with mp.workdps(70):
         reference = rtheta(z, tau, characteristic)
-    assert mp.almosteq(value, reference, rel_eps=mpf('1e-33'))
+    assert mp.almosteq(value, reference, rel_eps=1e-33)
 
     shift = mp.matrix([3, -2])
     quadratic = (shift.T * tau * shift)[0]
@@ -409,16 +409,16 @@ def test_rtheta_quasiperiodicity_with_small_imaginary_periods():
 def test_rtheta_small_imaginary_periods_genus_three():
     mp.dps = 25
     tau = (
-        (mpc('0.3', '0.12'), mpc('0.17', '0.03'), mpc(0, '0.02')),
-        (mpc('0.17', '0.03'), mpc('-0.2', '0.16'), mpc(0, '0.02')),
-        (mpc(0, '0.02'), mpc(0, '0.02'), mpc('0.1', '0.2')),
+        (0.3+0.12j, 0.17+0.03j, 0.02j),
+        (0.17+0.03j, -0.2+0.16j, 0.02j),
+        (0.02j, 0.02j, 0.1+0.2j),
     )
-    z = (mpc('0.13', '0.07'), mpc('-0.21', '0.04'), mpc('0.06', '-0.03'))
+    z = (0.13+0.07j, -0.21+0.04j, 0.06-0.03j)
     value = rtheta(z, tau)
     with mp.workdps(60):
         reference = rtheta(z, tau)
     assert mp.almosteq(value, reference,
-                       rel_eps=mpf('1e-23'), abs_eps=mpf('1e-23'))
+                       rel_eps=1e-23, abs_eps=1e-23)
 
 
 def test_rtheta_unreduced_genus_one_against_jtheta():

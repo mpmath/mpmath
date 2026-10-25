@@ -1,8 +1,12 @@
-"""Tests for Riemann theta derivatives and jets."""
+"""Tests for Riemann theta derivatives and jets.
+
+Decimal strings in the oracle tests preserve the inputs used to generate
+the reference values and the digits of those values.
+"""
 
 import pytest
 
-from mpmath import diff, exp, j, jtheta, mp, mpc, mpf, pi, rtheta, rtheta_jet
+from mpmath import diff, exp, j, jtheta, mp, mpc, pi, rtheta, rtheta_jet
 
 
 def test_rtheta_block_diagonal_factorisation_with_derivative():
@@ -128,32 +132,27 @@ def test_rtheta_precision_doubling_genus_three():
     tau = [[1.1j, 0.04j, 0.02j],
            [0.04j, 1.2j, 0.03j],
            [0.02j, 0.03j, 1.3j]]
-    z = [mpc('0.1', '0.02'), mpc('-0.15', '0.01'),
-         mpc('0.07', '-0.03')]
+    z = [0.1+0.02j, -0.15+0.01j, 0.07-0.03j]
     value = rtheta(z, tau, derivative=(1, 0, 1))
     with mp.workdps(130):
         reference = rtheta(z, tau, derivative=(1, 0, 1))
-    assert mp.almosteq(value, reference, rel_eps=mpf('1e-98'))
+    assert mp.almosteq(value, reference, rel_eps=1e-98)
 
 
 def test_rtheta_third_order_jet_with_characteristic_at_100_dps():
     mp.dps = 100
     tau = (
-        (mpc('0.10', '1.00'), mpc('-0.12', '0.08'),
-         mpc('0.05', '0.04')),
-        (mpc('-0.12', '0.08'), mpc('0.20', '1.15'),
-         mpc('0.08', '0.06')),
-        (mpc('0.05', '0.04'), mpc('0.08', '0.06'),
-         mpc('-0.15', '0.90')),
+        (0.1+1j, -0.12+0.08j, 0.05+0.04j),
+        (-0.12+0.08j, 0.2+1.15j, 0.08+0.06j),
+        (0.05+0.04j, 0.08+0.06j, -0.15+0.9j),
     )
-    z = (mpc('0.11', '0.03'), mpc('-0.07', '0.02'),
-         mpc('0.05', '-0.01'))
+    z = (0.11+0.03j, -0.07+0.02j, 0.05-0.01j)
     half = 0.5
     characteristic = ((half, 0, half), (0, half, half))
     jet = rtheta_jet(z, tau, 3, characteristic)
     with mp.workdps(130):
         reference_jet = rtheta_jet(z, tau, 3, characteristic)
-    tolerance = mpf('1e-98')
+    tolerance = 1e-98
     assert jet.keys() == reference_jet.keys()
     for derivative, value in jet.items():
         assert mp.almosteq(value, reference_jet[derivative], rel_eps=tolerance,
@@ -162,38 +161,37 @@ def test_rtheta_third_order_jet_with_characteristic_at_100_dps():
 
 def test_rtheta_cross_precision_after_reduction():
     mp.dps = 40
-    tau = [[mpc('0.2', '0.15'), mpc('0.12', '0.03')],
-           [mpc('0.12', '0.03'), mpc('-0.1', '0.2')]]
-    z = [mpc('0.13', '0.07'), mpc('-0.21', '0.04')]
-    characteristic = ((mpf('0.3'), mpf('-0.2')),
-                      (mpf('0.1'), mpf('0.4')))
+    tau = [[0.2+0.15j, 0.12+0.03j],
+           [0.12+0.03j, -0.1+0.2j]]
+    z = [0.13+0.07j, -0.21+0.04j]
+    characteristic = ((0.3, -0.2), (0.1, 0.4))
     value = rtheta(z, tau, characteristic, derivative=(1, 1))
     with mp.workdps(75):
         reference = rtheta(z, tau, characteristic, derivative=(1, 1))
-    assert mp.almosteq(value, reference, rel_eps=mpf('1e-38'))
+    assert mp.almosteq(value, reference, rel_eps=1e-38)
 
 
 def test_rtheta_derivatives_after_varying_arguments():
     mp.dps = 30
-    tau = [[mpc('0.2', '1.2')]]
-    z = [mpc('0.1', '0.01')]
+    tau = [[0.2+1.2j]]
+    z = [0.1+0.01j]
     initial = rtheta(z, tau, derivative=1)
     for i in range(40):
-        argument = mpc(mpf(i + 1) / 8, mpf(i + 1) / 100)
+        argument = complex((i + 1) / 8, (i + 1) / 100)
         value = rtheta([argument], tau, derivative=1)
         with mp.workdps(60):
             q = exp(pi * j * tau[0][0])
             reference = pi * jtheta(3, pi * argument, q, derivative=1)
         assert mp.almosteq(value, reference,
-                           rel_eps=mpf('1e-28'), abs_eps=mpf('1e-28'))
+                           rel_eps=1e-28, abs_eps=1e-28)
     assert mp.almosteq(rtheta(z, tau, derivative=1), initial)
 
 
 def test_rtheta_jets_preserve_inputs_and_precision():
     mp.dps = 30
-    tau = mp.matrix([[mpc('0.2', '0.15'), mpc('0.12', '0.03')],
-                     [mpc('0.12', '0.03'), mpc('-0.1', '0.2')]])
-    z = mp.matrix([mpc('0.13', '0.07'), mpc('-0.21', '0.04')])
+    tau = mp.matrix([[0.2+0.15j, 0.12+0.03j],
+                     [0.12+0.03j, -0.1+0.2j]])
+    z = mp.matrix([0.13+0.07j, -0.21+0.04j])
     characteristic = (mp.matrix([0.5, 0]), mp.matrix([0, 0.5]))
     original_tau, original_z = tau.copy(), z.copy()
     original_characteristic = tuple(v.copy() for v in characteristic)
@@ -205,7 +203,7 @@ def test_rtheta_jets_preserve_inputs_and_precision():
             reference = rtheta_jet(argument, tau, 2, char)
         for derivative, value in jet.items():
             assert mp.almosteq(value, reference[derivative],
-                               rel_eps=mpf('1e-28'), abs_eps=mpf('1e-28'))
+                               rel_eps=1e-28, abs_eps=1e-28)
     repeated = rtheta_jet(z, tau, 2, characteristic)
     for derivative, value in repeated.items():
         assert mp.almosteq(value, initial[derivative])
@@ -235,7 +233,7 @@ def test_rtheta_wolfram_first_derivative_reference_values():
             '-0.983740135148338116134552482066670136613333239537688',
             '-0.287732601392744703482773208619225173728089061045940')),
     )
-    tolerance = mpf('1e-38')
+    tolerance = 1e-38
     for characteristic, reference in references2:
         assert mp.almosteq(
             rtheta(z2, tau2, characteristic, derivative=(1, 0)),
@@ -244,7 +242,7 @@ def test_rtheta_wolfram_first_derivative_reference_values():
     z3 = [mpc('0.11', '0.03'), mpc('-0.07', '0.02'),
           mpc('0.05', '-0.01')]
     tau3 = [
-        [mpc('0.10', '1.00'), mpc('-0.12', '0.08'),
+        [mpc('0.10', 1), mpc('-0.12', '0.08'),
          mpc('0.05', '0.04')],
         [mpc('-0.12', '0.08'), mpc('0.20', '1.15'),
          mpc('0.08', '0.06')],
@@ -266,7 +264,7 @@ def test_rtheta_flint_high_precision_derivative_reference_values():
     # Every recorded midpoint had enclosure radius below 3.3e-128.
     # https://flintlib.org/doc/acb_theta.html
     mp.dps = 100
-    tolerance = mpf('1e-98')
+    tolerance = 1e-98
     z2 = [mpc('0.11', '0.03'), mpc('-0.07', '0.02')]
     tau2 = [
         [mpc('0.10', '0.90'), mpc('-0.20', '0.12')],
@@ -300,7 +298,7 @@ def test_rtheta_flint_high_precision_derivative_reference_values():
 
     z3 = z2 + [mpc('0.05', '-0.01')]
     tau3 = [
-        [mpc('0.10', '1.00'), mpc('-0.12', '0.08'),
+        [mpc('0.10', 1), mpc('-0.12', '0.08'),
          mpc('0.05', '0.04')],
         [mpc('-0.12', '0.08'), mpc('0.20', '1.15'),
          mpc('0.08', '0.06')],
@@ -348,56 +346,56 @@ def test_rtheta_derivative_validation():
 
 def test_rtheta_derivative_with_small_imaginary_periods():
     mp.dps = 35
-    tau = ((mpc('0.2', '0.15'), mpc('0.12', '0.03')),
-           (mpc('0.12', '0.03'), mpc('-0.1', '0.2')))
-    z = (mpc('0.13', '0.07'), mpc('-0.21', '0.04'))
-    characteristic = ((mpf('0.3'), mpf('-0.2')), (mpf('0.1'), mpf('0.4')))
+    tau = ((0.2+0.15j, 0.12+0.03j),
+           (0.12+0.03j, -0.1+0.2j))
+    z = (0.13+0.07j, -0.21+0.04j)
+    characteristic = ((0.3, -0.2), (0.1, 0.4))
     value = rtheta(z, tau, characteristic, derivative=(1, 0))
     with mp.workdps(60):
         reference = diff(lambda x: rtheta([x, z[1]], tau, characteristic), z[0])
     assert mp.almosteq(value, reference,
-                       rel_eps=mpf('1e-33'), abs_eps=mpf('1e-33'))
+                       rel_eps=1e-33, abs_eps=1e-33)
 
 
 def test_rtheta_genus_three_mixed_derivative_with_small_imaginary_periods():
     mp.dps = 20
     tau = (
-        (mpc('0.3', '0.12'), mpc('0.17', '0.03'), mpc(0, '0.02')),
-        (mpc('0.17', '0.03'), mpc('-0.2', '0.16'), mpc(0, '0.02')),
-        (mpc(0, '0.02'), mpc(0, '0.02'), mpc('0.1', '0.2')),
+        (0.3+0.12j, 0.17+0.03j, 0.02j),
+        (0.17+0.03j, -0.2+0.16j, 0.02j),
+        (0.02j, 0.02j, 0.1+0.2j),
     )
-    z = (mpc('0.11', '0.03'), mpc('-0.07', '0.02'), mpc('0.05', '-0.01'))
+    z = (0.11+0.03j, -0.07+0.02j, 0.05-0.01j)
     value = rtheta(z, tau, derivative=(1, 1, 0))
     with mp.workdps(45):
         reference = diff(lambda x: diff(
             lambda y: rtheta([x, y, z[2]], tau), z[1]), z[0])
     assert mp.almosteq(value, reference,
-                       rel_eps=mpf('1e-18'), abs_eps=mpf('1e-18'))
+                       rel_eps=1e-18, abs_eps=1e-18)
 
 
 def test_rtheta_mixed_derivative_with_small_imaginary_periods():
     mp.dps = 25
-    tau = ((mpc('0.4', '0.03'), mpc('0.1', '0.008')),
-           (mpc('0.1', '0.008'), mpc('-0.3', '0.05')))
-    z = (mpc('0.13', '0.07'), mpc('-0.21', '0.04'))
+    tau = ((0.4+0.03j, 0.1+0.008j),
+           (0.1+0.008j, -0.3+0.05j))
+    z = (0.13+0.07j, -0.21+0.04j)
     characteristic = ((0.5, 0), (0, 0.5))
     value = rtheta(z, tau, characteristic, derivative=(1, 1))
     with mp.workdps(50):
         reference = diff(lambda x: diff(
             lambda y: rtheta([x, y], tau, characteristic), z[1]), z[0])
     assert mp.almosteq(value, reference,
-                       rel_eps=mpf('1e-23'), abs_eps=mpf('1e-23'))
+                       rel_eps=1e-23, abs_eps=1e-23)
 
 
 def test_rtheta_jet_with_small_imaginary_periods_matches_scalar_calls():
     mp.dps = 25
-    tau = ((mpc('0.4', '0.03'), mpc('0.1', '0.008')),
-           (mpc('0.1', '0.008'), mpc('-0.3', '0.05')))
-    z = (mpc('0.13', '0.07'), mpc('-0.21', '0.04'))
+    tau = ((0.4+0.03j, 0.1+0.008j),
+           (0.1+0.008j, -0.3+0.05j))
+    z = (0.13+0.07j, -0.21+0.04j)
     characteristic = ((0.5, 0), (0, 0.5))
     jet = rtheta_jet(z, tau, 2, characteristic)
     for derivative, value in jet.items():
         with mp.workdps(55):
             reference = rtheta(z, tau, characteristic, derivative=derivative)
         assert mp.almosteq(value, reference,
-                           rel_eps=mpf('1e-23'), abs_eps=mpf('1e-23'))
+                           rel_eps=1e-23, abs_eps=1e-23)
