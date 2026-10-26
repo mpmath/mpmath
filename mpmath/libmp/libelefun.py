@@ -22,7 +22,7 @@ from .libmpf import (ComplexResult, bctable, finf, fnan, fninf, fnone, fone,
                      mpf_perturb, mpf_pos, mpf_pow_int, mpf_rdiv_int,
                      mpf_shift, mpf_sign, mpf_sqrt, mpf_sub, negative_rnd,
                      normalize, reciprocal_rnd, round_ceiling, round_down,
-                     round_floor, round_up, to_fixed, to_int)
+                     round_up, to_fixed, to_int)
 
 
 local = threading.local()
