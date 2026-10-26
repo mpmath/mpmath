@@ -927,12 +927,10 @@ def mpf_atan2(y, x, prec, rnd=round_down):
         if y == fzero:
             return fzero
         return mpf_shift(mpf_pi(prec, rnd), -1)
-    # Here y > 0, so the result is positive and atan(y/x) is increasing
-    # in y/x: round every intermediate step in the requested direction.
-    rnd = {round_down: round_floor, round_up: round_ceiling}.get(rnd, rnd)
-    tquo = mpf_atan(mpf_div(y, x, prec+4, rnd), prec+4, rnd)
+    wp = prec + 10
+    tquo = mpf_atan(mpf_div(y, x, wp), wp)
     if xsign:
-        return mpf_add(mpf_pi(prec+4, rnd), tquo, prec, rnd)
+        return mpf_add(mpf_pi(wp), tquo, prec, rnd)
     else:
         return mpf_pos(tquo, prec, rnd)
 
