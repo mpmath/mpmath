@@ -63,7 +63,6 @@ def test_from_str():
     assert mpf(from_str('0o1101.100101')) == mpf('577.12524795532227')
     assert mpf(from_str('1.99999999', prec=0)) == mpf('1.9999999901046976')
     pytest.raises(ValueError, lambda: from_str('1e400e2', 6))
-    # issue: float() accepts spelled-out infinity, from_str should too
     assert from_str('infinity') == from_str('inf')
     assert from_str('INFINITY') == from_str('inf')
     assert from_str('+Infinity') == from_str('+inf')
