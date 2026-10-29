@@ -734,7 +734,6 @@ def test_issue_1205():
     assert fp.degrees(math.pi) == 180
     assert fp.radians(1+2j) == fp.degree*(1+2j)
 
-
 def random_complexes(N):
     random.seed(1)
     a = []
