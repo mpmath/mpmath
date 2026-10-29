@@ -727,6 +727,18 @@ def test_degrees():
     assert sin(270*degree).ae(-1)
     assert sin(360*degree).ae(0)
 
+def test_degrees_radians_fp():
+    # issue: fp.degrees/fp.radians crashed with AttributeError since FPContext
+    # was missing the degree constant
+    import mpmath
+    fp = mpmath.fp
+    assert fp.degrees(1) == 1 / fp.degree
+    assert fp.radians(1) == fp.degree
+    assert fp.degrees(fp.radians(90)) == 90
+    assert fp.degrees(math.pi) == 180
+    assert fp.radians(1+2j) == fp.degree*(1+2j)
+
+
 def random_complexes(N):
     random.seed(1)
     a = []
