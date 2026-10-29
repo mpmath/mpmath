@@ -84,7 +84,7 @@ class FPContext(StandardBaseContext):
     khinchin = 2.6854520010653064453
     apery = 1.2020569031595942854
     glaisher = 1.2824271291006226369
-    degree = math.pi / 180
+    degree = 0.017453292519943295
 
     absmin = absmax = abs
 
