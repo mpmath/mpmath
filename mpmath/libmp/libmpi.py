@@ -703,7 +703,9 @@ def mpi_atan2(y, x, prec):
     if ya == yb == fzero:
         if mpf_ge(xa, fzero):
             return mpi_zero
-        return mpi_pi(prec)
+        if mpf_lt(xb, fzero):
+            return mpi_pi(prec)
+        return fzero, mpf_pi(prec, round_ceiling)
     # Right half-plane
     if mpf_ge(xa, fzero):
         if mpf_ge(ya, fzero):

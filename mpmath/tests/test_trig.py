@@ -1,4 +1,4 @@
-from mpmath import cos, ldexp, mp, mpf, pi, sin, tan
+from mpmath import cos, iv, ldexp, mp, mpf, pi, sin, tan
 from mpmath.libmp import (round_ceiling, round_down, round_floor,
                           round_nearest, round_up)
 
@@ -129,3 +129,16 @@ def test_trig_near_n_pi():
     assert cos(a[6], rounding=r) == 1
     assert cos(a[7], rounding=r) > -1
     assert cos(a[8], rounding=r) == 1
+
+def test_atan2_directed_rounding():
+    # x < 0: the interval must enclose the exact atan2(y, x)
+    for y, x, prec in [(4.51, -7.24, 24), (0.39, -2.29, 10),
+                       (2.27, -4.65, 53)]:
+        with mp.workprec(200):
+            t = mp.atan2(y, x)
+        iv.prec = prec
+        try:
+            r = iv.atan2(y, x)
+        finally:
+            iv.prec = 53
+        assert r.a <= t <= r.b

@@ -927,9 +927,10 @@ def mpf_atan2(y, x, prec, rnd=round_down):
         if y == fzero:
             return fzero
         return mpf_shift(mpf_pi(prec, rnd), -1)
-    tquo = mpf_atan(mpf_div(y, x, prec+4), prec+4)
+    wp = prec + 10
+    tquo = mpf_atan(mpf_div(y, x, wp), wp)
     if xsign:
-        return mpf_add(mpf_pi(prec+4), tquo, prec, rnd)
+        return mpf_add(mpf_pi(wp), tquo, prec, rnd)
     else:
         return mpf_pos(tquo, prec, rnd)
 
