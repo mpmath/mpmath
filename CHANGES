@@ -18,7 +18,11 @@ Features:
   see #1153 (Sergey B Kirpichev)
 * Add shortest_str context option to enable using shortest decimal
   representations in str/repr/format output, see #1115 (Sergey B Kirpichev)
-* Add fft()/invfft() functions for DFT calculation, see #1152 (Ayush Baranwal)
+* Add fft()/invfft() functions for DFT calculation, see #1152 and
+  #1176 (Ayush Baranwal)
+* Add lll_gram() for LLL reduction, see #1185 (Graham Hesketh)
+* Add Riemann theta functions, rtheta() and rtheta_jet(), see #1182
+  (Graham Hesketh)
 
 Compatibility:
 
@@ -94,6 +98,17 @@ Bug fixes:
 * Avoid spurious overflow in fp gammaprod, see #1150 (Sanjay Santhanam)
 * Document pretty_dps context's option, see #1153 (Sergey B Kirpichev)
 * Fix cplot points rounding, see #1155 (alexfyp)
+* Fix special cases for log1p, atan2, sin, cos, sqrt, hypot, atan,
+  atanh, see #1178, #1179, #1191, #1192 (Matt Haberland)
+* Speedup bin_to_radix for power-of-two bases, see #1187 (Sai Adith Prakash)
+* Fix complex interval conjugation, see #1202 (Christopher Albert)
+* Flip rounding direction when negating in mpf_gamma(type=3),
+  see #1204 (Syed Ahnaf Raza)
+* Use extra working precision in mpf_atan2 for directed rounding
+  and fix mpi_atan2() for y == 0 with x spanning zero, see #1203
+  (Syed Ahnaf Raza)
+* Accept spelled-out infinity in from_str(), see #1208 (Rahul)
+* Add missing degree constant to the FPContext, see #1207 (Rahul)
 
 Maintenance:
 
@@ -105,6 +120,8 @@ Maintenance:
 * Fix test_sn_cn_dn_identities(), see #1106 (Sergey B Kirpichev)
 * Fix test_compatibility(): avoid using of private numpy
   API (Sergey B Kirpichev)
+* Use prek, see #1184 (Sergey B Kirpichev)
+* Use new version of python-gmp in CI, see #1197 (Sergey B Kirpichev)
 
 
 --1.4.1--
