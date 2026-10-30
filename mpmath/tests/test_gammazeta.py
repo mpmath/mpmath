@@ -705,3 +705,39 @@ def test_issue_471():
 def test_issue_472():
     assert bernpoly(4, mpc(inf, 1e-50)) == mpc(inf, 0)
     assert mpc(inf, 2)**4 == mpc(inf, 0)
+
+def test_issue_1198():
+    # Issue 1198: the Euler-Maclaurin tail in _hurwitz_em stopped on an
+    # absolute 2**-prec tolerance, so values far below 2**-prec were only
+    # accurate to a few digits (2.8e-9 relative error for this case at 30 dps).
+    # Reference: the defining series summed directly, with the float inputs
+    # taken exactly (s = 43.0130398509305393872637..., q = 305.42432632507370726671...):
+    #   mp.dps = 60
+    #   s, q = mpf(43.01303985093054), mpf(305.4243263250737)
+    #   fsum((q + k)**(-s) for k in range(20000)) + (q + 20000)**(1 - s)/(s - 1)
+    #   = 1.01813111326012848334669424321e-106
+    # The last term, the integral bounding the omitted tail, is 2.5e-183
+    # (2.5e-77 relative), and 20000 terms at 60 dps round to < 1e-55 relative,
+    # so the reference is correct to the 25 digits quoted.
+    s = 43.01303985093054
+    q = 305.4243263250737
+    mp.dps = 30
+    ref = mpf('1.018131113260128483346694e-106')
+    assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-24, abs_eps=0)
+    mp.dps = 15
+    assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-13, abs_eps=0)
+    # Complex and negative s take the same Euler-Maclaurin path: check they
+    # keep full relative accuracy.  References are independent of that code,
+    # from Hermite's integral (DLMF 25.11.27), evaluated at mp.dps = 100 with
+    # the float inputs taken exactly and agreeing with mp.dps = 80 to 1e-60:
+    #   f = lambda t: sin(s*atan(t/a)) / ((a*a + t*t)**(s/2) * expm1(2*pi*t))
+    #   a**(-s)/2 + a**(1-s)/(s-1) + 2*quad(f, [0, 1, 5, 20, inf])
+    mp.dps = 30
+    ref = mpc('1.2556364750065273991155195840269895277',
+              '0.2374804534166297577343887313335098622602')
+    assert mp.almosteq(zeta(0.5+30j, 1.3), ref, rel_eps=1e-28, abs_eps=0)
+    ref = mpf('-0.016485181950713754227408431107763560808')
+    assert mp.almosteq(zeta(-10.5, 1.7), ref, rel_eps=1e-28, abs_eps=0)
+    ref = mpc('-9.479344816411352215237530481672086520617',
+              '-5.524470284352936227774160788476933102109')
+    assert mp.almosteq(zeta(2+50j, 0.3), ref, rel_eps=1e-28, abs_eps=0)
