@@ -1,5 +1,5 @@
-from mpmath import (chop, cos, diff, diffs, diffun, e, exp, j, log, mpf, sin,
-                    sqrt, taylor)
+from mpmath import (chop, cos, diff, diffs, diffun, e, exp, j, log, sin, sqrt,
+                    taylor)
 
 
 def test_diff():
