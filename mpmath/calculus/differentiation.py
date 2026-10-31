@@ -35,11 +35,11 @@ def hsteps(ctx, f, x, n, prec, *, method='step', direction=0, radius=0.25,
     try:
         ctx.prec = workprec
         if h is None:
-            if relative:
+            if relative and x:
                 hextramag = int(ctx.mag(x))
             else:
                 hextramag = 0
-            h = ctx.ldexp(1, -prec-addprec-hextramag)
+            h = ctx.ldexp(1, -prec-addprec+hextramag)
         else:
             h = ctx.convert(h)
         # Directed: steps x, x+h, ... x+n*h
