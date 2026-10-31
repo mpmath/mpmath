@@ -25,8 +25,7 @@ def test_diffs():
 
 def test_diff_relative():
     # relative=True must make the step proportional to |x|
-    for x in ['1e-30', '1e-5', '1', '1e10', '1e30']:
-        x = mpf(x)
+    for x in [1e-30, 1e-5, 1, 1e10, 1e30]:
         assert diff(log, x, relative=True).ae(1/x)
     # and must not fail at x = 0
     assert diff(exp, 0, relative=True).ae(1)
