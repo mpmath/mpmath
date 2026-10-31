@@ -23,6 +23,13 @@ def test_diffs():
     assert [chop(d) for d in diffs(sin, 0, 2)] == [0, 1, 0]
     assert [chop(d) for d in diffs(sin, 0, 2, method='quad')] == [0, 1, 0]
 
+def test_diff_relative():
+    # relative=True must make the step proportional to mag(x)
+    for x in [1e-30, 1e-5, 1, 1e10, 1e30]:
+        assert diff(log, x, relative=True).ae(1/x)
+    # and must not fail at x = 0
+    assert diff(exp, 0, relative=True).ae(1)
+
 def test_taylor():
     # Easy to test since the coefficients are exact in floating-point
     assert taylor(sqrt, 1, 4) == [1, 0.5, -0.125, 0.0625, -0.0390625]
