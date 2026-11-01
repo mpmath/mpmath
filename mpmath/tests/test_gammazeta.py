@@ -705,3 +705,27 @@ def test_issue_471():
 def test_issue_472():
     assert bernpoly(4, mpc(inf, 1e-50)) == mpc(inf, 0)
     assert mpc(inf, 2)**4 == mpc(inf, 0)
+
+def test_issue_1198():
+    # The Euler-Maclaurin tail in _hurwitz_em stopped on an
+    # absolute 2**-prec tolerance, so values far below 2**-prec were only
+    # accurate to a few digits (2.8e-9 relative error for this case at 30 dps).
+    s = 43.01303985093054
+    q = 305.4243263250737
+    mp.dps = 30
+    # Wolfram Engine N[Zeta[1513386798786899/35184372088832,
+    #                       167908799100035/549755813888], 25]
+    ref = mpf('1.018131113260128483346694e-106')
+    assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-24, abs_eps=0)
+    mp.dps = 15
+    assert mp.almosteq(zeta(s, q), ref, rel_eps=1e-13, abs_eps=0)
+    # Complex and negative s take the same Euler-Maclaurin path: check they
+    # keep full relative accuracy.
+    mp.dps = 30
+    # Wolfram Engine N[Zeta[1/2 + 30 I, 5854679515581645/4503599627370496], 40]
+    ref = mpc('1.25563647500652739911551958402695',
+              '0.23748045341662975773438873133351')
+    assert mp.almosteq(zeta(0.5+30j, 1.3), ref, rel_eps=1e-28, abs_eps=0)
+    # Wolfram Engine N[Zeta[-105/10, 7656119366529843/4503599627370496], 40]
+    ref = mpf('-0.0164851819507137542274084311077626')
+    assert mp.almosteq(zeta(-10.5, 1.7), ref, rel_eps=1e-28, abs_eps=0)
