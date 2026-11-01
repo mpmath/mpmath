@@ -914,6 +914,11 @@ def test_gammainc():
     assert upper_gamma(-2,-1).ae(1.7707229202810768576 - 1.5707963267948966192j)
     assert upper_gamma(-3,-1).ae(-1.4963349162467073643 + 0.5235987755982988731j)
     assert upper_gamma(-4,-1).ae(1.05365418617643814992 - 0.13089969389957471827j)
+    # issue 467
+    assert gammainc(3,0,-0.1).ae(-0.00035936171692220096)
+    assert gammainc(3,-0.1,0).ae(0.00035936171692220096)
+    assert gammainc(3,-0.1,0.1).ae(0.0006686678574515443)
+    assert gammainc(3,0,-0.1,regularized=True).ae(-0.00017968085846110048)
     # Regularized upper gamma
     assert isnan(gammainc(0, 0, regularized=True))
     assert gammainc(-1, 0, regularized=True) == inf
