@@ -249,8 +249,6 @@ def _gamma3(ctx, z, a, b, regularized=False):
         if ctx.mag(R) - max(ctx.mag(T1), ctx.mag(T2)) > -10:
             return R
         if not pole:
-            # Call lower_gamma() directly: going through gammainc() would
-            # swap a negative endpoint back into _gamma3() and recurse forever.
             T1 = ctx.lower_gamma(z, b, regularized=regularized)
             T2 = ctx.lower_gamma(z, a, regularized=regularized)
             R = T1 - T2
