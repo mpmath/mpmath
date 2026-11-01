@@ -619,14 +619,14 @@ def _hurwitz(ctx, s, a=1, d=0, *, verbose=False, maxprec=None):
             print("zeta: Using the Euler-Maclaurin algorithm")
         while 1:
             ctx.prec = prec + extraprec
-            T1, T2 = _hurwitz_em(ctx, s, a, d, prec+10, verbose)
-            cancellation = ctx.mag(T1) - ctx.mag(T1+T2)
+            T1, total = _hurwitz_em(ctx, s, a, d, prec+10, verbose)
+            cancellation = ctx.mag(T1) - ctx.mag(total)
             if verbose:
                 print("Term 1:", T1)
-                print("Term 2:", T2)
+                print("Term 2:", total - T1)
                 print("Cancellation:", cancellation, "bits")
             if cancellation < extraprec:
-                return T1 + T2
+                return total
             else:
                 extraprec = max(2*extraprec, min(cancellation + 5, 100*prec))
                 if extraprec > maxprec:
@@ -735,11 +735,10 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
             # and the result is only accurate to a few digits.  The result,
             # not tailsum, is the right scale: for negative s the direct sum
             # and the tail cancel almost completely (zeta(-10.5, 1.7): lsum and
-            # tailsum are 1.35e17, the result 0.016), and stopping relative to
-            # tailsum leaves a 3e-20 relative error at 30 dps.
+            # tailsum are 1.35e17, the result 0.016).
             total = lsum + (-1)**d * tailsum
             if ctx.mag(t) < tol + ctx.mag(total):
-                return lsum, (-1)**d * tailsum
+                return lsum, total
             fact *= (j2+1)*(j2+2)
         if verbose:
             print("Sum range:", M1, M2, "term magnitude", ctx.mag(t), "tolerance", tol)
