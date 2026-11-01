@@ -129,6 +129,26 @@ def test_bessel_zeros():
     assert besselyzero(0.5,3).ae(7.8539816339744830962)
     assert besselyzero(2,1,1).ae(5.0025829314460639452)
 
+def test_bessel_fp_integer_order():
+    # See issue #497
+    def ae(x, y, tol=1e-12):
+        return abs(x-y) <= abs(y)*tol
+    assert ae(fp.bessely(0,10), 0.055671167283599391424)
+    assert ae(fp.bessely(1,10), 0.24901542420695388392)
+    assert ae(fp.bessely(2,3), -0.16040039348492372968)
+    assert ae(fp.bessely(3,0.5), -42.059494304723882688)
+    assert ae(fp.bessely(-2,3), -0.16040039348492372968)
+    assert ae(fp.bessely(2,2+1j),
+              -0.57374073395963054458+0.41041309825527808465j)
+    assert ae(fp.bessely(2,3,1), 0.43160802044841579822)
+    assert ae(fp.besselyzero(0,1), 0.89357696627916752158)
+    assert ae(fp.besselyzero(1,1), 2.1971413260310170351)
+    assert ae(fp.besselyzero(2,1), 3.3842417671495934727)
+    assert ae(fp.besselyzero(3,2), 8.0975537628604907044)
+    assert ae(fp.besselyzero(0,1,1), 2.1971413260310170351)
+    assert ae(fp.besselyzero(2,1,1), 5.0025829314460639452)
+    assert ae(fp.besselyzero(3,2,1), 9.698787984148771075)
+
 def test_hankel():
     assert hankel1(0,0.5).ae(0.93846980724081290423-0.44451873350670655715j)
     assert hankel1(1,0.5).ae(0.2422684576748738864-1.4714723926702430692j)
