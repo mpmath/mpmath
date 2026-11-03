@@ -69,10 +69,7 @@ def _fornberg_weights(nodes, n):
     r"""
     Return exact weights `w_k` such that `f^{(n)}(0) \approx \sum_k w_k f(t_k)`
     for the rational nodes `t_k`.  The formula is exact for polynomials of
-    degree less than ``len(nodes)``.
-
-    B. Fornberg, "Calculation of weights in finite difference formulas",
-    SIAM Review 40 (1998), 685-691.
+    degree less than ``len(nodes)``.  See [Fornberg]_.
     """
     N = len(nodes)
     c = [[MPQ(0)]*N for _ in range(n+1)]
@@ -317,6 +314,10 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
         -9.99999998328279e-31
         >>> diff(cos, 1e-30, addprec=100)
         -1.0e-30
+
+    **References**
+
+    1. [Fornberg]_
 
     """
     partial = False
