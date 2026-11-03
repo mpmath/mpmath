@@ -1,6 +1,7 @@
 import functools
 import math
-from fractions import Fraction
+
+from ..libmp.backend import MPQ
 
 from .calculus import defun
 
@@ -74,13 +75,13 @@ def _fornberg_weights(nodes, n):
     SIAM Review 40 (1998), 685-691.
     """
     N = len(nodes)
-    c = [[Fraction(0)]*N for _ in range(n+1)]
-    c[0][0] = Fraction(1)
-    c1 = Fraction(1)
+    c = [[MPQ(0)]*N for _ in range(n+1)]
+    c[0][0] = MPQ(1)
+    c1 = MPQ(1)
     c4 = nodes[0]
     for i in range(1, N):
         mn = min(i, n)
-        c2 = Fraction(1)
+        c2 = MPQ(1)
         c5 = c4
         c4 = nodes[i]
         for j in range(i):
@@ -134,7 +135,7 @@ def _fixed_prec_stencil(n, one_sided, singular, eps, order=8):
     when f is analytic within distance 1 of x.
     """
     if one_sided:
-        start = Fraction(1, 2) if singular else Fraction(0)
+        start = MPQ(1, 2) if singular else MPQ(0)
         nodes = [start + k for k in range(n + order)]
         weights = _fornberg_weights(nodes, n)
         p, C = _leading_error(nodes, weights, n)
@@ -142,9 +143,9 @@ def _fixed_prec_stencil(n, one_sided, singular, eps, order=8):
         m = 1
         while 1:
             if singular:
-                nodes = [Fraction(2*k+1, 2) for k in range(-m, m)]
+                nodes = [MPQ(2*k+1, 2) for k in range(-m, m)]
             else:
-                nodes = [Fraction(k) for k in range(-m, m+1)]
+                nodes = [MPQ(k) for k in range(-m, m+1)]
             if len(nodes) > n:
                 weights = _fornberg_weights(nodes, n)
                 p, C = _leading_error(nodes, weights, n)
