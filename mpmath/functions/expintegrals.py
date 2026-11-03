@@ -249,8 +249,8 @@ def _gamma3(ctx, z, a, b, regularized=False):
         if ctx.mag(R) - max(ctx.mag(T1), ctx.mag(T2)) > -10:
             return R
         if not pole:
-            T1 = ctx.gammainc(z, 0, b, regularized=regularized)
-            T2 = ctx.gammainc(z, 0, a, regularized=regularized)
+            T1 = ctx.lower_gamma(z, b, regularized=regularized)
+            T2 = ctx.lower_gamma(z, a, regularized=regularized)
             R = T1 - T2
             # May be ok, but should probably at least print a warning
             # about possible cancellation
