@@ -747,4 +747,3 @@ def test_issue_551():
     z40_em = zeta(50 + 5j, method='euler-maclaurin')
     assert z40_em.imag.ae(mpf('2.82881957300551842714082073135782807549807024e-16'))
     mp.dps = 15
-

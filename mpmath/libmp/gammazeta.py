@@ -1087,7 +1087,7 @@ def mpc_zeta(s, prec, rnd=round_down, alt=0, force=False):
     im_shift = max(0, -(im[2] + im[3]))
     if (not force) and im_shift > prec:
         raise NotImplementedError
-    wp += max(0, to_int(re)) + im_shift
+    wp += max(0, int(to_int(re))) + im_shift
     r = mpc_sub(mpc_one, s, wp)
     n = int(wp/2.54 + 5)
     n += int(0.9*abs(to_int(im)))
