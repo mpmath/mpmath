@@ -729,3 +729,22 @@ def test_issue_1198():
     # Wolfram Engine N[Zeta[-105/10, 7656119366529843/4503599627370496], 40]
     ref = mpf('-0.0164851819507137542274084311077626')
     assert mp.almosteq(zeta(-10.5, 1.7), ref, rel_eps=1e-28, abs_eps=0)
+
+def test_issue_551():
+    mp.dps = 15
+    z = zeta(50 + 5j)
+    assert z.real.ae(mpf('0.999999999999999158074408'))
+    assert z.imag.ae(mpf('2.82881957300551842714082e-16'))
+    az = altzeta(50 + 5j)
+    assert az.real.ae(mpf('1.00000000000000084192559'))
+    assert az.imag.ae(mpf('-2.82881957300551842714082e-16'))
+    z_tiny_im = zeta(mpc(50, '1e-10'))
+    assert z_tiny_im.imag.ae(mpf('-6.15638368979648836897254e-26'))
+    assert zeta(mpc('50.5', 0), 2).real.ae(mpf('6.28036984277733690981071e-16'))
+    mp.dps = 40
+    z40 = zeta(50 + 5j)
+    assert z40.imag.ae(mpf('2.82881957300551842714082073135782807549807024e-16'))
+    z40_em = zeta(50 + 5j, method='euler-maclaurin')
+    assert z40_em.imag.ae(mpf('2.82881957300551842714082073135782807549807024e-16'))
+    mp.dps = 15
+

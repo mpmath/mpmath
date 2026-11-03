@@ -1084,6 +1084,11 @@ def mpc_zeta(s, prec, rnd=round_down, alt=0, force=False):
         pi2 = (mpf_shift(pi, 1), fzero)
         d = mpc_div_mpf(mpc_pow(pi2, s, wp2), pi, wp2)
         return mpc_mul(a,mpc_mul(b,mpc_mul(c,d,wp),wp),prec,rnd)
+    im_shift = max(0, -(im[2] + im[3]))
+    if (not force) and im_shift > prec:
+        raise NotImplementedError
+    wp += max(0, to_int(re)) + im_shift
+    r = mpc_sub(mpc_one, s, wp)
     n = int(wp/2.54 + 5)
     n += int(0.9*abs(to_int(im)))
     d = borwein_coefficients(n)
@@ -1247,6 +1252,11 @@ def mpc_zetasum(s, a, n, derivatives, reflect, prec):
 
     # parse s
     sre, sim = s
+    im_shift = max(0, -(sim[2] + sim[3])) if sim != fzero else 0
+    re_shift = int(math.ceil(to_float(sre) * math.log(max(a, 2), 2))) if (not sre[0] and sre != fzero) else 0
+    if im_shift > prec or re_shift > 2 * prec:
+        raise NotImplementedError
+    wp += max(0, re_shift) + im_shift
     critical_line = (sre == fhalf)
     sre = to_fixed(sre, wp)
     sim = to_fixed(sim, wp)
