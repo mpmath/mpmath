@@ -1,8 +1,11 @@
 import cmath
 import math
 
+import pytest
+
 from mpmath import (chop, cos, diff, diffs, diffun, e, exp, fp, j, log, sqrt,
                     sin, taylor)
+from mpmath.calculus.differentiation import _fixed_prec_stencil
 
 
 def test_diff():
@@ -111,3 +114,9 @@ def test_diff_fp():
     assert fp.almosteq(fp.findroot(lambda x: x**2 - 2, 1.0, solver='newton'),
                        math.sqrt(2))
     assert fp.multiplicity(lambda x: fp.sin(x) - 1, fp.pi/2) == 2
+
+
+def test_fixed_prec_stencil_without_error_term():
+    # diff() returns f(x) before reaching this case, so call the helper.
+    with pytest.raises(ValueError, match="no error term"):
+        _fixed_prec_stencil(0, True, False, fp.eps)
