@@ -1092,6 +1092,20 @@ def mpc_zeta(s, prec, rnd=round_down, alt=0, force=False):
     # cancellation from the magnitude of the computed sum and redo the
     # summation with a working precision that absorbs it (cf. the retry
     # loop in _hurwitz() for the Euler-Maclaurin algorithm).
+    #
+    # The retry needs a cap: if the sum keeps coming out at the noise
+    # floor of the working precision (exactly zero, or a few units in
+    # the last place), the measured cancellation is only a lower bound
+    # and the true eta value may be smaller than 2**-wp -- or exactly
+    # zero, in which case no working precision ever resolves it.  An
+    # input whose mantissas have B bits cannot locate a zero of eta to
+    # more than roughly B bits, so cancellation beyond B + 100*prec
+    # (the 100*prec scale is the growth cap used by _hurwitz()) cannot
+    # come from a resolvable value: if the sum is still at the noise
+    # floor once wp passes that cap, eta is indistinguishable from an
+    # exact zero at any precision the input can express, and the loop
+    # below returns zero for it.
+    wp_cap = prec + max(re[3], im[3]) + 100*prec + 20
     while True:
         n = int(wp/2.54 + 5)
         n += int(0.9*abs(to_int(im)))
@@ -1134,7 +1148,20 @@ def mpc_zeta(s, prec, rnd=round_down, alt=0, force=False):
             cancellation = max(0, -(aexp + abc)) + n.bit_length()
         if cancellation + 5 <= wp - prec:
             break
-        wp += cancellation + 5 - (wp - prec)
+        if cancellation >= wp - n.bit_length():
+            # The sum is at the noise floor of the working precision,
+            # so the true cancellation is unknown and may be arbitrarily
+            # large.  Raise the precision geometrically, as _hurwitz()
+            # does, instead of crawling upwards by prec + 5 bits at a
+            # time; but stop at wp_cap (see above), where a sum that is
+            # still at the noise floor means that eta is an exact zero
+            # at every precision the input can express.
+            if wp >= wp_cap:
+                tre = tim = fzero
+                break
+            wp = prec + max(cancellation + 5, 2*(wp - prec))
+        else:
+            wp += cancellation + 5 - (wp - prec)
     if alt:
         return mpc_pos((tre, tim), prec, rnd)
     else:
