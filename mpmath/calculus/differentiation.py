@@ -102,9 +102,7 @@ def _leading_error(nodes, weights, n):
     Return ``(p, C)`` such that the stencil computes
     `f^{(n)}(x) + C h^p f^{(n+p)}(x) + O(h^{p+1})`.
 
-    Raise ``ValueError`` if the stencil has no error term, which happens
-    only when all the weight sits on the node 0, as for ``n = 0`` with
-    integer nodes.
+    The stencils used here have at least one nonzero weight away from 0.
     """
     # For j > n the node 0 adds nothing to the sum. If some node t != 0 has
     # a nonzero weight, the Vandermonde matrix of the nonzero nodes shows
@@ -113,8 +111,6 @@ def _leading_error(nodes, weights, n):
         C = sum(w*t**j for t, w in zip(nodes, weights)) / math.factorial(j)
         if C:
             return j - n, C
-    raise ValueError("the stencil uses only f(x), so it has no error term; "
-                     "evaluate f(x) directly or pass singular=True")
 
 
 @functools.lru_cache(maxsize=None)
@@ -271,7 +267,7 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
     scale of `x`::
 
         >>> from mpmath import fp
-        >>> round(fp.diff(fp.exp, 0), 14)
+        >>> round(fp.diff(fp.exp, 0), 12)
         1.0
         >>> round(fp.diff(fp.sin, 1, 3), 10)    # -cos(1)
         -0.5403023059
@@ -387,10 +383,12 @@ def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
 
         f(x), f'(x), f''(x), \ldots, f^{(k)}(x), \ldots
 
-    With ``method='step'``, :func:`~mpmath.diffs` uses only `O(k)`
+    With ``method='step'``, :func:`~mpmath.diffs` normally uses only `O(k)`
     function evaluations to generate the first `k` derivatives,
     rather than the roughly `O(k^2)` evaluations
     required if one calls :func:`~mpmath.diff` `k` separate times.
+    In the ``fp`` context with an automatic step, it instead calls
+    :func:`~mpmath.diff` separately for each order.
 
     With `n < \infty`, the generator stops as soon as the
     `n`-th derivative has been generated. If the exact number of

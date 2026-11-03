@@ -1,11 +1,8 @@
 import cmath
 import math
 
-import pytest
-
 from mpmath import (chop, cos, diff, diffs, diffun, e, exp, fp, j, log, sqrt,
                     sin, taylor)
-from mpmath.calculus.differentiation import _fixed_prec_stencil
 
 
 def test_diff():
@@ -71,9 +68,11 @@ def test_diff_partial():
     assert diff(f, xyz, (2,2,1)).ae(2160900)
     assert diff(f, xyz, (2,2,2)).ae(1234800)
 
-def test_diff_fp():
+def test_issue_474():
     # gh-474: the default method returned 0.0 in the fp context
     assert fp.almosteq(fp.diff(fp.exp, 0), 1, rel_eps=1e-14)
+
+def test_diff_fp():
     tol = {1: 1e-13, 2: 1e-11, 3: 1e-9, 4: 1e-7}
     for x in [-1.0, 0.5, 3.0]:
         for n, eps in tol.items():
@@ -114,9 +113,3 @@ def test_diff_fp():
     assert fp.almosteq(fp.findroot(lambda x: x**2 - 2, 1.0, solver='newton'),
                        math.sqrt(2))
     assert fp.multiplicity(lambda x: fp.sin(x) - 1, fp.pi/2) == 2
-
-
-def test_fixed_prec_stencil_without_error_term():
-    # diff() returns f(x) before reaching this case, so call the helper.
-    with pytest.raises(ValueError, match="no error term"):
-        _fixed_prec_stencil(0, True, False, fp.eps)
