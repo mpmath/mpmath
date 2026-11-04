@@ -534,6 +534,35 @@ def test_hyper_1f1():
     assert hyp1f1(1, 2, -inf) == 0
     assert hyp1f1(2, 2, -inf) == 0
     assert hyp1f1(1, 5, -inf) == 0
+    # issue 658: the series terms first decay far below the working
+    # precision and then grow again when k passes -b; the sum must not
+    # stop at the intermediate plateau.  The value is very sensitive
+    # to b (at dps 15, the rounding of b alone moves it by ~1e-13
+    # relative), so check at a precision where b is resolved well.
+    with mp.workdps(50):
+        assert ae(hyp1f1(1,fraction(-4731,10),156),
+                  mpf('5.3127028522211665826e+46'), tol=1e-20)
+        assert ae(hyp1f1(1,fraction(-47301,100),156),
+                  mpf('5.7759255926099277430e+47'), tol=1e-20)
+    # issue 658: when |b| >> z the defining series converges
+    # geometrically, so it must be used when the transformed series
+    # needs more cancellation than maxprec allows
+    assert ae(hyp1f1(1,-1000000.5,10000), mpf('0.99009901489952688'))
+    assert ae(hyp1f1(1,-1000000.5,1000,maxprec=100),
+              mpf('0.99900099950099726'))
+    # issue 658: b very close to an integer.  At the default
+    # precision, mpf(-473) + mpf('1e-12') does not have distance
+    # exactly 1e-12 from -473: the distance is 1.02318153949e-12,
+    # and since the value is dominated by a term proportional to
+    # 1/delta, the expected values are the correct ones for the
+    # represented inputs (for an exactly represented distance of
+    # 1e-12 they would be -+5.8394527603628704e+57 instead).  The
+    # unfixed code returns the plateau value 0.752085111689195...
+    # for both.
+    assert ae(hyp1f1(1,mpf(-473)+mpf('1e-12'),156),
+              mpf('-5.7071521865491568e+57'))
+    assert ae(hyp1f1(1,mpf(-473)-mpf('1e-12'),156),
+              mpf('5.7071521865361897e+57'))
 
 def test_hyper_2f1():
     v = 1.0652207633823291032
@@ -652,6 +681,8 @@ def test_hyper_u():
     assert (hyperu((3,2),8,100+201j)*10**4).ae(-0.3797318333856738798 - 2.9974928453561707782j)
     assert (hyperu((5,2),(-1,2),-5000)*10**10).ae(-5.6681877926881664678j)
     assert (hyperu((5,2),(-1,2),-500)*10**7).ae(-1.82526906001593252847j)
+    # issue 658: catastrophic cancellation was returned silently
+    assert hyperu(1,-473.1,156).ae(0.00158642583521112114)
 
 def test_hyper_2f0():
     assert hyper([1,2],[],3) == hyp2f0(1,2,3)
