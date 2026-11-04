@@ -157,6 +157,13 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
     ctx.prec += 10
     m, d = ctx.nint_distance(n)
     if d < -ctx.prec:
+        if ctx._fixed_precision:
+            # The limit below needs a higher working precision, which
+            # a fixed-precision context can't provide (n + eps rounds
+            # back to n), so evaluate it in the mp context instead.
+            with ctx._mp.workprec(ctx.prec):
+                return ctx.convert(ctx._mp.bessely(n, z, derivative,
+                                                   **kwargs))
         h = +ctx.eps
         ctx.prec *= 2
         n += h
