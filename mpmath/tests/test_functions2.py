@@ -20,6 +20,10 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
 from mpmath.libmp import BACKEND, NoConvergence
 
 
+def ae(x, y, tol=1e-12):
+    return abs(x-y) <= abs(y)*tol
+
+
 def test_bessel():
     assert j0(1).ae(0.765197686557966551)
     assert j0(pi).ae(-0.304242177644093864)
@@ -129,10 +133,7 @@ def test_bessel_zeros():
     assert besselyzero(0.5,3).ae(7.8539816339744830962)
     assert besselyzero(2,1,1).ae(5.0025829314460639452)
 
-def test_bessel_fp_integer_order():
-    # See issue #497
-    def ae(x, y, tol=1e-12):
-        return abs(x-y) <= abs(y)*tol
+def test_issue_497():
     assert ae(fp.bessely(0,10), 0.055671167283599391424)
     assert ae(fp.bessely(1,10), 0.24901542420695388392)
     assert ae(fp.bessely(2,3), -0.16040039348492372968)
@@ -441,8 +442,6 @@ def test_trig_integrals():
     assert mp.shi(20-2j).ae(-4.050116856873293554e6-1.20747603112735722103e7j)
     assert mp.shi(20).ae(1.2807826332028294459e7)
     assert mp.shi(2+50j).ae(-0.017515007378437448+1.497884414277228461j)
-    def ae(x,y,tol=1e-12):
-        return abs(x-y) <= abs(y)*tol
     assert fp.ci(fp.inf) == 0
     assert ae(fp.ci(fp.ninf), fp.pi*1j)
     assert ae(fp.si(fp.inf), fp.pi/2)
