@@ -40,6 +40,8 @@ def hsteps(ctx, f, x, n, prec, *, method='step', direction=0, radius=0.25,
     try:
         ctx.prec = workprec
         if h is None:
+            if ctx._fixed_precision:
+                raise ValueError("pass h or use method='fornberg' in fp")
             if relative and x:
                 hextramag = int(ctx.mag(x))
             else:
@@ -259,7 +261,8 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
         absolute value; useful for large or tiny `x` (default = False).
     ``h``
         As an alternative to ``addprec`` and ``relative``, manually
-        select the step size `h`.
+        select the step size `h`. The ``'step'`` method needs an explicit
+        `h` in fp.
     ``singular``
         If True, evaluation exactly at the point `x` is avoided; this is
         useful for differentiating functions with removable singularities.

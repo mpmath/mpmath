@@ -136,6 +136,19 @@ def test_fornberg_dispatch_and_samples():
     assert fp.diff(fp.exp, 0, h=0.125) == fp.diff(fp.exp, 0, h=0.125, method='fornberg')
 
 
+def test_fp_step_requires_h():
+    message = "pass h or use method='fornberg'"
+    with pytest.raises(ValueError, match=message):
+        fp.diff(fp.exp, 1, method='step')
+    with pytest.raises(ValueError, match=message):
+        list(fp.diffs(fp.exp, 1, 1, method='step'))
+    with pytest.raises(ValueError, match=message):
+        fp.diffun(fp.exp, method='step')(1)
+    with pytest.raises(ValueError, match=message):
+        fp.taylor(fp.exp, 1, 1, method='step')
+    assert fp.diff(fp.exp, 1, 0, method='step') == fp.exp(1)
+
+
 def test_fornberg_precision_and_cache():
     ctx = mp.clone()
     for rounding in ('n', 'f'):
