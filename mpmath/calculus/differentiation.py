@@ -111,7 +111,7 @@ def _leading_error(nodes, weights, n):
             return j - n, C
 
 
-@functools.lru_cache(maxsize=None)
+@functools.lru_cache()
 def _fixed_prec_stencil(n, one_sided, singular, eps, order=8):
     """
     Return ``(nodes, weights, h)`` for an order-``order`` finite difference
