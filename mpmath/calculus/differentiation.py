@@ -245,7 +245,6 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
     ``addprec``
         Extra precision for `h` used to account for the function's
         sensitivity to perturbations with ``'step'`` (default = 10).
-        Ignored by ``'fornberg'``.
     ``relative``
         Choose `h` relative to the magnitude of `x`, rather than an
         absolute value; useful for large or tiny `x` (default = False).
@@ -415,7 +414,7 @@ def diffs(ctx, f, x, n=None, *, method=None, direction=0, radius=0.25,
     function evaluations to generate the first `k` derivatives,
     rather than the roughly `O(k^2)` evaluations
     required if one calls :func:`~mpmath.diff` `k` separate times.
-    With ``method='fornberg'``, it calls :func:`~mpmath.diff` separately
+    With ``method='fornberg'`` or ``method='quad'``, it calls :func:`~mpmath.diff` separately
     for each order.
 
     With `n < \infty`, the generator stops as soon as the
@@ -731,7 +730,7 @@ def diffun(ctx, f, n=1, *, method=None, direction=0, radius=0.25,
         >>> sin(1.3), sin2(1.3)
         (0.963558185417193, 0.963558185417193)
 
-    With ``method='step'``, `f` must support arbitrary precision evaluation.
+    With ``method='step'`` or ``method='quad'``, `f` must support arbitrary precision evaluation.
     See :func:`~mpmath.diff` for additional details and supported
     keyword options.
     """
