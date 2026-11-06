@@ -66,7 +66,6 @@ def hsteps(ctx, f, x, n, prec, *, method='step', direction=0, radius=0.25,
     finally:
         ctx.prec = orig
 
-
 def _fornberg_weights(nodes, n):
     r"""
     Return exact weights `w_k` such that `f^{(n)}(0) \approx \sum_k w_k f(t_k)`
@@ -96,7 +95,6 @@ def _fornberg_weights(nodes, n):
         c1 = c2
     return c[n]
 
-
 def _leading_error(nodes, weights, n):
     """
     Return ``(p, C)`` such that the stencil computes
@@ -111,7 +109,6 @@ def _leading_error(nodes, weights, n):
         C = sum(w*t**j for t, w in zip(nodes, weights)) / math.factorial(j)
         if C:
             return j - n, C
-
 
 @functools.lru_cache()
 def _stencil(ctx, prec, rounding, n, one_sided, singular, order=8):
@@ -164,7 +161,6 @@ def _stencil(ctx, prec, rounding, n, one_sided, singular, order=8):
 
     return nodes_tuple, w_tuple, h
 
-
 def _diff_fornberg(ctx, f, x, n, direction, singular, relative, h):
     """
     Evaluate a finite difference at the current precision using
@@ -195,7 +191,6 @@ def _diff_fornberg(ctx, f, x, n, direction, singular, relative, h):
     s = ctx.fdot(terms)
     return s / h**n
 
-
 def _resolve_method(ctx, method):
     """Resolve None to fornberg in fixed-precision contexts (fp),
     and step otherwise.
@@ -205,7 +200,6 @@ def _resolve_method(ctx, method):
     if method is None:
         return 'fornberg' if ctx._fixed_precision else 'step'
     return method
-
 
 @defun
 def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
