@@ -352,6 +352,7 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
         partial = True
     except TypeError:
         pass
+    method = _resolve_method(ctx, method)
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
                'radius': radius, 'relative': relative, 'h': h}
@@ -360,7 +361,6 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
         return _partial_diff(ctx, f, x, orders, options)
     if n == 0 and method != 'quad' and not singular:
         return f(ctx.convert(x))
-    method = _resolve_method(ctx, method)
     if method == 'fornberg':
         return _diff_fornberg(ctx, f, ctx.convert(x), n, direction,
                               singular, relative, h)
@@ -445,10 +445,11 @@ def diffs(ctx, f, x, n=None, *, method=None, direction=0, radius=0.25,
         n = ctx.inf
     else:
         n = int(n)
+    method = _resolve_method(ctx, method)
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
                'radius': radius, 'relative': relative, 'h': h}
-    if _resolve_method(ctx, method) != 'step':
+    if method != 'step':
         k = 0
         while k < n + 1:
             yield ctx.diff(f, x, k, **options)
