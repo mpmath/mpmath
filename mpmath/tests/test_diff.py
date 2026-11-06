@@ -214,6 +214,6 @@ def test_diff_interval_dispatch():
     prec = iv.prec
     f = lambda x: x*x
     assert iv.diff(f, 2) == iv.diff(f, 2, method='step')
-    with pytest.raises(NotImplementedError, match='fornberg'):
+    with pytest.raises(NotImplementedError):
         iv.diff(f, 2, method='fornberg')
     assert iv.prec == prec

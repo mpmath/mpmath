@@ -171,12 +171,8 @@ def _diff_fornberg(ctx, f, x, n, direction, singular, relative, h):
     :func:`_stencil` in any context with ulp and frexp.
     With ``h=None``, use its automatic step, relative scaling if requested,
     and a minimum of four ulps at nonzero x. An explicit h is used as the
-    node spacing without those adjustments. Contexts without ulp or frexp,
-    such as iv, raise NotImplementedError.
+    node spacing without those adjustments.
     """
-    if not hasattr(ctx, 'ulp') or not hasattr(ctx, 'frexp'):
-        raise NotImplementedError(
-            "fornberg differentiation requires scalar ulp and frexp")
     nodes, weights, auto_h = _stencil(
         ctx, ctx.prec, getattr(ctx, 'rounding', None),
         n, bool(direction), singular)
