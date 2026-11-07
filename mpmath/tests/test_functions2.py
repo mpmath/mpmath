@@ -150,6 +150,24 @@ def test_issue_497():
     assert ae(fp.besselyzero(2,1,1), 5.0025829314460639452)
     assert ae(fp.besselyzero(3,2,1), 9.698787984148771075)
 
+def test_bessely_imaginary_argument():
+    # Y_n(iy) has one part of the size of I_n(|y|) and one of the size
+    # of K_n(|y|); the smaller one used to be lost to cancellation.
+    for y in [50, -50]:
+        v = bessely(0, y*j)
+        assert ae(v.real, -2.1709802166062557236e-23)
+        assert ae(v.imag, 2.9325537838493363267e+20 * (1 if y > 0 else -1))
+    v = bessely(1, 50j)
+    assert ae(v.real, -2.9030785901035567968e+20)
+    assert ae(v.imag, 2.1925835755836102847e-23)
+    assert ae(bessely(0, 100j).real, -2.9645016032584161499e-45)
+    assert ae(bessely(0, mpc('1e-30', 50)).real, 2.9030785901033399407e-10)
+    assert ae(bessely(20, 0.01j).imag, 3.9199090161802396341e-65)
+    assert ae(bessely(-3, 0.01j).real, -2.0833463541992187952e-8)
+    assert ae(fp.bessely(0, 50j).real, -2.1709802166062557236e-23)
+    assert ae(fp.bessely(1, -50j).imag, -2.1925835755836102847e-23)
+    assert ae(fp.bessely(20, 0.01j).imag, 3.9199090161802396341e-65)
+
 def test_hankel():
     assert hankel1(0,0.5).ae(0.93846980724081290423-0.44451873350670655715j)
     assert hankel1(1,0.5).ae(0.2422684576748738864-1.4714723926702430692j)
