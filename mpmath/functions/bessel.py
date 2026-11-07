@@ -155,6 +155,17 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
             return ctx.ninf + (n+z)
     orig = ctx.prec
     ctx.prec += 10
+    if not derivative and not ctx.re(z) and not ctx.im(n):
+        # On the imaginary axis Y_n(iy) has one part of the size of I_n(y)
+        # and one of the size of K_n(y), so use (DLMF 10.27.11)
+        # Y_n(iy) = e^((n+1)pi*i/2) I_n(y) - 2/pi e^(-n*pi*i/2) K_n(y),
+        # y > 0, which has no cancellation, and Y_n(-iy) = conj(Y_n(iy)).
+        y = ctx.im(z)
+        a = y if y > 0 else ctx.fneg(y, exact=True)  # abs() would round y
+        c, s = ctx.cospi_sinpi(n/2)    # exact for integer n, unlike expjpi
+        v = ((ctx.j*c - s)*ctx.besseli(n, a, **kwargs) -
+             2/ctx.pi*(c - ctx.j*s)*ctx.besselk(n, a, **kwargs))
+        return v if y > 0 else ctx.conj(v)
     m, d = ctx.nint_distance(n)
     hbits = 0
     if d < -ctx.prec:
@@ -179,8 +190,9 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
                 e = max(e, (ctx.loggamma(v) + ctx.loggamma(v+1) +
                             2*v*ctx.ln(2/r))/ctx.ln2)
             e = int(e)
-            if x:
-                e = min(e, ctx.mag(z) - ctx.mag(x) + 5)
+            # Capped by the distance to the axis, which must be nonzero
+            # here (or the extra bits would grow without bound with |z|).
+            e = min(e, ctx.mag(z) - ctx.mag(x) + 5) if x else 0
             hbits += max(e, 0)
         ctx.prec = 2*hbits
         n += ctx.ldexp(1, -hbits)
@@ -188,6 +200,13 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
         ctx.prec -= d
     orig_n = n - ctx.ldexp(1, -hbits) if hbits else n
     for _ in range(5):
+        # The working precision can be well above the one the hypercomb
+        # defaults were set for, so scale them up (unless given).
+        if maxprec is None:
+            kwargs['maxprec'] = max(kwargs['maxprec'],
+                                    ctx._default_hyper_maxprec(ctx.prec))
+        if asymp_tol is None:
+            kwargs['asymp_tol'] = ctx.eps/4
         cos, sin = ctx.cospi_sinpi(n)
         a = ctx.besselj(n,z,derivative,**kwargs)*cos
         b = ctx.besselj(-n,z,derivative,**kwargs)
