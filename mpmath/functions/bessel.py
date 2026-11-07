@@ -153,9 +153,10 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
             return ctx.inf + (n+z)
         else:
             return ctx.ninf + (n+z)
-    # XXX: use hypercomb
+    orig = ctx.prec
     ctx.prec += 10
     m, d = ctx.nint_distance(n)
+    hbits = 0
     if d < -ctx.prec:
         if ctx._fixed_precision:
             # The limit below needs a higher working precision, which
@@ -164,15 +165,50 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
             with ctx._mp.workprec(ctx.prec):
                 return ctx.convert(ctx._mp.bessely(n, z, derivative,
                                                    **kwargs))
-        h = +ctx.eps
-        ctx.prec *= 2
-        n += h
+        # Evaluate the limit at n + 2**-hbits.  Near the imaginary axis
+        # one part of Y_n is of the size of I_n(|z|) and the other of
+        # K_n(|z|), and the error of the limit, about 2**-hbits times the
+        # larger one, must stay below the smaller one too.
+        hbits = ctx.prec
+        x, y = ctx.re(z), ctx.im(z)
+        if abs(x) < abs(y):
+            r = abs(z)
+            v = abs(ctx.re(n))
+            e = 2.9*r                    # log2(K_n/I_n), large |z|
+            if v:                        # ... and small |z|
+                e = max(e, (ctx.loggamma(v) + ctx.loggamma(v+1) +
+                            2*v*ctx.ln(2/r))/ctx.ln2)
+            e = int(e)
+            if x:
+                e = min(e, ctx.mag(z) - ctx.mag(x) + 5)
+            hbits += max(e, 0)
+        ctx.prec = 2*hbits
+        n += ctx.ldexp(1, -hbits)
     elif d < 0:
         ctx.prec -= d
-    # TODO: avoid cancellation for imaginary arguments
-    cos, sin = ctx.cospi_sinpi(n)
-    return (ctx.besselj(n,z,derivative,**kwargs)*cos - \
-        ctx.besselj(-n,z,derivative,**kwargs))/sin
+    orig_n = n - ctx.ldexp(1, -hbits) if hbits else n
+    for _ in range(5):
+        cos, sin = ctx.cospi_sinpi(n)
+        a = ctx.besselj(n,z,derivative,**kwargs)*cos
+        b = ctx.besselj(-n,z,derivative,**kwargs)
+        u = a - b
+        if not ctx.im(z):
+            break
+        # Off the real axis the real or imaginary part of Y_n can be much
+        # smaller than J_n and J_{-n} (e.g. for imaginary z), and lost to
+        # cancellation.  Check how many bits are left.
+        big = max(ctx.mag(a), ctx.mag(b))
+        loss = max([big - ctx.mag(c) for c in (ctx.re(u), ctx.im(u)) if c]
+                   or [0])
+        if ctx.prec - loss >= (orig - 10 if ctx._fixed_precision
+                               else orig + 5):
+            break
+        if ctx._fixed_precision:
+            with ctx._mp.workprec(orig):
+                return ctx.convert(ctx._mp.bessely(orig_n, z, derivative,
+                                                   **kwargs))
+        ctx.prec = loss + orig + 20
+    return u/sin
 
 @defun_wrapped
 def besselk(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
