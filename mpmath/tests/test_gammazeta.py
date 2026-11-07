@@ -2,12 +2,12 @@ import pytest
 
 from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     bernpoly, beta, binomial, catalan, digamma, e, euler,
-                    eulerpoly, fac, fac2, factorial, fadd, ff, findroot, fp,
-                    fraction, gamma, gammaprod, harmonic, hyperfac, inf, isnan,
-                    j, log, loggamma, mp, mpc, mpf, mpmathify, nan, pi,
-                    polyexp, polylog, primezeta, psi, rf, rgamma, sech,
-                    secondzeta, siegelz, sinc, sqrt, stieltjes, superfac, zeta,
-                    zetazero)
+                    eulerpoly, extraprec, fac, fac2, factorial, fadd, ff,
+                    findroot, fp, fraction, gamma, gammaprod, harmonic,
+                    hyperfac, inf, isnan, j, log, loggamma, mp, mpc, mpf,
+                    mpmathify, nan, pi, polyexp, polylog, primezeta, psi, rf,
+                    rgamma, sech, secondzeta, siegelz, sinc, sqrt, stieltjes,
+                    superfac, zeta, zetazero)
 from mpmath.libmp import from_float, round_up
 from mpmath.libmp.gammazeta import mpf_zeta_int
 
@@ -768,3 +768,10 @@ def test_issue_965_high_cancellation():
         assert mp.almosteq(zeta(x), ref, rel_eps=1e-12, abs_eps=0)
         assert mp.almosteq(altzeta(y), refy_eta, rel_eps=1e-12, abs_eps=0)
         assert mp.almosteq(zeta(y), refy, rel_eps=1e-12, abs_eps=0)
+
+
+def test_issue_551():
+    ref = +extraprec(1000)(zeta)(50+5j).imag
+    assert abs(zeta(50+5j).imag - ref) <= mp.ulp(ref)
+    ref = +extraprec(1000)(altzeta)(50+5j).imag
+    assert abs(altzeta(50+5j).imag - ref) <= mp.ulp(ref)

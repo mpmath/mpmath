@@ -1037,7 +1037,7 @@ def mpc_zeta(s, prec, rnd=round_down, alt=0, force=False):
         return mpf_zeta(re, prec, rnd, alt), fzero
 
     # slow for large s
-    if (not force) and mpf_gt(mpc_abs(s, 10), from_int(prec)):
+    if (not force) and mpf_gt(mpc_abs(s, 10), from_int(prec//2)):
         raise NotImplementedError
 
     wp = prec + 20
