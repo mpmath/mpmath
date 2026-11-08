@@ -34,7 +34,7 @@ def difference(ctx, s, n):
     return d
 
 def hsteps(ctx, f, x, n, prec, *, method='step', direction=0, radius=0.25,
-           singular=False, addprec=10, relative=False, h=None):
+           singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     workprec = (prec+2*addprec) * (n+1)
     orig = ctx.prec
     try:
@@ -162,7 +162,7 @@ def _stencil(ctx, n, one_sided, singular, order=8):
 
     return nodes_tuple, w_tuple, h
 
-def _diff_fornberg(ctx, f, x, n, direction, singular, relative, h):
+def _diff_fornberg(ctx, f, x, n, direction, singular, relative, h, stencil_order):
     """
     Evaluate a finite difference at the current precision using
     :func:`_stencil` in any context with ulp and frexp.
@@ -170,7 +170,7 @@ def _diff_fornberg(ctx, f, x, n, direction, singular, relative, h):
     and a minimum of four ulps at nonzero x. An explicit h is used as the
     node spacing without those adjustments.
     """
-    nodes, weights, auto_h = ctx._stencil(n, bool(direction), singular)
+    nodes, weights, auto_h = ctx._stencil(n, bool(direction), singular, stencil_order)
     if h is None:
         h = auto_h
         ax = abs(x)
@@ -200,9 +200,13 @@ def _resolve_method(ctx, method):
         return 'fornberg' if ctx._fixed_precision else 'step'
     return method
 
+def _validate_stencil_order(method, stencil_order):
+    if stencil_order is not None and method != 'fornberg':
+        raise ValueError("stencil_order requires method='fornberg'")
+
 @defun
 def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
-         singular=False, addprec=10, relative=False, h=None):
+         singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     r"""
     Numerically computes the derivative of `f`, `f'(x)`, or generally for
     an integer `n \ge 0`, the `n`-th derivative `f^{(n)}(x)`.
@@ -237,6 +241,11 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
         a higher-order finite difference, and ``'quad'`` uses quadrature.
         The default, None, selects ``'fornberg'`` in fp and ``'step'``
         otherwise. An explicit method is never replaced.
+    ``stencil_order``
+        Accuracy order for ``method='fornberg'`` (default 8). Higher orders
+        help at high precision; lower orders help near nonsmooth points.
+        Central differences round odd orders up to the next even order;
+        one-sided differences use the specified order.
     ``direction``
         Direction of finite difference: can be -1 for a left
         difference, 0 for a central difference (default), or +1
@@ -270,12 +279,12 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
     derivatives, this method may thus be faster if f is very expensive to
     evaluate at high precision.
 
-    The ``fornberg`` method uses a stencil of order 8 and evaluates at
+    The ``fornberg`` method uses a stencil of order 8 by default and evaluates at
     the current precision. Fixed evaluation precision is its purpose. It
     loses digits, increasingly so for higher derivatives, and simply raising
     precision does not guarantee full accuracy for a fixed-order stencil.
     For full accuracy in mp, use the default ``step`` method instead. The
-    stencil typically uses `n + 7` or `n + 8` evaluations. The step `h`
+    default stencil typically uses `n + 7` or `n + 8` evaluations. The step `h`
     balances the truncation and rounding errors for a function analytic within
     distance 1 of `x`. In fp it is `2^{-7}` for `n = 1`, so a central first
     derivative evaluates `f` within `x \pm 0.032`, and it grows slowly
@@ -351,9 +360,11 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
     except TypeError:
         pass
     method = _resolve_method(ctx, method)
+    _validate_stencil_order(method, stencil_order)
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
-               'radius': radius, 'relative': relative, 'h': h}
+               'radius': radius, 'relative': relative, 'h': h,
+               'stencil_order': stencil_order}
     if partial:
         x = [ctx.convert(_) for _ in x]
         return _partial_diff(ctx, f, x, orders, options)
@@ -361,7 +372,8 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
         return f(ctx.convert(x))
     if method == 'fornberg':
         return _diff_fornberg(ctx, f, ctx.convert(x), n, direction,
-                              singular, relative, h)
+                              singular, relative, h,
+                              8 if stencil_order is None else stencil_order)
     prec = ctx.prec
     try:
         if method == 'step':
@@ -401,7 +413,7 @@ def _partial_diff(ctx, f, xs, orders, options):
 
 @defun
 def diffs(ctx, f, x, n=None, *, method=None, direction=0, radius=0.25,
-          singular=False, addprec=10, relative=False, h=None):
+          singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     r"""
     Returns a generator that yields the sequence of derivatives
 
@@ -444,9 +456,11 @@ def diffs(ctx, f, x, n=None, *, method=None, direction=0, radius=0.25,
     else:
         n = int(n)
     method = _resolve_method(ctx, method)
+    _validate_stencil_order(method, stencil_order)
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
-               'radius': radius, 'relative': relative, 'h': h}
+               'radius': radius, 'relative': relative, 'h': h,
+               'stencil_order': stencil_order}
     if method != 'step':
         k = 0
         while k < n + 1:
@@ -715,7 +729,7 @@ def differint(ctx, f, x, n=1, x0=0):
 
 @defun
 def diffun(ctx, f, n=1, *, method=None, direction=0, radius=0.25,
-           singular=False, addprec=10, relative=False, h=None):
+           singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     r"""
     Given a function `f`, returns a function `g(x)` that evaluates the nth
     derivative `f^{(n)}(x)`::
@@ -735,7 +749,8 @@ def diffun(ctx, f, n=1, *, method=None, direction=0, radius=0.25,
     """
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
-               'radius': radius, 'relative': relative, 'h': h}
+               'radius': radius, 'relative': relative, 'h': h,
+               'stencil_order': stencil_order}
     if n == 0:
         return f
     def g(x):
@@ -744,7 +759,7 @@ def diffun(ctx, f, n=1, *, method=None, direction=0, radius=0.25,
 
 @defun
 def taylor(ctx, f, x, n, *, chop=True, method=None, direction=0, radius=0.25,
-           singular=False, addprec=10, relative=False, h=None):
+           singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     r"""
     Produces a degree-`n` Taylor polynomial around the point `x` of the
     given function `f`. The coefficients are returned as a list.
@@ -772,7 +787,8 @@ def taylor(ctx, f, x, n, *, chop=True, method=None, direction=0, radius=0.25,
     """
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
-               'radius': radius, 'relative': relative, 'h': h}
+               'radius': radius, 'relative': relative, 'h': h,
+               'stencil_order': stencil_order}
     gen = enumerate(ctx.diffs(f, x, n, **options))
     if chop:
         return [ctx.chop(d)/ctx.factorial(i) for i, d in gen]

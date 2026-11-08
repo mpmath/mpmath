@@ -217,3 +217,24 @@ def test_diff_interval_dispatch():
     with pytest.raises(NotImplementedError):
         iv.diff(f, 2, method='fornberg')
     assert iv.prec == prec
+
+
+def test_fornberg_stencil_order():
+    default = fp.diff(fp.exp, 1)
+    low = fp.diff(fp.exp, 1, stencil_order=2)
+    assert abs(default - math.e) < abs(low - math.e)
+    assert fp.almosteq(fp.diff(fp.exp, 1, direction=1, stencil_order=4), math.e,
+                       rel_eps=1e-9)
+    assert list(fp.diffs(fp.exp, 1, 1, stencil_order=2))[1] == low
+    assert fp.taylor(fp.exp, 1, 1, stencil_order=2)[1] == low
+    assert fp.diffun(fp.exp, stencil_order=2)(1) == low
+    assert fp.diff(lambda x, y: fp.exp(x), (1, 2), (1, 0), stencil_order=2) == low
+    with mp.workdps(30):
+        default = mp.diff(mp.exp, 1, method='fornberg')
+        high = mp.diff(mp.exp, 1, method='fornberg', stencil_order=16)
+        assert abs(high - mp.e) < abs(default - mp.e)
+    for method in ('step', 'quad'):
+        with pytest.raises(ValueError, match='stencil_order'):
+            mp.diff(mp.exp, 1, method=method, stencil_order=2)
+        with pytest.raises(ValueError, match='stencil_order'):
+            list(mp.diffs(mp.exp, 1, 0, method=method, stencil_order=2))
