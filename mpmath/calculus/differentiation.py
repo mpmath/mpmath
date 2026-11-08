@@ -1,6 +1,6 @@
-import functools
 import math
 
+from ..functions.functions import ctx_lru_cache, defun as defun_special
 from ..libmp.backend import MPQ
 
 from .calculus import defun
@@ -110,8 +110,9 @@ def _leading_error(nodes, weights, n):
         if C:
             return j - n, C
 
-@functools.lru_cache()
-def _stencil(ctx, prec, rounding, n, one_sided, singular, order=8):
+@defun_special
+@ctx_lru_cache(maxsize=128)
+def _stencil(ctx, n, one_sided, singular, order=8):
     """
     Return ``(nodes, weights, h)`` for an order-``order`` finite difference
     for the n-th derivative, used when the working precision is fixed.
@@ -169,9 +170,7 @@ def _diff_fornberg(ctx, f, x, n, direction, singular, relative, h):
     and a minimum of four ulps at nonzero x. An explicit h is used as the
     node spacing without those adjustments.
     """
-    nodes, weights, auto_h = _stencil(
-        ctx, ctx.prec, getattr(ctx, 'rounding', None),
-        n, bool(direction), singular)
+    nodes, weights, auto_h = ctx._stencil(n, bool(direction), singular)
     if h is None:
         h = auto_h
         ax = abs(x)
