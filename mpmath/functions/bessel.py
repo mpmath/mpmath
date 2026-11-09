@@ -153,7 +153,6 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
             return ctx.inf + (n+z)
         else:
             return ctx.ninf + (n+z)
-    orig = ctx.prec
     ctx.prec += 10
     if not derivative and not ctx.re(z) and not ctx.im(n):
         # On the imaginary axis Y_n(iy) has one part of the size of I_n(y)
@@ -167,7 +166,6 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
              2/ctx.pi*(c - ctx.j*s)*ctx.besselk(n, a, **kwargs))
         return v if y > 0 else ctx.conj(v)
     m, d = ctx.nint_distance(n)
-    hbits = 0
     if d < -ctx.prec:
         if ctx._fixed_precision:
             # The limit below needs a higher working precision, which
@@ -198,36 +196,16 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
         n += ctx.ldexp(1, -hbits)
     elif d < 0:
         ctx.prec -= d
-    orig_n = n - ctx.ldexp(1, -hbits) if hbits else n
-    for _ in range(5):
-        # The working precision can be well above the one the hypercomb
-        # defaults were set for, so scale them up (unless given).
-        if maxprec is None:
-            kwargs['maxprec'] = max(kwargs['maxprec'],
-                                    ctx._default_hyper_maxprec(ctx.prec))
-        if asymp_tol is None:
-            kwargs['asymp_tol'] = ctx.eps/4
-        cos, sin = ctx.cospi_sinpi(n)
-        a = ctx.besselj(n,z,derivative,**kwargs)*cos
-        b = ctx.besselj(-n,z,derivative,**kwargs)
-        u = a - b
-        if not ctx.im(z):
-            break
-        # Off the real axis the real or imaginary part of Y_n can be much
-        # smaller than J_n and J_{-n} (e.g. for imaginary z), and lost to
-        # cancellation.  Check how many bits are left.
-        big = max(ctx.mag(a), ctx.mag(b))
-        loss = max([big - ctx.mag(c) for c in (ctx.re(u), ctx.im(u)) if c]
-                   or [0])
-        if ctx.prec - loss >= (orig - 10 if ctx._fixed_precision
-                               else orig + 5):
-            break
-        if ctx._fixed_precision:
-            with ctx._mp.workprec(orig):
-                return ctx.convert(ctx._mp.bessely(orig_n, z, derivative,
-                                                   **kwargs))
-        ctx.prec = loss + orig + 20
-    return u/sin
+    # The working precision can be well above the one the hypercomb
+    # defaults were set for, so scale them up (unless given).
+    if maxprec is None:
+        kwargs['maxprec'] = max(kwargs['maxprec'],
+                                ctx._default_hyper_maxprec(ctx.prec))
+    if asymp_tol is None:
+        kwargs['asymp_tol'] = ctx.eps/4
+    cos, sin = ctx.cospi_sinpi(n)
+    return (ctx.besselj(n,z,derivative,**kwargs)*cos - \
+        ctx.besselj(-n,z,derivative,**kwargs))/sin
 
 @defun_wrapped
 def besselk(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,

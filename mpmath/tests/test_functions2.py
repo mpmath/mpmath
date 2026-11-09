@@ -164,6 +164,8 @@ def test_bessely_imaginary_argument():
     assert ae(bessely(0, mpc('1e-30', 50)).real, 2.9030785901033399407e-10)
     assert ae(bessely(20, 0.01j).imag, 3.9199090161802396341e-65)
     assert ae(bessely(-3, 0.01j).real, -2.0833463541992187952e-8)
+    assert ae(bessely(20, mpc('1e-40', '0.01')).imag,
+              -8.1203386829725471222e+25)
     assert ae(fp.bessely(0, 50j).real, -2.1709802166062557236e-23)
     assert ae(fp.bessely(1, -50j).imag, -2.1925835755836102847e-23)
     assert ae(fp.bessely(20, 0.01j).imag, 3.9199090161802396341e-65)
