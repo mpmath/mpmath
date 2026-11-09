@@ -534,6 +534,8 @@ def test_hyper_1f1():
     assert hyp1f1(1, 2, -inf) == 0
     assert hyp1f1(2, 2, -inf) == 0
     assert hyp1f1(1, 5, -inf) == 0
+
+def test_issue_658():
     # issue 658: the series terms first decay far below the working
     # precision and then grow again when k passes -b; the sum must not
     # stop at the intermediate plateau.  The value is very sensitive
@@ -563,6 +565,7 @@ def test_hyper_1f1():
               mpf('-5.7071521865491568e+57'))
     assert ae(hyp1f1(1,mpf(-473)-mpf('1e-12'),156),
               mpf('5.7071521865361897e+57'))
+    assert hyperu(1,-473.1,156).ae(0.00158642583521112114)  # issue 658
 
 def test_hyper_2f1():
     v = 1.0652207633823291032
@@ -681,8 +684,6 @@ def test_hyper_u():
     assert (hyperu((3,2),8,100+201j)*10**4).ae(-0.3797318333856738798 - 2.9974928453561707782j)
     assert (hyperu((5,2),(-1,2),-5000)*10**10).ae(-5.6681877926881664678j)
     assert (hyperu((5,2),(-1,2),-500)*10**7).ae(-1.82526906001593252847j)
-    # issue 658: catastrophic cancellation was returned silently
-    assert hyperu(1,-473.1,156).ae(0.00158642583521112114)
 
 def test_hyper_2f0():
     assert hyper([1,2],[],3) == hyp2f0(1,2,3)

@@ -420,8 +420,7 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
         # decay below the working precision and then grow again once
         # k passes -b, where (b)_k changes sign; hypsum can then stop
         # at the intermediate plateau and return a completely wrong
-        # value (issue #658).  Use the Kummer transformation
-        # M(a, b, z) = exp(z) * M(b-a, b, -z) instead: the terms of
+        # value (issue 658). Use the Kummer transformation instead: the terms of
         # the transformed series have a single hump, and any
         # cancellation in it is detected (and compensated for) by
         # hypsum in the usual way.  If the transformed series cannot
