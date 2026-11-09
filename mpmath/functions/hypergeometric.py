@@ -427,13 +427,16 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
         # reach the requested precision either (when |b| >> z it
         # needs about z*log10(e) digits of cancellation, while the
         # defining series converges geometrically), fall back to the
-        # defining series below.
+        # defining series below -- but only in that geometric regime:
+        # nearer the plateau regime the defining series is itself
+        # unsafe, so propagate the NoConvergence instead.
         ba, batype = ctx._convert_param(b-a)
         try:
             return ctx.exp(z) * ctx.hypsum(1, 1, (batype, btype),
                                            [ba, b], -z, **kwargs)
         except ctx.NoConvergence:
-            pass
+            if 5*z > -b:
+                raise
     v = ctx.hypsum(1, 1, (atype, btype), [a, b], z, **kwargs)
     return v
 

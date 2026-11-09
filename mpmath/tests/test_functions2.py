@@ -552,6 +552,13 @@ def test_issue_658():
     assert ae(hyp1f1(1,-1000000.5,10000), mpf('0.99009901489952688'))
     assert ae(hyp1f1(1,-1000000.5,1000,maxprec=100),
               mpf('0.99900099950099726'))
+    # issue 658: outside the geometric regime the defining series is
+    # not a safe fallback either -- if the transformed series cannot
+    # reach the requested precision, NoConvergence must propagate
+    # instead of silently returning the plateau value (the unfixed
+    # fallback returned 0.7521244884735925... here)
+    pytest.raises(NoConvergence,
+                  lambda: hyp1f1(1,-473.1,156,maxprec=100))
     # issue 658: b very close to an integer.  At the default
     # precision, mpf(-473) + mpf('1e-12') does not have distance
     # exactly 1e-12 from -473: the distance is 1.02318153949e-12,
