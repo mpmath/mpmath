@@ -536,7 +536,7 @@ def test_hyper_1f1():
     assert hyp1f1(1, 5, -inf) == 0
 
 def test_issue_658():
-    # issue 658: the series terms first decay far below the working
+    # the series terms first decay far below the working
     # precision and then grow again when k passes -b; the sum must not
     # stop at the intermediate plateau.  The value is very sensitive
     # to b (at dps 15, the rounding of b alone moves it by ~1e-13
@@ -546,20 +546,20 @@ def test_issue_658():
                   mpf('5.3127028522211665826e+46'), tol=1e-20)
         assert ae(hyp1f1(1,fraction(-47301,100),156),
                   mpf('5.7759255926099277430e+47'), tol=1e-20)
-    # issue 658: when |b| >> z the defining series converges
+    # when |b| >> z the defining series converges
     # geometrically, so it must be used when the transformed series
     # needs more cancellation than maxprec allows
     assert ae(hyp1f1(1,-1000000.5,10000), mpf('0.99009901489952688'))
     assert ae(hyp1f1(1,-1000000.5,1000,maxprec=100),
               mpf('0.99900099950099726'))
-    # issue 658: outside the geometric regime the defining series is
+    # outside the geometric regime the defining series is
     # not a safe fallback either -- if the transformed series cannot
     # reach the requested precision, NoConvergence must propagate
     # instead of silently returning the plateau value (the unfixed
     # fallback returned 0.7521244884735925... here)
     pytest.raises(NoConvergence,
                   lambda: hyp1f1(1,-473.1,156,maxprec=100))
-    # issue 658: b very close to an integer.  At the default
+    # b very close to an integer.  At the default
     # precision, mpf(-473) + mpf('1e-12') does not have distance
     # exactly 1e-12 from -473: the distance is 1.02318153949e-12,
     # and since the value is dominated by a term proportional to
@@ -572,7 +572,7 @@ def test_issue_658():
               mpf('-5.7071521865491568e+57'))
     assert ae(hyp1f1(1,mpf(-473)-mpf('1e-12'),156),
               mpf('5.7071521865361897e+57'))
-    assert hyperu(1,-473.1,156).ae(0.00158642583521112114)  # issue 658
+    assert hyperu(1,-473.1,156).ae(0.00158642583521112114)
 
 def test_hyper_2f1():
     v = 1.0652207633823291032
