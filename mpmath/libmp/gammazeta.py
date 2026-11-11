@@ -708,6 +708,12 @@ def mpc_psi0(z, prec, rnd=round_down):
     # Fall back to the real case
     if im == fzero:
         return (mpf_psi0(re, prec, rnd), fzero)
+    # Non-finite parts: the loops below would never end (or to_int() would
+    # fail).  Away from the negative real axis psi(z) ~ log(z).
+    if re in (finf, fninf, fnan) or im in (finf, fninf, fnan):
+        if fnan in (re, im) or (re == fninf and im not in (finf, fninf)):
+            return (fnan, fnan)
+        return mpc_ln(z, prec, rnd)
     wp = prec + 20
     sign, man, exp, bc = re
     # Reflection formula
