@@ -1142,7 +1142,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
             ctx.prec = (ctx.prec+10) * 4
         else:
             ctx.prec += 30
-        while 1:
+        while True:
             if index >= maxterms:
                 break
 

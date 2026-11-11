@@ -373,7 +373,7 @@ def mpf_erfc(x, prec, rnd=round_down):
     term_prev = 0
     t = (2 * to_fixed(x, wp) ** 2) >> wp
     k = 1
-    while 1:
+    while True:
         term = ((term * (2*k - 1)) << wp) // t
         if k > 4 and term > term_prev or not term:
             break
@@ -1024,7 +1024,7 @@ def mpc_agm(a, b, prec, rnd=round_down):
         return fzero, fzero
     wp = prec+20
     eps = mpf_shift(fone, -wp+10)
-    while 1:
+    while True:
         a1 = mpc_shift(mpc_add(a, b, wp), -1)
         b1 = mpc_sqrt(mpc_mul(a, b, wp), wp)
         a, b = a1, b1

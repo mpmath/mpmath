@@ -281,7 +281,7 @@ class StandardBaseContext(Context,
         result = []
         i = 0
         t = a
-        while 1:
+        while True:
             t = a + dt*i
             i += 1
             if op(t, b):
@@ -358,7 +358,7 @@ class StandardBaseContext(Context,
         prec = ctx.prec
         try:
             extraprec = 10
-            while 1:
+            while True:
                 ctx.prec = prec + extraprec + 5
                 max_mag = ctx.ninf
                 sum_mag = ctx.zero
@@ -387,7 +387,7 @@ class StandardBaseContext(Context,
         prec = ctx.prec
         try:
             extraprec = 10
-            while 1:
+            while True:
                 ctx.prec = prec + extraprec + 5
                 max_mag = ctx.ninf
                 one = ctx.one

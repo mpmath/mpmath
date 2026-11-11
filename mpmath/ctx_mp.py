@@ -518,7 +518,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
                 except catch:
                     v1 = ctx.nan
                 prec2 = prec + 20
-                while 1:
+                while True:
                     ctx.prec = prec2
                     try:
                         v2 = f(*args, **kwargs)
@@ -719,7 +719,7 @@ maxterms, or set zeroprec."""
                     magnitude_check[n] = d
                 extraprec = max(extraprec, d - prec + 60)
             max_total_jump += abs(d)
-        while 1:
+        while True:
             if extraprec > maxprec:
                 raise ctx.NoConvergence(ctx._hypsum_msg % (prec, prec+extraprec))
             wp = prec + extraprec

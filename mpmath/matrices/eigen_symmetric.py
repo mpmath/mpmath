@@ -410,9 +410,9 @@ def tridiag_eigen(ctx, d, e, z = False):
 
     for l in range(n):
         j = 0
-        while 1:
+        while True:
             m = l
-            while 1:
+            while True:
                 # look for a small subdiagonal element
                 if m + 1 == n:
                     break
@@ -1052,7 +1052,7 @@ def svd_r_raw(ctx, A, V = False, calc_u = False):
         #   loop over singular values, and over allowed itations
 
         its = 0
-        while 1:
+        while True:
             its += 1
             flag = True
 
@@ -1378,7 +1378,7 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
         #   loop over singular values, and over allowed itations
 
         its = 0
-        while 1:
+        while True:
             its += 1
             flag = True
 

@@ -108,7 +108,7 @@ def qp(ctx, a, q=None, n=None, *, maxterms=None):
             k = 1
             x1 = q
             x2 = q**2
-            while 1:
+            while True:
                 yield (-1)**k * x1
                 yield (-1)**k * x2
                 x1 *= q**(3*k+1)
@@ -121,7 +121,7 @@ def qp(ctx, a, q=None, n=None, *, maxterms=None):
     def factors():
         k = 0
         r = ctx.one
-        while 1:
+        while True:
             yield 1 - a*r
             r *= q
             k += 1
@@ -267,7 +267,7 @@ def qhyper(ctx, a_s, b_s, q, z, *, maxterms=None):
         qk = 1
         k = 0
         x = 1
-        while 1:
+        while True:
             for a in a_s:
                 p = 1 - a*qk
                 t *= p

@@ -726,7 +726,7 @@ def RF_calc(ctx, x, y, z, r):
     Q = ctx.root(3*r, -6) * max(abs(A0-x),abs(A0-y),abs(A0-z))
     g = ctx.mpf(0.25)
     pow4 = ctx.one
-    while 1:
+    while True:
         xs = ctx.sqrt(xm)
         ys = ctx.sqrt(ym)
         zs = ctx.sqrt(zm)
@@ -774,7 +774,7 @@ def RC_calc(ctx, x, y, r, pv=True):
     else:
         sx = ctx.sqrt(x)
         sy = ctx.sqrt(y)
-        v = ctx.acos(sx/sy)/(ctx.sqrt((1-x/y))*sy)
+        v = ctx.acos(sx/sy)/(ctx.sqrt(1-x/y)*sy)
     ctx.prec -= extraprec
     return v
 
@@ -843,7 +843,7 @@ def RJ_calc(ctx, x, y, z, p, r, integration):
     g = ctx.mpf(0.25)
     pow4 = ctx.one
     S = 0
-    while 1:
+    while True:
         sx = ctx.sqrt(xm)
         sy = ctx.sqrt(ym)
         sz = ctx.sqrt(zm)

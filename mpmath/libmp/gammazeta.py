@@ -98,7 +98,7 @@ def khinchin_fixed(prec):
     pi = mpf_pi(wp)
     pipow = twopi2 = mpf_shift(mpf_mul(pi, pi, wp), 2)
     n = 1
-    while 1:
+    while True:
         zeta2n = mpf_abs(mpf_bernoulli(2*n, wp))
         zeta2n = mpf_mul(zeta2n, pipow, wp)
         zeta2n = mpf_div(zeta2n, fac, wp)
@@ -180,7 +180,7 @@ def glaisher_fixed(prec):
     j = 3
     fac = from_int(2)
     k = 1
-    while 1:
+    while True:
         # D(2*k-1) * B(2*k) / fac(2*k) [D(n) = nth derivative]
         D = ((a << wp) + b*logN) // pN
         D = from_man_exp(D, -wp)
@@ -262,7 +262,7 @@ def euler_fixed(prec):
     A = U = -p*ln2_fixed(prec)
     B = V = MPZ_ONE << prec
     k = 1
-    while 1:
+    while True:
         B = B*n**2//k**2
         A = (A*n**2//k + B)//k
         U += A
@@ -282,7 +282,7 @@ def mertens_fixed(prec):
     wp = prec + 20
     m = 2
     s = mpf_euler(wp)
-    while 1:
+    while True:
         t = mpf_zeta_int(m, wp)
         if t == fone:
             break
@@ -302,7 +302,7 @@ def twinprime_fixed(prec):
     primes = [from_rational(1,p,wp) for p in [2,3,5,7]]
     ppowers = [mpf_mul(p,p,wp) for p in primes]
     n = 2
-    while 1:
+    while True:
         a = mpf_zeta_int(n, wp)
         for i in range(4):
             a = mpf_mul(a, mpf_sub(fone, ppowers[i]), wp)
@@ -685,7 +685,7 @@ def mpf_psi0(x, prec, rnd=round_down):
     t = one
     prev = 0
     k = 1
-    while 1:
+    while True:
         t = (t*x2) >> wp
         bsign, bman, bexp, bbc = mpf_bernoulli(2*k, wp)
         offset = (bexp + 2*wp)
@@ -739,7 +739,7 @@ def mpc_psi0(z, prec, rnd=round_down):
     szprev = fzero
     k = 1
     eps = mpf_shift(fone, -wp+2)
-    while 1:
+    while True:
         t = mpc_mul(t, z2, wp)
         bern = mpf_bernoulli(2*k, wp)
         term = mpc_mpf_div(bern, mpc_mul_int(t, 2*k, wp), wp)
@@ -804,7 +804,7 @@ def mpc_psi(m, z, prec, rnd=round_down):
     magn = mpc_abs(s, 10)
     magn = magn[2]+magn[3]
     eps = mpf_shift(fone, magn-wp+2)
-    while 1:
+    while True:
         zm = mpc_mul(zm, z2, wp)
         bern = mpf_bernoulli(2*k, wp)
         scal = mpf_mul_int(bern, a, wp)
@@ -1211,7 +1211,7 @@ def zetasum_sieved(critical_line, sre, sim, a, n, wp):
         if p in basic_powers:
             m = mult[k]
             tre, tim = basic_powers[p][m-1]
-            while 1:
+            while True:
                 k //= p**m
                 if k == 1:
                     break
@@ -1384,7 +1384,7 @@ def zeta_array(N, prec):
     # pi*k*exp(2*pi*k)/(exp(2*pi*k)-1)**2
     exps3 = []
     k = 1
-    while 1:
+    while True:
         tp = wp - 9*k
         if tp < 1:
             break
@@ -1584,7 +1584,7 @@ def real_stirling_series(x, prec):
     usize = u.bit_length()
     tsize = t.bit_length()
     texp = 0
-    while 1:
+    while True:
         p, q, pb, qb = stirling_coefficient(k)
         term_mag = tsize + pb + texp
         shift = -texp
@@ -1650,7 +1650,7 @@ def complex_stirling_series(x, y, prec):
     usize = (max(abs(ure), abs(uim))).bit_length()
     tsize = (max(abs(tre), abs(tim))).bit_length()
     texp = 0
-    while 1:
+    while True:
         p, q, pb, qb = stirling_coefficient(k)
         term_mag = tsize + pb + texp
         shift = -texp

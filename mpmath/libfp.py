@@ -386,7 +386,7 @@ def ei_asymp(z, _e1=False):
 def ei_taylor(z, _e1=False):
     s = t = z
     k = 2
-    while 1:
+    while True:
         t = t*z/k
         term = t/k
         if abs(term) < 1e-17:

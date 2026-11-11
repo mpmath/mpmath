@@ -414,7 +414,7 @@ def hessenberg_qr(ctx, A, Q):
 
     its = totalits = 0
 
-    while 1:
+    while True:
         # kressner p.32 algo 3
         # the active submatrix is A[n0:n1,n0:n1]
 

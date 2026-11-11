@@ -534,7 +534,7 @@ class MPIntervalContext(StandardBaseContext):
         #tol = ctx.eps
         s = t = ctx.one
         k = 0
-        while 1:
+        while True:
             for i in num: t *= (coeffs[i]+k)
             for i in den: t /= (coeffs[i]+k)
             k += 1; t /= k; t *= z; s += t

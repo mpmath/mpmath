@@ -11,7 +11,7 @@ def test_levin_0():
     with mp.extraprec(2 * mp.prec):
         L = mp.levin(method = "levin", variant = "u")
         S, s, n = [], 0, 1
-        while 1:
+        while True:
             s += mp.one / (n * n)
             n += 1
             S.append(s)
@@ -32,7 +32,7 @@ def test_levin_1():
     with mp.extraprec(2 * mp.prec):
         L = mp.levin(method = "levin", variant = "v")
         A, n = [], 1
-        while 1:
+        while True:
             s = mp.mpf(n) ** (2 + 3j)
             n += 1
             A.append(s)
@@ -55,7 +55,7 @@ def test_levin_2():
     with mp.extraprec(2 * mp.prec):
         L = mp.levin(method = "sidi", variant = "t")
         n = 0
-        while 1:
+        while True:
             s = (-1)**n * mp.fac(n) * z ** (-n)
             v, e = L.step(s)
             n += 1
@@ -78,7 +78,7 @@ def test_levin_3():
     with mp.extraprec(7*mp.prec):  # we need copious amount of precision to sum this highly divergent series
         L = mp.levin(method = "levin", variant = "t")
         n, s = 0, 0
-        while 1:
+        while True:
             s += (-z)**n * mp.fac(4 * n) / (mp.fac(n) * mp.fac(2 * n) * (4 ** n))
             n += 1
             v, e = L.step_psum(s)
@@ -119,7 +119,7 @@ def test_cohen_alt_0():
     mp.dps = 17
     AC = mp.cohen_alt()
     S, s, n = [], 0, 1
-    while 1:
+    while True:
         s += -((-1) ** n) * mp.one / (n * n)
         n += 1
         S.append(s)
@@ -136,7 +136,7 @@ def test_cohen_alt_1():
     A = []
     AC = mp.cohen_alt()
     n = 1
-    while 1:
+    while True:
         A.append( mp.loggamma(1 + mp.one / (2 * n - 1)))
         A.append(-mp.loggamma(1 + mp.one / (2 * n)))
         n += 1

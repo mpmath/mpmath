@@ -430,7 +430,7 @@ class GaussLegendre(QuadratureRule):
             # Asymptotic formula for the roots
             r = ctx.mpf(math.cos(math.pi*(j-0.25)/(n+0.5)))
             # Newton iteration
-            while 1:
+            while True:
                 t1, t2 = 1, 0
                 # Evaluates the Legendre polynomial using its defining
                 # recurrence relation

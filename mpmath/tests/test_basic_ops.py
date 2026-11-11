@@ -518,8 +518,8 @@ def test_isnan_etc():
     assert fp.isnormal(complex('inf+1j')) is False
     assert isint(3) is True
     assert isint(0) is True
-    assert isint(int(3)) is True
-    assert isint(int(0)) is True
+    assert isint(3) is True
+    assert isint(0) is True
     assert isint(mpf(3)) is True
     assert isint(mpf(0)) is True
     assert isint(mpf(-3)) is True
