@@ -250,11 +250,11 @@ class StandardBaseContext(Context,
 
         """
         if not len(args) <= 3:
-            raise TypeError('arange expected at most 3 arguments, got %i'
-                            % len(args))
+            raise TypeError('arange expected at most 3 arguments, got '
+                            f'{len(args)}')
         if not len(args) >= 1:
-            raise TypeError('arange expected at least 1 argument, got %i'
-                            % len(args))
+            raise TypeError('arange expected at least 1 argument, got '
+                            f'{len(args)}')
         # set default
         a = 0
         dt = 1
@@ -320,8 +320,8 @@ class StandardBaseContext(Context,
             b = args[0].b
             n = int(args[1])
         else:
-            raise TypeError('linspace expected 2 or 3 arguments, got %i' \
-                            % len(args))
+            raise TypeError('linspace expected 2 or 3 arguments, got '
+                            f'{len(args)}')
         if n < 1:
             raise ValueError('n must be greater than 0')
         if endpoint:
@@ -460,7 +460,7 @@ class StandardBaseContext(Context,
         def f_maxcalls_wrapped(*args, **kwargs):
             counter[0] += 1
             if counter[0] > N:
-                raise ctx.NoConvergence("maxcalls: function evaluated %i times" % N)
+                raise ctx.NoConvergence(f"maxcalls: function evaluated {N} times")
             return f(*args, **kwargs)
         return f_maxcalls_wrapped
 

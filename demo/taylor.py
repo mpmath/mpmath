@@ -20,7 +20,7 @@ def taylor(x, n):
     for k in range(2, n+1):
         t = (t * x) / k
         s += t
-        print("adding x^%i / %i! ~= %s" % (k, k, t.mid))
+        print(f"adding x^{k} / {k}! ~= {t.mid}")
         print(s, "\n")
     print("-"*75)
     return s

@@ -57,7 +57,7 @@ def calculateit(base, n, tofile):
     if tofile:
         out_ = sys.stdout
         sys.stdout = tofile
-    print("%i base-%i digits of pi:\n" % (n, base))
+    print(f"{n} base-{base} digits of pi:\n")
     print(intpart, ".\n")
 
     display_fraction(d, skip, colwidth=10, columns=5)

@@ -158,7 +158,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
     prec += extra
 
     if verbose:
-        print("PSLQ using prec %i and tol %s" % (prec, ctx.nstr(tol)))
+        print(f"PSLQ using prec {prec} and tol {ctx.nstr(tol)}")
 
     tol = ctx.to_fixed(tol, prec)
     assert tol
@@ -291,8 +291,8 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
                 range(1,n+1)]
                 if max(abs(v) for v in vec) < maxcoeff:
                     if verbose:
-                        print("FOUND relation at iter %i/%i, error: %s" % \
-                            (REP, maxsteps, ctx.nstr(err / ctx.mpf(2)**prec, 1)))
+                        print(f"FOUND relation at iter {REP:d}/{maxsteps:d}, "
+                              f"error: {ctx.nstr(err / ctx.mpf(2)**prec, 1)}")
                     return vec
             best_err = min(err, best_err)
         # Calculate a lower bound for the norm. We could do this
@@ -305,12 +305,13 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
         else:
             norm = ctx.inf
         if verbose:
-            print("%i/%i:  Error: %8s   Norm: %s" % \
-                (REP, maxsteps, ctx.nstr(best_err / ctx.mpf(2)**prec, 1), norm))
+            print(f"{REP}/{maxsteps}:  Error: "
+                  f"{ctx.nstr(best_err / ctx.mpf(2)**prec, 1):8}   "
+                  f"Norm: {norm}")
         if norm >= maxcoeff:
             break
     if verbose:
-        print("CANCELLING after step %i/%i." % (REP, maxsteps))
+        print(f"CANCELLING after step {REP}/{maxsteps}.")
         print(f"Could not find an integer relation. Norm bound: {norm}")
     return None
 

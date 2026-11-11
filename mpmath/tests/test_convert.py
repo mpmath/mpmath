@@ -20,7 +20,7 @@ def test_basic_string():
     assert mpf('30') == mpf('30.0') == mpf('00030.') == mpf(30.0)
     for i in range(10):
         for j in range(10):
-            assert mpf('%ie%i' % (i,j)) == i * 10**j
+            assert mpf(f'{i}e{j}') == i * 10**j
     assert str(mpf('25000.0')) == '25000.0'
     assert str(mpf('2500.0')) == '2500.0'
     assert str(mpf('250.0')) == '250.0'

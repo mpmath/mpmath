@@ -481,7 +481,7 @@ def hessenberg_qr(ctx, A, Q):
             qr_step(ctx, n0, n1, A, Q, shift)
 
             if its > maxits:
-                raise RuntimeError("qr: failed to converge after %d steps" % its)
+                raise RuntimeError(f"qr: failed to converge after {its} steps")
 
 
 @defun

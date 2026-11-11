@@ -444,7 +444,7 @@ class GaussLegendre(QuadratureRule):
             x = r
             w = 2/((1-r**2)*t4**2)
             if verbose  and j % 30 == 15:
-                print("Computing nodes (%i of %i)" % (j, upto))
+                print(f"Computing nodes ({j} of {upto})")
             nodes.append((x, w))
             nodes.append((-x, w))
         ctx.prec = orig

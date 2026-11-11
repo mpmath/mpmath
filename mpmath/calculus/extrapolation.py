@@ -1153,7 +1153,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                 pass
             if verbose:
                 print("-"*70)
-                print("Adding terms #%i-#%i" % (index, index+step))
+                print(f"Adding terms #{index}-#{index+step}")
             update(partial, range(index, index+step))
             index += step
 

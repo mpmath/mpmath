@@ -139,8 +139,8 @@ def hypercomb(ctx, function, params=[], discard_known_zeros=True,
                 w_s, c_s, alpha_s, beta_s, a_s, b_s, z = term_data
                 if verbose:
                     print()
-                    print("  Evaluating term %i/%i : %iF%i" % \
-                        (term_index+1, len(terms), len(a_s), len(b_s)))
+                    print(f"  Evaluating term {term_index+1}/{len(terms)} : "
+                          f"{len(a_s)}F{len(b_s)}")
                     print("    powers", ctx.nstr(w_s), ctx.nstr(c_s))
                     print("    gamma", ctx.nstr(alpha_s), ctx.nstr(beta_s))
                     print("    hyper", ctx.nstr(a_s), ctx.nstr(b_s))

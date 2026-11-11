@@ -533,9 +533,8 @@ class MPContext(BaseMPContext, StandardBaseContext):
                         print(f"autoprec: target={prec}, prec={prec2}, accuracy={-err}")
                     v1 = v2
                     if prec2 >= maxprec2:
-                        raise ctx.NoConvergence(\
-                        "autoprec: prec increased to %i without convergence"\
-                        % prec2)
+                        raise ctx.NoConvergence("autoprec: prec increased "
+                                                f"to {prec2} without convergence")
                     prec2 += int(prec2*2)
                     prec2 = min(prec2, maxprec2)
             finally:

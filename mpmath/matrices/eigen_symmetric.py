@@ -423,7 +423,8 @@ def tridiag_eigen(ctx, d, e, z = False):
                 break
 
             if j >= iterlim:
-                raise RuntimeError("tridiag_eigen: no convergence to an eigenvalue after %d iterations" % iterlim)
+                raise RuntimeError("tridiag_eigen: no convergence to an "
+                                   f"eigenvalue after {iterlim} iterations")
 
             j += 1
 
@@ -1099,7 +1100,8 @@ def svd_r_raw(ctx, A, V = False, calc_u = False):
                 break
 
             if its >= maxits:
-                raise RuntimeError("svd: no convergence to an eigenvalue after %d iterations" % its)
+                raise RuntimeError("svd: no convergence to an eigenvalue "
+                                   f"after {its} iterations")
 
             x = S[l]         # shift from bottom 2 by 2 minor
             nm = k-1
@@ -1425,7 +1427,8 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
                 break
 
             if its >= maxits:
-                raise RuntimeError("svd: no convergence to an eigenvalue after %d iterations" % its)
+                raise RuntimeError("svd: no convergence to an eigenvalue "
+                                   f"after {its} iterations")
 
             x = S[l]         # shift from bottom 2 by 2 minor
             nm = k-1
