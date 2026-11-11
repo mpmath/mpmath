@@ -353,7 +353,7 @@ def _getm(method):
             else:
                 return 0.5
     else:
-        raise ValueError("method '%s' not recognized" % method)
+        raise ValueError(f"method '{method}' not recognized")
     return getm
 
 class Illinois:
@@ -399,7 +399,7 @@ class Illinois:
         self.method = kwargs.get('method', 'illinois')
         self.getm = _getm(self.method)
         if self.verbose:
-            print('using %s method' % self.method)
+            print(f'using {self.method} method')
 
     def __iter__(self):
         method = self.method
@@ -1202,9 +1202,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True,
             xl = x
         if verify and norm(f(*xl))**2 > tol: # TODO: better condition?
             raise ValueError('Could not find root within given tolerance. '
-                             '(%s > %s)\n'
-                             'Try another starting point or tweak arguments.'
-                             % (norm(f(*xl))**2, tol))
+                             f'({norm(f(*xl))**2} > {tol})\n'
+                             'Try another starting point or tweak arguments.')
         return x
     finally:
         ctx.prec = prec

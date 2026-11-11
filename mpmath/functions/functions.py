@@ -573,7 +573,7 @@ def lambertw(ctx, z, k=0):
             else:
                 w = wn
         if i == 100:
-            ctx.warn("Lambert W iteration failed to converge for z = %s" % z)
+            ctx.warn(f"Lambert W iteration failed to converge for z = {z}")
     ctx.prec = prec
     return +w
 

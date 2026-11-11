@@ -222,8 +222,8 @@ class QuadratureRule:
             for degree in range(1, max_degree+1):
                 nodes = self.get_nodes(a, b, degree, prec, verbose)
                 if verbose:
-                    print("Integrating from %s to %s (degree %s of %s)" % \
-                        (ctx.nstr(a), ctx.nstr(b), degree, max_degree))
+                    print(f"Integrating from {ctx.nstr(a)} to {ctx.nstr(b)} "
+                          f"(degree {degree} of {max_degree})")
                 result = self.sum_next(f, nodes, degree, prec, results, verbose)
                 results.append(result)
                 if degree > 1:
@@ -728,7 +728,7 @@ class QuadratureMethods:
             elif rule == 'gauss-legendre':
                 rule = ctx._gauss_legendre
             else:
-                raise ValueError("unknown quadrature rule: %s" % rule)
+                raise ValueError(f"unknown quadrature rule: {rule}")
         else:
             rule = rule(ctx)
         dim = len(points)

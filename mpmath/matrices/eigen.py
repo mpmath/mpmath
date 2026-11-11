@@ -829,7 +829,7 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
         elif f == "abs":
             f = abs
         else:
-            raise RuntimeError("unknown function %s" % f)
+            raise RuntimeError(f"unknown function {f}")
 
     n = len(E)
 

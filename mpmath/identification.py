@@ -311,7 +311,7 @@ def pslq(ctx, x, tol=None, maxcoeff=1000, maxsteps=100, verbose=False):
             break
     if verbose:
         print("CANCELLING after step %i/%i." % (REP, maxsteps))
-        print("Could not find an integer relation. Norm bound: %s" % norm)
+        print(f"Could not find an integer relation. Norm bound: {norm}")
     return None
 
 def findpoly(ctx, x, n=1, asc=True, *,
@@ -461,9 +461,9 @@ def pslqstring(r, constants):
                 cs = '*' + cs
             if isinstance(z, int_types):
                 if z > 0: term = str(z) + cs
-                else:     term = ("(%s)" % z) + cs
+                else:     term = (f"({z})") + cs
             else:
-                term = ("(%s/%s)" % z) + cs
+                term = f"({z[0]}/{z[1]})" + cs
             s.append(term)
     s = ' + '.join(s)
     if '+' in s or '*' in s:
@@ -482,16 +482,16 @@ def prodstring(r, constants):
             cs = constants[i][1]
             if isinstance(z, int_types):
                 if abs(z) == 1: t = cs
-                else:           t = '%s**%s' % (cs, abs(z))
+                else:           t = f'{cs}**{abs(z)}'
                 ([num,den][z<0]).append(t)
             else:
-                t = '%s**(%s/%s)' % (cs, abs(z[0]), z[1])
+                t = f'{cs}**({abs(z[0])}/{z[1]})'
                 ([num,den][z[0]<0]).append(t)
     num = '*'.join(num)
     den = '*'.join(den)
-    if num and den: return "(%s)/(%s)" % (num, den)
+    if num and den: return f"({num})/({den})"
     if num: return num
-    if den: return "1/(%s)" % den
+    if den: return f"1/({den})"
 
 def quadraticstring(ctx,t,a,b,c):
     if c < 0:
@@ -499,11 +499,11 @@ def quadraticstring(ctx,t,a,b,c):
     u1 = (-b+ctx.sqrt(b**2-4*a*c))/(2*c)
     u2 = (-b-ctx.sqrt(b**2-4*a*c))/(2*c)
     if abs(u1-t) < abs(u2-t):
-        if b:  s = '((%s+sqrt(%s))/%s)' % (-b,b**2-4*a*c,2*c)
-        else:  s = '(sqrt(%s)/%s)' % (-4*a*c,2*c)
+        if b:  s = f'(({-b}+sqrt({b**2-4*a*c}))/{2*c})'
+        else:  s = f'(sqrt({-4*a*c})/{2*c})'
     else:
-        if b:  s = '((%s-sqrt(%s))/%s)' % (-b,b**2-4*a*c,2*c)
-        else:  s = '(-sqrt(%s)/%s)' % (-4*a*c,2*c)
+        if b:  s = f'(({-b}-sqrt({b**2-4*a*c}))/{2*c})'
+        else:  s = f'(-sqrt({-4*a*c})/{2*c})'
     return s
 
 # Transformation y = f(x,c), with inverse function x = f(y,c)
@@ -768,9 +768,9 @@ def identify(ctx, x, constants=[], tol=None, maxcoeff=1000, full=False,
         if sol is None:
             return sol
         if full:
-            return ["-(%s)"%s for s in sol]
+            return [f"-({s})" for s in sol]
         else:
-            return "-(%s)" % sol
+            return f"-({sol})"
 
     if tol:
         tol = ctx.mpf(tol)

@@ -46,14 +46,14 @@ def monitor(f, input='print', output='print'):
         incount = [0]
         def input(value):
             args, kwargs = value
-            print("in  %s %r %r" % (incount[0], args, kwargs))
+            print(f"in  {incount[0]} {args!r} {kwargs!r}")
             incount[0] += 1
     if not output:
         output = lambda v: None
     elif output == 'print':
         outcount = [0]
         def output(value):
-            print("out %s %r" % (outcount[0], value))
+            print(f"out {outcount[0]} {value!r}")
             outcount[0] += 1
     def f_monitored(*args, **kwargs):
         input((args, kwargs))

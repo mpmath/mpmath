@@ -1456,8 +1456,8 @@ def hyper2d(ctx, a, b, x, y, *, eliminate=True, eliminate_all=False,
     b_m = parse(b, 'm')
     b_n = parse(b, 'n')
     b_m_add_n = parse(b, 'm+n')
-    if a: raise ValueError("unsupported key: %r" % a.keys()[0])
-    if b: raise ValueError("unsupported key: %r" % b.keys()[0])
+    if a: raise ValueError(f"unsupported key: {a.keys()[0]!r}")
+    if b: raise ValueError(f"unsupported key: {b.keys()[0]!r}")
     s = 0
     outer = ctx.one
     m = ctx.mpf(0)

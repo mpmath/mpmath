@@ -123,7 +123,7 @@ class ivmpf:
         n = repr_dps(self.ctx.prec)
         a = libmp.to_str(a, n)
         b = libmp.to_str(b, n)
-        return "mpi(%r, %r)" % (a, b)
+        return f"mpi({a!r}, {b!r})"
 
     def __reduce__(self):
         return _make_mpf, (self._mpi_,)
@@ -172,10 +172,10 @@ class ivmpc:
     def __repr__(s):
         if s.ctx.pretty:
             return str(s)
-        return "iv.mpc(%s, %s)" % (repr(s.real), repr(s.imag))
+        return f"iv.mpc({s.real!r}, {s.imag!r})"
 
     def __str__(s):
-        return "(%s + %s*j)" % (str(s.real), str(s.imag))
+        return f"({s.real} + {s.imag}*j)"
 
     @property
     def a(self):
@@ -459,7 +459,7 @@ class MPIntervalContext(StandardBaseContext):
         if hasattr(x, "_mpci_"):
             re = libmp.libmpi.mpi_to_str(x._mpci_[0], n, **kwargs)
             im = libmp.libmpi.mpi_to_str(x._mpci_[1], n, **kwargs)
-            return "(%s + %s*j)" % (re, im)
+            return f"({re} + {im}*j)"
 
     def mag(ctx, x):
         x = ctx.convert(x)

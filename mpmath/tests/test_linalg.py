@@ -217,8 +217,8 @@ def test_singular():
     A = [[5.6, 1.2], [7./15, .1]]
     B = repr(zeros(2))
     b = [1, 2]
-    for i in ['lu_solve(%s, %s)' % (A, b), 'lu_solve(%s, %s)' % (B, b),
-              'qr_solve(%s, %s)' % (A, b), 'qr_solve(%s, %s)' % (B, b)]:
+    for i in [f'lu_solve({A}, {b})', f'lu_solve({B}, {b})',
+              f'qr_solve({A}, {b})', f'qr_solve({B}, {b})']:
         pytest.raises((ZeroDivisionError, ValueError), lambda: eval(i))
 
 def test_cholesky():

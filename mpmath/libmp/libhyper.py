@@ -281,7 +281,7 @@ def make_hyp_summator(key):
         add("return a, False, magn")
 
     source = "\n".join(("    " + line) for line in source)
-    source = ("def %s(coeffs, z, prec, wp, epsshift, magnitude_check, **kwargs):\n" % fname) + source
+    source = (f"def {fname}(coeffs, z, prec, wp, epsshift, magnitude_check, **kwargs):\n") + source
 
     namespace = {}
 

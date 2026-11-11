@@ -128,9 +128,9 @@ def nome(ctx, m):
 
 def _validate_weierstrass_pair_args(funcname, g2, g3, omega1, omega2):
     if (g2 is None) != (g3 is None):
-        raise ValueError("%s: must provide both g2 and g3" % funcname)
+        raise ValueError(f"{funcname}: must provide both g2 and g3")
     if (omega1 is None) != (omega2 is None):
-        raise ValueError("%s: must provide both omega1 and omega2" % funcname)
+        raise ValueError(f"{funcname}: must provide both omega1 and omega2")
 
 def _validate_weierstrass_parameter_args(
         funcname, q, m, k, tau, qbar, g2, g3, omega1, omega2):
@@ -138,8 +138,8 @@ def _validate_weierstrass_parameter_args(
     parameter_count = sum(x is not None for x in [q, m, k, tau, qbar])
     parameter_count += int(g2 is not None) + int(omega1 is not None)
     if parameter_count != 1:
-        raise ValueError("%s: must provide exactly one elliptic "
-                         "parameterization" % funcname)
+        raise ValueError(f"{funcname}: must provide exactly one elliptic "
+                         "parameterization")
 
 @defun_wrapped
 @ctx_lru_cache(maxsize=16)

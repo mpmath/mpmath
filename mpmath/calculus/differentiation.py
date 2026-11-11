@@ -196,7 +196,7 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
             d = ctx.quadts(g, [0, 2*ctx.pi])
             v = d * ctx.factorial(n) / (2*ctx.pi)
         else:
-            raise ValueError("unknown method: %r" % method)
+            raise ValueError(f"unknown method: {method!r}")
     finally:
         ctx.prec = prec
     return +v
@@ -345,8 +345,7 @@ def diffs_prod(ctx, factors):
     """
     N = len(factors)
     if N == 1:
-        for c in factors[0]:
-            yield c
+        yield from factors[0]
     else:
         u = iterable_to_function(ctx.diffs_prod(factors[:N//2]))
         v = iterable_to_function(ctx.diffs_prod(factors[N//2:]))

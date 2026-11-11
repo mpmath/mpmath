@@ -872,7 +872,7 @@ def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
             d[i] = a2b2 / ((abi - 2) * abi)
             e[i] = ctx.sqrt(4 * j * (j + alpha) * (j + beta) * (j + ab) / ((abi * abi - 1) * abi * abi))
     elif isinstance(qtype, str):
-        raise ValueError("unknown quadrature rule \"%s\"" % qtype)
+        raise ValueError(f"unknown quadrature rule \"{qtype}\"")
     elif not isinstance(qtype, str):
         w = qtype(d, e)
     else:
