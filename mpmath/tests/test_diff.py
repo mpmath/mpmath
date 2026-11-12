@@ -1,5 +1,10 @@
-from mpmath import (chop, cos, diff, diffs, diffun, e, exp, j, log, sin, sqrt,
-                    taylor)
+import cmath
+import math
+
+from mpmath import (chop, cos, diff, diffs, diffun, e, exp, fp, j, log, sqrt,
+                    sin, taylor, mp, iv)
+import pytest
+from itertools import islice
 
 
 def test_diff():
@@ -64,3 +69,172 @@ def test_diff_partial():
     assert diff(f, xyz, (2,2,0)).ae(3025260)
     assert diff(f, xyz, (2,2,1)).ae(2160900)
     assert diff(f, xyz, (2,2,2)).ae(1234800)
+
+def test_issue_474():
+    # gh-474: the default method returned 0.0 in the fp context
+    assert fp.almosteq(fp.diff(fp.exp, 0), 1, rel_eps=1e-14)
+
+def test_diff_fp():
+    tol = {1: 1e-13, 2: 1e-11, 3: 1e-9, 4: 1e-7}
+    for x in [-1.0, 0.5, 3.0]:
+        for n, eps in tol.items():
+            assert fp.almosteq(fp.diff(fp.exp, x, n), math.exp(x), rel_eps=eps)
+            assert fp.almosteq(fp.diff(fp.sin, x, n),
+                               math.sin(x + n*math.pi/2), rel_eps=eps)
+    assert fp.almosteq(fp.diff(lambda x: x**3 - 2*x, 2.0, 2), 12, rel_eps=1e-12)
+    assert fp.almosteq(fp.diff(fp.exp, 1+2j), cmath.exp(1+2j), rel_eps=1e-13)
+    # one-sided differences, also in a complex direction
+    assert fp.almosteq(fp.diff(abs, 0, direction=1), 1, rel_eps=1e-13)
+    assert fp.almosteq(fp.diff(abs, 0, direction=-1), -1, rel_eps=1e-13)
+    assert fp.almosteq(fp.diff(fp.exp, 2.0, direction=3j), math.exp(2),
+                       rel_eps=1e-11)
+    # relative=True scales the step with |x|; x = 0 falls back to 1
+    assert fp.almosteq(fp.diff(fp.log, 1e6, relative=True), 1e-6, rel_eps=1e-12)
+    assert fp.almosteq(fp.diff(fp.log, 1e-6, relative=True), 1e6, rel_eps=1e-12)
+    assert fp.almosteq(fp.diff(fp.exp, 0, relative=True), 1, rel_eps=1e-14)
+    # removable singularity at 0
+    sinc = lambda x: fp.sin(x)/x
+    assert fp.almosteq(fp.diff(sinc, 0, 0, singular=True), 1, rel_eps=1e-14)
+    assert abs(fp.diff(sinc, 0, singular=True)) < 1e-13
+    assert fp.almosteq(fp.diff(sinc, 0, 2, singular=True), -1/3, rel_eps=1e-11)
+    # a first derivative takes 8 evaluations, none of them at x
+    calls = []
+    fp.diff(lambda t: calls.append(t) or fp.exp(t), 0)
+    assert len(calls) == 8 and 0.0 not in calls
+    # an explicit h keeps the plain (n+1)-point difference
+    assert fp.diff(fp.exp, 0, h=1e-5, method='step') == (fp.exp(1e-5) - fp.exp(-1e-5))/2e-5
+    # partial derivatives, diffs() and taylor()
+    assert fp.almosteq(fp.diff(lambda x, y: x*y**2, (1.0, 2.0), (1, 1)), 4,
+                       rel_eps=1e-11)
+    for d in fp.diffs(fp.exp, 0, 4):
+        assert fp.almosteq(d, 1, rel_eps=1e-7)
+    expected = [0, 1, 0, -1/6, 0, 1/120]
+    for c, c0 in zip(fp.taylor(fp.sin, 0, 5), expected):
+        assert abs(c - c0) < 1e-8
+    # functions built on diff()
+    assert fp.almosteq(fp.findroot(lambda x: x**2 - 2, 1.0, solver='newton'),
+                       math.sqrt(2))
+    assert fp.multiplicity(lambda x: fp.sin(x) - 1, fp.pi/2) == 2
+
+
+def test_fornberg_dispatch_and_samples():
+    for ctx in (mp, fp):
+        default = 'fornberg' if ctx is fp else 'step'
+        assert ctx.diff(ctx.exp, 1) == ctx.diff(ctx.exp, 1, method=default)
+        assert ctx.diff(ctx.exp, 1, method=None) == ctx.diff(ctx.exp, 1)
+        steps = (ctx.mpf('0.125'),) if ctx is fp else (None, ctx.mpf('0.125'))
+        for h in steps:
+            samples = []
+            ctx.diff(lambda t: samples.append(t) or t**2, 1, method='step', h=h)
+            assert len(samples) == 2
+            if h is not None:
+                assert samples == [1-h, 1+h]
+    samples = []
+    fp.diff(lambda t: samples.append(t) or t, 0, h=0.125)
+    assert len(samples) == 8
+    assert samples == [k*0.125 for k in (-4, -3, -2, -1, 1, 2, 3, 4)]
+    assert fp.diff(fp.exp, 0, h=0.125) == fp.diff(fp.exp, 0, h=0.125, method='fornberg')
+
+
+def test_fp_step_requires_h():
+    message = "pass h or use method='fornberg'"
+    with pytest.raises(ValueError, match=message):
+        fp.diff(fp.exp, 1, method='step')
+    with pytest.raises(ValueError, match=message):
+        list(fp.diffs(fp.exp, 1, 1, method='step'))
+    with pytest.raises(ValueError, match=message):
+        fp.diffun(fp.exp, method='step')(1)
+    with pytest.raises(ValueError, match=message):
+        fp.taylor(fp.exp, 1, 1, method='step')
+    assert fp.diff(fp.exp, 1, 0, method='step') == fp.exp(1)
+
+
+def test_fornberg_precision_and_cache():
+    ctx = mp.clone()
+    for rounding in ('n', 'f'):
+        ctx.rounding = rounding
+        for prec in (53, 166, 53):
+            ctx.prec = prec
+            fresh = mp.clone()
+            fresh.prec, fresh.rounding = prec, rounding
+            for n in (1, 2):
+                value = ctx.diff(ctx.exp, 1, n, method='fornberg')
+                assert value == fresh.diff(fresh.exp, 1, n, method='fornberg')
+            fp.diff(fp.exp, 1, method='fornberg')
+            if prec == 166:
+                assert abs(value - ctx.e) < ctx.mpf('1e-35')
+                assert abs(ctx.diff(ctx.exp, 1, method='fornberg') - ctx.e) < ctx.mpf('1e-40')
+
+
+def test_fornberg_options_and_related_functions():
+    with mp.workdps(40):
+        for ctx, tol in ((mp, mp.mpf('1e-20')), (fp, 1e-4)):
+            for n in range(1, 5):
+                for direction in (0, 1, 3j):
+                    z = ctx.convert(1+1j)
+                    assert abs(ctx.diff(ctx.exp, z, n, method='fornberg', direction=direction) - ctx.exp(z)) < tol
+            assert ctx.diff(lambda t: t+1, 2, 0, method='fornberg') == 3
+            assert abs(ctx.diff(lambda t: t+1, 2, 0, method='fornberg', singular=True)-3) < tol
+            assert abs(ctx.diff(lambda x, y: x*y, (1, 2), (1, 1), method='fornberg')-1) < tol
+            assert abs(ctx.diffun(ctx.exp, method='fornberg')(0)-1) < tol
+            assert all(abs(v-1) < tol for v in ctx.diffs(ctx.exp, 0, 3, method='fornberg'))
+            assert len(list(islice(ctx.diffs(ctx.exp, 0, method='fornberg'), 4))) == 4
+            assert abs(ctx.taylor(ctx.exp, 0, 2, method='fornberg')[2]-ctx.mpf('0.5')) < tol
+        for x in (0, mp.mpf('1e-30'), mp.mpf('1e30')):
+            f = mp.exp if not x else mp.log
+            expected = 1 if not x else 1/x
+            assert abs((mp.diff(f, x, method='fornberg', relative=True)-expected)/expected) < mp.mpf('1e-25')
+
+
+def test_fornberg_spacing_and_precision():
+    for ctx in (mp, fp):
+        def samples(**options):
+            seen = []
+            ctx.diff(lambda t: seen.append((t, ctx.prec)) or t, 1, method='fornberg', **options)
+            return seen
+        assert samples(addprec=0) == samples(addprec=100)
+        manual = samples(h=ctx.mpf('0.125'), relative=True)
+        assert [t for t, p in manual] == [1+ctx.mpf(k)/8 for k in (-4, -3, -2, -1, 1, 2, 3, 4)]
+        large = []
+        ctx.diff(lambda t: large.append(t) or t, ctx.mpf('1e30'), method='fornberg')
+        assert len(set(large)) == 8
+        prec = ctx.prec
+        with pytest.raises(RuntimeError):
+            ctx.diff(lambda t: (_ for _ in ()).throw(RuntimeError()), 1, method='fornberg')
+        assert ctx.prec == prec
+    seen = []
+    list(fp.diffs(lambda t: seen.append(t) or t, 0, 0, method='step', singular=True, h=0.125))
+    assert seen == [0.0625]
+    seen = []
+    list(mp.diffs(lambda t: seen.append(t) or t, 0, 4))
+    assert len(seen) == 7
+
+
+def test_diff_interval_dispatch():
+    prec = iv.prec
+    f = lambda x: x*x
+    assert iv.diff(f, 2) == iv.diff(f, 2, method='step')
+    with pytest.raises(NotImplementedError):
+        iv.diff(f, 2, method='fornberg')
+    assert iv.prec == prec
+
+
+def test_fornberg_stencil_order():
+    default = fp.diff(fp.exp, 1)
+    low = fp.diff(fp.exp, 1, stencil_order=2)
+    assert abs(default - math.e) < abs(low - math.e)
+    assert fp.almosteq(fp.diff(fp.exp, 1, direction=1, stencil_order=4), math.e,
+                       rel_eps=1e-9)
+    assert list(fp.diffs(fp.exp, 1, 1, stencil_order=2))[1] == low
+    assert fp.taylor(fp.exp, 1, 1, stencil_order=2)[1] == low
+    assert fp.diffun(fp.exp, stencil_order=2)(1) == low
+    assert fp.diff(lambda x, y: fp.exp(x), (1, 2), (1, 0), stencil_order=2) == low
+    with mp.workdps(30):
+        default = mp.diff(mp.exp, 1, method='fornberg')
+        high = mp.diff(mp.exp, 1, method='fornberg', stencil_order=16)
+        assert abs(high - mp.e) < abs(default - mp.e)
+    for method in ('step', 'quad'):
+        with pytest.raises(ValueError, match='stencil_order'):
+            mp.diff(mp.exp, 1, method=method, stencil_order=2)
+        with pytest.raises(ValueError, match='stencil_order'):
+            list(mp.diffs(mp.exp, 1, 0, method=method, stencil_order=2))

@@ -1,3 +1,8 @@
+import math
+
+from ..functions.functions import ctx_lru_cache, defun as defun_special
+from ..libmp.backend import MPQ
+
 from .calculus import defun
 
 
@@ -29,12 +34,14 @@ def difference(ctx, s, n):
     return d
 
 def hsteps(ctx, f, x, n, prec, *, method='step', direction=0, radius=0.25,
-           singular=False, addprec=10, relative=False, h=None):
+           singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     workprec = (prec+2*addprec) * (n+1)
     orig = ctx.prec
     try:
         ctx.prec = workprec
         if h is None:
+            if ctx._fixed_precision:
+                raise ValueError("pass h or use method='fornberg' in fp")
             if relative and x:
                 hextramag = int(ctx.mag(x))
             else:
@@ -59,10 +66,147 @@ def hsteps(ctx, f, x, n, prec, *, method='step', direction=0, radius=0.25,
     finally:
         ctx.prec = orig
 
+def _fornberg_weights(nodes, n):
+    r"""
+    Return exact weights `w_k` such that `f^{(n)}(0) \approx \sum_k w_k f(t_k)`
+    for the rational nodes `t_k`.  The formula is exact for polynomials of
+    degree less than ``len(nodes)``.  See [Fornberg]_.
+    """
+    N = len(nodes)
+    c = [[MPQ(0)]*N for _ in range(n+1)]
+    c[0][0] = MPQ(1)
+    c1 = MPQ(1)
+    c4 = nodes[0]
+    for i in range(1, N):
+        mn = min(i, n)
+        c2 = MPQ(1)
+        c5 = c4
+        c4 = nodes[i]
+        for j in range(i):
+            c3 = nodes[i] - nodes[j]
+            c2 *= c3
+            if j == i-1:
+                for k in range(mn, 0, -1):
+                    c[k][i] = c1*(k*c[k-1][i-1] - c5*c[k][i-1])/c2
+                c[0][i] = -c1*c5*c[0][i-1]/c2
+            for k in range(mn, 0, -1):
+                c[k][j] = (c4*c[k][j] - k*c[k-1][j])/c3
+            c[0][j] = c4*c[0][j]/c3
+        c1 = c2
+    return c[n]
+
+def _leading_error(nodes, weights, n):
+    """
+    Return ``(p, C)`` such that the stencil computes
+    `f^{(n)}(x) + C h^p f^{(n+p)}(x) + O(h^{p+1})`.
+
+    The stencils used here have at least one nonzero weight away from 0.
+    """
+    # For j > n the node 0 adds nothing to the sum. If some node t != 0 has
+    # a nonzero weight, the Vandermonde matrix of the nonzero nodes shows
+    # that one of the next len(nodes) sums is nonzero.
+    for j in range(n + 1, n + len(nodes) + 1):
+        C = sum(w*t**j for t, w in zip(nodes, weights)) / math.factorial(j)
+        if C:
+            return j - n, C
+
+@defun_special
+@ctx_lru_cache(maxsize=128)
+def _stencil(ctx, n, one_sided, singular, order=8):
+    """
+    Return ``(nodes, weights, h)`` for an order-``order`` finite difference
+    for the n-th derivative, used when the working precision is fixed.
+
+    Central stencils use the nodes -m, ..., m; one-sided stencils use
+    0, 1, 2, ...  With ``singular`` set, the nodes are shifted to
+    half-integers so that x itself is never used.  Nodes with zero weight
+    are dropped.
+
+    The step ``h`` is the power of two that minimizes the truncation error
+    plus the rounding error,
+
+        |C| * (n+p)! * h**p  +  eps * sum(|w|) / h**n,
+
+    where ``C*h**p*f^(n+p)(x)`` is the leading truncation error.  The
+    factor ``(n+p)!`` assumes ``|f^(j)(x)| <= j! * max|f|``, which holds
+    when f is analytic within distance 1 of x.
+    """
+    if one_sided:
+        start = MPQ(1, 2) if singular else MPQ(0)
+        nodes = [start + k for k in range(n + order)]
+        weights = _fornberg_weights(nodes, n)
+        p, C = _leading_error(nodes, weights, n)
+    else:
+        m = 1
+        while 1:
+            if singular:
+                nodes = [MPQ(2*k+1, 2) for k in range(-m, m)]
+            else:
+                nodes = [MPQ(k) for k in range(-m, m+1)]
+            if len(nodes) > n:
+                weights = _fornberg_weights(nodes, n)
+                p, C = _leading_error(nodes, weights, n)
+                if p >= order:
+                    break
+            m += 1
+    S = ctx.mpf(sum(abs(w) for w in weights))
+    logh = (ctx.log(max(n, 1)*ctx.eps*S, 2) -
+            ctx.log(p*abs(ctx.mpf(C))*ctx.factorial(n+p), 2))/(n+p)
+    h = ctx.ldexp(ctx.one, int(round(logh)))
+    pairs = []
+    for t, w in zip(nodes, weights):
+        if w:
+            pairs.append((ctx.mpf(t), ctx.mpf(w)))
+    nodes_tuple = tuple(t for t, _ in pairs)
+    w_tuple = tuple(w for _, w in pairs)
+
+    return nodes_tuple, w_tuple, h
+
+def _diff_fornberg(ctx, f, x, n, direction, singular, relative, h, stencil_order):
+    """
+    Evaluate a finite difference at the current precision using
+    :func:`_stencil` in any context with ulp and frexp.
+    With ``h=None``, use its automatic step, relative scaling if requested,
+    and a minimum of four ulps at nonzero x. An explicit h is used as the
+    node spacing without those adjustments.
+    """
+    nodes, weights, auto_h = ctx._stencil(n, bool(direction), singular, stencil_order)
+    if h is None:
+        h = auto_h
+        ax = abs(x)
+        if ax:
+            if relative:
+                h = ctx.ldexp(h, ctx.frexp(ax)[1])
+            # The nodes x + t*h must stay distinct from x and from each other.
+            h = max(h, 4*ctx.ulp(ax))
+    else:
+        h = ctx.convert(h)
+    if direction:
+        h *= ctx.sign(direction)
+    terms = []
+    for t, w in zip(nodes, weights):
+        sample = f(x + t*h)
+        terms.append((w, sample))
+    s = ctx.fdot(terms)
+    return s / h**n
+
+def _resolve_method(ctx, method):
+    """Resolve None to fornberg in fixed-precision contexts (fp),
+    and step otherwise.
+
+    Explicit methods pass through unchanged.
+    """
+    if method is None:
+        return 'fornberg' if ctx._fixed_precision else 'step'
+    return method
+
+def _validate_stencil_order(method, stencil_order):
+    if stencil_order is not None and method != 'fornberg':
+        raise ValueError("stencil_order requires method='fornberg'")
 
 @defun
-def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
-         singular=False, addprec=10, relative=False, h=None):
+def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
+         singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     r"""
     Numerically computes the derivative of `f`, `f'(x)`, or generally for
     an integer `n \ge 0`, the `n`-th derivative `f^{(n)}(x)`.
@@ -93,22 +237,29 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
     The following optional keyword arguments are recognized:
 
     ``method``
-        Supported methods are ``'step'`` or ``'quad'``: derivatives may be
-        computed using either a finite difference with a small step
-        size `h` (default), or numerical quadrature.
+        ``'step'`` uses a small finite difference, ``'fornberg'`` uses
+        a higher-order finite difference, and ``'quad'`` uses quadrature.
+        The default, None, selects ``'fornberg'`` in fp and ``'step'``
+        otherwise. An explicit method is never replaced.
+    ``stencil_order``
+        Accuracy order for ``method='fornberg'`` (default 8). Higher orders
+        help at high precision; lower orders help near nonsmooth points.
+        Central differences round odd orders up to the next even order;
+        one-sided differences use the specified order.
     ``direction``
         Direction of finite difference: can be -1 for a left
         difference, 0 for a central difference (default), or +1
         for a right difference; more generally can be any complex number.
     ``addprec``
         Extra precision for `h` used to account for the function's
-        sensitivity to perturbations (default = 10).
+        sensitivity to perturbations with ``'step'`` (default = 10).
     ``relative``
         Choose `h` relative to the magnitude of `x`, rather than an
         absolute value; useful for large or tiny `x` (default = False).
     ``h``
         As an alternative to ``addprec`` and ``relative``, manually
-        select the step size `h`.
+        select the step size `h`. The ``'step'`` method needs an explicit
+        `h` in fp.
     ``singular``
         If True, evaluation exactly at the point `x` is avoided; this is
         useful for differentiating functions with removable singularities.
@@ -119,7 +270,7 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
         accurate, but it must be chosen so that `f` has no
         singularities within the radius from the evaluation point.
 
-    A finite difference requires `n+1` function evaluations and must be
+    The ``step`` method requires `n+1` function evaluations and must be
     performed at `(n+1)` times the target precision. Accordingly, `f` must
     support fast evaluation at high precision.
 
@@ -127,6 +278,37 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
     required, but not much extra precision is required. For high order
     derivatives, this method may thus be faster if f is very expensive to
     evaluate at high precision.
+
+    The ``fornberg`` method uses a stencil of order 8 by default and evaluates at
+    the current precision. Fixed evaluation precision is its purpose. It
+    loses digits, increasingly so for higher derivatives, and simply raising
+    precision does not guarantee full accuracy for a fixed-order stencil.
+    For full accuracy in mp, use the default ``step`` method instead. The
+    default stencil typically uses `n + 7` or `n + 8` evaluations. The step `h`
+    balances the truncation and rounding errors for a function analytic within
+    distance 1 of `x`. In fp it is `2^{-7}` for `n = 1`, so a central first
+    derivative evaluates `f` within `x \pm 0.032`, and it grows slowly
+    with `n`. With ``relative=True`` the step is multiplied by about
+    `|x|`, which suits functions such as `\log(x)` that vary on the
+    scale of `x`::
+
+        >>> from mpmath import fp
+        >>> round(fp.diff(fp.exp, 0), 12)
+        1.0
+        >>> round(fp.diff(fp.sin, 1, 3), 10)    # -cos(1)
+        -0.5403023059
+        >>> round(fp.diff(fp.log, 1e6, relative=True) * 1e6, 12)
+        1.0
+
+    Accuracy drops quickly for higher orders: for `\exp(x)` the relative
+    error is about `10^{-6}` at `n = 5` and `5 \cdot 10^{-2}` at `n = 8`. If `f`
+    accepts complex arguments, ``method='quad'`` is more accurate there.
+    An explicit ``h`` sets the stencil spacing without relative scaling or
+    the automatic minimum step. For example, in arbitrary precision::
+
+        >>> with mp.workdps(50):
+        ...     nprint(mp.diff(mp.exp, 1, method='fornberg'), 15)
+        2.71828182845905
 
     **Further examples**
 
@@ -165,6 +347,10 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
         >>> diff(cos, 1e-30, addprec=100)
         -1.0e-30
 
+    **References**
+
+    1. [Fornberg]_
+
     """
     partial = False
     try:
@@ -173,14 +359,21 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
         partial = True
     except TypeError:
         pass
+    method = _resolve_method(ctx, method)
+    _validate_stencil_order(method, stencil_order)
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
-               'radius': radius, 'relative': relative, 'h': h}
+               'radius': radius, 'relative': relative, 'h': h,
+               'stencil_order': stencil_order}
     if partial:
         x = [ctx.convert(_) for _ in x]
         return _partial_diff(ctx, f, x, orders, options)
     if n == 0 and method != 'quad' and not singular:
         return f(ctx.convert(x))
+    if method == 'fornberg':
+        return _diff_fornberg(ctx, f, ctx.convert(x), n, direction,
+                              singular, relative, h,
+                              8 if stencil_order is None else stencil_order)
     prec = ctx.prec
     try:
         if method == 'step':
@@ -219,8 +412,8 @@ def _partial_diff(ctx, f, xs, orders, options):
     return _partial_diff(ctx, fdiff_inner, xs, orders, options)
 
 @defun
-def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
-          singular=False, addprec=10, relative=False, h=None):
+def diffs(ctx, f, x, n=None, *, method=None, direction=0, radius=0.25,
+          singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     r"""
     Returns a generator that yields the sequence of derivatives
 
@@ -228,10 +421,12 @@ def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
 
         f(x), f'(x), f''(x), \ldots, f^{(k)}(x), \ldots
 
-    With ``method='step'``, :func:`~mpmath.diffs` uses only `O(k)`
+    With ``method='step'``, :func:`~mpmath.diffs` normally uses only `O(k)`
     function evaluations to generate the first `k` derivatives,
     rather than the roughly `O(k^2)` evaluations
     required if one calls :func:`~mpmath.diff` `k` separate times.
+    With ``method='fornberg'`` or ``method='quad'``, it calls :func:`~mpmath.diff` separately
+    for each order.
 
     With `n < \infty`, the generator stops as soon as the
     `n`-th derivative has been generated. If the exact number of
@@ -260,9 +455,12 @@ def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
         n = ctx.inf
     else:
         n = int(n)
+    method = _resolve_method(ctx, method)
+    _validate_stencil_order(method, stencil_order)
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
-               'radius': radius, 'relative': relative, 'h': h}
+               'radius': radius, 'relative': relative, 'h': h,
+               'stencil_order': stencil_order}
     if method != 'step':
         k = 0
         while k < n + 1:
@@ -270,7 +468,7 @@ def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
             k += 1
         return
     if singular:
-        yield ctx.diff(f, x, 0, singular=True)
+        yield ctx.diff(f, x, 0, **options)
     else:
         yield f(ctx.convert(x))
     if n < 1:
@@ -530,8 +728,8 @@ def differint(ctx, f, x, n=1, x0=0):
     return ctx.diff(g, x, m) / ctx.gamma(m-n)
 
 @defun
-def diffun(ctx, f, n=1, *, method='step', direction=0, radius=0.25,
-           singular=False, addprec=10, relative=False, h=None):
+def diffun(ctx, f, n=1, *, method=None, direction=0, radius=0.25,
+           singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     r"""
     Given a function `f`, returns a function `g(x)` that evaluates the nth
     derivative `f^{(n)}(x)`::
@@ -545,13 +743,14 @@ def diffun(ctx, f, n=1, *, method='step', direction=0, radius=0.25,
         >>> sin(1.3), sin2(1.3)
         (0.963558185417193, 0.963558185417193)
 
-    The function `f` must support arbitrary precision evaluation.
+    With ``method='step'`` or ``method='quad'``, `f` must support arbitrary precision evaluation.
     See :func:`~mpmath.diff` for additional details and supported
     keyword options.
     """
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
-               'radius': radius, 'relative': relative, 'h': h}
+               'radius': radius, 'relative': relative, 'h': h,
+               'stencil_order': stencil_order}
     if n == 0:
         return f
     def g(x):
@@ -559,8 +758,8 @@ def diffun(ctx, f, n=1, *, method='step', direction=0, radius=0.25,
     return g
 
 @defun
-def taylor(ctx, f, x, n, *, chop=True, method='step', direction=0, radius=0.25,
-           singular=False, addprec=10, relative=False, h=None):
+def taylor(ctx, f, x, n, *, chop=True, method=None, direction=0, radius=0.25,
+           singular=False, addprec=10, relative=False, h=None, stencil_order=None):
     r"""
     Produces a degree-`n` Taylor polynomial around the point `x` of the
     given function `f`. The coefficients are returned as a list.
@@ -571,9 +770,9 @@ def taylor(ctx, f, x, n, *, chop=True, method='step', direction=0, radius=0.25,
         [0.0, 1.0, 0.0, -0.166667, 0.0, 0.00833333]
 
     The coefficients are computed using high-order numerical
-    differentiation. The function must be possible to evaluate
-    to arbitrary precision. See :func:`~mpmath.diff` for additional details
-    and supported keyword options.
+    differentiation. With ``method='step'``, the function must support
+    arbitrary precision evaluation. See :func:`~mpmath.diff` for additional
+    details and supported keyword options.
 
     Note that to evaluate the Taylor polynomial as an approximation
     of `f`, the point of the Taylor expansion must be subtracted from
@@ -588,7 +787,8 @@ def taylor(ctx, f, x, n, *, chop=True, method='step', direction=0, radius=0.25,
     """
     options = {'method': method, 'singular': singular,
                'addprec': addprec, 'direction': direction,
-               'radius': radius, 'relative': relative, 'h': h}
+               'radius': radius, 'relative': relative, 'h': h,
+               'stencil_order': stencil_order}
     gen = enumerate(ctx.diffs(f, x, n, **options))
     if chop:
         return [ctx.chop(d)/ctx.factorial(i) for i, d in gen]
