@@ -201,7 +201,7 @@ def normalize(sign, man, exp, bc, prec, rnd):
         bc = prec
     # Strip trailing bits
     if not man & 1:
-        t = trailing(man)
+        t = (man & -man).bit_length() - 1
         man >>= t
         exp += t
         bc -= t
