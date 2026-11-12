@@ -1263,6 +1263,15 @@ def test_float_cbrt():
         r = cbrt(z)
         assert mpc_ae(r, w, eps)
 
+def test_root_complex_infinity():
+    for z in [mpc(-inf, 0), mpc(-inf, 1), mpc(1, inf), mpc(inf, inf),
+              mpc(1, -inf), mpc(-inf, -1)]:
+        for n in [3, 4, 25]:
+            assert root(z, n) == power(z, mpf(1)/n)
+        assert cbrt(z) == power(z, mpf(1)/3)
+    assert root(-inf, 2) == sqrt(-inf) == mpc(0, inf)
+    assert root(-inf, 3) == mpc(inf, inf)
+
 def test_root():
     mp.dps = 30
     random.seed(1)
