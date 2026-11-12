@@ -876,7 +876,7 @@ def mpf_div(s, t, prec, rnd=round_down):
         return fzero
     sign = ssign ^ tsign
     if tman == 1:
-        return normalize(sign, sman, sexp-texp, sbc, prec, rnd)
+        return normalize(sign, sman, sexp-texp, sbc, prec or sbc, rnd)
     # Same strategy as for addition: if there is a remainder, perturb
     # the result a few bits outside the precision range before rounding
     if not prec:

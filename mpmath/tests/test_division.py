@@ -137,3 +137,8 @@ def test_mod():
 def test_div_negative_rnd_bug():
     assert (-3) / mpf('0.1531879017645047') == mpf('-19.583791966887116')
     assert mpf('-2.6342475750861301') / mpf('0.35126216427941814') == mpf('-7.4993775104985909')
+
+def test_issue_1225():
+    assert mpf_div(from_int(3), from_int(7), 0, "f") == (0, 439, -10, 9)
+    assert mpf_div(from_int(3), from_int(4), 0, "n") == (0, 3, -2, 2)
+    assert mpf_div(from_int(3), from_int(4), 0, "f") == (0, 3, -2, 2)
