@@ -412,6 +412,31 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
                 pass
         finally:
             ctx.prec -= magz
+    if (ctx._is_real_type(a) and ctx._is_real_type(b) and
+            ctx._is_real_type(z) and ctx.isfinite(a) and
+            ctx.isfinite(b) and ctx.isfinite(z) and
+            b < 0 and z > 0 and not ctx.isnpint(b)):
+        # For b < 0 < z, the terms of the defining series may first
+        # decay below the working precision and then grow again once
+        # k passes -b, where (b)_k changes sign; hypsum can then stop
+        # at the intermediate plateau and return a completely wrong
+        # value (issue 658). Use the Kummer transformation instead: the terms of
+        # the transformed series have a single hump, and any
+        # cancellation in it is detected (and compensated for) by
+        # hypsum in the usual way.  If the transformed series cannot
+        # reach the requested precision either (when |b| >> z it
+        # needs about z*log10(e) digits of cancellation, while the
+        # defining series converges geometrically), fall back to the
+        # defining series below -- but only in that geometric regime:
+        # nearer the plateau regime the defining series is itself
+        # unsafe, so propagate the NoConvergence instead.
+        ba, batype = ctx._convert_param(b-a)
+        try:
+            return ctx.exp(z) * ctx.hypsum(1, 1, (batype, btype),
+                                           [ba, b], -z, **kwargs)
+        except ctx.NoConvergence:
+            if 5*z > -b:
+                raise
     v = ctx.hypsum(1, 1, (atype, btype), [a, b], z, **kwargs)
     return v
 
