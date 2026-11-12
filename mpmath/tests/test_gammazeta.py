@@ -7,7 +7,7 @@ from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     hyperfac, inf, isnan, j, log, loggamma, mp, mpc, mpf,
                     mpmathify, nan, pi, polyexp, polylog, primezeta, psi, rf,
                     rgamma, sech, secondzeta, siegelz, sinc, sqrt, stieltjes,
-                    superfac, zeta)
+                    superfac, zeta, zetazero)
 from mpmath.libmp import from_float, round_up
 from mpmath.libmp.gammazeta import mpf_zeta_int
 
@@ -730,6 +730,45 @@ def test_issue_1198():
     # Wolfram Engine N[Zeta[-105/10, 7656119366529843/4503599627370496], 40]
     ref = mpf('-0.0164851819507137542274084311077626')
     assert mp.almosteq(zeta(-10.5, 1.7), ref, rel_eps=1e-28, abs_eps=0)
+
+def test_issue_965():
+    # The Borwein summation in mpc_zeta() adds up O(1) terms, so near a
+    # zero of zeta the cancellation ate the guard bits: at this point
+    # (the 11th zero, to working precision) the result had only 19
+    # correct bits for the real part at 53 bits, and lost a constant
+    # ~33 bits at every precision.  The Euler-Maclaurin algorithm is an
+    # independent reference.
+    for dps, eps in [(15, 1e-13), (30, 1e-28), (50, 1e-45)]:
+        with mp.workdps(dps):
+            x = mpc(0.5, '52.970321477714464')
+            with mp.workdps(dps + 40):
+                ref = zeta(+x, method='euler-maclaurin')
+                refalt = altzeta(+x)
+            assert mp.almosteq(zeta(x), ref, rel_eps=eps, abs_eps=0)
+            assert mp.almosteq(altzeta(x), refalt, rel_eps=eps, abs_eps=0)
+
+def test_issue_965_high_cancellation():
+    # Zeros supplied with far more bits than the evaluation precision:
+    # the Borwein sum in mpc_zeta() starts out at the noise floor of
+    # the working precision, and the retry must raise the precision
+    # geometrically until the value is resolved with full relative
+    # accuracy.  It must neither crawl through hundreds of rounds nor
+    # mistake the tiny value for an exact zero.  The references are
+    # Euler-Maclaurin values at the full input precision.
+    with mp.workdps(300):
+        x = zetazero(11)
+        ref = zeta(x, method='euler-maclaurin')
+        # Zero of the eta factor 1 - 2**(1-s): eta vanishes there even
+        # though zeta itself does not.
+        y = mpc(1, 2*pi/log(2))
+        refy = zeta(y, method='euler-maclaurin')
+        refy_eta = refy * (-mp.powm1(2, 1-y))
+    with mp.workdps(15):
+        assert zeta(x) != 0
+        assert mp.almosteq(zeta(x), ref, rel_eps=1e-12, abs_eps=0)
+        assert mp.almosteq(altzeta(y), refy_eta, rel_eps=1e-12, abs_eps=0)
+        assert mp.almosteq(zeta(y), refy, rel_eps=1e-12, abs_eps=0)
+
 
 def test_issue_551():
     ref = +extraprec(1000)(zeta)(50+5j).imag

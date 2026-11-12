@@ -1084,40 +1084,88 @@ def mpc_zeta(s, prec, rnd=round_down, alt=0, force=False):
         pi2 = (mpf_shift(pi, 1), fzero)
         d = mpc_div_mpf(mpc_pow(pi2, s, wp2), pi, wp2)
         return mpc_mul(a,mpc_mul(b,mpc_mul(c,d,wp),wp),prec,rnd)
-    n = int(wp/2.54 + 5)
-    n += int(0.9*abs(to_int(im)))
-    d = borwein_coefficients(n)
-    ref = to_fixed(re, wp)
-    imf = to_fixed(im, wp)
-    tre = MPZ_ZERO
-    tim = MPZ_ZERO
-    one = MPZ_ONE << wp
-    one_2wp = MPZ_ONE << (2*wp)
-    critical_line = re == fhalf
-    ln2 = ln2_fixed(wp)
-    pi2 = pi_fixed(wp-1)
-    wp2 = wp+wp
-    for k in range(n):
-        log = log_int_fixed(k+1, wp, ln2)
-        # A square root is much cheaper than an exp
-        if critical_line:
-            w = one_2wp // isqrt_fast((k+1) << wp2)
+    # Borwein summation.  The individual terms are O(1) in magnitude, so
+    # when the sum (the Dirichlet eta value) is tiny compared to 1 -- most
+    # notably when zeta(s) is evaluated near one of its zeros -- the
+    # cancellation destroys a corresponding number of guard bits and the
+    # result is only accurate to prec - cancellation bits.  Measure the
+    # cancellation from the magnitude of the computed sum and redo the
+    # summation with a working precision that absorbs it (cf. the retry
+    # loop in _hurwitz() for the Euler-Maclaurin algorithm).
+    #
+    # The retry needs a cap: if the sum keeps coming out at the noise
+    # floor of the working precision (exactly zero, or a few units in
+    # the last place), the measured cancellation is only a lower bound
+    # and the true eta value may be smaller than 2**-wp -- or exactly
+    # zero, in which case no working precision ever resolves it.  An
+    # input whose mantissas have B bits cannot locate a zero of eta to
+    # more than roughly B bits, so cancellation beyond B + 100*prec
+    # (the 100*prec scale is the growth cap used by _hurwitz()) cannot
+    # come from a resolvable value: if the sum is still at the noise
+    # floor once wp passes that cap, eta is indistinguishable from an
+    # exact zero at any precision the input can express, and the loop
+    # below returns zero for it.
+    wp_cap = prec + max(re[3], im[3]) + 100*prec + 20
+    while True:
+        n = int(wp/2.54 + 5)
+        n += int(0.9*abs(to_int(im)))
+        d = borwein_coefficients(n)
+        ref = to_fixed(re, wp)
+        imf = to_fixed(im, wp)
+        tre = MPZ_ZERO
+        tim = MPZ_ZERO
+        one = MPZ_ONE << wp
+        one_2wp = MPZ_ONE << (2*wp)
+        critical_line = re == fhalf
+        ln2 = ln2_fixed(wp)
+        pi2 = pi_fixed(wp-1)
+        wp2 = wp+wp
+        for k in range(n):
+            log = log_int_fixed(k+1, wp, ln2)
+            # A square root is much cheaper than an exp
+            if critical_line:
+                w = one_2wp // isqrt_fast((k+1) << wp2)
+            else:
+                w = exp_fixed((-ref*log) >> wp, wp)
+            if k & 1:
+                w *= (d[n] - d[k])
+            else:
+                w *= (d[k] - d[n])
+            wre, wim = cos_sin_fixed((-imf*log)>>wp, wp, pi2)
+            tre += (w * wre) >> wp
+            tim += (w * wim) >> wp
+        tre //= (-d[n])
+        tim //= (-d[n])
+        tre = from_man_exp(tre, -wp, wp)
+        tim = from_man_exp(tim, -wp, wp)
+        # Bits lost to cancellation: the distance of the sum below the
+        # O(1) term scale, plus the rounding accumulated over n terms.
+        # A sum that flushed to zero means the loss exceeds wp itself.
+        asign, aman, aexp, abc = mpc_abs((tre, tim), 10)
+        if not aman:
+            cancellation = wp
         else:
-            w = exp_fixed((-ref*log) >> wp, wp)
-        if k & 1:
-            w *= (d[n] - d[k])
+            cancellation = max(0, -(aexp + abc)) + n.bit_length()
+        if cancellation + 5 <= wp - prec:
+            break
+        if cancellation >= wp - n.bit_length():
+            # The sum is at the noise floor of the working precision,
+            # so the true cancellation is unknown and may be arbitrarily
+            # large.  Raise the precision geometrically, as _hurwitz()
+            # does, instead of crawling upwards by prec + 5 bits at a
+            # time; but stop at wp_cap (see above), where a sum that is
+            # still at the noise floor means that eta is an exact zero
+            # at every precision the input can express.
+            if wp >= wp_cap:
+                tre = tim = fzero
+                break
+            wp = prec + max(cancellation + 5, 2*(wp - prec))
         else:
-            w *= (d[k] - d[n])
-        wre, wim = cos_sin_fixed((-imf*log)>>wp, wp, pi2)
-        tre += (w * wre) >> wp
-        tim += (w * wim) >> wp
-    tre //= (-d[n])
-    tim //= (-d[n])
-    tre = from_man_exp(tre, -wp, wp)
-    tim = from_man_exp(tim, -wp, wp)
+            wp += cancellation + 5 - (wp - prec)
     if alt:
         return mpc_pos((tre, tim), prec, rnd)
     else:
+        r = mpc_sub(mpc_one, s, wp)
         q = mpc_sub(mpc_one, mpc_pow(mpc_two, r, wp), wp)
         return mpc_div((tre, tim), q, prec, rnd)
 
