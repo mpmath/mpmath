@@ -1693,6 +1693,12 @@ def test_expm1():
     assert expm1(inf) == inf
     assert expm1(1e-50).ae(1e-50)
     assert (expm1(1e-10)*1e10).ae(1.00000000005)
+    # The real part of a complex argument can be much smaller than the
+    # result and must not be lost to cancellation.
+    assert expm1(mpc('-1e-30', '1e-15')).real.ae(-1.5e-30)
+    assert expm1(mpc(0, '1e-10')).real.ae(-5e-21)
+    assert expm1(mpc('5e-21', '1e-10')).real.ae(-6.385639492172628975e-37)
+    assert expm1(mpc('1e-5', 3)).ae(exp(mpc('1e-5', 3)) - 1)
 
     # Other real special cases:
     # https://en.cppreference.com/c/numeric/math/expm1

@@ -189,15 +189,22 @@ def sincpi(ctx, x):
         return x+1
     return ctx.sinpi(x)/(ctx.pi*x)
 
-# TODO: tests; improve implementation
 @defun_wrapped
 def expm1(ctx, x):
     if not x:
         return ctx.zero
+    a, b = ctx.re(x), ctx.im(x)
+    if b and ctx.isfinite(a) and ctx.isfinite(b):
+        # exp(a+b*j) - 1 = expm1(a)*cos(b) - 2*sin(b/2)**2 + exp(a)*sin(b)*j,
+        # where the real part can be much smaller than |exp(x) - 1|.
+        # (b/2 would round b to the working precision; ldexp is exact)
+        h = ctx.ldexp(b, -1)
+        re = ctx.sum_accurately(lambda: iter([ctx.expm1(a)*ctx.cos(b),
+                                               -2*ctx.sin(h)**2]))
+        return ctx.mpc(re, ctx.exp(a)*ctx.sin(b))
     # exp(x) - 1 ~ x
     if ctx.mag(x) < -ctx.prec:
         return x + 0.5*x**2
-    # TODO: accurately eval the smaller of the real/imag parts
     return ctx.sum_accurately(lambda: iter([ctx.exp(x),-1]),1)
 
 @defun_wrapped
