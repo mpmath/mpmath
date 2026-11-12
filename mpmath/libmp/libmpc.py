@@ -393,9 +393,8 @@ def mpc_nthroot(z, n, prec, rnd=round_down):
     prec2 = prec+10 + 10
     nth = mpf_rdiv_int(1, fn, prec2)
     re, im = mpc_pow((a, b), (nth, fzero), prec2, rnd)
-    re = normalize(re[0], re[1], re[2], re[3], prec, rnd)
-    im = normalize(im[0], im[1], im[2], im[3], prec, rnd)
-    return re, im
+    # mpf_pos() also passes through infinities and nan from mpc_pow()
+    return mpf_pos(re, prec, rnd), mpf_pos(im, prec, rnd)
 
 def mpc_cbrt(z, prec, rnd=round_down):
     """
