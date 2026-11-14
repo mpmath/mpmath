@@ -1264,7 +1264,7 @@ def test_float_cbrt():
         assert mpc_ae(r, w, eps)
 
 def test_root_complex_infinity():
-    for z in [mpc(-inf, 0), mpc(-inf, 1), mpc(1, inf), mpc(inf, inf),
+    for z in [mpc(-inf), mpc(-inf, 1), mpc(1, inf), mpc(inf, inf),
               mpc(1, -inf), mpc(-inf, -1)]:
         for n in [3, 4, 25]:
             assert root(z, n) == power(z, mpf(1)/n)
