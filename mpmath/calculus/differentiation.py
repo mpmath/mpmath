@@ -259,7 +259,7 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
     ``h``
         As an alternative to ``addprec`` and ``relative``, manually
         select the step size `h`. The ``'step'`` method needs an explicit
-        `h` in fp.
+        `h` in the ``fp`` context.
     ``singular``
         If True, evaluation exactly at the point `x` is avoided; this is
         useful for differentiating functions with removable singularities.
