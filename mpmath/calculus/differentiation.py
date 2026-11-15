@@ -286,7 +286,7 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
     For full accuracy in mp, use the default ``step`` method instead. The
     default stencil typically uses `n + 7` or `n + 8` evaluations. The step `h`
     balances the truncation and rounding errors for a function analytic within
-    distance 1 of `x`. In fp it is `2^{-7}` for `n = 1`, so a central first
+    distance 1 of `x`. In the ``fp`` context it is `2^{-7}` for `n = 1`, so a central first
     derivative evaluates `f` within `x \pm 0.032`, and it grows slowly
     with `n`. With ``relative=True`` the step is multiplied by about
     `|x|`, which suits functions such as `\log(x)` that vary on the
