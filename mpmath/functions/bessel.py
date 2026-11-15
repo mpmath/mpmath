@@ -154,16 +154,26 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
         else:
             return ctx.ninf + (n+z)
     ctx.prec += 10
-    if not derivative and not ctx.re(z) and not ctx.im(n):
+    if (not ctx.re(z) and not ctx.im(n) and ctx.isint(derivative)
+            and derivative >= 0):
         # On the imaginary axis Y_n(iy) has one part of the size of I_n(y)
         # and one of the size of K_n(y), so use (DLMF 10.27.11)
         # Y_n(iy) = e^((n+1)pi*i/2) I_n(y) - 2/pi e^(-n*pi*i/2) K_n(y),
         # y > 0, which has no cancellation, and Y_n(-iy) = conj(Y_n(iy)).
+        # Since d/dy = i d/dz, the d-th derivative is (-i)**d times
+        # the d-th derivative of the right-hand side.  besselk() has no
+        # derivative option, but K_n^(d)(y) = (-1/2)**d Sum_k C(d,k)
+        # K_(n-d+2k)(y) (DLMF 10.29.5), a sum of positive terms.
+        d = int(derivative)
         y = ctx.im(z)
         a = y if y > 0 else ctx.fneg(y, exact=True)  # abs() would round y
         c, s = ctx.cospi_sinpi(n/2)    # exact for integer n, unlike expjpi
-        v = ((ctx.j*c - s)*ctx.besseli(n, a, **kwargs) -
-             2/ctx.pi*(c - ctx.j*s)*ctx.besselk(n, a, **kwargs))
+        K = ctx.fsum(ctx.binomial(d, k)*ctx.besselk(n-d+2*k, a, **kwargs)
+                     for k in range(d+1))*(-0.5)**d
+        v = ((ctx.j*c - s)*ctx.besseli(n, a, d, **kwargs) -
+             2/ctx.pi*(c - ctx.j*s)*K)
+        if d:
+            v *= ctx.mpc(0, -1)**d
         return v if y > 0 else ctx.conj(v)
     m, d = ctx.nint_distance(n)
     if d < -ctx.prec:
