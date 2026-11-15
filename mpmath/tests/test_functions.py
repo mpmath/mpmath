@@ -1699,6 +1699,9 @@ def test_expm1():
     assert expm1(mpc(0, '1e-10')).real.ae(-5e-21)
     assert expm1(mpc('5e-21', '1e-10')).real.ae(-6.385639492172628975e-37)
     assert expm1(mpc('1e-5', 3)).ae(exp(mpc('1e-5', 3)) - 1)
+    # Tiny complex arguments take the same shortcut as real ones.
+    z = mpc('1e-100', '-2e-100')
+    assert expm1(z) == z + 0.5*z**2
 
     # Other real special cases:
     # https://en.cppreference.com/c/numeric/math/expm1
