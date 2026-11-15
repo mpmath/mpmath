@@ -239,7 +239,7 @@ def diff(ctx, f, x, n=1, *, method=None, direction=0, radius=0.25,
     ``method``
         ``'step'`` uses a small finite difference, ``'fornberg'`` uses
         a higher-order finite difference, and ``'quad'`` uses quadrature.
-        The default, None, selects ``'fornberg'`` in fp and ``'step'``
+        The default, None, selects ``'fornberg'`` in the ``fp`` context and ``'step'``
         otherwise. An explicit method is never replaced.
     ``stencil_order``
         Accuracy order for ``method='fornberg'`` (default 8). Higher orders
