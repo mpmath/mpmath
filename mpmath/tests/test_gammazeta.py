@@ -397,7 +397,11 @@ def test_polygamma():
                   (mpc(inf, inf), pi/4), (mpc(-inf, inf), 3*pi/4)]:
         v = digamma(z)
         assert v.real == inf and v.imag.ae(im)
-    for z in [mpc(-inf, 1), mpc(nan, 1), mpc(1, nan)]:
+    # The real part tends to +inf, but the imaginary part has no limit.
+    for z in [mpc(-inf, 1), mpc(inf, nan), mpc(nan, -inf), mpc(-inf, nan)]:
+        v = digamma(z)
+        assert v.real == inf and isnan(v.imag)
+    for z in [mpc(nan, 1), mpc(1, nan), mpc(nan, nan)]:
         v = digamma(z)
         assert isnan(v.real) and isnan(v.imag)
 
