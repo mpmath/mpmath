@@ -197,12 +197,9 @@ def rgamma(x):
     try:
         return 1./gamma(x)
     except (ZeroDivisionError, ValueError):
-        # math.gamma() raises ValueError at the poles (the nonpositive
-        # integers), where 1/gamma(x) is zero
-        z = complex(x)
-        if z.imag == 0 and z.real <= 0 and z.real == int(z.real):
-            return 0j if isinstance(x, complex) else 0.0
-        raise
+        # gamma() raises ValueError only at its poles, the nonpositive
+        # integers, where 1/gamma(x) is zero
+        return x*0.0
 
 def factorial(x):
     return gamma(x+1.0)
