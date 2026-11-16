@@ -394,25 +394,32 @@ def _hyp1f1_defining_series_safe(ctx, a, b, z, v):
         return True
     if not v:
         return False
+    lga = ctx._re(ctx.loggamma(a))
+    lgb = ctx._re(ctx.loggamma(b))
+    logz = ctx.log(z)
     def logterm(k):
-        return (ctx._re(ctx.loggamma(k+a)) - ctx._re(ctx.loggamma(a))
-                - ctx._re(ctx.loggamma(k+b)) + ctx._re(ctx.loggamma(b))
-                + k*ctx.log(z) - ctx._re(ctx.loggamma(k+1)))
+        return (ctx._re(ctx.loggamma(k+a)) - lga
+                - ctx._re(ctx.loggamma(k+b)) + lgb
+                + k*logz - ctx._re(ctx.loggamma(k+1)))
     # The maximum of |t_k| for k > -b is at the start of that range
-    # or at the stationary point of |t_{k+1}/t_k|, which is the
-    # largest root of k^2 + (b+1-z)*k + (b-z*a) = 0.
+    # or at a stationary point of |t_{k+1}/t_k| = z*|k+a| /
+    # ((k+b)*(k+1)).  With k+a > 0 this gives the roots of
+    # k^2 + (b+1-z)*k + (b-z*a) = 0; with k+a < 0 (possible when
+    # a < b < 0) it gives the roots of k^2 + (b+1+z)*k + (b+z*a) = 0.
+    # Both quadratics must be tried: for a = -500.3, b = -50.3,
+    # z = 40.24 the true maximum sits at the second branch's root
+    # and exceeds the first branch's candidates by ~140 nats.
     candidates = set()
     k0 = int(ctx.floor(-b)) + 1
     candidates.update((k0, k0+1))
-    B = b + 1 - z
-    C = b - z*a
-    disc = B*B - 4*C
-    if disc >= 0:
-        for s in (1, -1):
-            ks = (-B + s*ctx.sqrt(disc)) / 2
-            if ks > 0:
-                k = int(ctx.floor(ks))
-                candidates.update((k-1, k, k+1, k+2))
+    for B, C in ((b + 1 - z, b - z*a), (b + 1 + z, b + z*a)):
+        disc = B*B - 4*C
+        if disc >= 0:
+            for s in (1, -1):
+                ks = (-B + s*ctx.sqrt(disc)) / 2
+                if ks > 0:
+                    k = int(ctx.floor(ks))
+                    candidates.update((k-1, k, k+1, k+2))
     lmax = max(logterm(k) for k in candidates if k >= 0)
     # Bound the post-dip tail by (number of terms) * (largest term)
     count = z + 2*ctx.sqrt(z+1) + 64
