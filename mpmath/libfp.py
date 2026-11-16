@@ -196,7 +196,9 @@ gamma = _mathfun_real(math.gamma, _gamma_complex)
 def rgamma(x):
     try:
         return 1./gamma(x)
-    except ZeroDivisionError:
+    except (ZeroDivisionError, ValueError):
+        # gamma() raises ValueError only at its poles, the nonpositive
+        # integers, where 1/gamma(x) is zero
         return x*0.0
 
 def factorial(x):

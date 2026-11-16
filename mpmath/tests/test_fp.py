@@ -1806,6 +1806,16 @@ def test_fp_nan_in_args():
 def test_issue_510():
     assert fp.rgamma(fp.inf) == fp.zero
 
+def test_rgamma_poles():
+    for x in [0, -0.0, -1, -3, -1e20]:
+        r = fp.rgamma(x)
+        assert r == 0 and type(r) is float
+    for x in [0j, -2+0j]:
+        r = fp.rgamma(x)
+        assert r == 0 and type(r) is complex
+    assert fp.rgamma(-0.5) == 1/fp.gamma(-0.5)
+    assert fp.rgamma(-2+1e-10j) != 0
+
 def test_issue_491():
     assert fp.appellf1(0, 0.4, 2.5, 2.2, fp.inf, 1.4) == fp.one
 
