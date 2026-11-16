@@ -379,6 +379,46 @@ def _hyp0f1(ctx, b_s, z, **kwargs):
             pass
     return ctx.hypsum(0, 1, (btype,), [b], z, **kwargs)
 
+def _hyp1f1_defining_series_safe(ctx, a, b, z, v):
+    """
+    Whether the value v of 1F1(a, b, z), computed from the defining
+    series for real b < 0 < z, can be trusted: the terms beyond the
+    dip (k > -b) must be too small to contribute at the working
+    precision, so hypsum cannot have stopped at the false plateau.
+    The largest such term is located via the log-gamma function.
+    The bound is conservative: it may reject a correct value, but
+    it never certifies a plateau value.
+    """
+    if ctx.isnpint(a):
+        # The series terminates, so there is no plateau.
+        return True
+    if not v:
+        return False
+    def logterm(k):
+        return (ctx._re(ctx.loggamma(k+a)) - ctx._re(ctx.loggamma(a))
+                - ctx._re(ctx.loggamma(k+b)) + ctx._re(ctx.loggamma(b))
+                + k*ctx.log(z) - ctx._re(ctx.loggamma(k+1)))
+    # The maximum of |t_k| for k > -b is at the start of that range
+    # or at the stationary point of |t_{k+1}/t_k|, which is the
+    # largest root of k^2 + (b+1-z)*k + (b-z*a) = 0.
+    candidates = set()
+    k0 = int(ctx.floor(-b)) + 1
+    candidates.update((k0, k0+1))
+    B = b + 1 - z
+    C = b - z*a
+    disc = B*B - 4*C
+    if disc >= 0:
+        for s in (1, -1):
+            ks = (-B + s*ctx.sqrt(disc)) / 2
+            if ks > 0:
+                k = int(ctx.floor(ks))
+                candidates.update((k-1, k, k+1, k+2))
+    lmax = max(logterm(k) for k in candidates if k >= 0)
+    # Bound the post-dip tail by (number of terms) * (largest term)
+    count = z + 2*ctx.sqrt(z+1) + 64
+    return lmax + ctx.log(count) < \
+        ctx.log(abs(v)) - (ctx.prec + 16) * ctx.log(2)
+
 @defun
 def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
     (a, atype), = a_s
@@ -412,31 +452,38 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
                 pass
         finally:
             ctx.prec -= magz
-    if (ctx._is_real_type(a) and ctx._is_real_type(b) and
-            ctx._is_real_type(z) and ctx.isfinite(a) and
-            ctx.isfinite(b) and ctx.isfinite(z) and
-            b < 0 and z > 0 and not ctx.isnpint(b)):
-        # For b < 0 < z, the terms of the defining series may first
-        # decay below the working precision and then grow again once
-        # k passes -b, where (b)_k changes sign; hypsum can then stop
-        # at the intermediate plateau and return a completely wrong
-        # value (issue 658). Use the Kummer transformation instead: the terms of
-        # the transformed series have a single hump, and any
-        # cancellation in it is detected (and compensated for) by
-        # hypsum in the usual way.  If the transformed series cannot
-        # reach the requested precision either (when |b| >> z it
-        # needs about z*log10(e) digits of cancellation, while the
-        # defining series converges geometrically), fall back to the
-        # defining series below -- but only in that geometric regime:
-        # nearer the plateau regime the defining series is itself
-        # unsafe, so propagate the NoConvergence instead.
+    if (ctx.isfinite(a) and ctx.isfinite(b) and ctx.isfinite(z) and
+            ctx._re(b) < 0 and ctx._re(z) > 0 and
+            not ctx.isnpint(b)):
+        # For Re(b) < 0 < Re(z), the terms of the defining series
+        # may first decay below the working precision and then grow
+        # again once k passes -Re(b); hypsum can then stop at the
+        # intermediate plateau and return a completely wrong value
+        # (issue 658).  Use the Kummer transformation instead: the
+        # terms of the transformed series have a single hump, so no
+        # false plateau is possible, and any cancellation in it is
+        # detected (and compensated for) by hypsum in the usual way.
         ba, batype = ctx._convert_param(b-a)
         try:
             return ctx.exp(z) * ctx.hypsum(1, 1, (batype, btype),
                                            [ba, b], -z, **kwargs)
         except ctx.NoConvergence:
-            if 5*z > -b:
-                raise
+            pass
+        # Fall back to the defining series.  This is needed when
+        # |b| >> |z|, where the transformed series needs about
+        # |z|*log10(e) digits of cancellation while the defining
+        # series converges geometrically.  For real parameters, the
+        # result is only trusted if the terms beyond the dip cannot
+        # contribute at the working precision; otherwise propagate
+        # the NoConvergence instead of returning a plateau value.
+        v = ctx.hypsum(1, 1, (atype, btype), [a, b], z, **kwargs)
+        if (ctx._is_real_type(a) and ctx._is_real_type(b) and
+                ctx._is_real_type(z) and
+                not _hyp1f1_defining_series_safe(ctx, a, b, z, v)):
+            raise ctx.NoConvergence(
+                "hyp1f1: the transformed series failed to converge "
+                "and the defining series is unsafe here")
+        return v
     v = ctx.hypsum(1, 1, (atype, btype), [a, b], z, **kwargs)
     return v
 

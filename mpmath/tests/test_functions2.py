@@ -547,18 +547,34 @@ def test_issue_658():
         assert ae(hyp1f1(1,fraction(-47301,100),156),
                   mpf('5.7759255926099277430e+47'), tol=1e-20)
     # when |b| >> z the defining series converges
-    # geometrically, so it must be used when the transformed series
-    # needs more cancellation than maxprec allows
+    # geometrically; these must keep working when the transformed
+    # series needs more cancellation than maxprec allows
     assert ae(hyp1f1(1,-1000000.5,10000), mpf('0.99009901489952688'))
     assert ae(hyp1f1(1,-1000000.5,1000,maxprec=100),
               mpf('0.99900099950099726'))
-    # outside the geometric regime the defining series is
-    # not a safe fallback either -- if the transformed series cannot
-    # reach the requested precision, NoConvergence must propagate
-    # instead of silently returning the plateau value (the unfixed
-    # fallback returned 0.7521244884735925... here)
+    # if the transformed series cannot reach the requested
+    # precision and the defining series cannot be trusted here
+    # either, NoConvergence must propagate instead of silently
+    # returning the plateau value (the unfixed code returned
+    # 0.7521244884735925... for the first case and
+    # 0.751831593921557517... for the second)
     pytest.raises(NoConvergence,
                   lambda: hyp1f1(1,-473.1,156,maxprec=100))
+    pytest.raises(NoConvergence,
+                  lambda: hyp1f1(1,-20600.5,6800))
+    # but where the terms beyond the dip provably cannot
+    # contribute at the working precision, the defining series is
+    # a safe fallback and its value is returned
+    assert ae(hyp1f1(1,-473.1,118.275,maxprec=100),
+              mpf('0.80006768464970106'))
+    # the same plateau corrupts complex parameters with
+    # Re(b) < 0 < Re(z); the transformation applies there too
+    assert hyp1f1(1,-473.1,156+50j).ae(
+        -4.0004795648255753e+56 + 4.7385937507717590e+56j)
+    assert hyp1f1(1+2j,-473.1,156).ae(
+        3.3875876692319647e+47 + 6.7591371608758660e+46j)
+    assert hyp1f1(1,mpc(-473.1,20),156).ae(
+        -2.3016525705006193e+18 - 2.5728636355501985e+19j)
     # b very close to an integer.  At the default
     # precision, mpf(-473) + mpf('1e-12') does not have distance
     # exactly 1e-12 from -473: the distance is 1.02318153949e-12,
