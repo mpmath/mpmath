@@ -1,3 +1,5 @@
+import pytest
+
 from mpmath import mp
 
 
@@ -25,6 +27,8 @@ def test_levin_0():
     w = mp.nsum(lambda n: 1/(n * n), [1, mp.inf], method = "levin", levin_variant = "u")
     err = abs(v - w)
     assert err < eps
+
+    pytest.raises(ValueError, lambda: mp.levin(method="spam"))
 
 def test_levin_1():
     mp.dps = 17

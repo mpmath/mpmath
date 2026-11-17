@@ -77,6 +77,8 @@ def test_matrix_basic():
 
     pytest.raises(ValueError, lambda: matrix(-2))
     pytest.raises(ValueError, lambda: matrix(2, -3))
+    pytest.raises(TypeError, lambda: zeros(1, 2, 3))
+    pytest.raises(TypeError, lambda: ones(1, 2, 3))
 
 def test_matmul():
     """

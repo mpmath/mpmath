@@ -3,9 +3,10 @@ import pytest
 from mpmath import (cos, eps, findroot, fp, inf, iv, jacobian, matrix, mnorm,
                     mp, mpc, mpf, multiplicity, norm, pi, polyval, sin, sqrt,
                     workprec)
-from mpmath.calculus.optimization import (Anderson, ANewton, Bisection,
-                                          Illinois, MDNewton, MNewton, Muller,
-                                          Newton, Pegasus, Ridder, Secant, ModAB, Brent)
+from mpmath.calculus.optimization import (Anderson, ANewton, Bisection, Brent,
+                                          Halley, Illinois, MDNewton, MNewton,
+                                          ModAB, Muller, Newton, Pegasus,
+                                          Ridder, Secant)
 
 
 def test_findroot():
@@ -19,6 +20,16 @@ def test_findroot():
     for solver in [Newton, Secant, MNewton, Muller, ANewton]:
         x = findroot(f, 2., solver=solver)
         assert abs(f(x)) < eps
+    pytest.raises(ValueError, lambda: findroot(f, [1, 2], solver=Newton))
+    pytest.raises(ValueError, lambda: findroot(f, [1, 2, 3], solver=Secant))
+    pytest.raises(ValueError, lambda: findroot(f, [1, 2], solver=MNewton))
+    pytest.raises(ValueError, lambda: findroot(f, [1, 2], solver=Halley))
+    pytest.raises(ValueError, lambda: findroot(f, [1, 2, 3, 4], solver=Muller))
+    pytest.raises(ValueError, lambda: findroot(f, 1, solver=Bisection))
+    pytest.raises(ValueError, lambda: findroot(f, 1, solver=Illinois))
+    pytest.raises(ValueError, lambda: findroot(f, 1, solver=Brent))
+    pytest.raises(ValueError, lambda: findroot(f, 1, solver=Ridder))
+    pytest.raises(ValueError, lambda: findroot(f, [1, 2], solver=ANewton))
     # test all solvers with interval of 2 points
     for solver in [Secant, Muller, Bisection, Illinois, Pegasus, Anderson,
                    Ridder, ModAB, Brent]:
@@ -45,6 +56,16 @@ def test_findroot():
     # issue 387
     with pytest.raises(ValueError):
         findroot(lambda p: (1 - p)**30 - 1, 0.9)
+
+    with pytest.raises(ValueError):
+        Illinois(mp, f, x0=[1, 2], method='spam', tol=eps, verbose=False)
+
+def test_findroot_verbose(capsys):
+    f = lambda x: cos(x)
+    x = findroot(f, (1., 2.), solver=Illinois, verbose=True)
+    assert abs(f(x)) < eps
+    captured = capsys.readouterr()
+    assert captured.out.find("using illinois method") >= 0
 
 def test_bisection():
     # issue 273

@@ -12,10 +12,10 @@ from hypothesis import example, given, settings
 from hypothesis import strategies as st
 
 import mpmath
-from mpmath import (ceil, fadd, fdiv, floor, fmul, fneg, fp, frac, fsub, inf,
-                    isinf, isint, isnan, isnormal, iv, monitor, mp, mpc, mpf,
-                    mpi, nan, ninf, nint, nint_distance, nstr, pi, rand,
-                    workprec)
+from mpmath import (autoprec, ceil, exp, fadd, fdiv, floor, fmul, fneg, fp,
+                    frac, fsub, inf, isinf, isint, isnan, isnormal, iv,
+                    monitor, mp, mpc, mpf, mpi, nan, ninf, nint, nint_distance,
+                    nstr, pi, rand, workprec)
 from mpmath.libmp import (MPZ, finf, fnan, fninf, fnone, fone, from_float,
                           from_int, from_str, mpf_add, mpf_mul, mpf_sub,
                           round_down, round_nearest, round_up, to_float,
@@ -813,3 +813,11 @@ def test_issue_1135():
             thread.join()
 
         assert not bad
+
+
+def test_autoprec_verbose(capsys):
+    x = 1e-10
+    f = lambda t: exp(t) - 1
+    assert autoprec(f, verbose=True)(x) != f(x)
+    captured = capsys.readouterr()
+    assert captured.out.find("autoprec: target=53") >= 0
