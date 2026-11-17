@@ -233,8 +233,3 @@ def test_fornberg_stencil_order():
         default = mp.diff(mp.exp, 1, method='fornberg')
         high = mp.diff(mp.exp, 1, method='fornberg', stencil_order=16)
         assert abs(high - mp.e) < abs(default - mp.e)
-    for method in ('step', 'quad'):
-        with pytest.raises(ValueError, match='stencil_order'):
-            mp.diff(mp.exp, 1, method=method, stencil_order=2)
-        with pytest.raises(ValueError, match='stencil_order'):
-            list(mp.diffs(mp.exp, 1, 0, method=method, stencil_order=2))
