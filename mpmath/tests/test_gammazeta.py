@@ -731,6 +731,25 @@ def test_issue_1198():
     ref = mpf('-0.0164851819507137542274084311077626')
     assert mp.almosteq(zeta(-10.5, 1.7), ref, rel_eps=1e-28, abs_eps=0)
 
+def test_issue_1230():
+    # The Euler-Maclaurin tail in _hurwitz_em is expanded at a + M2, so the
+    # summation has to run past the zero of a + n for negative a.  Otherwise
+    # ln(M2 + a) is complex and the result is silently wrong.
+    # References computed as sum((a + k)**-s for k < m) + zeta(s, a + m) with
+    # m > -a at 40 digits.
+    mp.dps = 15
+    assert mp.almosteq(zeta(2, -30.25), mpf('19.706691341963048'), rel_eps=1e-14)
+    assert mp.almosteq(zeta(2, -30.5), mpf('9.837349132820685'), rel_eps=1e-14)
+    assert mp.almosteq(zeta(3, -30.25), mpf('-62.01202471454503'), rel_eps=1e-14)
+    assert mp.almosteq(zeta(2.5, -30.25),
+                       mpc('2.491542385511935', '-32.84354292180844'),
+                       rel_eps=1e-14)
+    assert mp.almosteq(zeta(2, -120.75), mpf('19.73096142624632'), rel_eps=1e-14)
+    # Derivatives take the same code path.
+    assert mp.almosteq(zeta(2, -30.25, 1),
+                       mpc('20.81842344488016', '-53.92484631903816'),
+                       rel_eps=1e-13)
+
 def test_issue_551():
     ref = +extraprec(1000)(zeta)(50+5j).imag
     assert abs(zeta(50+5j).imag - ref) <= mp.ulp(ref)
