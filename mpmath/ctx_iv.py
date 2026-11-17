@@ -531,17 +531,18 @@ class MPIntervalContext(StandardBaseContext):
         coeffs = list(coeffs)
         num = range(p)
         den = range(p,p+q)
-        #tol = ctx.eps
+        tol = ctx.eps
         s = t = ctx.one
         k = 0
         while True:
             for i in num: t *= (coeffs[i]+k)
             for i in den: t /= (coeffs[i]+k)
             k += 1; t /= k; t *= z; s += t
-            if t == 0:
-                return s
-            #if abs(t) < tol:
-            #    return s
+            try:
+                if abs(t) < tol:
+                    return s
+            except ValueError:
+                pass
             if k > maxterms:
                 raise ctx.NoConvergence
 

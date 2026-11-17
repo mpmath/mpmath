@@ -505,3 +505,8 @@ def test_interval_repr():
 
 def test_interval_str():
     assert str(iv.mpc([1, 2], [3, 4])) == '([1.0, 2.0] + [3.0, 4.0]*j)'
+
+def test_interval_hypsum():
+    assert 2.2795853023360673 in iv.hyp0f1(1, 1)
+    pytest.raises(iv.NoConvergence, lambda: iv.hyp0f1(1, 1, maxterms=10))
+    pytest.raises(iv.NoConvergence, lambda: iv.hyp0f1(-1, 1, maxterms=10))
