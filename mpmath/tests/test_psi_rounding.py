@@ -32,4 +32,3 @@ def test_psi_zero_matches_digamma_rounding(value):
 def test_real_psi_zero_preserves_requested_rounding(rounding):
     value = from_int(3)
     assert mpf_psi(0, value, 53, rounding) == mpf_psi0(value, 53, rounding)
-
