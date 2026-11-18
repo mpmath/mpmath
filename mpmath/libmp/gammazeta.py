@@ -697,7 +697,7 @@ def mpf_psi0(x, prec, rnd=round_down):
             break
         prev = term
         k += 1
-    return from_man_exp(s, -wp, wp, rnd)
+    return from_man_exp(s, -wp, prec, rnd)
 
 def mpc_psi0(z, prec, rnd=round_down):
     """
@@ -750,7 +750,7 @@ def mpc_psi0(z, prec, rnd=round_down):
         prev = term
         szprev = szterm
         k += 1
-    return s
+    return mpc_pos(s, prec, rnd)
 
 # Currently unoptimized
 def mpf_psi(m, x, prec, rnd=round_down):
@@ -759,7 +759,7 @@ def mpf_psi(m, x, prec, rnd=round_down):
     m >= 0, for a real argument x.
     """
     if m == 0:
-        return mpf_psi0(x, prec, rnd=round_down)
+        return mpf_psi0(x, prec, rnd)
     return mpc_psi(m, (x, fzero), prec, rnd)[0]
 
 def mpc_psi(m, z, prec, rnd=round_down):
