@@ -929,7 +929,7 @@ class LaplaceTransformInversionMethods:
             elif rule == 'cohen':
                 rule = ctx._cohen
             else:
-                raise ValueError("unknown invlap algorithm: %s" % rule)
+                raise ValueError(f"unknown invlap algorithm: {rule}")
         else:
             rule = rule(ctx)
 

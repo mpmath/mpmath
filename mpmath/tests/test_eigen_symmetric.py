@@ -1,3 +1,5 @@
+import pytest
+
 from mpmath import mp
 
 
@@ -350,3 +352,5 @@ def test_gauss_quadrature_dynamic(verbose = False):
     run("chebyshev1", lambda x: 1/mp.sqrt(1-x*x), [-1, 1])
     run("chebyshev2", lambda x: mp.sqrt(1-x*x), [-1, 1])
     run("jacobi", lambda x: (1-x)**(1/mp.mpf(3)) * (1+x)**(1/mp.mpf(5)), [-1, 1], alpha = 1 / mp.mpf(3), beta = 1 / mp.mpf(5) )
+
+    pytest.raises(ValueError, lambda: mp.gauss_quadrature(n, "spam"))

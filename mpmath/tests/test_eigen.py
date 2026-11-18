@@ -1,3 +1,5 @@
+import pytest
+
 from mpmath import fp, mp
 
 
@@ -176,6 +178,13 @@ def test_eig():
     A = mp.matrix(1)
     assert mp.eig(A, left=False, right=False) == [0]
 
+    mp.prec = 20
+    A = mp.matrix([[1, 1, 1, 1, 1, 1, 1, 1], [1, -1, 1, -1, 1, -1, 1, -1],
+                   [1, 1, -1, -1, 1, 1, -1, -1], [1, -1, -1, 1, 1, -1, -1, 1],
+                   [1, 1, 1, 1, -1, -1, -1, -1], [1, -1, 1, -1, -1, 1, -1, 1],
+                   [1, 1, -1, -1, -1, -1, 1, 1], [1, -1, 0, 0, 0, 1, 0, 0]])
+    pytest.raises(RuntimeError, lambda: mp.eig(A))
+
 
 def test_fp_eig():
     A = fp.matrix([[1, 2],
@@ -183,3 +192,9 @@ def test_fp_eig():
     E, ER = fp.eig(A)
     assert all(_ == 0 for _ in fp.chop(A * ER[:,0] - E[0] * ER[:,0]))
     assert all(_ == 0 for _ in fp.chop(A * ER[:,1] - E[1] * ER[:,1]))
+
+
+def test_eig_sort():
+    A = mp.matrix([[3, -1, 2], [2, 5, -5], [-2, -3, 7]])
+    E, EL, ER = mp.eig(A, left=True, right=True)
+    pytest.raises(RuntimeError, lambda: mp.eig_sort(E, EL, ER, f="spam"))

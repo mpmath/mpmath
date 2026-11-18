@@ -19,10 +19,10 @@ testcases = []
 
 # Basic values
 for n in list(range(1,200)) + list(range(201,2000,17)):
-    testcases.append(["%s" % n, None])
+    testcases.append([f"{n}", None])
 for n in range(-200,200):
-    testcases.append(["%s+0.5" % n, None])
-    testcases.append(["%s+0.37" % n, None])
+    testcases.append([f"{n}+0.5", None])
+    testcases.append([f"{n}+0.37", None])
 
 testcases += [
 ["(0.1+1j)", None],
@@ -118,26 +118,26 @@ testcases += [
 ]
 
 for z in [4, 14, 34, 64]:
-    testcases.append(["(2+j)*%s/3" % z, None])
-    testcases.append(["(-2+j)*%s/3" % z, None])
-    testcases.append(["(1+2*j)*%s/3" % z, None])
-    testcases.append(["(2-j)*%s/3" % z, None])
-    testcases.append(["(20+j)*%s/3" % z, None])
-    testcases.append(["(-20+j)*%s/3" % z, None])
-    testcases.append(["(1+20*j)*%s/3" % z, None])
-    testcases.append(["(20-j)*%s/3" % z, None])
-    testcases.append(["(200+j)*%s/3" % z, None])
-    testcases.append(["(-200+j)*%s/3" % z, None])
-    testcases.append(["(1+200*j)*%s/3" % z, None])
-    testcases.append(["(200-j)*%s/3" % z, None])
+    testcases.append([f"(2+j)*{z}/3", None])
+    testcases.append([f"(-2+j)*{z}/3", None])
+    testcases.append([f"(1+2*j)*{z}/3", None])
+    testcases.append([f"(2-j)*{z}/3", None])
+    testcases.append([f"(20+j)*{z}/3", None])
+    testcases.append([f"(-20+j)*{z}/3", None])
+    testcases.append([f"(1+20*j)*{z}/3", None])
+    testcases.append([f"(20-j)*{z}/3", None])
+    testcases.append([f"(200+j)*{z}/3", None])
+    testcases.append([f"(-200+j)*{z}/3", None])
+    testcases.append([f"(1+200*j)*{z}/3", None])
+    testcases.append([f"(200-j)*{z}/3", None])
 
 # Poles
 for n in [0,1,2,3,4,25,-1,-2,-3,-4,-20,-21,-50,-51,-200,-201,-20000,-20001]:
     for t in ['1e-5', '1e-20', '1e-100', '1e-10000']:
-        testcases.append(["fadd(%s,'%s',exact=True)" % (n, t), None])
-        testcases.append(["fsub(%s,'%s',exact=True)" % (n, t), None])
-        testcases.append(["fadd(%s,'%sj',exact=True)" % (n, t), None])
-        testcases.append(["fsub(%s,'%sj',exact=True)" % (n, t), None])
+        testcases.append([f"fadd({n},'{t}',exact=True)", None])
+        testcases.append([f"fsub({n},'{t}',exact=True)", None])
+        testcases.append([f"fadd({n},'{t}j',exact=True)", None])
+        testcases.append([f"fsub({n},'{t}j',exact=True)", None])
 
 
 @pytest.mark.parametrize("z,result", testcases)

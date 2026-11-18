@@ -410,9 +410,9 @@ def tridiag_eigen(ctx, d, e, z = False):
 
     for l in range(n):
         j = 0
-        while 1:
+        while True:
             m = l
-            while 1:
+            while True:
                 # look for a small subdiagonal element
                 if m + 1 == n:
                     break
@@ -423,7 +423,8 @@ def tridiag_eigen(ctx, d, e, z = False):
                 break
 
             if j >= iterlim:
-                raise RuntimeError("tridiag_eigen: no convergence to an eigenvalue after %d iterations" % iterlim)
+                raise RuntimeError("tridiag_eigen: no convergence to an "
+                                   f"eigenvalue after {iterlim} iterations")
 
             j += 1
 
@@ -872,7 +873,7 @@ def gauss_quadrature(ctx, n, qtype = "legendre", alpha = 0, beta = 0):
             d[i] = a2b2 / ((abi - 2) * abi)
             e[i] = ctx.sqrt(4 * j * (j + alpha) * (j + beta) * (j + ab) / ((abi * abi - 1) * abi * abi))
     elif isinstance(qtype, str):
-        raise ValueError("unknown quadrature rule \"%s\"" % qtype)
+        raise ValueError(f"unknown quadrature rule \"{qtype}\"")
     elif not isinstance(qtype, str):
         w = qtype(d, e)
     else:
@@ -1052,7 +1053,7 @@ def svd_r_raw(ctx, A, V = False, calc_u = False):
         #   loop over singular values, and over allowed itations
 
         its = 0
-        while 1:
+        while True:
             its += 1
             flag = True
 
@@ -1099,7 +1100,8 @@ def svd_r_raw(ctx, A, V = False, calc_u = False):
                 break
 
             if its >= maxits:
-                raise RuntimeError("svd: no convergence to an eigenvalue after %d iterations" % its)
+                raise RuntimeError("svd: no convergence to an eigenvalue "
+                                   f"after {its} iterations")
 
             x = S[l]         # shift from bottom 2 by 2 minor
             nm = k-1
@@ -1378,7 +1380,7 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
         #   loop over singular values, and over allowed itations
 
         its = 0
-        while 1:
+        while True:
             its += 1
             flag = True
 
@@ -1425,7 +1427,8 @@ def svd_c_raw(ctx, A, V = False, calc_u = False):
                 break
 
             if its >= maxits:
-                raise RuntimeError("svd: no convergence to an eigenvalue after %d iterations" % its)
+                raise RuntimeError("svd: no convergence to an eigenvalue "
+                                   f"after {its} iterations")
 
             x = S[l]         # shift from bottom 2 by 2 minor
             nm = k-1

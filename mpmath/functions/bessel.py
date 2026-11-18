@@ -157,6 +157,13 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
     ctx.prec += 10
     m, d = ctx.nint_distance(n)
     if d < -ctx.prec:
+        if ctx._fixed_precision:
+            # The limit below needs a higher working precision, which
+            # a fixed-precision context can't provide (n + eps rounds
+            # back to n), so evaluate it in the mp context instead.
+            with ctx._mp.workprec(ctx.prec):
+                return ctx.convert(ctx._mp.bessely(n, z, derivative,
+                                                   **kwargs))
         h = +ctx.eps
         ctx.prec *= 2
         n += h
@@ -1097,7 +1104,7 @@ def generalized_bisection(ctx,f,a,b,n):
     N = n+1
     points = []
     signs = []
-    while 1:
+    while True:
         points = ctx.linspace(a,b,N)
         signs = [ctx.sign(f(x)) for x in points]
         ok_intervals = [(points[i],points[i+1]) for i in range(N-1) \
@@ -1149,7 +1156,7 @@ def bessel_zero(ctx, kind, prime, v, m, isoltol=0.01, _interval_cache={}):
         if kind == 2 and not prime: low = 0.8
         if kind == 2 and prime: low = 2.0
         n = m+1
-        while 1:
+        while True:
             r1, err = mcmahon(ctx, kind, prime, v, n)
             if err < isoltol:
                 r2, err2 = mcmahon(ctx, kind, prime, v, n+1)

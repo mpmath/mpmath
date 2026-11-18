@@ -1234,6 +1234,8 @@ def test_arange():
     assert arange(0) == []
     assert arange(1000, -1) == []
     assert arange(-1.23, 3.21, -0.0000001) == []
+    pytest.raises(TypeError, lambda: arange(1, 2, 3, 4))
+    pytest.raises(TypeError, lambda: arange())
 
 def test_linspace():
     assert linspace(2, 9, 7) == [mpf('2.0'), mpf('3.166666666666667'),
@@ -1242,6 +1244,7 @@ def test_linspace():
     assert linspace(2, 9, 7, endpoint=0) == [mpf('2.0'), mpf('3.0'), mpf('4.0'),
         mpf('5.0'), mpf('6.0'), mpf('7.0'), mpf('8.0')]
     assert linspace(2, 7, 1) == [mpf(2)]
+    pytest.raises(TypeError, lambda: linspace(1, 2, 3, 4))
 
 def test_float_cbrt():
     mp.dps = 30
@@ -1262,6 +1265,15 @@ def test_float_cbrt():
         z = w*w*w
         r = cbrt(z)
         assert mpc_ae(r, w, eps)
+
+def test_root_complex_infinity():
+    for z in [mpc(-inf), mpc(-inf, 1), mpc(1, inf), mpc(inf, inf),
+              mpc(1, -inf), mpc(-inf, -1)]:
+        for n in [3, 4, 25]:
+            assert root(z, n) == power(z, mpf(1)/n)
+        assert cbrt(z) == power(z, mpf(1)/3)
+    assert root(-inf, 2) == sqrt(-inf) == mpc(0, inf)
+    assert root(-inf, 3) == mpc(inf, inf)
 
 def test_root():
     mp.dps = 30
@@ -1533,37 +1545,90 @@ def test_call_with_dps():
 
 def test_tanh():
     assert tanh(0) == 0
-    assert tanh(inf) == 1
+    assert tanh(+inf) == 1
     assert tanh(-inf) == -1
     assert isnan(tanh(nan))
-    assert tanh(mpc('inf', '0')) == 1
+    assert tanh(mpc(inf, 0)) == 1
 
     assert tanh(mpc(+inf, +inf)) == mpc(+1, 0)
     assert tanh(mpc(+inf, -inf)) == mpc(+1, 0)
     assert tanh(mpc(-inf, +inf)) == mpc(-1, 0)
     assert tanh(mpc(-inf, -inf)) == mpc(-1, 0)
-    assert tanh(mpc(+inf, 2)) == mpc(+1, 0)
-    assert tanh(mpc(-inf, 2)) == mpc(-1, 0)
+    assert tanh(mpc(+inf, +2)) == mpc(+1, 0)
+    assert tanh(mpc(-inf, +2)) == mpc(-1, 0)
+    assert tanh(mpc(+inf, -2)) == mpc(+1, 0)
+    assert tanh(mpc(-inf, -2)) == mpc(-1, 0)
     r = tanh(mpc(0, -inf))
     assert r.real == 0 and isnan(r.imag)
-    r = tanh(mpc(2, -inf))
+    r = tanh(mpc(0, +inf))
+    assert r.real == 0 and isnan(r.imag)
+    r = tanh(mpc(+2, -inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tanh(mpc(+2, +inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tanh(mpc(-2, -inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tanh(mpc(-2, +inf))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tanh(mpc(0, nan))
+    assert r.real == 0 and isnan(r.imag)
+    r = tanh(mpc(+2, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tanh(mpc(-2, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tanh(mpc(nan, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = tanh(mpc(nan, +2))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tanh(mpc(nan, -2))
     assert isnan(r.real) and isnan(r.imag)
     assert tanh(mpc(+inf, nan)) == mpc(+1, 0)
     assert tanh(mpc(-inf, nan)) == mpc(-1, 0)
+    r = tanh(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
 
 def test_tan():
+    assert tan(0) == 0
+    assert isnan(tan(inf))
+    assert isnan(tan(-inf))
+    assert isnan(tan(nan))
+
     assert tan(mpc(+inf, +inf)) == mpc(0, +1)
     assert tan(mpc(+inf, -inf)) == mpc(0, -1)
     assert tan(mpc(-inf, +inf)) == mpc(0, +1)
     assert tan(mpc(-inf, -inf)) == mpc(0, -1)
-    assert tan(mpc(2, +inf)) == mpc(0, +1)
-    assert tan(mpc(2, -inf)) == mpc(0, -1)
+    assert tan(mpc(+2, +inf)) == mpc(0, +1)
+    assert tan(mpc(+2, -inf)) == mpc(0, -1)
+    assert tan(mpc(-2, +inf)) == mpc(0, +1)
+    assert tan(mpc(-2, -inf)) == mpc(0, -1)
     r = tan(mpc(-inf, 0))
     assert isnan(r.real) and r.imag == 0
-    r = tan(mpc(-inf, 2))
+    r = tan(mpc(+inf, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = tan(mpc(-inf, +2))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tan(mpc(+inf, +2))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tan(mpc(+inf, -2))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tan(mpc(-inf, -2))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tan(mpc(nan, 0))
+    assert isnan(r.real) and r.imag == 0
+    r = tan(mpc(nan, +2))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tan(mpc(nan, -2))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tan(mpc(0, nan))
+    assert r.real == 0 and isnan(r.imag)
+    r = tan(mpc(+2, nan))
+    assert isnan(r.real) and isnan(r.imag)
+    r = tan(mpc(-2, nan))
     assert isnan(r.real) and isnan(r.imag)
     assert tan(mpc(nan, +inf)) == mpc(0, +1)
     assert tan(mpc(nan, -inf)) == mpc(0, -1)
+    r = tan(mpc(nan, nan))
+    assert isnan(r.real) and isnan(r.imag)
 
 def test_atanh():
     # Real cases:

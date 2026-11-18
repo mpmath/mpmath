@@ -573,7 +573,7 @@ def lambertw(ctx, z, k=0):
             else:
                 w = wn
         if i == 100:
-            ctx.warn("Lambert W iteration failed to converge for z = %s" % z)
+            ctx.warn(f"Lambert W iteration failed to converge for z = {z}")
     ctx.prec = prec
     return +w
 
@@ -597,7 +597,7 @@ def _polyexp(ctx, n, x, extra=False):
             yield ctx.sincpi(n)
         t = x
         k = 1
-        while 1:
+        while True:
             yield k**n * t
             k += 1
             t = t*x/k
@@ -708,7 +708,7 @@ def mangoldt(ctx, n):
     if n > 10**30:
         raise NotImplementedError
     k = 2
-    while 1:
+    while True:
         p = int(n**(1./k) + 0.5)
         if p < 2:
             return ctx.zero

@@ -463,8 +463,8 @@ invfft = mp.invfft
 class _MPMathModule(types.ModuleType):
 
     def _helper(self, *args, prop=''):
-        raise AttributeError("cannot set '{name}' on 'mpmath'. Did you mean to "
-                             "set '{name}' on 'mpmath.mp'?".format(name=prop))
+        raise AttributeError(f"cannot set '{prop}' on 'mpmath'. Did you mean to "
+                             f"set '{prop}' on 'mpmath.mp'?")
 
     dps = property(fset=functools.partial(_helper, prop='dps'))
     prec = property(fset=functools.partial(_helper, prop='prec'))

@@ -158,7 +158,7 @@ def isqrt_small_python(x):
     # The following iteration now precisely computes floor(sqrt(x))
     # See e.g. Crandall & Pomerance, "Prime Numbers: A Computational
     # Perspective"
-    while 1:
+    while True:
         y = (r+x//r)>>1
         if y >= r:
             return r

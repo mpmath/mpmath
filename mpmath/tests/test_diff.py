@@ -1,10 +1,11 @@
 import cmath
 import math
-
-from mpmath import (chop, cos, diff, diffs, diffun, e, exp, fp, j, log, sqrt,
-                    sin, taylor, mp, iv)
-import pytest
 from itertools import islice
+
+import pytest
+
+from mpmath import (chop, cos, diff, diffs, diffun, e, exp, fp, iv, j, log, mp,
+                    sin, sqrt, taylor)
 
 
 def test_diff():
@@ -21,6 +22,7 @@ def test_diff():
     assert diff(lambda x: 3+x**5, 3.0, n=2, method='step').ae(540)
     assert diffun(sin)(2).ae(cos(2))
     assert diffun(sin, n=2)(2).ae(-sin(2))
+    pytest.raises(ValueError, lambda: diff(abs, 0.0, method='spam'))
 
 def test_diffs():
     assert [chop(d) for d in diffs(sin, 0, 1)] == [0, 1]

@@ -238,7 +238,7 @@ def pcfv(ctx, a, z, *, eliminate=True, eliminate_all=False,
                 T[0].append(1j)
                 T[1].append(1)
                 T[3].append(q-n)
-            u = ctx.expjpi((q*n-r)) * ctx.sqrt(2/ctx.pi)
+            u = ctx.expjpi(q*n-r) * ctx.sqrt(2/ctx.pi)
             for T in T2terms:
                 T[0].append(u)
                 T[1].append(1)

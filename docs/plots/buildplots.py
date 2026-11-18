@@ -10,13 +10,13 @@ for f in glob.glob("*.py"):
     for i in range(len(code)):
         l = code[i].rstrip()
         if "cplot(" in l:
-            l = l[:-1] + (", dpi=45, file='%s.png', verbose=True)" % f[:-3])
+            l = l[:-1] + f", dpi=45, file='{f[:-3]}.png', verbose=True)"
             code[i] = l
         elif "splot(" in l:
-            l = l[:-1] + (", dpi=45, file='%s.png')" % f[:-3])
+            l = l[:-1] + f", dpi=45, file='{f[:-3]}.png')"
             code[i] = l
         elif "plot(" in l:
-            l = l[:-1] + (", dpi=45, file='%s.png')" % f[:-3])
+            l = l[:-1] + f", dpi=45, file='{f[:-3]}.png')"
             code[i] = l
     code = "\n".join(code)
     exec(code)

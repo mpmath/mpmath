@@ -232,7 +232,7 @@ class FPContext(StandardBaseContext):
         tol = ctx.eps
         s = t = 1.0
         k = 0
-        while 1:
+        while True:
             for i in num: t *= (coeffs[i]+k)
             try:
                 for i in den: t /= (coeffs[i]+k)

@@ -57,14 +57,14 @@ def calculateit(base, n, tofile):
     if tofile:
         out_ = sys.stdout
         sys.stdout = tofile
-    print("%i base-%i digits of pi:\n" % (n, base))
+    print(f"{n} base-{base} digits of pi:\n")
     print(intpart, ".\n")
 
     display_fraction(d, skip, colwidth=10, columns=5)
     if tofile:
         sys.stdout = out_
-    print("\nFinished in %f seconds (%f calc, %f convert)" % \
-        ((step1_time + step2_time), step1_time, step2_time))
+    print(f"\nFinished in {step1_time + step2_time:f} seconds "
+          f"({step1_time:f} calc, {step2_time:f} convert)")
 
 def interactive():
     print("Compute digits of pi with mpmath\n")

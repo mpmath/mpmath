@@ -876,7 +876,7 @@ def mpf_div(s, t, prec, rnd=round_down):
         return fzero
     sign = ssign ^ tsign
     if tman == 1:
-        return normalize(sign, sman, sexp-texp, sbc, prec, rnd)
+        return normalize(sign, sman, sexp-texp, sbc, prec or sbc, rnd)
     # Same strategy as for addition: if there is a remainder, perturb
     # the result a few bits outside the precision range before rounding
     if not prec:
@@ -1003,7 +1003,7 @@ def mpf_pow_int(s, n, prec, rnd=round_down):
     # operations are performed.
     workprec = prec + 4*n.bit_length() + 4
     _, pm, pe, pbc = fone
-    while 1:
+    while True:
         if n & 1:
             pm = pm*man
             pe = pe+exp
@@ -1607,7 +1607,7 @@ def read_format_spec(format_spec):
         if format_dict['precision'] < 0 and format_dict['type'].lower() not in ['', 'a', 'b']:
             format_dict['precision'] = 6
     else:
-        raise ValueError("Invalid format specifier '{}'".format(format_spec))
+        raise ValueError(f"Invalid format specifier '{format_spec}'")
 
     return format_dict
 

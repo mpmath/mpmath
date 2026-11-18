@@ -513,7 +513,7 @@ class _constant(_mpf):
         return self.func(prec, rounding)
 
     def __repr__(self):
-        return "<%s: %s~>" % (self.name, self.context.nstr(self(dps=self._reprdps_getter())))
+        return f"<{self.name}: {self.context.nstr(self(dps=self._reprdps_getter()))}~>"
 
 
 class _mpc(mpnumeric):
@@ -1193,9 +1193,9 @@ class PythonMPContext:
                     return ctx.make_mpc(mpc_f((x._mpf_, fzero), prec, rounding))
             elif hasattr(x, '_mpc_'):
                 return ctx.make_mpc(mpc_f(x._mpc_, prec, rounding))
-            raise NotImplementedError("%s of a %s" % (name, type(x)))
+            raise NotImplementedError(f"{name} of a {type(x)}")
         name = mpf_f.__name__[4:]
-        f.__doc__ = function_docs.__dict__.get(name, "Computes the %s of x" % doc)
+        f.__doc__ = function_docs.__dict__.get(name, f"Computes the {doc} of x")
         f.__name__ = name
         return f
 

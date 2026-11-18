@@ -2,11 +2,12 @@ import pytest
 
 from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     bernpoly, beta, binomial, catalan, digamma, e, euler,
-                    eulerpoly, fac, fac2, factorial, fadd, ff, findroot, fp,
-                    fraction, gamma, gammaprod, harmonic, hyperfac, inf, isnan,
-                    j, log, loggamma, mp, mpc, mpf, mpmathify, nan, pi,
-                    polyexp, polylog, primezeta, psi, rf, rgamma, sech,
-                    secondzeta, siegelz, sinc, sqrt, stieltjes, superfac, zeta)
+                    eulerpoly, extraprec, fac, fac2, factorial, fadd, ff,
+                    findroot, fp, fraction, gamma, gammaprod, harmonic,
+                    hyperfac, inf, isnan, j, log, loggamma, mp, mpc, mpf,
+                    mpmathify, nan, pi, polyexp, polylog, primezeta, psi, rf,
+                    rgamma, sech, secondzeta, siegelz, sinc, sqrt, stieltjes,
+                    superfac, zeta)
 from mpmath.libmp import from_float, round_up
 from mpmath.libmp.gammazeta import mpf_zeta_int
 
@@ -729,3 +730,9 @@ def test_issue_1198():
     # Wolfram Engine N[Zeta[-105/10, 7656119366529843/4503599627370496], 40]
     ref = mpf('-0.0164851819507137542274084311077626')
     assert mp.almosteq(zeta(-10.5, 1.7), ref, rel_eps=1e-28, abs_eps=0)
+
+def test_issue_551():
+    ref = +extraprec(1000)(zeta)(50+5j).imag
+    assert abs(zeta(50+5j).imag - ref) <= mp.ulp(ref)
+    ref = +extraprec(1000)(altzeta)(50+5j).imag
+    assert abs(altzeta(50+5j).imag - ref) <= mp.ulp(ref)

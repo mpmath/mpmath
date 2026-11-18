@@ -6,6 +6,12 @@ def test_sumem():
     assert sumem(lambda k: 1/k**2.5, [50, 100]).ae(0.0012524505324784962)
     assert sumem(lambda k: k**4 + 3*k + 1, [10, 100]).ae(2050333103)
 
+def test_sumem_verbose(capsys):
+    assert sumem(lambda k: k**4 + 3*k + 1, [10, 100],
+                 verbose=True).ae(2050333103)
+    captured = capsys.readouterr()
+    assert captured.out.find("Integrating f(x) from x =") >= 0
+
 def test_nsum():
     assert nsum(lambda x: x**2, [1, 3]) == 14
     assert nsum(lambda k: 1/factorial(k), [0, inf]).ae(e)
@@ -17,6 +23,25 @@ def test_nsum():
     assert nsum(lambda k: 1/k**2, [4, inf], method='e').ae(0.2838229557371153)
     assert abs(fp.nsum(lambda k: 1/k**4, [1, fp.inf]) - 1.082323233711138) < 1e-5
     assert abs(fp.nsum(lambda k: 1/k**4, [1, fp.inf], method='e') - 1.082323233711138) < 1e-4
+
+def test_nsum_verbose(capsys):
+    assert nsum(lambda k: 1/(k**2), [1, inf],
+                verbose=True).ae(1.6449340668482264)
+    captured = capsys.readouterr()
+    assert captured.out.find("Adding terms") >= 0
+    assert captured.out.find("Direct error") >= 0
+    assert captured.out.find("Richardson error") >= 0
+    assert captured.out.find("Shanks error") >= 0
+
+    assert nsum(lambda k: 1/(k**2), [1, inf], method='l',
+                verbose=True).ae(1.6449340668482264)
+    captured = capsys.readouterr()
+    assert captured.out.find("levin(u) error") >= 0
+
+    assert nsum(lambda k: 1/(k**2), [1, inf], method='e',
+                verbose=True).ae(1.6449340668482264)
+    captured = capsys.readouterr()
+    assert captured.out.find("Euler-Maclaurin error") >= 0
 
 def test_nprod():
     assert nprod(lambda k: exp(1/k**2), [1,inf], method='r').ae(exp(pi**2/6))
