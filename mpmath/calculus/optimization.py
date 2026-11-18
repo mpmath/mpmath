@@ -33,7 +33,7 @@ class Newton:
         if len(x0) == 1:
             self.x0 = x0[0]
         else:
-            raise ValueError('expected 1 starting point, got %i' % len(x0))
+            raise ValueError(f'expected 1 starting point, got {len(x0)}')
         self.f = f
         if 'df' not in kwargs:
             def df(x):
@@ -78,7 +78,7 @@ class Secant:
             self.x0 = x0[0]
             self.x1 = x0[1]
         else:
-            raise ValueError('expected 1 or 2 starting points, got %i' % len(x0))
+            raise ValueError(f'expected 1 or 2 starting points, got {len(x0)}')
         self.f = f
 
     def __iter__(self):
@@ -120,7 +120,7 @@ class MNewton:
     def __init__(self, ctx, f, x0, **kwargs):
         self.ctx = ctx
         if not len(x0) == 1:
-            raise ValueError('expected 1 starting point, got %i' % len(x0))
+            raise ValueError(f'expected 1 starting point, got {len(x0)}')
         self.x0 = x0[0]
         self.f = f
         if 'df' not in kwargs:
@@ -177,7 +177,7 @@ class Halley:
     def __init__(self, ctx, f, x0, **kwargs):
         self.ctx = ctx
         if not len(x0) == 1:
-            raise ValueError('expected 1 starting point, got %i' % len(x0))
+            raise ValueError(f'expected 1 starting point, got {len(x0)}')
         self.x0 = x0[0]
         self.f = f
         if 'df' not in kwargs:
@@ -244,8 +244,7 @@ class Muller:
             self.x1 = x0[1]
             self.x2 = x0[2]
         else:
-            raise ValueError('expected 1, 2 or 3 starting points, got %i'
-                             % len(x0))
+            raise ValueError(f'expected 1, 2 or 3 starting points, got {len(x0)}')
         self.f = f
         self.verbose = kwargs['verbose']
 
@@ -304,7 +303,7 @@ class Bisection:
     def __init__(self, ctx, f, x0, **kwargs):
         self.ctx = ctx
         if len(x0) != 2:
-            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+            raise ValueError(f'expected interval of 2 points, got {len(x0)}')
         self.f = f
         self.a, self.b = x0
         self.maxsteps = 2*ctx.prec + ctx.ceil(ctx.log2(abs(self.a - self.b)))
@@ -353,7 +352,7 @@ def _getm(method):
             else:
                 return 0.5
     else:
-        raise ValueError("method '%s' not recognized" % method)
+        raise ValueError(f"method '{method}' not recognized")
     return getm
 
 class Illinois:
@@ -390,7 +389,7 @@ class Illinois:
     def __init__(self, ctx, f, x0, **kwargs):
         self.ctx = ctx
         if len(x0) != 2:
-            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+            raise ValueError(f'expected interval of 2 points, got {len(x0)}')
         self.a = x0[0]
         self.b = x0[1]
         self.f = f
@@ -399,7 +398,7 @@ class Illinois:
         self.method = kwargs.get('method', 'illinois')
         self.getm = _getm(self.method)
         if self.verbose:
-            print('using %s method' % self.method)
+            print(f'using {self.method} method')
 
     def __iter__(self):
         method = self.method
@@ -483,7 +482,7 @@ class Ridder:
         self.ctx = ctx
         self.f = f
         if len(x0) != 2:
-            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+            raise ValueError(f'expected interval of 2 points, got {len(x0)}')
         self.x1 = x0[0]
         self.x2 = x0[1]
         self.verbose = kwargs['verbose']
@@ -531,7 +530,7 @@ class ANewton:
     def __init__(self, ctx, f, x0, **kwargs):
         self.ctx = ctx
         if not len(x0) == 1:
-            raise ValueError('expected 1 starting point, got %i' % len(x0))
+            raise ValueError(f'expected 1 starting point, got {len(x0)}')
         self.x0 = x0[0]
         self.f = f
         if 'df' not in kwargs:
@@ -597,7 +596,7 @@ class Brent:
     def __init__(self, ctx, f, x0, **kwargs):
         self.ctx = ctx
         if len(x0) != 2:
-            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+            raise ValueError(f'expected interval of 2 points, got {len(x0)}')
 
         self.f = f
         self.a, self.b = x0
@@ -694,7 +693,7 @@ class ModAB:
     def __init__(self, ctx, f, x0, **kwargs):
         self.ctx = ctx
         if len(x0) != 2:
-            raise ValueError('expected interval of 2 points, got %i' % len(x0))
+            raise ValueError(f'expected interval of 2 points, got {len(x0)}')
 
         self.f = f
 
@@ -1202,9 +1201,8 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True,
             xl = x
         if verify and norm(f(*xl))**2 > tol: # TODO: better condition?
             raise ValueError('Could not find root within given tolerance. '
-                             '(%s > %s)\n'
-                             'Try another starting point or tweak arguments.'
-                             % (norm(f(*xl))**2, tol))
+                             f'({norm(f(*xl))**2} > {tol})\n'
+                             'Try another starting point or tweak arguments.')
         return x
     finally:
         ctx.prec = prec

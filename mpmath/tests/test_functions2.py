@@ -1469,6 +1469,13 @@ def test_hypercomb_zero_pow():
     assert hypercomb(lambda a: (([0],[a],[],[],[],[],0),), [0]) == 1
     assert meijerg([[-1.5],[]],[[0],[-0.75]],0).ae(1.4464090846320771425)
 
+def test_hypercomb_verbose(capsys):
+    assert hyp2f1(2, (1,2), 4, 5.75,
+                  verbose=True).ae(0.20830114243445386 - 0.84949627475332001j)
+    captured = capsys.readouterr()
+    assert captured.out.find("ENTERING hypercomb main loop") >= 0
+    assert captured.out.find("Evaluating term") >= 0
+
 def test_spherharm():
     t = 0.5; r = 0.25
     assert spherharm(0,0,t,r).ae(0.28209479177387814347)

@@ -196,7 +196,7 @@ def diff(ctx, f, x, n=1, *, method='step', direction=0, radius=0.25,
             d = ctx.quadts(g, [0, 2*ctx.pi])
             v = d * ctx.factorial(n) / (2*ctx.pi)
         else:
-            raise ValueError("unknown method: %r" % method)
+            raise ValueError(f"unknown method: {method!r}")
     finally:
         ctx.prec = prec
     return +v
@@ -279,7 +279,7 @@ def diffs(ctx, f, x, n=None, *, method='step', direction=0, radius=0.25,
         A, B = 1, 2
     else:
         A, B = 1, n+1
-    while 1:
+    while True:
         callprec = ctx.prec
         y, norm, workprec = hsteps(ctx, f, x, B, callprec, **options)
         for k in range(A, B):
@@ -345,13 +345,12 @@ def diffs_prod(ctx, factors):
     """
     N = len(factors)
     if N == 1:
-        for c in factors[0]:
-            yield c
+        yield from factors[0]
     else:
         u = iterable_to_function(ctx.diffs_prod(factors[:N//2]))
         v = iterable_to_function(ctx.diffs_prod(factors[N//2:]))
         n = 0
-        while 1:
+        while True:
             #yield sum(binomial(n,k)*u(n-k)*v(k) for k in range(n+1))
             s = u(n) * v(0)
             a = 1
@@ -446,7 +445,7 @@ def diffs_exp(ctx, fdiffs):
     f0 = ctx.exp(fn(0))
     yield f0
     i = 1
-    while 1:
+    while True:
         s = ctx.mpf(0)
         for powers, c in iteritems(dpoly(i)):
             s += c*ctx.fprod(fn(k+1)**p for (k,p) in enumerate(powers) if p)

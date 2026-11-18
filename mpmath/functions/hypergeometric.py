@@ -97,7 +97,7 @@ def hypercomb(ctx, function, params=[], discard_known_zeros=True,
     perturbed_reference_value = None
     hextra = 0
     try:
-        while 1:
+        while True:
             ctx.prec += 10
             if ctx.prec > maxprec:
                 raise ValueError(_hypercomb_msg % (orig, ctx.prec))
@@ -139,8 +139,8 @@ def hypercomb(ctx, function, params=[], discard_known_zeros=True,
                 w_s, c_s, alpha_s, beta_s, a_s, b_s, z = term_data
                 if verbose:
                     print()
-                    print("  Evaluating term %i/%i : %iF%i" % \
-                        (term_index+1, len(terms), len(a_s), len(b_s)))
+                    print(f"  Evaluating term {term_index+1}/{len(terms)} : "
+                          f"{len(a_s)}F{len(b_s)}")
                     print("    powers", ctx.nstr(w_s), ctx.nstr(c_s))
                     print("    gamma", ctx.nstr(alpha_s), ctx.nstr(beta_s))
                     print("    hyper", ctx.nstr(a_s), ctx.nstr(b_s))
@@ -422,7 +422,7 @@ def _hyp2f1_gosper(ctx,a,b,c,z,**kwargs):
     orig = ctx.prec
     maxprec = kwargs.get('maxprec', 100*orig)
     extra = 10
-    while 1:
+    while True:
         ctx.prec = orig + extra
         #a = ctx.convert(_a)
         #b = ctx.convert(_b)
@@ -448,7 +448,7 @@ def _hyp2f1_gosper(ctx,a,b,c,z,**kwargs):
         nprint = ctx.nprint
         mag = ctx.mag
         maxmag = ctx.ninf
-        while 1:
+        while True:
             kch = k+ch
             kakbz = (k+a)*(k+b)*z / (4*(k+1)*kch*(k+c1h))
             d1 = kakbz*(e-(k+cba)*d*g)
@@ -692,7 +692,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
             yield sum(ctx.loggamma(a+k0) for a in a_s) - \
                 sum(ctx.loggamma(b+k0) for b in b2) + k0*ctx.log(z)
             i = 0
-            while 1:
+            while True:
                 v = sum(ctx.psi(i,a+k0) for a in a_s) - \
                     sum(ctx.psi(i,b+k0) for b in b2)
                 if i == 0:
@@ -851,7 +851,7 @@ def _hyp2f2(ctx, a_s, b_s, z, **kwargs):
                     s1 = 0
                     k = 0
                     tprev = 0
-                    while 1:
+                    while True:
                         if k not in c:
                             uu1 = 1-B2+2*a1+a1**2+2*a2+a2**2-A2*B2+a1*a2+b1*b2+(2*B2-3*(A2+1))*k+2*k**2
                             uu2 = (k-A2+b1-1)*(k-A2+b2-1)*(k-X-2)
@@ -925,7 +925,7 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
                     s2 = 0
                     k = 0
                     tprev = 0
-                    while 1:
+                    while True:
                         if k not in c:
                             uu1 = (3*k**2+(-6*a1+2*b1+2*b2-4)*k + 3*a1**2 - \
                                 (b1-b2)**2 - 2*a1*(b1+b2-2) + MPQ(1,4))
@@ -1008,7 +1008,7 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                     s2 = 0
                     k = 0
                     tprev = 0
-                    while 1:
+                    while True:
                         if k not in c:
                             uu1 = (k-2*X-3)*(k-2*X-2*b1-1)*(k-2*X-2*b2-1)*\
                                 (k-2*X-2*b3-1)
@@ -1456,8 +1456,8 @@ def hyper2d(ctx, a, b, x, y, *, eliminate=True, eliminate_all=False,
     b_m = parse(b, 'm')
     b_n = parse(b, 'n')
     b_m_add_n = parse(b, 'm+n')
-    if a: raise ValueError("unsupported key: %r" % a.keys()[0])
-    if b: raise ValueError("unsupported key: %r" % b.keys()[0])
+    if a: raise ValueError(f"unsupported key: {a.keys()[0]!r}")
+    if b: raise ValueError(f"unsupported key: {b.keys()[0]!r}")
     s = 0
     outer = ctx.one
     m = ctx.mpf(0)
@@ -1467,7 +1467,7 @@ def hyper2d(ctx, a, b, x, y, *, eliminate=True, eliminate_all=False,
     try:
         ctx.prec += 10
         tol = +ctx.eps
-        while 1:
+        while True:
             inner_sign = 1
             outer_sign = 1
             inner_a = list(a_n)

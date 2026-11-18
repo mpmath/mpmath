@@ -368,12 +368,12 @@ class MPContext(BaseMPContext, StandardBaseContext):
 
     def __str__(ctx):
         lines = ["Mpmath settings:",
-            ("  mp.prec = %s" % ctx.prec).ljust(30) + f"[default: {sys.float_info.mant_dig}]",
-            ("  mp.dps = %s" % ctx.dps).ljust(30) + f"[default: {sys.float_info.dig}]",
-            ("  mp.rounding = '%s'" % ctx.rounding).ljust(30) + f"[default: 'n']",
-            ("  mp.trap_complex = %s" % ctx.trap_complex).ljust(30) + "[default: False]",
-            ("  mp.pretty_dps = '%s'" % ctx.pretty_dps).ljust(30) + "[default: 'str']",
-            ("  mp.shortest_str = %s" % ctx.shortest_str).ljust(30) + "[default: False]",
+            (f"  mp.prec = {ctx.prec}").ljust(30) + f"[default: {sys.float_info.mant_dig}]",
+            (f"  mp.dps = {ctx.dps}").ljust(30) + f"[default: {sys.float_info.dig}]",
+            (f"  mp.rounding = '{ctx.rounding}'").ljust(30) + f"[default: 'n']",
+            (f"  mp.trap_complex = {ctx.trap_complex}").ljust(30) + "[default: False]",
+            (f"  mp.pretty_dps = '{ctx.pretty_dps}'").ljust(30) + "[default: 'str']",
+            (f"  mp.shortest_str = {ctx.shortest_str}").ljust(30) + "[default: False]",
         ]
         return "\n".join(lines)
 
@@ -518,7 +518,7 @@ class MPContext(BaseMPContext, StandardBaseContext):
                 except catch:
                     v1 = ctx.nan
                 prec2 = prec + 20
-                while 1:
+                while True:
                     ctx.prec = prec2
                     try:
                         v2 = f(*args, **kwargs)
@@ -530,13 +530,11 @@ class MPContext(BaseMPContext, StandardBaseContext):
                     if err < (-prec):
                         break
                     if verbose:
-                        print("autoprec: target=%s, prec=%s, accuracy=%s" \
-                            % (prec, prec2, -err))
+                        print(f"autoprec: target={prec}, prec={prec2}, accuracy={-err}")
                     v1 = v2
                     if prec2 >= maxprec2:
-                        raise ctx.NoConvergence(\
-                        "autoprec: prec increased to %i without convergence"\
-                        % prec2)
+                        raise ctx.NoConvergence("autoprec: prec increased "
+                                                f"to {prec2} without convergence")
                     prec2 += int(prec2*2)
                     prec2 = min(prec2, maxprec2)
             finally:
@@ -592,9 +590,9 @@ class MPContext(BaseMPContext, StandardBaseContext):
                   'rnd': rnd}
 
         if isinstance(x, list):
-            return "[%s]" % (", ".join(ctx.nstr(c, n, **kwargs) for c in x))
+            return "[{}]".format(", ".join(ctx.nstr(c, n, **kwargs) for c in x))
         if isinstance(x, tuple):
-            return "(%s)" % (", ".join(ctx.nstr(c, n, **kwargs) for c in x))
+            return "({})".format(", ".join(ctx.nstr(c, n, **kwargs) for c in x))
         if hasattr(x, '_mpf_'):
             return to_str(x._mpf_, n, **kwargs)
         if hasattr(x, '_mpc_'):
@@ -719,7 +717,7 @@ maxterms, or set zeroprec."""
                     magnitude_check[n] = d
                 extraprec = max(extraprec, d - prec + 60)
             max_total_jump += abs(d)
-        while 1:
+        while True:
             if extraprec > maxprec:
                 raise ctx.NoConvergence(ctx._hypsum_msg % (prec, prec+extraprec))
             wp = prec + extraprec
@@ -1291,7 +1289,7 @@ maxterms, or set zeroprec."""
             0.0100000000000000002081668171172
         """
         return ctx.constant(lambda prec, rnd: from_rational(p, q, prec, rnd),
-            '%s/%s' % (p, q))
+            f'{p}/{q}')
 
     def absmin(ctx, x):
         return abs(ctx.convert(x))

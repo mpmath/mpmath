@@ -19,7 +19,7 @@ class MatrixCalculusMethods:
                 ctx.factorial(p)**2/(ctx.factorial(2*p)**2 * (2*p + 1))
         q = 4
         extraq = 8
-        while 1:
+        while True:
             if eps_pade(q) < ctx.eps:
                 break
             q += 1
@@ -131,7 +131,7 @@ class MatrixCalculusMethods:
             T = A
             Y = A**0 + A
             k = 2
-            while 1:
+            while True:
                 T *= A * (1/ctx.mpf(k))
                 if ctx.mnorm(T, 'inf') < tol:
                     break
@@ -325,7 +325,7 @@ class MatrixCalculusMethods:
             Z = I = A**0
             k = 0
             # Denman-Beavers iteration
-            while 1:
+            while True:
                 Yprev = Y
                 try:
                     Y, Z = 0.5*(Y+ctx.inverse(Z)), 0.5*(Z+ctx.inverse(Y))
@@ -442,7 +442,7 @@ class MatrixCalculusMethods:
             I = A**0
             B = A
             n = 0
-            while 1:
+            while True:
                 B = ctx.sqrtm(B)
                 n += 1
                 if ctx.mnorm(B-I, 'inf') < 0.125:
@@ -450,7 +450,7 @@ class MatrixCalculusMethods:
             T = X = B-I
             L = X*0
             k = 1
-            while 1:
+            while True:
                 if k & 1:
                     L += T / k
                 else:

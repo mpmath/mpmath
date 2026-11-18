@@ -414,7 +414,7 @@ def hessenberg_qr(ctx, A, Q):
 
     its = totalits = 0
 
-    while 1:
+    while True:
         # kressner p.32 algo 3
         # the active submatrix is A[n0:n1,n0:n1]
 
@@ -481,7 +481,7 @@ def hessenberg_qr(ctx, A, Q):
             qr_step(ctx, n0, n1, A, Q, shift)
 
             if its > maxits:
-                raise RuntimeError("qr: failed to converge after %d steps" % its)
+                raise RuntimeError(f"qr: failed to converge after {its} steps")
 
 
 @defun
@@ -829,7 +829,7 @@ def eig_sort(ctx, E, EL = False, ER = False, f = "real"):
         elif f == "abs":
             f = abs
         else:
-            raise RuntimeError("unknown function %s" % f)
+            raise RuntimeError(f"unknown function {f}")
 
     n = len(E)
 

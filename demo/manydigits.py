@@ -78,11 +78,11 @@ print()
 
 print("C10: (7+2^(1/5)-5*(8^(1/5)))^(1/3) + 4^(1/5)-2^(1/5)")
 a = mpf(1)/5
-print(pr(((7 + 2**a - 5*(8**a))**(mpf(1)/3) + 4**a - 2**a)))
+print(pr((7 + 2**a - 5*(8**a))**(mpf(1)/3) + 4**a - 2**a))
 print()
 
 print("C11: tan(2^(1/2))+arctanh(sin(1))")
-print(pr((tan(sqrt(2)) + atanh(sin(1)))))
+print(pr(tan(sqrt(2)) + atanh(sin(1))))
 print()
 
 print("C12: arcsin(1/e^2) + arcsinh(e^2)")

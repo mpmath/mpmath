@@ -235,6 +235,7 @@ def test_invlap():
     assert invertlaplace(fp,t,method='stehfest').ae(ftt)
     assert invertlaplace(fp,t,method='dehoog').ae(ftt)
     assert invertlaplace(fp,t,method='cohen').ae(ftt)
+    pytest.raises(ValueError, lambda: invertlaplace(fp,t,method='spam'))
 
 def test_expm():
     #  Simple tests with known exact results

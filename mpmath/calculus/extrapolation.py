@@ -500,7 +500,7 @@ class levin_class:
         elif method == "sidi":
             self.factor = self.factor_sidi
         else:
-            raise ValueError("levin: unknown method \"%s\"" % method)
+            raise ValueError(f"levin: unknown method \"{method}\"")
 
     def factor_levin(self, i):
         # original levin
@@ -1064,7 +1064,7 @@ def sumem(ctx, f, interval, tol=None, reject=10, integral=None,
         if b != ctx.inf: s += f(b)/2
         # Tail integral
         if verbose:
-            print("Integrating f(x) from x = %s to %s" % (ctx.nstr(a), ctx.nstr(b)))
+            print(f"Integrating f(x) from x = {ctx.nstr(a)} to {ctx.nstr(b)}")
         if integral:
             s += integral
         else:
@@ -1142,7 +1142,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
             ctx.prec = (ctx.prec+10) * 4
         else:
             ctx.prec += 30
-        while 1:
+        while True:
             if index >= maxterms:
                 break
 
@@ -1153,7 +1153,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                 pass
             if verbose:
                 print("-"*70)
-                print("Adding terms #%i-#%i" % (index, index+step))
+                print(f"Adding terms #{index}-#{index+step}")
             update(partial, range(index, index+step))
             index += step
 
@@ -1161,7 +1161,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
             best = partial[-1]
             error = abs(best - partial[-2])
             if verbose:
-                print("Direct error: %s" % ctx.nstr(error))
+                print(f"Direct error: {ctx.nstr(error)}")
             if error <= tol:
                 return best
 
@@ -1171,7 +1171,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                 # Convergence
                 richardson_error = abs(value - last_richardson_value)
                 if verbose:
-                    print("Richardson error: %s" % ctx.nstr(richardson_error))
+                    print(f"Richardson error: {ctx.nstr(richardson_error)}")
                 # Convergence
                 if richardson_error <= tol:
                     return value
@@ -1194,7 +1194,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                     est1, maxc, est2 = row[-1], abs(row[-2]), row[-3]
                     shanks_error = abs(est1-est2)
                 if verbose:
-                    print("Shanks error: %s" % ctx.nstr(shanks_error))
+                    print(f"Shanks error: {ctx.nstr(shanks_error)}")
                 if shanks_error <= tol:
                     return est1
                 if ctx.eps*maxc > tol:
@@ -1207,7 +1207,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
             for L in summer:
                 est, lerror = L.update_psum(partial)
                 if verbose:
-                    print("%s error: %s" % (L.name, ctx.nstr(lerror)))
+                    print(f"{L.name} error: {ctx.nstr(lerror)}")
                 if lerror <= tol:
                     return est
                 if lerror < error:
@@ -1224,7 +1224,7 @@ def adaptive_extrapolation(ctx, update, emfun, kwargs):
                     value, em_error = emfun(index, tol)
                     value += partial[-1]
                     if verbose:
-                        print("Euler-Maclaurin error: %s" % ctx.nstr(em_error))
+                        print(f"Euler-Maclaurin error: {ctx.nstr(em_error)}")
                     if em_error <= tol:
                         return value
                     if em_error < error:

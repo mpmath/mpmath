@@ -864,7 +864,7 @@ class MatrixMethods:
             m = args[0]
             n = args[1]
         else:
-            raise TypeError('zeros expected at most 2 arguments, got %i' % len(args))
+            raise TypeError(f'zeros expected at most 2 arguments, got {len(args)}')
         A = ctx.matrix(m, n)
         for i in range(m):
             for j in range(n):
@@ -889,7 +889,7 @@ class MatrixMethods:
             m = args[0]
             n = args[1]
         else:
-            raise TypeError('ones expected at most 2 arguments, got %i' % len(args))
+            raise TypeError(f'ones expected at most 2 arguments, got {len(args)}')
         A = ctx.matrix(m, n)
         for i in range(m):
             for j in range(n):

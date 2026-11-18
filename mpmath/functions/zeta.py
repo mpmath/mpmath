@@ -267,7 +267,7 @@ def primezeta(ctx, s):
             # zeta ~ 1+eps; need to set precision
             # to get logarithm accurately
             k = 0
-            while 1:
+            while True:
                 k += 1
                 u = ctx.moebius(k)
                 if not u:
@@ -361,7 +361,7 @@ def eulerpoly(ctx, n, z):
         t = ctx.one
         k = 0
         w = ctx.ldexp(1,n+2)
-        while 1:
+        while True:
             v = n-k+1
             if not v & 1:
                 yield (2-w)*ctx.bernoulli(v)*t
@@ -390,7 +390,7 @@ def polylog_series(ctx, s, z):
     l = ctx.zero
     k = 1
     zk = z
-    while 1:
+    while True:
         term = zk / k**s
         l += term
         if abs(term) < tol:
@@ -419,7 +419,7 @@ def polylog_unitcircle(ctx, n, z):
         logz = ctx.ln(z)
         logmz = ctx.one
         m = 0
-        while 1:
+        while True:
             if (n-m) != 1:
                 term = ctx.zeta(n-m) * logmz / ctx.fac(m)
                 if term and abs(term) < tol:
@@ -433,7 +433,7 @@ def polylog_unitcircle(ctx, n, z):
         logz = ctx.ln(z)
         logkz = ctx.one
         k = 0
-        while 1:
+        while True:
             b = ctx.bernoulli(k-n+1)
             if b:
                 term = b*logkz/(ctx.fac(k)*(k-n+1))
@@ -462,7 +462,7 @@ def polylog_general(ctx, s, z):
     if ctx.isfinite(s):
         ctx.prec += max(0, -ctx.nint_distance(s)[1])
 
-    while 1:
+    while True:
         term = ctx.zeta(s-k) * t
         if not abs(term) >= ctx.eps:
             break
@@ -617,7 +617,7 @@ def _hurwitz(ctx, s, a=1, d=0, *, verbose=False, maxprec=None):
                 print("zeta: Reflection formula failed")
         if verbose:
             print("zeta: Using the Euler-Maclaurin algorithm")
-        while 1:
+        while True:
             ctx.prec = prec + extraprec
             T1, total = _hurwitz_em(ctx, s, a, d, prec+10, verbose)
             cancellation = ctx.mag(T1) - ctx.mag(total)
@@ -688,7 +688,7 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
     if ctx.isint(s):
         s = int(ctx._re(s))
     s1 = s-1
-    while 1:
+    while True:
         # Truncated L-series
         l = ctx._zetasum(s, M1+a, M2-M1-1, [d])[0][0]
         #if d:

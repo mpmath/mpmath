@@ -1234,6 +1234,8 @@ def test_arange():
     assert arange(0) == []
     assert arange(1000, -1) == []
     assert arange(-1.23, 3.21, -0.0000001) == []
+    pytest.raises(TypeError, lambda: arange(1, 2, 3, 4))
+    pytest.raises(TypeError, lambda: arange())
 
 def test_linspace():
     assert linspace(2, 9, 7) == [mpf('2.0'), mpf('3.166666666666667'),
@@ -1242,6 +1244,7 @@ def test_linspace():
     assert linspace(2, 9, 7, endpoint=0) == [mpf('2.0'), mpf('3.0'), mpf('4.0'),
         mpf('5.0'), mpf('6.0'), mpf('7.0'), mpf('8.0')]
     assert linspace(2, 7, 1) == [mpf(2)]
+    pytest.raises(TypeError, lambda: linspace(1, 2, 3, 4))
 
 def test_float_cbrt():
     mp.dps = 30

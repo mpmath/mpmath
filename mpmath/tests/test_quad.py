@@ -21,6 +21,17 @@ def test_basic_integrals():
         assert ae(quadts(lambda x: 1/(1+x*x), [-1, 1]), pi/2)
         assert ae(quadts(lambda x: 1/(1+x*x), [-inf, inf]), pi)
         assert ae(quadts(lambda x: 2*sqrt(1-x*x), [-1, 1]), pi)
+    pytest.raises(ValueError, lambda: quad(sin, [1, 2], method="spam"))
+
+def test_quad_verbose(capsys):
+    assert quad(sin, [1, 2], verbose=True).ae(0.95644914241528212)
+    captured = capsys.readouterr()
+    assert captured.out.find("Integrating from") >= 0
+    mp._gauss_legendre.clear()
+    assert quad(lambda x: exp(-x), [0, inf], verbose=True,
+                method='gauss-legendre').ae(1)
+    captured = capsys.readouterr()
+    assert captured.out.find("Computing nodes") >= 0
 
 def test_multiple_intervals():
     y,err = quad(lambda x: sign(x), [-0.5, 0.9, 1], maxdegree=2, error=True)

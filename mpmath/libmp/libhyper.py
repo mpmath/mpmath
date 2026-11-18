@@ -54,7 +54,7 @@ def make_hyp_summator(key):
     p, q, param_types, ztype = key
 
     pstring = "".join(param_types)
-    fname = "hypsum_%i_%i_%s_%s_%s" % (p, q, pstring[:p], pstring[p:], ztype)
+    fname = f"hypsum_{p}_{q}_{pstring[:p]}_{pstring[p:]}_{ztype}"
     #print "generating hypsum", fname
 
     have_complex_param = 'C' in param_types
@@ -108,22 +108,22 @@ def make_hyp_summator(key):
         W = ["A", "B"][i >= p]
         if flag == 'Z':
             ([aint,bint][i >= p]).append(i)
-            add("%sINT_%i = coeffs[%i]" % (W, i, i))
+            add(f"{W}INT_{i} = coeffs[{i}]")
         elif flag == 'Q':
             ([arat,brat][i >= p]).append(i)
-            add("%sP_%i, %sQ_%i = coeffs[%i].numerator, coeffs[%i].denominator" % (W, i, W, i, i, i))
+            add(f"{W}P_{i}, {W}Q_{i} = coeffs[{i}].numerator, coeffs[{i}].denominator")
         elif flag == 'R':
             ([areal,breal][i >= p]).append(i)
-            add("xsign, xm, xe, xbc = coeffs[%i]._mpf_" % i)
+            add(f"xsign, xm, xe, xbc = coeffs[{i}]._mpf_")
             add("if xsign: xm = -xm")
             add("offset = xe + wp")
             add("if offset >= 0:")
-            add("    %sREAL_%i = xm << offset" % (W, i))
+            add(f"    {W}REAL_{i} = xm << offset")
             add("else:")
-            add("    %sREAL_%i = xm >> (-offset)" % (W, i))
+            add(f"    {W}REAL_{i} = xm >> (-offset)")
         elif flag == 'C':
             ([acomplex,bcomplex][i >= p]).append(i)
-            add("__re, __im = coeffs[%i]._mpc_" % i)
+            add(f"__re, __im = coeffs[{i}]._mpc_")
             add("xsign, xm, xe, xbc = __re")
             add("if xsign: xm = -xm")
             add("ysign, ym, ye, ybc = __im")
@@ -131,14 +131,14 @@ def make_hyp_summator(key):
 
             add("offset = xe + wp")
             add("if offset >= 0:")
-            add("    %sCRE_%i = xm << offset" % (W, i))
+            add(f"    {W}CRE_{i} = xm << offset")
             add("else:")
-            add("    %sCRE_%i = xm >> (-offset)" % (W, i))
+            add(f"    {W}CRE_{i} = xm >> (-offset)")
             add("offset = ye + wp")
             add("if offset >= 0:")
-            add("    %sCIM_%i = ym << offset" % (W, i))
+            add(f"    {W}CIM_{i} = ym << offset")
             add("else:")
-            add("    %sCIM_%i = ym >> (-offset)" % (W, i))
+            add(f"    {W}CIM_{i} = ym >> (-offset)")
         else:
             raise ValueError
 
@@ -183,10 +183,10 @@ def make_hyp_summator(key):
         # TODO: when there are several real parameters and just a few complex
         # (maybe just the complex argument), we only need to do about
         # half as many ops if we accumulate the real factor in a single real variable
-        for k in range(cancellable_real): add("    PRE = PRE * AREAL_%i // BREAL_%i" % (areal[k], breal[k]))
+        for k in range(cancellable_real): add(f"    PRE = PRE * AREAL_{areal[k]} // BREAL_{breal[k]}")
         for i in noncancellable_real_num: add("    PRE = (PRE * AREAL_#) >> wp".replace("#", str(i)))
         for i in noncancellable_real_den: add("    PRE = (PRE << wp) // BREAL_#".replace("#", str(i)))
-        for k in range(cancellable_real): add("    PIM = PIM * AREAL_%i // BREAL_%i" % (areal[k], breal[k]))
+        for k in range(cancellable_real): add(f"    PIM = PIM * AREAL_{areal[k]} // BREAL_{breal[k]}")
         for i in noncancellable_real_num: add("    PIM = (PIM * AREAL_#) >> wp".replace("#", str(i)))
         for i in noncancellable_real_den: add("    PIM = (PIM << wp) // BREAL_#".replace("#", str(i)))
 
@@ -220,7 +220,7 @@ def make_hyp_summator(key):
             add("    PIM = (im << wp) // mag".replace("#", str(i)))
 
     else:
-        for k in range(cancellable_real): add("    PRE = PRE * AREAL_%i // BREAL_%i" % (areal[k], breal[k]))
+        for k in range(cancellable_real): add(f"    PRE = PRE * AREAL_{areal[k]} // BREAL_{breal[k]}")
         for i in noncancellable_real_num: add("    PRE = (PRE * AREAL_#) >> wp".replace("#", str(i)))
         for i in noncancellable_real_den: add("    PRE = (PRE << wp) // BREAL_#".replace("#", str(i)))
         if multiplier:
@@ -281,7 +281,7 @@ def make_hyp_summator(key):
         add("return a, False, magn")
 
     source = "\n".join(("    " + line) for line in source)
-    source = ("def %s(coeffs, z, prec, wp, epsshift, magnitude_check, **kwargs):\n" % fname) + source
+    source = (f"def {fname}(coeffs, z, prec, wp, epsshift, magnitude_check, **kwargs):\n") + source
 
     namespace = {}
 
@@ -373,7 +373,7 @@ def mpf_erfc(x, prec, rnd=round_down):
     term_prev = 0
     t = (2 * to_fixed(x, wp) ** 2) >> wp
     k = 1
-    while 1:
+    while True:
         term = ((term * (2*k - 1)) << wp) // t
         if k > 4 and term > term_prev or not term:
             break
@@ -1024,7 +1024,7 @@ def mpc_agm(a, b, prec, rnd=round_down):
         return fzero, fzero
     wp = prec+20
     eps = mpf_shift(fone, -wp+10)
-    while 1:
+    while True:
         a1 = mpc_shift(mpc_add(a, b, wp), -1)
         b1 = mpc_sqrt(mpc_mul(a, b, wp), wp)
         a, b = a1, b1

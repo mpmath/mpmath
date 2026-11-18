@@ -397,6 +397,7 @@ def test_interval_nstr():
     exp = iv.exp
     assert iv.nstr(iv.exp(mpi('5000.1')), n, mode='diff') == '3.2797365856787867069110487[0926, 1191]e+2171'
     assert iv.nstr(iv.mpc(3, 4)) == '([3.0, 3.0] + [4.0, 4.0]*j)'
+    pytest.raises(ValueError, lambda: iv.nstr(x, mode='spam'))
 
 def test_mpi_from_str():
     assert iv.convert('1.5 +- 0.5') == mpi(mpf('1.0'), mpf('2.0'))
@@ -496,3 +497,16 @@ def test_interval_loggamma_encloses():
             t = mp.loggamma(x)
         assert r.a <= r.b
         assert r.a <= t <= r.b
+
+def test_interval_repr():
+    assert repr(iv.mpf([1, 2])) == "mpi('1.0', '2.0')"
+    assert (repr(iv.mpc([1, 2], [3, 4]))
+            == "iv.mpc(mpi('1.0', '2.0'), mpi('3.0', '4.0'))")
+
+def test_interval_str():
+    assert str(iv.mpc([1, 2], [3, 4])) == '([1.0, 2.0] + [3.0, 4.0]*j)'
+
+def test_interval_hypsum():
+    assert 2.2795853023360673 in iv.hyp0f1(1, 1)
+    pytest.raises(iv.NoConvergence, lambda: iv.hyp0f1(1, 1, maxterms=10))
+    pytest.raises(iv.NoConvergence, lambda: iv.hyp0f1(-1, 1, maxterms=10))
