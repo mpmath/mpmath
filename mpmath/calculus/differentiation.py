@@ -138,7 +138,7 @@ def _stencil(ctx, n, one_sided, singular, order=8):
         p, C = _leading_error(nodes, weights, n)
     else:
         m = 1
-        while 1:
+        while True:
             if singular:
                 nodes = [MPQ(2*k+1, 2) for k in range(-m, m)]
             else:
