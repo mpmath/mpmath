@@ -369,12 +369,12 @@ def fabs(ctx, x):
 @defun
 def re(ctx, x):
     x = ctx.convert(x)
-    return x.real
+    return +x.real
 
 @defun
 def im(ctx, x):
     x = ctx.convert(x)
-    return x.imag
+    return +x.imag
 
 @defun
 def conj(ctx, x):

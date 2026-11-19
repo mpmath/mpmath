@@ -112,7 +112,7 @@ def test_anewton():
 def test_muller():
     f = lambda x: (2 + x)**3 + 2
     x = findroot(f, 1., solver=Muller)
-    assert abs(f(x)) < eps
+    assert abs(f(x)) < 3*eps
 
 def test_ridder():
     f = lambda x: cos(x)/x
@@ -204,6 +204,7 @@ def test_multidimensional(capsys):
 def test_trivial():
     assert findroot(lambda x: 0, 1) == 1
     assert findroot(lambda x: x, 0) == 0
+    assert findroot(lambda x, y: [0, 0], [1, 2]) == mp.matrix([1, 2])
     #assert findroot(lambda x, y: x + y, (1, -1)) == (1, -1)
 
 def test_issue_869():

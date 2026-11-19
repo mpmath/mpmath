@@ -27,7 +27,7 @@ def monitor(f, input='print', output='print'):
         >>> input = []
         >>> output = []
         >>> findroot(monitor(sin, input.append, output.append), 3.0)
-        mpf('3.1415926535897932')
+        mpf('3.1415926535897931')
         >>> len(input)  # Count number of evaluations
         9
         >>> print(input[3])

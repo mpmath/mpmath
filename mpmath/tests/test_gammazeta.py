@@ -292,6 +292,11 @@ def test_zeta():
     assert zeta(0,0.5,1).ae(-0.34657359027997265)
     # see issue #390
     assert zeta(-1.5,0.5j).ae(-0.13671400162512768475 + 0.11411333638426559139j)
+    # see issue #1158
+    assert (zeta(0.25 + 10000j, method='riemann-siegel')
+            == +zeta(0.25 + 10000j, method='riemann-siegel'))
+    mp.prec = 897
+    assert zeta(228) == +zeta(228)
 
 def test_altzeta():
     assert altzeta(-2) == 0
@@ -401,6 +406,11 @@ def test_polygamma():
     for z in [mpc(nan, 1), mpc(1, nan), mpc(nan, nan)]:
         v = digamma(z)
         assert isnan(v.real) and isnan(v.imag)
+    # issue #1158
+    ref = extraprec(1000)(digamma)(1)
+    for rounding in ['n', 'f', 'c']:
+        mp.rounding = rounding
+        assert psi(0, 1) == digamma(1) == +ref
 
 def test_polygamma_high_prec():
     mp.dps = 100

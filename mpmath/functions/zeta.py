@@ -573,7 +573,7 @@ def zeta(ctx, s, a=1, derivative=0, method=None, *, prec=None,
             try:
                 if verbose:
                     print("zeta: Attempting to use the Riemann-Siegel algorithm")
-                return ctx.rs_zeta(s, derivative)
+                return +ctx.rs_zeta(s, derivative)
             except NotImplementedError:
                 if verbose:
                     print("zeta: Could not use the Riemann-Siegel algorithm")
