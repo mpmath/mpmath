@@ -1706,6 +1706,17 @@ def test_expm1():
     assert expm1(1e-50).ae(1e-50)
     assert (expm1(1e-10)*1e10).ae(1.00000000005)
 
+    # The real part is much smaller than the result:
+    for a, b, re, im in [
+            ('0.61562647038601426', '1', '-4.839287885554659614898608e-18',
+             '1.55740772465490222297023'),
+            ('0.13058424044372272', '0.5', '-1.235357638062384707038775e-18',
+             '0.5463024898437905125803005'),
+            ('5.000000833333556e-7', '0.001', '2.418313194394268320713583e-23',
+             '0.001000000333333466687537362')]:
+        v = expm1(mpc(a, b))
+        assert (v.real/mpf(re)).ae(1) and v.imag.ae(mpf(im))
+
     # Other real special cases:
     # https://en.cppreference.com/c/numeric/math/expm1
     assert isnan(expm1(nan))
