@@ -742,9 +742,9 @@ class LaplaceTransformInversionMethods:
         >>> fp = lambda p: 1/sqrt(p*p + 1)
         >>> ft = lambda t: besselj(0,t)
         >>> ft(tt[0]),ft(tt[0])-invertlaplace(fp,tt[0],method='dehoog')
-        (0.999999750000016, -6.09717765032273e-18)
+        (0.999999750000016, -1.18965777441866e-17)
         >>> ft(tt[1]),ft(tt[1])-invertlaplace(fp,tt[1],method='dehoog')
-        (0.99997500015625, -5.61756281076169e-17)
+        (0.99997500015625, -1.06066312688131e-16)
 
         .. math ::
 

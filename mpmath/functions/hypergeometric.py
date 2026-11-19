@@ -790,7 +790,8 @@ def _hyp_borel(ctx, p, q, a_s, b_s, z, **kwargs):
             t = term(k)
             s += t
             if abs(t) <= tol:
-                return s
+                ctx.prec = prec
+                return +s
     finally:
         ctx.prec = prec
     if p <= q+3:
@@ -875,7 +876,8 @@ def _hyp2f2(ctx, a_s, b_s, z, **kwargs):
                 v = ctx.hypercomb(h, [a1,a2,b1,b2], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx._is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
                     v = ctx.re(v)
-                return v
+                ctx.prec = orig
+                return +v
             except ctx.NoConvergence:
                 pass
         finally:
@@ -956,7 +958,8 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
                 v = ctx.hypercomb(h, [a1,b1,b2], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx._is_real_type(u) for u in [a1,b1,b2,z]) == 4:
                     v = ctx.re(v)
-                return v
+                ctx.prec = orig
+                return +v
             except ctx.NoConvergence:
                 pass
         finally:
@@ -1041,7 +1044,8 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                 v = ctx.hypercomb(h, [a1,a2,b1,b2,b3], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx._is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
                     v = ctx.re(v)
-                return v
+                ctx.prec = orig
+                return +v
             except ctx.NoConvergence:
                 pass
         finally:
