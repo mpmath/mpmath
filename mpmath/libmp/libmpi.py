@@ -17,7 +17,7 @@ from .libmpf import (dps_to_prec, fhalf, finf, fnan, fninf, fnone, fone,
 def mpi_str(s, prec):
     sa, sb = s
     dps = prec_to_dps(prec) + 5
-    return "[%s, %s]" % (to_str(sa, dps), to_str(sb, dps))
+    return f"[{to_str(sa, dps)}, {to_str(sb, dps)}]"
     #dps = prec_to_dps(prec)
     #m = mpi_mid(s, prec)
     #d = mpf_shift(mpi_delta(s, 20), -1)
@@ -458,7 +458,7 @@ def mpi_from_str(s, prec):
         x are shared digits, y and z are unequal digits, e is the exponent.
 
     """
-    e = ValueError("Improperly formed interval number '%s'" % s)
+    e = ValueError(f"Improperly formed interval number '{s}'")
     s = s.replace(" ", "")
     wp = prec + 20
     if "+-" in s:
@@ -595,7 +595,7 @@ def mpi_to_str(x, dps, use_spaces=True, brackets='[]', mode='brackets', error_dp
         else:
             s = br1 + 'e'.join(a) + ',' + sp + 'e'.join(b) + br2
     else:
-        raise ValueError("'%s' is unknown mode for printing mpi" % mode)
+        raise ValueError(f"'{mode}' is unknown mode for printing mpi")
     return s
 
 def mpci_add(x, y, prec):

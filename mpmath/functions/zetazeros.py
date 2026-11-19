@@ -329,7 +329,7 @@ def pattern_construct(ctx, block, T, V):
         L.append(v1)
         L.insert(0,v0)
         count = count_variations(L)
-        pattern = pattern + ("%s" % count)
+        pattern = pattern + (f"{count}")
         if b1 > 0:
             pattern = pattern + ')('
         k0 = k

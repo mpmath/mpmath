@@ -6,10 +6,10 @@ import mpmath
 
 
 def pytest_report_header(config):
-    print("mpmath backend: %s" % mpmath.libmp.backend.BACKEND)
-    print("mpmath mp class: %s" % repr(mpmath.mp))
-    print("mpmath version: %s" % mpmath.__version__)
-    print("Python version: %s" % sys.version)
+    print(f"mpmath backend: {mpmath.libmp.backend.BACKEND}")
+    print(f"mpmath mp class: {mpmath.mp!r}")
+    print(f"mpmath version: {mpmath.__version__}")
+    print(f"Python version: {sys.version}")
 
 
 def pytest_configure(config):

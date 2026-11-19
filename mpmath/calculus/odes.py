@@ -255,10 +255,10 @@ def odefun(ctx, F, x0, y0, tol=None, degree=None, method='taylor', verbose=False
         n = bisect(series_boundaries, x)
         if n < len(series_boundaries):
             return series_data[n-1]
-        while 1:
+        while True:
             ser, xa, xb = series_data[-1]
             if verbose:
-                print("Computing Taylor series for [%f, %f]" % (xa, xb))
+                print(f"Computing Taylor series for [{xa:f}, {xb:f}]")
             y = mpolyval(ser, xb-xa)
             xa = xb
             ser, xb = ode_taylor(ctx, F, xb, y, tol_prec, degree)

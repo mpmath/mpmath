@@ -69,3 +69,12 @@ def test_odefun_harmonic():
         c, s = f(x)
         assert c.ae(cos(x))
         assert s.ae(sin(x))
+
+def test_odefun_verbose(capsys):
+    f = odefun(lambda x, y: [-y[1], y[0]], 0, [1, 0], verbose=True)
+    x = 1
+    c, s = f(x)
+    assert c.ae(cos(x))
+    assert s.ae(sin(x))
+    captured = capsys.readouterr()
+    assert captured.out.find("Computing Taylor series for") >= 0

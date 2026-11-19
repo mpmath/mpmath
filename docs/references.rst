@@ -95,6 +95,9 @@ References not listed here can be found in the source code.
 
 .. [DLMF] NIST Digital Library of Mathematical Functions. http://dlmf.nist.gov/
 
+.. [Fornberg] B. Fornberg, "Calculation of weights in finite difference formulas",
+              SIAM Review 40 (1998), 685-691.
+
 .. [Froberg] Carl-Erik Froberg, "On the prime zeta function", BIT 8 (1968),
              pp. 187-202.
 

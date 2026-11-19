@@ -352,7 +352,7 @@ def int_pow_fixed(y, n, prec):
     exp = 0
     workprec = 2 * (prec + 4*n.bit_length() + 4)
     _, pm, pe, pbc = fone
-    while 1:
+    while True:
         if n & 1:
             pm = pm*y
             pe = pe+exp
@@ -532,7 +532,7 @@ def agm_fixed(a, b, prec):
     a, b both close to unit magnitude.
     """
     i = 0
-    while 1:
+    while True:
         anew = (a+b)>>1
         if i > 4 and abs(a-anew) < 8:
             return a
@@ -797,7 +797,7 @@ def mpf_log_hypot(a, b, prec, rnd):
 
 def atan_newton(x, prec):
     if prec >= 100:
-        r = math.atan(int((x>>(prec-53)))/2.0**53)
+        r = math.atan(int(x>>(prec-53))/2.0**53)
     else:
         r = math.atan(int(x)/2.0**prec)
     prevp = 50
@@ -1289,7 +1289,7 @@ def mod_pi2(man, exp, mag, wp):
     # Reduce to standard interval
     if mag > 0:
         i = 0
-        while 1:
+        while True:
             cancellation_prec = 20 << i
             wpmod = wp + mag + cancellation_prec
             pi2 = pi_fixed(wpmod-1)

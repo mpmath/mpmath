@@ -203,8 +203,7 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
                 roots[i] = p - x
                 err[i] = abs(x)
         if abs(max(err)) >= tol:
-            raise ctx.NoConvergence("Didn't converge in maxsteps=%d steps." \
-                    % maxsteps)
+            raise ctx.NoConvergence(f"Didn't converge in {maxsteps=} steps.")
         # Remove small real or imaginary parts
         if cleanup:
             for i in range(deg):
