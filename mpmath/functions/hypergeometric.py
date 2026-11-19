@@ -379,6 +379,53 @@ def _hyp0f1(ctx, b_s, z, **kwargs):
             pass
     return ctx.hypsum(0, 1, (btype,), [b], z, **kwargs)
 
+def _hyp1f1_defining_series_safe(ctx, a, b, z, v):
+    """
+    Whether the value v of 1F1(a, b, z), computed from the defining
+    series for real b < 0 < z, can be trusted: the terms beyond the
+    dip (k > -b) must be too small to contribute at the working
+    precision, so hypsum cannot have stopped at the false plateau.
+    The largest such term is located via the log-gamma function.
+    The bound is conservative: it may reject a correct value, but
+    it never certifies a plateau value.
+    """
+    if ctx.isnpint(a):
+        # The series terminates, so there is no plateau.
+        return True
+    if not v:
+        return False
+    lga = ctx._re(ctx.loggamma(a))
+    lgb = ctx._re(ctx.loggamma(b))
+    logz = ctx.log(z)
+    def logterm(k):
+        return (ctx._re(ctx.loggamma(k+a)) - lga
+                - ctx._re(ctx.loggamma(k+b)) + lgb
+                + k*logz - ctx._re(ctx.loggamma(k+1)))
+    # The maximum of |t_k| for k > -b is at the start of that range
+    # or at a stationary point of |t_{k+1}/t_k| = z*|k+a| /
+    # ((k+b)*(k+1)).  With k+a > 0 this gives the roots of
+    # k^2 + (b+1-z)*k + (b-z*a) = 0; with k+a < 0 (possible when
+    # a < b < 0) it gives the roots of k^2 + (b+1+z)*k + (b+z*a) = 0.
+    # Both quadratics must be tried: for a = -500.3, b = -50.3,
+    # z = 40.24 the true maximum sits at the second branch's root
+    # and exceeds the first branch's candidates by ~140 nats.
+    candidates = set()
+    k0 = int(ctx.floor(-b)) + 1
+    candidates.update((k0, k0+1))
+    for B, C in ((b + 1 - z, b - z*a), (b + 1 + z, b + z*a)):
+        disc = B*B - 4*C
+        if disc >= 0:
+            for s in (1, -1):
+                ks = (-B + s*ctx.sqrt(disc)) / 2
+                if ks > 0:
+                    k = int(ctx.floor(ks))
+                    candidates.update((k-1, k, k+1, k+2))
+    lmax = max(logterm(k) for k in candidates if k >= 0)
+    # Bound the post-dip tail by (number of terms) * (largest term)
+    count = z + 2*ctx.sqrt(z+1) + 64
+    return lmax + ctx.log(count) < \
+        ctx.log(abs(v)) - (ctx.prec + 16) * ctx.log(2)
+
 @defun
 def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
     (a, atype), = a_s
@@ -412,6 +459,38 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
                 pass
         finally:
             ctx.prec -= magz
+    if (ctx.isfinite(a) and ctx.isfinite(b) and ctx.isfinite(z) and
+            ctx._re(b) < 0 and ctx._re(z) > 0 and
+            not ctx.isnpint(b)):
+        # For Re(b) < 0 < Re(z), the terms of the defining series
+        # may first decay below the working precision and then grow
+        # again once k passes -Re(b); hypsum can then stop at the
+        # intermediate plateau and return a completely wrong value
+        # (issue 658).  Use the Kummer transformation instead: the
+        # terms of the transformed series have a single hump, so no
+        # false plateau is possible, and any cancellation in it is
+        # detected (and compensated for) by hypsum in the usual way.
+        ba, batype = ctx._convert_param(b-a)
+        try:
+            return ctx.exp(z) * ctx.hypsum(1, 1, (batype, btype),
+                                           [ba, b], -z, **kwargs)
+        except ctx.NoConvergence:
+            pass
+        # Fall back to the defining series.  This is needed when
+        # |b| >> |z|, where the transformed series needs about
+        # |z|*log10(e) digits of cancellation while the defining
+        # series converges geometrically.  For real parameters, the
+        # result is only trusted if the terms beyond the dip cannot
+        # contribute at the working precision; otherwise propagate
+        # the NoConvergence instead of returning a plateau value.
+        v = ctx.hypsum(1, 1, (atype, btype), [a, b], z, **kwargs)
+        if (ctx._is_real_type(a) and ctx._is_real_type(b) and
+                ctx._is_real_type(z) and
+                not _hyp1f1_defining_series_safe(ctx, a, b, z, v)):
+            raise ctx.NoConvergence(
+                "hyp1f1: the transformed series failed to converge "
+                "and the defining series is unsafe here")
+        return v
     v = ctx.hypsum(1, 1, (atype, btype), [a, b], z, **kwargs)
     return v
 

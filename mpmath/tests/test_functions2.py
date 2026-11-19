@@ -535,6 +535,61 @@ def test_hyper_1f1():
     assert hyp1f1(2, 2, -inf) == 0
     assert hyp1f1(1, 5, -inf) == 0
 
+def test_issue_658():
+    # the series terms first decay far below the working
+    # precision and then grow again when k passes -b; the sum must not
+    # stop at the intermediate plateau.  The value is very sensitive
+    # to b (at dps 15, the rounding of b alone moves it by ~1e-13
+    # relative), so check at a precision where b is resolved well.
+    with mp.workdps(50):
+        assert ae(hyp1f1(1,fraction(-4731,10),156),
+                  mpf('5.3127028522211665826e+46'), tol=1e-20)
+        assert ae(hyp1f1(1,fraction(-47301,100),156),
+                  mpf('5.7759255926099277430e+47'), tol=1e-20)
+    # when |b| >> z the defining series converges
+    # geometrically; these must keep working when the transformed
+    # series needs more cancellation than maxprec allows
+    assert ae(hyp1f1(1,-1000000.5,10000), mpf('0.99009901489952688'))
+    assert ae(hyp1f1(1,-1000000.5,1000,maxprec=100),
+              mpf('0.99900099950099726'))
+    # if the transformed series cannot reach the requested
+    # precision and the defining series cannot be trusted here
+    # either, NoConvergence must propagate instead of silently
+    # returning the plateau value (the unfixed code returned
+    # 0.7521244884735925... for the first case and
+    # 0.751831593921557517... for the second)
+    pytest.raises(NoConvergence,
+                  lambda: hyp1f1(1,-473.1,156,maxprec=100))
+    pytest.raises(NoConvergence,
+                  lambda: hyp1f1(1,-20600.5,6800))
+    # but where the terms beyond the dip provably cannot
+    # contribute at the working precision, the defining series is
+    # a safe fallback and its value is returned
+    assert ae(hyp1f1(1,-473.1,118.275,maxprec=100),
+              mpf('0.80006768464970106'))
+    # the same plateau corrupts complex parameters with
+    # Re(b) < 0 < Re(z); the transformation applies there too
+    assert hyp1f1(1,-473.1,156+50j).ae(
+        -4.0004795648255753e+56 + 4.7385937507717590e+56j)
+    assert hyp1f1(1+2j,-473.1,156).ae(
+        3.3875876692319647e+47 + 6.7591371608758660e+46j)
+    assert hyp1f1(1,mpc(-473.1,20),156).ae(
+        -2.3016525705006193e+18 - 2.5728636355501985e+19j)
+    # b very close to an integer.  At the default
+    # precision, mpf(-473) + mpf('1e-12') does not have distance
+    # exactly 1e-12 from -473: the distance is 1.02318153949e-12,
+    # and since the value is dominated by a term proportional to
+    # 1/delta, the expected values are the correct ones for the
+    # represented inputs (for an exactly represented distance of
+    # 1e-12 they would be -+5.8394527603628704e+57 instead).  The
+    # unfixed code returns the plateau value 0.752085111689195...
+    # for both.
+    assert ae(hyp1f1(1,mpf(-473)+mpf('1e-12'),156),
+              mpf('-5.7071521865491568e+57'))
+    assert ae(hyp1f1(1,mpf(-473)-mpf('1e-12'),156),
+              mpf('5.7071521865361897e+57'))
+    assert hyperu(1,-473.1,156).ae(0.00158642583521112114)
+
 def test_hyper_2f1():
     v = 1.0652207633823291032
     assert hyper([(1,2), (3,4)], [2], 0.3).ae(v)
