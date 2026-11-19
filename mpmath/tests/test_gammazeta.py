@@ -736,3 +736,26 @@ def test_issue_551():
     assert abs(zeta(50+5j).imag - ref) <= mp.ulp(ref)
     ref = +extraprec(1000)(altzeta)(50+5j).imag
     assert abs(altzeta(50+5j).imag - ref) <= mp.ulp(ref)
+
+@pytest.mark.parametrize('prec', [15, 53, 113])
+@pytest.mark.parametrize('value', [1, 3, 0.75, 1.25+0.5j])
+def test_psi_zero_is_rounded_to_context_precision(prec, value):
+    mp.prec = prec
+    result = psi(0, value)
+    assert result == +result
+    if isinstance(result, mpc):
+        assert result.real._mpf_[3] <= prec
+        assert result.imag._mpf_[3] <= prec
+    else:
+        assert result._mpf_[3] <= prec
+
+@pytest.mark.parametrize('value', [1, 3, 0.75])
+def test_psi_zero_matches_digamma_rounding(value):
+    assert psi(0, value) == digamma(value)
+
+@pytest.mark.parametrize('rounding', ['n', 'f', 'c'])
+@pytest.mark.parametrize('value', [3, 0.75])
+def test_psi_zero_preserves_requested_rounding(rounding, value):
+    ref = extraprec(100)(psi)(0, value)
+    mp.rounding = rounding
+    assert psi(0, value) == +ref

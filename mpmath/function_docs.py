@@ -2165,14 +2165,12 @@ Any infinite series where the summand is a rational function of
 the index `k` can be evaluated in closed form in terms of polygamma
 functions of the roots and poles of the summand::
 
-    >>> from mpmath import workdps, mpf
-    >>> with workdps(50):
-    ...     a = sqrt(2)
-    ...     b = sqrt(3)
-    ...     s = nsum(lambda k: 1/((k+a)**2*(k+b)), [0, inf])
-    ...     t = (psi(0,a)-psi(0,b)-a*psi(1,a)+b*psi(1,a))/(a-b)**2
-    ...     abs(s-t) < mpf('1e-49')
-    True
+    >>> a = sqrt(2)
+    >>> b = sqrt(3)
+    >>> nsum(lambda k: 1/((k+a)**2*(k+b)), [0, inf])
+    0.4049668927517857061917531
+    >>> ((psi(0,a)-psi(0,b))/(a-b)-psi(1,a))/(a-b)
+    0.4049668927517857061917531
 
 This follows from the series representation (`m > 0`)
 
