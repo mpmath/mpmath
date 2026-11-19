@@ -1693,8 +1693,8 @@ def test_expm1():
     assert expm1(inf) == inf
     assert expm1(1e-50).ae(1e-50)
     assert (expm1(1e-10)*1e10).ae(1.00000000005)
-    # exp(a)*cos(b) ~ 1, so the real part is much smaller than the result
-    # and used to lose digits to cancellation.
+
+    # The real part is much smaller than the result:
     for a, b, re, im in [
             ('0.61562647038601426', '1', '-4.839287885554659614898608e-18',
              '1.55740772465490222297023'),
