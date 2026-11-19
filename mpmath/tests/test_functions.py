@@ -1693,15 +1693,17 @@ def test_expm1():
     assert expm1(inf) == inf
     assert expm1(1e-50).ae(1e-50)
     assert (expm1(1e-10)*1e10).ae(1.00000000005)
-    # The real part of a complex argument can be much smaller than the
-    # result and must not be lost to cancellation.
-    assert expm1(mpc('-1e-30', '1e-15')).real.ae(-1.5e-30)
-    assert expm1(mpc(0, '1e-10')).real.ae(-5e-21)
-    assert expm1(mpc('5e-21', '1e-10')).real.ae(-6.385639492172628975e-37)
-    assert expm1(mpc('1e-5', 3)).ae(exp(mpc('1e-5', 3)) - 1)
-    # Tiny complex arguments take the same shortcut as real ones.
-    z = mpc('1e-100', '-2e-100')
-    assert expm1(z) == z + 0.5*z**2
+    # exp(a)*cos(b) ~ 1, so the real part is much smaller than the result
+    # and used to lose digits to cancellation.
+    for a, b, re, im in [
+            ('0.61562647038601426', '1', '-4.839287885554659614898608e-18',
+             '1.55740772465490222297023'),
+            ('0.13058424044372272', '0.5', '-1.235357638062384707038775e-18',
+             '0.5463024898437905125803005'),
+            ('5.000000833333556e-7', '0.001', '2.418313194394268320713583e-23',
+             '0.001000000333333466687537362')]:
+        v = expm1(mpc(a, b))
+        assert (v.real/mpf(re)).ae(1) and v.imag.ae(mpf(im))
 
     # Other real special cases:
     # https://en.cppreference.com/c/numeric/math/expm1
