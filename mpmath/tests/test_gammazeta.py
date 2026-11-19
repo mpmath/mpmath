@@ -391,13 +391,10 @@ def test_polygamma():
     assert digamma(-0.5+0.5j).ae(mpc('0.131892637354523', '2.44065951997751'))
     mp.prec = 53
     assert digamma(1e300+1j).ae(690.77552789821368)
-    # Non-finite complex arguments used to hang or raise.  Away from the
-    # negative real axis digamma(z) ~ log(z).
     for z, im in [(mpc(0, inf), pi/2), (mpc(5, -inf), -pi/2), (mpc(inf, 1), 0),
                   (mpc(inf, inf), pi/4), (mpc(-inf, inf), 3*pi/4)]:
         v = digamma(z)
         assert v.real == inf and v.imag.ae(im)
-    # The real part tends to +inf, but the imaginary part has no limit.
     for z in [mpc(-inf, 1), mpc(inf, nan), mpc(nan, -inf), mpc(-inf, nan)]:
         v = digamma(z)
         assert v.real == inf and isnan(v.imag)

@@ -711,8 +711,11 @@ def mpc_psi0(z, prec, rnd=round_down):
         return (mpf_psi0(re, prec, rnd), fzero)
     if mpc_is_infnan(z):
         if fnan in z or (re == fninf and im not in (finf, fninf)):
-            # The real part still tends to +inf if |z| does, as for log(z),
-            # but the imaginary part has no limit.
+            # psi(z) ~ log(z) needs |arg(z)| <= pi - delta (DLMF 5.11.2).
+            # On the negative real side, psi(z) = psi(1 - z) - pi*cot(pi*z):
+            # the first term grows like log|z|, so the real part still tends
+            # to +inf, but the second is periodic in re(z), so the imaginary
+            # part has no limit.
             return (finf if mpc_is_inf(z) else fnan, fnan)
         return mpc_ln(z, prec, rnd)
     wp = prec + 20
