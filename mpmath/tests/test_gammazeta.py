@@ -391,6 +391,16 @@ def test_polygamma():
     assert digamma(-0.5+0.5j).ae(mpc('0.131892637354523', '2.44065951997751'))
     mp.prec = 53
     assert digamma(1e300+1j).ae(690.77552789821368)
+    for z, im in [(mpc(0, inf), pi/2), (mpc(5, -inf), -pi/2), (mpc(inf, 1), 0),
+                  (mpc(inf, inf), pi/4), (mpc(-inf, inf), 3*pi/4)]:
+        v = digamma(z)
+        assert v.real == inf and v.imag.ae(im)
+    for z in [mpc(-inf, 1), mpc(inf, nan), mpc(nan, -inf), mpc(-inf, nan)]:
+        v = digamma(z)
+        assert v.real == inf and isnan(v.imag)
+    for z in [mpc(nan, 1), mpc(1, nan), mpc(nan, nan)]:
+        v = digamma(z)
+        assert isnan(v.real) and isnan(v.imag)
 
 def test_polygamma_high_prec():
     mp.dps = 100

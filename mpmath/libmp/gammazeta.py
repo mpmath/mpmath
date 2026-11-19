@@ -25,8 +25,9 @@ from .libelefun import (constant_memo, cos_sin_fixed, def_mpf_constant,
                         sqrtpi_fixed)
 from .libintmath import ifac, ifac2, isqrt_fast, list_primes, lshift, moebius
 from .libmpc import (mpc_abs, mpc_add, mpc_add_mpf, mpc_cos_pi, mpc_div,
-                     mpc_div_mpf, mpc_exp, mpc_half, mpc_ln, mpc_mpf_div,
-                     mpc_mul, mpc_mul_int, mpc_mul_mpf, mpc_neg, mpc_one,
+                     mpc_div_mpf, mpc_exp, mpc_half, mpc_is_inf,
+                     mpc_is_infnan, mpc_ln, mpc_mpf_div, mpc_mul,
+                     mpc_mul_int, mpc_mul_mpf, mpc_neg, mpc_one,
                      mpc_pos, mpc_pow, mpc_pow_int, mpc_reciprocal, mpc_shift,
                      mpc_sin_pi, mpc_square, mpc_sub, mpc_sub_mpf, mpc_two,
                      mpc_zero)
@@ -708,6 +709,15 @@ def mpc_psi0(z, prec, rnd=round_down):
     # Fall back to the real case
     if im == fzero:
         return (mpf_psi0(re, prec, rnd), fzero)
+    if mpc_is_infnan(z):
+        if fnan in z or (re == fninf and im not in (finf, fninf)):
+            # psi(z) ~ log(z) needs |arg(z)| <= pi - delta (DLMF 5.11.2).
+            # On the negative real side, psi(z) = psi(1 - z) - pi*cot(pi*z):
+            # the first term grows like log|z|, so the real part still tends
+            # to +inf, but the second is periodic in re(z), so the imaginary
+            # part has no limit.
+            return (finf if mpc_is_inf(z) else fnan, fnan)
+        return mpc_ln(z, prec, rnd)
     wp = prec + 20
     sign, man, exp, bc = re
     # Reflection formula
