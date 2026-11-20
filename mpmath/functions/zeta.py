@@ -682,11 +682,10 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
     # Estimate number of terms for Euler-Maclaurin summation; could be improved
     M1 = 0
     M2 = prec // 3
-    # The Euler-Maclaurin tail is expanded at a+M2, so it must start at a
-    # positive argument.  For a < 1 the sum has to run past the zero of a+n,
-    # otherwise ln(a+M2) is complex and the tail (and thus the result) is wrong.
-    if ctx.re(a) < 1:
-        M2 = max(M2, int(ctx.ceil(1 - ctx.re(a))))
+    # Shift the tail for negative a to the same starting range as for
+    # positive a, so the correction terms converge on the first pass.
+    if ctx.re(a) < 0:
+        M2 += int(ctx.ceil(-ctx.re(a)))  # x = a + M2 is in [prec/3, prec/3 + 1)
     N = M2
     lsum = 0
     # This speeds up the recurrence for derivatives
