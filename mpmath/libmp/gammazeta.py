@@ -632,8 +632,15 @@ algorithm.)
 def mpf_harmonic(x, prec, rnd):
     if x in (fzero, fnan, finf):
         return x
-    a = mpf_psi0(mpf_add(fone, x, prec+5), prec)
-    return mpf_add(a, mpf_euler(prec+5, rnd), prec, rnd)
+    # For tiny x, 1+x and psi0(1+x)+euler both lose about -log2|x| bits
+    # (H(x) ~ zeta(2)*x), so work with that much extra precision.
+    k = max(0, -(x[2] + x[3]))
+    if k > prec + 10:
+        # H(x) = zeta(2)*x + O(x**2), relative error far below 2**-prec
+        return mpf_mul(mpf_zeta_int(2, prec+10), x, prec, rnd)
+    wp = prec + 10 + k
+    a = mpf_psi0(mpf_add(fone, x, wp), wp)
+    return mpf_add(a, mpf_euler(wp, rnd), prec, rnd)
 
 def mpc_harmonic(z, prec, rnd):
     if z[1] == fzero:
