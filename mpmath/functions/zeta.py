@@ -21,7 +21,7 @@ def stieltjes(ctx, n, a=1):
     def f(x):
         xa = x/a
         v = (xa-ctx.j)*ctx.ln(a-ctx.j*x)**n/(1+xa**2)/(ctx.exp(2*ctx.pi*x)-1)
-        return ctx._re(v) / mag
+        return v.real / mag
     orig = ctx.prec
     try:
         # Normalize integrand by approx. magnitude to
@@ -49,7 +49,7 @@ def siegeltheta(ctx, t, derivative=0):
         else:
             return ctx.zero
     if d == 0:
-        if ctx._im(t):
+        if t.imag:
             # XXX: cancellation occurs
             a = ctx.loggamma(0.25+0.5j*t)
             b = ctx.loggamma(0.25-0.5j*t)
@@ -57,20 +57,20 @@ def siegeltheta(ctx, t, derivative=0):
         else:
             if ctx.isinf(t):
                 return t
-            return ctx._im(ctx.loggamma(0.25+0.5j*t)) - ctx.ln(ctx.pi)/2*t
+            return ctx.loggamma(0.25+0.5j*t).imag - ctx.ln(ctx.pi)/2*t
     if d > 0:
         a = (-0.5j)**(d-1)*ctx.polygamma(d-1, 0.25-0.5j*t)
         b = (0.5j)**(d-1)*ctx.polygamma(d-1, 0.25+0.5j*t)
-        if ctx._im(t):
+        if t.imag:
             if d == 1:
                 return -0.5*ctx.log(ctx.pi)+0.25*(a+b)
             else:
                 return 0.25*(a+b)
         else:
             if d == 1:
-                return ctx._re(-0.5*ctx.log(ctx.pi)+0.25*(a+b))
+                return (-0.5*ctx.log(ctx.pi)+0.25*(a+b)).real
             else:
-                return ctx._re(0.25*(a+b))
+                return 0.25*(a+b).real
 
 @defun_wrapped
 def grampoint(ctx, n):
@@ -84,14 +84,14 @@ def grampoint(ctx, n):
 def siegelz(ctx, t, *, derivative=0):
     d = int(derivative)
     t = ctx.convert(t)
-    t1 = ctx._re(t)
-    t2 = ctx._im(t)
+    t1 = t.real
+    t2 = t.imag
     prec = ctx.prec
     try:
         if abs(t1) > 500*prec and t2**2 < t1:
             v = ctx.rs_z(t, d)
             if ctx._is_real_type(t):
-                return ctx._re(v)
+                return v.real
             return v
     except NotImplementedError:
         pass
@@ -102,7 +102,7 @@ def siegelz(ctx, t, *, derivative=0):
         v = e1*z
         ctx.prec=prec
         if ctx._is_real_type(t):
-            return ctx._re(v)
+            return v.real
         return +v
     z1 = ctx.zeta(0.5+ctx.j*t, derivative=1)
     theta1 = ctx.siegeltheta(t, derivative=1)
@@ -110,7 +110,7 @@ def siegelz(ctx, t, *, derivative=0):
         v =  ctx.j*e1*(z1+z*theta1)
         ctx.prec=prec
         if ctx._is_real_type(t):
-            return ctx._re(v)
+            return v.real
         return +v
     z2 = ctx.zeta(0.5+ctx.j*t, derivative=2)
     theta2 = ctx.siegeltheta(t, derivative=2)
@@ -122,7 +122,7 @@ def siegelz(ctx, t, *, derivative=0):
         v =  -e1*v
         ctx.prec = prec
         if ctx._is_real_type(t):
-            return ctx._re(v)
+            return v.real
         return +v
     ctx.prec += 10
     z3 = ctx.zeta(0.5+ctx.j*t, derivative=3)
@@ -135,7 +135,7 @@ def siegelz(ctx, t, *, derivative=0):
         v =  -ctx.j*e1*v
         ctx.prec = prec
         if ctx._is_real_type(t):
-            return ctx._re(v)
+            return v.real
         return +v
     z4 = ctx.zeta(0.5+ctx.j*t, derivative=4)
     theta4 = ctx.siegeltheta(t, derivative=4)
@@ -151,7 +151,7 @@ def siegelz(ctx, t, *, derivative=0):
         v =  e1*v
         ctx.prec = prec
         if ctx._is_real_type(t):
-            return ctx._re(v)
+            return v.real
         return +v
     if d > 4:
         h = lambda x: ctx.siegelz(x, derivative=4)
@@ -407,8 +407,8 @@ def polylog_continuation(ctx, n, z):
     twopij = 2j * ctx.pi
     a = -twopij**n/ctx.fac(n) * ctx.bernpoly(n, ctx.ln(z)/twopij)
     if ctx._is_real_type(z) and z < 0:
-        a = ctx._re(a)
-    if ctx._im(z) < 0 or (ctx._im(z) == 0 and ctx._re(z) >= 1):
+        a = a.real
+    if z.imag < 0 or (z.imag == 0 and z.real >= 1):
         a -= twopij*ctx.ln(z)**(n-1)/ctx.fac(n-1)
     return a
 
@@ -445,7 +445,7 @@ def polylog_unitcircle(ctx, n, z):
     else:
         raise ValueError
     if ctx._is_real_type(z) and z < 0:
-        l = ctx._re(l)
+        l = l.real
     return l
 
 def polylog_general(ctx, s, z):
@@ -557,8 +557,8 @@ def zeta(ctx, s, a=1, derivative=0, method=None, *, prec=None,
     if (not s) and (not derivative):
         return ctx.mpf(0.5) - ctx._convert_param(a)[0]
     if a == 1 and method != 'euler-maclaurin':
-        im = abs(ctx._im(s))
-        re = abs(ctx._re(s))
+        im = abs(s.imag)
+        re = abs(s.real)
         #if (im < prec or method == 'borwein') and not derivative:
         #    try:
         #        if verbose:
@@ -690,7 +690,7 @@ def _hurwitz_em(ctx, s, a, d, prec, verbose):
     lsum = 0
     # This speeds up the recurrence for derivatives
     if ctx.isint(s):
-        s = int(ctx._re(s))
+        s = int(s.real)
     s1 = s-1
     while True:
         # Truncated L-series

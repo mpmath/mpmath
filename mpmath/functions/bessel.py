@@ -24,7 +24,7 @@ def besselj(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
         n = ctx.convert(n)
         n_isint = ctx.isint(n)
         if n_isint:
-            n = int(ctx._re(n))
+            n = int(n.real)
     if n_isint and n < 0:
         return (-1)**n * ctx.besselj(-n, z, derivative, **kwargs)
     z = ctx.convert(z)
@@ -716,7 +716,7 @@ def airyai(ctx, z, derivative=0, *, eliminate=True, eliminate_all=False,
         if n == 1:
             def h():
                 # http://functions.wolfram.com/03.07.06.0005.01
-                if ctx._re(z) > 4:
+                if z.real > 4:
                     ctx.prec += extraprec
                     w = z**1.5; r = -0.75/w; u = -2*w/3
                     ctx.prec -= extraprec
@@ -751,11 +751,11 @@ def airyai(ctx, z, derivative=0, *, eliminate=True, eliminate_all=False,
                 return T1, T2
             v = ctx.hypercomb(h, [n], **kwargs)
             if ctx._is_real_type(z) and ctx.isint(n):
-                v = ctx._re(v)
+                v = v.real
             return v
     else:
         def h():
-            if ctx._re(z) > 4:
+            if z.real > 4:
                 # We could use 1F1, but it results in huge cancellation;
                 # the following expansion is better.
                 # TODO: asymptotic series for derivatives
@@ -842,7 +842,7 @@ def airybi(ctx, z, derivative=0, *, eliminate=True, eliminate_all=False,
                 return T1, T2
             v = ctx.hypercomb(h, [n], **kwargs)
             if ctx._is_real_type(z) and ctx.isint(n):
-                v = ctx._re(v)
+                v = v.real
             return v
     else:
         def h():
@@ -1022,8 +1022,8 @@ def coulombg(ctx, l, eta, z, w=1, chop=True, *, eliminate=True,
     # Irregular Coulomb wave function
     # Note: w can be either 1 or -1; the other may be better in some cases
     # TODO: check that chop=True chops when and only when it should
-    if not ctx._im(l):
-        l = ctx._re(l)  # XXX: for isint
+    if not l.imag:
+        l = l.real  # XXX: for isint
     def h(l, eta):
         # Force perturbation for integers and half-integers
         if ctx.isint(l*2):
@@ -1047,9 +1047,9 @@ def coulombg(ctx, l, eta, z, w=1, chop=True, *, eliminate=True,
             T1 = [0], [-1], [], [], [], [], 0
             return (T1,)
     v = ctx.hypercomb(h, [l,eta], **kwargs)
-    if chop and (not ctx._im(l)) and (not ctx._im(eta)) and (not ctx._im(z)) and \
-        (ctx._re(z) >= 0):
-        v = ctx._re(v)
+    if chop and (not l.imag) and (not eta.imag) and (not z.imag) and \
+        (z.real >= 0):
+        v = v.real
     return v
 
 def mcmahon(ctx,kind,prime,v,m):

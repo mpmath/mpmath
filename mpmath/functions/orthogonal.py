@@ -245,7 +245,7 @@ def pcfv(ctx, a, z, *, eliminate=True, eliminate_all=False,
             return T1terms + T2terms
         v = ctx.hypercomb(h, [], **kwargs)
         if ctx._is_real_type(n) and ctx._is_real_type(z):
-            v = ctx._re(v)
+            v = v.real
         return v
     else:
         def h(n):
@@ -306,7 +306,7 @@ def pcfw(ctx, a, z, *, eliminate=True, eliminate_all=False,
         yield C * ctx.expj(-rho) * ctx.pcfu(-ctx.j*n, z*ctx.expjpi(0.25), **kwargs)
     v = ctx.sum_accurately(terms)
     if ctx._is_real_type(n) and ctx._is_real_type(z):
-        v = ctx._re(v)
+        v = v.real
     return v
 
 """
@@ -512,7 +512,7 @@ def chebyt(ctx, n, x, *, eliminate=True, eliminate_all=False,
     kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
                                    force_series, asymp_tol, maxprec,
                                    maxterms, zeroprec, infprec, verbose)
-    if (not x) and ctx.isint(n) and int(ctx._re(n)) % 2 == 1:
+    if (not x) and ctx.isint(n) and int(n.real) % 2 == 1:
         return x * 0
     return ctx.hyp2f1(-n,n,(1,2),(1-x)/2, **kwargs)
 
@@ -523,7 +523,7 @@ def chebyu(ctx, n, x, *, eliminate=True, eliminate_all=False,
     kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
                                    force_series, asymp_tol, maxprec,
                                    maxterms, zeroprec, infprec, verbose)
-    if (not x) and ctx.isint(n) and int(ctx._re(n)) % 2 == 1:
+    if (not x) and ctx.isint(n) and int(n.real) % 2 == 1:
         return x * 0
     return (n+1) * ctx.hyp2f1(-n, n+2, (3,2), (1-x)/2, **kwargs)
 

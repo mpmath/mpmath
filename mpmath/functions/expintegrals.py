@@ -13,7 +13,7 @@ def _erf_complex(ctx, z):
         z2 = ctx.square_exp_arg(z, -1)
         v = (2/ctx.sqrt(ctx.pi))*z * ctx.hyp1f1((1,2),(3,2), z2)
     if not re_z:
-        v = ctx._im(v)*ctx.j
+        v = v.imag*ctx.j
     return v
 
 @defun_wrapped
@@ -26,7 +26,7 @@ def _erfc_complex(ctx, z):
     else:
         v = 1 - ctx._erf_complex(z)
     if not re_z:
-        v = 1+ctx._im(v)*ctx.j
+        v = 1+v.imag*ctx.j
     return v
 
 @defun
@@ -77,13 +77,13 @@ def erfi(ctx, z):
         return z
     z2 = ctx.square_exp_arg(z)
     v = (2/ctx.sqrt(ctx.pi)*z) * ctx.hyp1f1((1,2), (3,2), z2)
-    if not ctx._re(z):
-        v = ctx._im(v)*ctx.j
+    if not z.real:
+        v = v.imag*ctx.j
     return v
 
 @defun_wrapped
 def erfinv(ctx, x):
-    xre = ctx._re(x)
+    xre = x.real
     if (xre != x) or (xre < -1) or (xre > 1):
         return ctx.bad_domain("erfinv(x) is defined only for -1 <= x <= 1")
     x = xre
@@ -316,7 +316,7 @@ def _ei_generic(ctx, z):
             r = ctx.one/z
             v = ctx.exp(z)*ctx.hyper([1,1],[],r,
                 maxterms=ctx.prec, force_series=True)/z
-            im = ctx._im(z)
+            im = z.imag
             if im > 0:
                 v += ctx.pi*ctx.j
             if im < 0:
@@ -325,7 +325,7 @@ def _ei_generic(ctx, z):
         except ctx.NoConvergence:
             pass
     v = z*ctx.hyp2f2(1,1,2,2,z) + ctx.euler
-    if ctx._im(z):
+    if z.imag:
         v += 0.5*(ctx.log(z) - ctx.log(ctx.one/z))
     else:
         v += ctx.log(abs(z))
@@ -353,8 +353,8 @@ def _ci_generic(ctx, z):
     jz = ctx.fmul(ctx.j,z,exact=True)
     njz = ctx.fneg(jz,exact=True)
     v = 0.5*(ctx.ei(jz) + ctx.ei(njz))
-    zreal = ctx._re(z)
-    zimag = ctx._im(z)
+    zreal = z.real
+    zimag = z.imag
     if zreal == 0:
         if zimag > 0: v += ctx.pi*0.5j
         if zimag < 0: v -= ctx.pi*0.5j
@@ -362,7 +362,7 @@ def _ci_generic(ctx, z):
         if zimag >= 0: v += ctx.pi*1j
         if zimag <  0: v -= ctx.pi*1j
     if ctx._is_real_type(z) and zreal > 0:
-        v = ctx._re(v)
+        v = v.real
     return v
 
 @defun
@@ -382,13 +382,13 @@ def _si_generic(ctx, z):
         jz = ctx.fmul(ctx.j,z,exact=True)
         njz = ctx.fneg(jz,exact=True)
         v = (-0.5j)*(ctx.ei(jz) - ctx.ei(njz))
-        zreal = ctx._re(z)
+        zreal = z.real
         if zreal > 0:
             v -= 0.5*ctx.pi
         if zreal < 0:
             v += 0.5*ctx.pi
         if ctx._is_real_type(z):
-            v = ctx._re(v)
+            v = v.real
         return v
     else:
         return z*ctx.hyp1f2((1,2),(3,2),(3,2),-0.25*z*z)
@@ -397,8 +397,8 @@ def _si_generic(ctx, z):
 def chi(ctx, z):
     nz = ctx.fneg(z, exact=True)
     v = 0.5*(ctx.ei(z) + ctx.ei(nz))
-    zreal = ctx._re(z)
-    zimag = ctx._im(z)
+    zreal = z.real
+    zimag = z.imag
     if zimag > 0:
         v += ctx.pi*0.5j
     elif zimag < 0:
@@ -413,7 +413,7 @@ def shi(ctx, z):
     if ctx.mag(z) >= -1:
         nz = ctx.fneg(z, exact=True)
         v = 0.5*(ctx.ei(z) - ctx.ei(nz))
-        zimag = ctx._im(z)
+        zimag = z.imag
         if zimag > 0: v -= 0.5j*ctx.pi
         if zimag < 0: v += 0.5j*ctx.pi
         return v

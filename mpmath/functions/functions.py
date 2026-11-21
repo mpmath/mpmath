@@ -358,8 +358,8 @@ def unitroots(ctx, n, primitive=False):
 @defun
 def arg(ctx, x):
     x = ctx.convert(x)
-    re = ctx._re(x)
-    im = ctx._im(x)
+    re = x.real
+    im = x.imag
     return ctx.atan2(im, re)
 
 @defun
@@ -510,8 +510,8 @@ def _lambertw_series(ctx, z, k, tol):
     if (-10 < magz < 900) and (-1000 < k < 1000):
         # Near the branch point at -1/e
         if magz < 1 and abs(z+0.36787944117144) < 0.05:
-            if k == 0 or (k == -1 and ctx._im(z) >= 0) or \
-                         (k == 1  and ctx._im(z) < 0):
+            if k == 0 or (k == -1 and z.imag >= 0) or \
+                         (k == 1  and z.imag < 0):
                 delta = ctx.sum_accurately(lambda: [z, ctx.exp(-1)])
                 cancellation = -ctx.mag(delta)
                 ctx.prec += cancellation
@@ -544,7 +544,7 @@ def _lambertw_series(ctx, z, k, tol):
             return z*(1-z), False
         L1 = ctx.ln(z)
         L2 = ctx.ln(L1)
-    elif k == -1 and (not ctx._im(z)) and (-0.36787944117144 < ctx._re(z) < 0):
+    elif k == -1 and (not z.imag) and (-0.36787944117144 < z.real < 0):
         L1 = ctx.ln(-z)
         return L1 - ctx.ln(-L1), False
     else:

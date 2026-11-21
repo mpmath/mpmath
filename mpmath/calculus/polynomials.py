@@ -209,11 +209,11 @@ def polyroots(ctx, coeffs, maxsteps=50, cleanup=True, extraprec=10,
             for i in range(deg):
                 if abs(roots[i]) < tol:
                     roots[i] = ctx.zero
-                elif abs(ctx._im(roots[i])) < tol:
+                elif abs(roots[i].imag) < tol:
                     roots[i] = roots[i].real
-                elif abs(ctx._re(roots[i])) < tol:
+                elif abs(roots[i].real) < tol:
                     roots[i] = roots[i].imag * 1j
-        roots.sort(key=lambda x: (abs(ctx._im(x)), ctx._re(x)))
+        roots.sort(key=lambda x: (abs(x.imag), x.real))
     if error:
         err = max(err)
         err = max(err, ctx.ldexp(1, -orig+1))
