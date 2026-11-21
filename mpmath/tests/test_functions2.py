@@ -2585,9 +2585,9 @@ def test_issue_1142():
 
 def test_harmonic_small_argument():
     # H(x) = zeta(2)*x - zeta(3)*x**2 + ...
-    for x in [mpf('1e-20'), mpf('-1e-20'), mpf('1e-300'), mpf('-1e-300')]:
+    for x in [1e-20, -1e-20, 1e-300, -1e-300]:
         assert abs(harmonic(x)/(zeta(2)*x) - 1) < 1e-14
-    x = mpf('-4.8467835758339822e-7')
+    x = -4.846783575833982e-7
     with mp.workdps(50):
         ref = harmonic(x)
     assert abs(harmonic(x)/ref - 1) < 1e-14
