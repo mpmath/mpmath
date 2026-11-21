@@ -6,8 +6,8 @@ from mpmath import (altzeta, apery, barnesg, bell, bernfrac, bernoulli,
                     findroot, fp, fraction, gamma, gammaprod, harmonic,
                     hyperfac, inf, isnan, j, log, loggamma, mp, mpc, mpf,
                     mpmathify, nan, pi, polyexp, polylog, primezeta, psi, rf,
-                    rgamma, sech, secondzeta, siegelz, sinc, sqrt, stieltjes,
-                    superfac, zeta)
+                    rgamma, sech, secondzeta, siegeltheta, siegelz, sinc, sqrt,
+                    stieltjes, superfac, zeta)
 from mpmath.libmp import from_float, round_up
 from mpmath.libmp.gammazeta import mpf_zeta_int
 
@@ -690,7 +690,11 @@ def test_siegelz():
     assert siegelz(100000, derivative=2).ae(-54.1172711010126452832)
     assert siegelz(100000, derivative=3).ae(-278.930831343966552538)
     assert siegelz(100000+j,derivative=1).ae(678.214511857070283307-379.742160779916375413j)
-
+    assert siegelz(100000-j).ae(95.378181207505371 - 147.77498418946901j)
+    assert siegelz(1, derivative=1).ae(0.4213658367796486)
+    assert siegelz(1, derivative=2).ae(-0.72951420513356173)
+    assert siegelz(1, derivative=3).ae(1.2469574692263271)
+    assert siegelz(1, derivative=4).ae(-1.823786556366623)
 
 
 def test_zeta_near_1():
@@ -756,3 +760,6 @@ def test_issue_551():
     assert abs(zeta(50+5j).imag - ref) <= mp.ulp(ref)
     ref = +extraprec(1000)(altzeta)(50+5j).imag
     assert abs(altzeta(50+5j).imag - ref) <= mp.ulp(ref)
+
+def test_siegeltheta():
+    assert siegeltheta(1, 1).ae(-1.0125730965517336)

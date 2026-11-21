@@ -510,3 +510,8 @@ def test_interval_hypsum():
     assert 2.2795853023360673 in iv.hyp0f1(1, 1)
     pytest.raises(iv.NoConvergence, lambda: iv.hyp0f1(1, 1, maxterms=10))
     pytest.raises(iv.NoConvergence, lambda: iv.hyp0f1(-1, 1, maxterms=10))
+
+def test_interval_ei():
+    assert 1.8951178163559368 in iv.ei(1)
+    assert 4.9542343560018898 in iv.ei(2)
+    assert 2.7155527448538798e+41 in iv.ei(100)
