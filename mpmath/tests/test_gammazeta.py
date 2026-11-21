@@ -735,23 +735,21 @@ def test_issue_1230():
     # The Euler-Maclaurin tail in _hurwitz_em is expanded at a + M2, so the
     # summation has to run past the zero of a + n for negative a.  Otherwise
     # ln(M2 + a) is complex and the result is silently wrong.
-    # References computed as sum((a + k)**-s for k < m) + zeta(s, a + m) with
-    # m > -a at 40 digits.
-    mp.dps = 15
-    assert mp.almosteq(zeta(2, -30.25), mpf('19.706691341963048'), rel_eps=1e-14)
-    assert mp.almosteq(zeta(2, -30.5), mpf('9.837349132820685'), rel_eps=1e-14)
-    assert mp.almosteq(zeta(3, -30.25), mpf('-62.01202471454503'), rel_eps=1e-14)
+    # References computed as sum((a + k)**-s for k in range(m)) + zeta(s, a + m) with
+    # m > -a with 25 digits of extra precision.
+    assert mp.almosteq(zeta(2, -30.25), 19.706691341963048, rel_eps=1e-14)
+    assert mp.almosteq(zeta(2, -30.5), 9.8373491328206849, rel_eps=1e-14)
+    assert mp.almosteq(zeta(3, -30.25), -62.012024714545027, rel_eps=1e-14)
     assert mp.almosteq(zeta(2.5, -30.25),
-                       mpc('2.491542385511935', '-32.84354292180844'),
+                       2.4915423855119352 - 32.84354292180844j,
                        rel_eps=1e-14)
-    assert mp.almosteq(zeta(2, -120.75), mpf('19.73096142624632'), rel_eps=1e-14)
+    assert mp.almosteq(zeta(2, -120.75), 19.73096142624632, rel_eps=1e-14)
     assert mp.almosteq(zeta(2, -100.25 + 0.5j),
-                       mpc('0.13697297537497584414226275392',
-                           '1.69643985758768172538403951219'),
+                       0.13697297537497584 + 1.6964398575876817j,
                        rel_eps=1e-14)
     # Derivatives take the same code path.
     assert mp.almosteq(zeta(2, -30.25, 1),
-                       mpc('20.81842344488016', '-53.92484631903816'),
+                       20.818423444880163 - 53.924846319038165j,
                        rel_eps=1e-13)
 
 def test_issue_551():
