@@ -196,7 +196,7 @@ def expm1(ctx, x):
     # exp(x) - 1 ~ x
     if ctx.mag(x) < -ctx.prec:
         return x + 0.5*x**2
-    a, b = ctx.re(x), ctx.im(x)
+    a, b = x.real, x.imag
     if b and ctx.isfinite(a) and ctx.isfinite(b):
         # expm1(a+b*j) = expm1(a)*cos(b) - 2*sin(b/2)**2 + exp(a)*sin(b)*j,
         # where the real part can be much smaller than |exp(x) - 1|.
