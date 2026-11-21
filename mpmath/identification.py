@@ -365,7 +365,7 @@ def findpoly(ctx, x, n=1, asc=True, *,
         >>> findpoly(1+sqrt(2), 2)
         [-1, -2, 1]
         >>> findroot(lambda x: x**2 - 2*x - 1, 1)
-        2.4142135623731
+        2.41421356237309
 
     Despite only containing square roots, the following number results
     in a polynomial of degree 4::

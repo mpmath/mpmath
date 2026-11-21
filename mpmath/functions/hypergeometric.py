@@ -373,7 +373,7 @@ def _hyp0f1(ctx, b_s, z, **kwargs):
             finally:
                 ctx.prec = orig
             if ctx._is_real_type(b) and ctx._is_real_type(z):
-                v = ctx._re(v)
+                v = v.real
             return +v
         except ctx.NoConvergence:
             pass
@@ -394,7 +394,7 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
         try:
             try:
                 ctx.prec += magz
-                sector = ctx._im(z) < 0
+                sector = z.imag < 0
                 def h(a,b):
                     if sector:
                         E = ctx.expjpi(ctx.fneg(a, exact=True))
@@ -406,7 +406,7 @@ def _hyp1f1(ctx, a_s, b_s, z, **kwargs):
                     return T1, T2
                 v = ctx.hypercomb(h, [a,b], force_series=True)
                 if ctx._is_real_type(a) and ctx._is_real_type(b) and ctx._is_real_type(z):
-                    v = ctx._re(v)
+                    v = v.real
                 return +v
             except ctx.NoConvergence:
                 pass
@@ -621,7 +621,7 @@ def _hypq1fq(ctx, p, q, a_s, b_s, z, **kwargs):
     # Problem: the convergence acceleration degenerates as |z-1| -> 0,
     # except for special cases. Everywhere else, the Shanks transformation
     # is very efficient.
-    if absz < 1.1 and ctx._re(z) <= 1:
+    if absz < 1.1 and z.real <= 1:
 
         def term(kk, _cache={0:ctx.one}):
             k = int(kk)
@@ -790,7 +790,8 @@ def _hyp_borel(ctx, p, q, a_s, b_s, z, **kwargs):
             t = term(k)
             s += t
             if abs(t) <= tol:
-                return s
+                ctx.prec = prec
+                return +s
     finally:
         ctx.prec = prec
     if p <= q+3:
@@ -875,7 +876,8 @@ def _hyp2f2(ctx, a_s, b_s, z, **kwargs):
                 v = ctx.hypercomb(h, [a1,a2,b1,b2], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx._is_real_type(u) for u in [a1,a2,b1,b2,z]) == 5:
                     v = ctx.re(v)
-                return v
+                ctx.prec = orig
+                return +v
             except ctx.NoConvergence:
                 pass
         finally:
@@ -956,7 +958,8 @@ def _hyp1f2(ctx, a_s, b_s, z, **kwargs):
                 v = ctx.hypercomb(h, [a1,b1,b2], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx._is_real_type(u) for u in [a1,b1,b2,z]) == 4:
                     v = ctx.re(v)
-                return v
+                ctx.prec = orig
+                return +v
             except ctx.NoConvergence:
                 pass
         finally:
@@ -1041,7 +1044,8 @@ def _hyp2f3(ctx, a_s, b_s, z, **kwargs):
                 v = ctx.hypercomb(h, [a1,a2,b1,b2,b3], force_series=True, maxterms=4*ctx.prec)
                 if sum(ctx._is_real_type(u) for u in [a1,a2,b1,b2,b3,z]) == 6:
                     v = ctx.re(v)
-                return v
+                ctx.prec = orig
+                return +v
             except ctx.NoConvergence:
                 pass
         finally:

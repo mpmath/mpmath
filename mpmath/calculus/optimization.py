@@ -1173,10 +1173,11 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True,
 
         # happily return starting point if it's a root
         if norm(fx) == 0:
+            ctx.prec = prec
             if md:
-                return ctx.matrix(x0)
+                return +ctx.matrix(x0)
             else:
-                return x0[0]
+                return +x0[0]
 
         # use solver
         iterations = solver(ctx, f, x0, **kwargs)
@@ -1203,11 +1204,12 @@ def findroot(ctx, f, x0, solver='secant', tol=None, verbose=False, verify=True,
             raise ValueError('Could not find root within given tolerance. '
                              f'({norm(f(*xl))**2} > {tol})\n'
                              'Try another starting point or tweak arguments.')
-        return x
     finally:
         ctx.prec = prec
         if trap_complex is not None:
             ctx.trap_complex = trap_complex
+
+    return +x
 
 
 def multiplicity(ctx, f, root, tol=None, maxsteps=10, **kwargs):

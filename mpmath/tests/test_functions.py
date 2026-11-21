@@ -1258,7 +1258,7 @@ def test_float_cbrt():
         mp.dps += 10
         r2 = pow(a, one_third)
         mp.dps -= 10
-        assert r1.ae(r2, eps)
+        assert r1.ae(r2, 2*eps)
     mp.dps = 100
     for n in range(100, 301, 100):
         w = 10**n + j*10**-3
@@ -1340,6 +1340,7 @@ def test_root():
     assert nthroot(j, 0) == 1
     assert nthroot(j, -1) == -j
     assert nthroot(j, 22).ae(cos(pi/44) + sin(pi/44)*1j)
+    assert nthroot(-1, 3) == +nthroot(-1, 3)  # issue 1158
     assert isnan(nthroot(nan, 1))
     assert isnan(nthroot(nan, 0))
     assert isnan(nthroot(nan, -1))
@@ -1450,6 +1451,9 @@ def test_complex_parts():
     assert conj(3) == 3
     assert conj(3+4j) == 3-4j
     assert mpf(3).conjugate() == 3
+    # issue 1158
+    assert re(11111111111111111111111111) == +re(11111111111111111111111111)
+    assert im(11111111111111111111111111) == +im(11111111111111111111111111)
 
 def test_cospi_sinpi():
     assert sinpi(0) == 0
@@ -1698,6 +1702,10 @@ def test_atanh():
 
     # Negative conjugate case:
     assert atanh(mpc(-inf, inf)).ae(mpc(0, pi/2))
+
+    # issue 1158:
+    assert atanh(1j) == +atanh(1j)
+    assert atanh(mpc(0, inf)) == +atanh(mpc(0, inf))
 
 def test_expm1():
     assert expm1(0) == 0

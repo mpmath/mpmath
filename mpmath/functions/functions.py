@@ -196,7 +196,7 @@ def expm1(ctx, x):
     # exp(x) - 1 ~ x
     if ctx.mag(x) < -ctx.prec:
         return x + 0.5*x**2
-    a, b = ctx.re(x), ctx.im(x)
+    a, b = x.real, x.imag
     if b and ctx.isfinite(a) and ctx.isfinite(b):
         # expm1(a+b*j) = expm1(a)*cos(b) - 2*sin(b/2)**2 + exp(a)*sin(b)*j,
         # where the real part can be much smaller than |exp(x) - 1|.
@@ -358,8 +358,8 @@ def unitroots(ctx, n, primitive=False):
 @defun
 def arg(ctx, x):
     x = ctx.convert(x)
-    re = ctx._re(x)
-    im = ctx._im(x)
+    re = x.real
+    im = x.imag
     return ctx.atan2(im, re)
 
 @defun
@@ -369,12 +369,12 @@ def fabs(ctx, x):
 @defun
 def re(ctx, x):
     x = ctx.convert(x)
-    return x.real
+    return +x.real
 
 @defun
 def im(ctx, x):
     x = ctx.convert(x)
-    return x.imag
+    return +x.imag
 
 @defun
 def conj(ctx, x):
@@ -510,8 +510,8 @@ def _lambertw_series(ctx, z, k, tol):
     if (-10 < magz < 900) and (-1000 < k < 1000):
         # Near the branch point at -1/e
         if magz < 1 and abs(z+0.36787944117144) < 0.05:
-            if k == 0 or (k == -1 and ctx._im(z) >= 0) or \
-                         (k == 1  and ctx._im(z) < 0):
+            if k == 0 or (k == -1 and z.imag >= 0) or \
+                         (k == 1  and z.imag < 0):
                 delta = ctx.sum_accurately(lambda: [z, ctx.exp(-1)])
                 cancellation = -ctx.mag(delta)
                 ctx.prec += cancellation
@@ -544,7 +544,7 @@ def _lambertw_series(ctx, z, k, tol):
             return z*(1-z), False
         L1 = ctx.ln(z)
         L2 = ctx.ln(L1)
-    elif k == -1 and (not ctx._im(z)) and (-0.36787944117144 < ctx._re(z) < 0):
+    elif k == -1 and (not z.imag) and (-0.36787944117144 < z.real < 0):
         L1 = ctx.ln(-z)
         return L1 - ctx.ln(-L1), False
     else:

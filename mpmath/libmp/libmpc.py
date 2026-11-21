@@ -386,8 +386,8 @@ def mpc_nthroot(z, n, prec, rnd=round_down):
             bf = to_fixed(b, prec2)
             re, im = mpc_nthroot_fixed(af, bf, n, prec2)
             extra = 10
-            re = from_man_exp(re, -prec2-extra, prec2, rnd)
-            im = from_man_exp(im, -prec2-extra, prec2, rnd)
+            re = from_man_exp(re, -prec2-extra, prec, rnd)
+            im = from_man_exp(im, -prec2-extra, prec, rnd)
             return re, im
     fn = from_int(n)
     prec2 = prec+10 + 10
@@ -801,8 +801,8 @@ def mpc_atanh(z, prec, rnd=round_down):
         if a == fnan:
             pi2 = mpf_shift(mpf_pi(prec, rnd), -1)
             return fzero, pi2 if b == finf else mpf_neg(pi2)
-        return fzero, v[1]
-    return v
+        return fzero, mpf_pos(v[1], prec, rnd)
+    return mpc_pos(v, prec, rnd)
 
 def mpc_fibonacci(z, prec, rnd=round_down):
     re, im = z

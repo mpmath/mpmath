@@ -3,20 +3,21 @@ import sys
 
 import pytest
 
-from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
-                    besseljzero, besselk, bessely, besselyzero, betainc,
-                    chebyt, chebyu, chi, ci, clsin, convert, coulombg, e, e1,
-                    ei, ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp,
-                    expint, extradps, fadd, fmul, foxh, fp, fraction, fresnelc,
-                    fresnels, fsub, fsum, gamma, gammainc, gegenbauer, hankel1,
-                    hankel2, harmonic, hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1,
-                    hyp2f2, hyp2f3, hyper, hypercomb, hyperu, inf, isnan, j,
-                    j0, j1, jacobi, kei, ker, laguerre, lambertw, ldexp,
-                    legendre, legenp, legenq, lerchphi, li, log, lower_gamma,
-                    meijerg, mp, mpc, mpf, nan, ncdf, npdf, nthroot, pi,
-                    polylog, qp, quadts, shi, si, spherharm, spherical_in,
-                    spherical_jn, spherical_kn, spherical_yn,  sqrt, struveh,
-                    struvel, upper_gamma, whitm, whitw, zeta)
+from mpmath import (agm, airyai, airyaizero, airybi, airybizero, appellf1, bei,
+                    ber, besseli, besselj, besseljzero, besselk, bessely,
+                    besselyzero, betainc, chebyt, chebyu, chi, ci, clsin,
+                    convert, coulombg, e, e1, ei, ellipe, ellipk, eps, erf,
+                    erfc, erfi, erfinv, exp, expint, extradps, fadd, fmul,
+                    foxh, fp, fraction, fresnelc, fresnels, fsub, fsum, gamma,
+                    gammainc, gegenbauer, hankel1, hankel2, harmonic, hermite,
+                    hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1, hyp2f2, hyp2f3,
+                    hyper, hypercomb, hyperu, inf, isnan, j, j0, j1, jacobi,
+                    kei, ker, laguerre, lambertw, ldexp, legendre, legenp,
+                    legenq, lerchphi, li, log, lower_gamma, meijerg, mp, mpc,
+                    mpf, nan, ncdf, npdf, nthroot, pi, polylog, qp, quadts,
+                    shi, si, spherharm, spherical_in, spherical_jn,
+                    spherical_kn, spherical_yn, sqrt, struveh, struvel,
+                    upper_gamma, whitm, whitw, zeta)
 from mpmath.libmp import BACKEND, NoConvergence
 
 
@@ -33,6 +34,7 @@ def test_bessel():
     assert j1(pi).ae(0.284615343179752757)
     assert j1(1000).ae(0.00472831190708952392)
     assert j1(-25).ae(0.125350249580289905)
+    assert j0(1) == +j0(1)  # issue 1158
     assert besselj(5,1).ae(0.000249757730211234431)
     assert besselj(5+0j,1).ae(0.000249757730211234431)
     assert besselj(5,pi).ae(0.0521411843671184747)
@@ -132,6 +134,9 @@ def test_bessel_zeros():
     assert besselyzero(10,1).ae(12.128927704415439387)
     assert besselyzero(0.5,3).ae(7.8539816339744830962)
     assert besselyzero(2,1,1).ae(5.0025829314460639452)
+    # issue 1158
+    assert airyaizero(1, 1) == +airyaizero(1, 1)
+    assert airybizero(1, 1) == +airybizero(1, 1)
 
 def test_issue_497():
     assert ae(fp.bessely(0,10), 0.055671167283599391424)
@@ -189,9 +194,15 @@ def test_hyper_misc():
     assert hyp0f1(1,0) == 1
     assert hyp1f1(1,2,0) == 1
     assert hyp1f2(1,2,3,0) == 1
+    assert hyp1f2(1,3,4,1000000) == +hyp1f2(1,3,4,1000000)  # issue 1158
     assert hyp2f1(1,2,3,0) == 1
     assert hyp2f2(1,2,3,4,0) == 1
+    assert hyp2f2(1,2,3,4,1000000) == +hyp2f2(1,2,3,4,1000000)  # issue 1158
     assert hyp2f3(1,2,3,4,5,0) == 1
+    assert hyp2f3(1,2,3,4,5,1000000) == +hyp2f3(1,2,3,4,5,1000000)  # issue 1158
+    assert hyper([2,0.5,4],[5.25],0.0625,
+                 asymp_tol=1e-5) == +hyper([2,0.5,4],[5.25],0.0625,
+                                           asymp_tol=1e-5)
     # Degenerate case: 0F0
     assert hyper([],[],0) == 1
     assert hyper([],[],-2).ae(exp(-2))
@@ -907,6 +918,7 @@ def test_agm():
     assert agm(1,j).ae(0.599070117367796104+0.599070117367796104j)
     assert agm(2) == agm(1,2)
     assert agm(-3,4).ae(0.63468509766550907+1.3443087080896272j)
+    assert agm(1j,2j) == +agm(1j,2j)  # issue 1158
 
 def test_gammainc():
     assert upper_gamma(2,5).ae(6*exp(-5))
