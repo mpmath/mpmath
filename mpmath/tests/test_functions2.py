@@ -9,7 +9,7 @@ from mpmath import (agm, airyai, airybi, appellf1, bei, ber, besseli, besselj,
                     ei, ellipe, ellipk, eps, erf, erfc, erfi, erfinv, exp,
                     expint, extradps, fadd, fmul, foxh, fp, fraction, fresnelc,
                     fresnels, fsub, fsum, gamma, gammainc, gegenbauer, hankel1,
-                    hankel2, hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1,
+                    hankel2, harmonic, hermite, hyp0f1, hyp1f1, hyp1f2, hyp2f0, hyp2f1,
                     hyp2f2, hyp2f3, hyper, hypercomb, hyperu, inf, isnan, j,
                     j0, j1, jacobi, kei, ker, laguerre, lambertw, ldexp,
                     legendre, legenp, legenq, lerchphi, li, log, lower_gamma,
@@ -2582,3 +2582,12 @@ def test_issue_496():
 def test_issue_1142():
     assert spherical_jn(8, 5).ae(+spherical_jn(8, -5))
     assert spherical_jn(9, 5).ae(-spherical_jn(9, -5))
+
+def test_harmonic_small_argument():
+    # H(x) = zeta(2)*x - zeta(3)*x**2 + ...
+    for x in [1e-20, -1e-20, 1e-300, -1e-300]:
+        assert abs(harmonic(x)/(zeta(2)*x) - 1) < 1e-14
+    x = -4.846783575833982e-7
+    with mp.workdps(50):
+        ref = harmonic(x)
+    assert abs(harmonic(x)/ref - 1) < 1e-14
