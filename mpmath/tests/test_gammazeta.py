@@ -741,6 +741,21 @@ def test_issue_1198():
     ref = mpf('-0.0164851819507137542274084311077626')
     assert mp.almosteq(zeta(-10.5, 1.7), ref, rel_eps=1e-28, abs_eps=0)
 
+def test_issue_1230():
+    # References computed as sum((a + k)**-s for k in range(m)) + zeta(s, a + m) with
+    # m > -a with 25 digits of extra precision.
+    assert mp.almosteq(zeta(2, -30.25), 19.706691341963048, rel_eps=1e-14)
+    assert mp.almosteq(zeta(2, -30.5), 9.8373491328206849, rel_eps=1e-14)
+    assert mp.almosteq(zeta(3, -30.25), -62.012024714545027, rel_eps=1e-14)
+    assert mp.almosteq(zeta(2.5, -30.25),
+                       2.4915423855119352-32.84354292180844j, rel_eps=1e-14)
+    assert mp.almosteq(zeta(2, -120.75), 19.73096142624632, rel_eps=1e-14)
+    assert mp.almosteq(zeta(2, -100.25 + 0.5j),
+                       0.13697297537497584+1.6964398575876817j, rel_eps=1e-14)
+    # Derivatives take the same code path.
+    assert mp.almosteq(zeta(2, -30.25, 1),
+                       20.818423444880163-53.924846319038165j, rel_eps=1e-13)
+
 def test_issue_551():
     ref = +extraprec(1000)(zeta)(50+5j).imag
     assert abs(zeta(50+5j).imag - ref) <= mp.ulp(ref)
