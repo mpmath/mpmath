@@ -201,8 +201,8 @@ def qfac(ctx, z, q, *, maxterms=None):
         (0.4370556551322672478613695 + 0.2609739839216039203708921j)
 
     """
-    if ctx.isint(z) and ctx._re(z) > 0:
-        n = int(ctx._re(z))
+    if ctx.isint(z) and z.real > 0:
+        n = int(z.real)
         return ctx.qp(q, q, n, maxterms=maxterms) / (1-q)**n
     return ctx.qgamma(z+1, q, maxterms=maxterms)
 

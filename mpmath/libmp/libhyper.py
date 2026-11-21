@@ -883,6 +883,7 @@ def mpc_si(z, prec, rnd=round_down):
 # is very small
 
 def mpf_besseljn(n, x, prec, rnd=round_down):
+    origprec = prec
     prec += 50
     negate = n < 0 and n & 1
     mag = x[2]+x[3]
@@ -903,7 +904,7 @@ def mpf_besseljn(n, x, prec, rnd=round_down):
         k += 1
     if negate:
         s = -s
-    return from_man_exp(s, -wp, prec, rnd)
+    return from_man_exp(s, -wp, origprec, rnd)
 
 def mpc_besseljn(n, z, prec, rnd=round_down):
     negate = n < 0 and n & 1
@@ -1031,7 +1032,7 @@ def mpc_agm(a, b, prec, rnd=round_down):
         size = mpf_min_max([mpc_abs(a,10), mpc_abs(b,10)])[1]
         err = mpc_abs(mpc_sub(a, b, 10), 10)
         if size == fzero or mpf_lt(err, mpf_mul(eps, size)):
-            return a
+            return mpc_pos(a, prec, rnd)
 
 def mpc_agm1(a, prec, rnd=round_down):
     return mpc_agm(mpc_one, a, prec, rnd)
