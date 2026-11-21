@@ -696,6 +696,7 @@ maxterms, or set zeroprec."""
             ctx.hyp_summators[key] = libmp.libhyper.make_hyp_summator(key)[1]
         summator = ctx.hyp_summators[key]
         prec = ctx.prec
+        rounding = ctx.rounding
         maxprec = kwargs.get('maxprec', ctx._default_hyper_maxprec(prec))
         extraprec = 50
         epsshift = 25
@@ -725,8 +726,9 @@ maxterms, or set zeroprec."""
                 mag_dict = dict((n,None) for n in magnitude_check)
             else:
                 mag_dict = {}
-            zv, have_complex, magnitude = summator(coeffs, v, prec, wp, \
-                epsshift, mag_dict, **kwargs)
+            zv, have_complex, magnitude = summator(coeffs, v, prec, rounding,
+                                                   wp, epsshift, mag_dict,
+                                                   **kwargs)
             cancel = -magnitude
             jumps_resolved = True
             if extraprec < max_total_jump:

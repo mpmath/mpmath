@@ -256,8 +256,8 @@ def make_hyp_summator(key):
     for i in bcomplex: add("    BCRE_# += one".replace("#", str(i)))
 
     if have_complex:
-        add("a = from_man_exp(SRE, -wp, prec, 'n')")
-        add("b = from_man_exp(SIM, -wp, prec, 'n')")
+        add("a = from_man_exp(SRE, -wp, prec, rnd)")
+        add("b = from_man_exp(SIM, -wp, prec, rnd)")
 
         add("if SRE:")
         add("    if SIM:")
@@ -271,7 +271,7 @@ def make_hyp_summator(key):
 
         add("return (a, b), True, magn")
     else:
-        add("a = from_man_exp(SRE, -wp, prec, 'n')")
+        add("a = from_man_exp(SRE, -wp, prec, rnd)")
 
         add("if SRE:")
         add("    magn = a[2]+a[3]")
@@ -281,7 +281,8 @@ def make_hyp_summator(key):
         add("return a, False, magn")
 
     source = "\n".join(("    " + line) for line in source)
-    source = (f"def {fname}(coeffs, z, prec, wp, epsshift, magnitude_check, **kwargs):\n") + source
+    source = (f"def {fname}(coeffs, z, prec, rnd, "
+              "wp, epsshift, magnitude_check, **kwargs):\n") + source
 
     namespace = {}
 
