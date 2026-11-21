@@ -12,12 +12,12 @@ def _djacobi_theta2(ctx, z, q, nd):
     MIN = 2
     extra1 = 10
     extra2 = 20
-    if not ctx._im(q) and not ctx._im(z):
+    if not q.imag and not z.imag:
         wp = ctx.prec + extra1
-        x = ctx.to_fixed(ctx._re(q), wp)
+        x = ctx.to_fixed(q.real, wp)
         x2 = (x*x) >> wp
         a = b = x2
-        c1, s1 = ctx.cos_sin(ctx._re(z), prec=wp)
+        c1, s1 = ctx.cos_sin(z.real, prec=wp)
         cn = c1 = ctx.to_fixed(c1, wp)
         sn = s1 = ctx.to_fixed(s1, wp)
         c2 = (c1*c1 - s1*s1) >> wp
@@ -40,15 +40,15 @@ def _djacobi_theta2(ctx, z, q, nd):
         s = -(s << 1)
         s = ctx.ldexp(s, -wp)
     # case z real, q complex
-    elif not ctx._im(z):
+    elif not z.imag:
         wp = ctx.prec + extra2
-        xre = ctx.to_fixed(ctx._re(q), wp)
-        xim = ctx.to_fixed(ctx._im(q), wp)
+        xre = ctx.to_fixed(q.real, wp)
+        xim = ctx.to_fixed(q.imag, wp)
         x2re = (xre*xre - xim*xim) >> wp
         x2im = (xre*xim) >> (wp - 1)
         are = bre = x2re
         aim = bim = x2im
-        c1, s1 = ctx.cos_sin(ctx._re(z), prec=wp)
+        c1, s1 = ctx.cos_sin(z.real, prec=wp)
         cn = c1 = ctx.to_fixed(c1, wp)
         sn = s1 = ctx.to_fixed(s1, wp)
         c2 = (c1*c1 - s1*s1) >> wp
@@ -81,16 +81,16 @@ def _djacobi_theta2(ctx, z, q, nd):
         sim = ctx.ldexp(sim, -wp)
         s = ctx.mpc(sre, sim)
     # case z complex, q real
-    elif not ctx._im(q):
+    elif not q.imag:
         wp = ctx.prec + extra2
-        x = ctx.to_fixed(ctx._re(q), wp)
+        x = ctx.to_fixed(q.real, wp)
         x2 = (x*x) >> wp
         a = b = x2
         c1, s1 = ctx.cos_sin(z, prec=wp)
-        cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
-        cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
-        snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
-        snim = s1im = ctx.to_fixed(ctx._im(s1), wp)
+        cnre = c1re = ctx.to_fixed(c1.real, wp)
+        cnim = c1im = ctx.to_fixed(c1.imag, wp)
+        snre = s1re = ctx.to_fixed(s1.real, wp)
+        snim = s1im = ctx.to_fixed(s1.imag, wp)
         c2re = (c1re*c1re - c1im*c1im - s1re*s1re + s1im*s1im) >> wp
         c2im = (c1re*c1im - s1re*s1im) >> (wp - 1)
         s2re = (c1re*s1re - c1im*s1im) >> (wp - 1)
@@ -136,17 +136,17 @@ def _djacobi_theta2(ctx, z, q, nd):
     # case z and q complex
     else:
         wp = ctx.prec + extra2
-        xre = ctx.to_fixed(ctx._re(q), wp)
-        xim = ctx.to_fixed(ctx._im(q), wp)
+        xre = ctx.to_fixed(q.real, wp)
+        xim = ctx.to_fixed(q.imag, wp)
         x2re = (xre*xre - xim*xim) >> wp
         x2im = (xre*xim) >> (wp - 1)
         are = bre = x2re
         aim = bim = x2im
         c1, s1 = ctx.cos_sin(z, prec=wp)
-        cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
-        cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
-        snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
-        snim = s1im = ctx.to_fixed(ctx._im(s1), wp)
+        cnre = c1re = ctx.to_fixed(c1.real, wp)
+        cnim = c1im = ctx.to_fixed(c1.imag, wp)
+        snre = s1re = ctx.to_fixed(s1.real, wp)
+        snim = s1im = ctx.to_fixed(s1.imag, wp)
         c2re = (c1re*c1re - c1im*c1im - s1re*s1re + s1im*s1im) >> wp
         c2im = (c1re*c1im - s1re*s1im) >> (wp - 1)
         s2re = (c1re*s1re - c1im*s1im) >> (wp - 1)
@@ -199,14 +199,14 @@ def _djacobi_theta3(ctx, z, q, nd):
     MIN = 2
     extra1 = 10
     extra2 = 20
-    if not ctx._im(q) and not ctx._im(z):
+    if not q.imag and not z.imag:
         s = 0
         wp = ctx.prec + extra1
-        x = ctx.to_fixed(ctx._re(q), wp)
+        x = ctx.to_fixed(q.real, wp)
         a = (1 << wp)
         b = x
         x2 = (x*x) >> wp
-        c1, s1 = ctx.cos_sin(ctx._re(z)*2, prec=wp)
+        c1, s1 = ctx.cos_sin(z.real*2, prec=wp)
         c1 = ctx.to_fixed(c1, wp)
         s1 = ctx.to_fixed(s1, wp)
         cn = c1
@@ -230,17 +230,17 @@ def _djacobi_theta3(ctx, z, q, nd):
         s = -(s << (nd+1))
         s = ctx.ldexp(s, -wp)*q
     # case z real, q complex
-    elif not ctx._im(z):
+    elif not z.imag:
         wp = ctx.prec + extra2
-        xre = ctx.to_fixed(ctx._re(q), wp)
-        xim = ctx.to_fixed(ctx._im(q), wp)
+        xre = ctx.to_fixed(q.real, wp)
+        xim = ctx.to_fixed(q.imag, wp)
         x2re = (xre*xre - xim*xim) >> wp
         x2im = (xre*xim) >> (wp - 1)
         are = (1 << wp)
         aim = 0
         bre = xre
         bim = xim
-        c1, s1 = ctx.cos_sin(ctx._re(z)*2, prec=wp)
+        c1, s1 = ctx.cos_sin(z.real*2, prec=wp)
         c1 = ctx.to_fixed(c1, wp)
         s1 = ctx.to_fixed(s1, wp)
         cn = c1
@@ -273,17 +273,17 @@ def _djacobi_theta3(ctx, z, q, nd):
         sim = ctx.ldexp(sim, -wp)
         s = ctx.mpc(sre, sim)*q
     # case z complex, q real
-    elif not ctx._im(q):
+    elif not q.imag:
         wp = ctx.prec + extra2
-        x = ctx.to_fixed(ctx._re(q), wp)
+        x = ctx.to_fixed(q.real, wp)
         a = (1 << wp)
         b = x
         x2 = (x*x) >> wp
         c1, s1 = ctx.cos_sin(2*z, prec=wp)
-        cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
-        cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
-        snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
-        snim = s1im = ctx.to_fixed(ctx._im(s1), wp)
+        cnre = c1re = ctx.to_fixed(c1.real, wp)
+        cnim = c1im = ctx.to_fixed(c1.imag, wp)
+        snre = s1re = ctx.to_fixed(s1.real, wp)
+        snim = s1im = ctx.to_fixed(s1.imag, wp)
         if nd&1:
             sre = (a * snre) >> wp
             sim = (a * snim) >> wp
@@ -319,8 +319,8 @@ def _djacobi_theta3(ctx, z, q, nd):
     # case z and q complex
     else:
         wp = ctx.prec + extra2
-        xre = ctx.to_fixed(ctx._re(q), wp)
-        xim = ctx.to_fixed(ctx._im(q), wp)
+        xre = ctx.to_fixed(q.real, wp)
+        xim = ctx.to_fixed(q.imag, wp)
         x2re = (xre*xre - xim*xim) >> wp
         x2im = (xre*xim) >> (wp - 1)
         are = (1 << wp)
@@ -328,10 +328,10 @@ def _djacobi_theta3(ctx, z, q, nd):
         bre = xre
         bim = xim
         c1, s1 = ctx.cos_sin(2*z, prec=wp)
-        cnre = c1re = ctx.to_fixed(ctx._re(c1), wp)
-        cnim = c1im = ctx.to_fixed(ctx._im(c1), wp)
-        snre = s1re = ctx.to_fixed(ctx._re(s1), wp)
-        snim = s1im = ctx.to_fixed(ctx._im(s1), wp)
+        cnre = c1re = ctx.to_fixed(c1.real, wp)
+        cnim = c1im = ctx.to_fixed(c1.imag, wp)
+        snre = s1re = ctx.to_fixed(s1.real, wp)
+        snim = s1im = ctx.to_fixed(s1.imag, wp)
         if nd&1:
             sre = (are * snre - aim * snim) >> wp
             sim = (aim * snre + are * snim) >> wp

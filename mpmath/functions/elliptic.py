@@ -117,7 +117,7 @@ def nome(ctx, m):
     a = ctx.ellipk(ctx.one-m)
     b = ctx.ellipk(m)
     v = ctx.exp(-ctx.pi*a/b)
-    if not ctx._im(m) and ctx._re(m) < 1:
+    if not m.imag and m.real < 1:
         if ctx._is_real_type(m):
             return v.real
         else:
@@ -755,15 +755,15 @@ def RC_calc(ctx, x, y, r, pv=True):
             return ctx.pi / ctx.sqrt(y) / 2
         raise ValueError
     # Cauchy principal value
-    if pv and ctx._im(y) == 0 and ctx._re(y) < 0:
+    if pv and y.imag == 0 and y.real < 0:
         return ctx.sqrt(x/(x-y)) * RC_calc(ctx, x-y, -y, r)
     if x == y:
         return 1/ctx.sqrt(x)
     extraprec = 2*max(0,-ctx.mag(x-y)+ctx.mag(x))
     ctx.prec += extraprec
     if ctx._is_real_type(x) and ctx._is_real_type(y):
-        x = ctx._re(x)
-        y = ctx._re(y)
+        x = x.real
+        y = y.real
         a = ctx.sqrt(x/y)
         if x < y:
             b = ctx.sqrt(y-x)

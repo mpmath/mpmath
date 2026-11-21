@@ -55,7 +55,7 @@ def beta(ctx, x, y):
     if ctx.isinf(y):
         x, y = y, x
     if ctx.isinf(x):
-        if x == ctx.inf and not ctx._im(y):
+        if x == ctx.inf and not y.imag:
             if y == ctx.ninf:
                 return ctx.nan
             if y > 0:
@@ -116,7 +116,7 @@ def barnesg(ctx, z):
             ctx.j*ctx.polylog(2, u)/pi2
         v = ctx.barnesg(2-z)*ctx.exp(v)/pi2**w
         if ctx._is_real_type(z):
-            v = ctx._re(v)
+            v = v.real
         return v
     # Estimate terms for asymptotic expansion
     # TODO: fixme, obviously
