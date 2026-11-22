@@ -2603,3 +2603,12 @@ def test_harmonic_small_argument():
     with mp.workdps(50):
         ref = harmonic(x)
     assert abs(harmonic(x)/ref - 1) < 1e-14
+
+def test_hypsum_directed_rounding():
+    mp.rounding = 'f'
+    r1 = hyp0f1(1, 1)
+    mp.rounding = 'c'
+    r2 = hyp0f1(1, 1)
+    mp.rounding = 'n'
+    assert r1 < r2
+    assert r1 == hyp0f1(1, 1)
