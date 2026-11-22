@@ -40,7 +40,7 @@ gmpy2 = ["gmpy2>=2.3; python_implementation != 'GraalVM'"]
 gmpy = ['mpmath[gmpy2]']
 gmp = ["python-gmp"]
 docs = ['sphinx', 'matplotlib', 'sphinxcontrib-autoprogram']
-ci = ['pytest-xdist', 'diff_cover']
+ci = ['pytest-xdist', 'diff_cover', 'mpmath[develop,extra,gmpy2,gmp]']
 
 [tool.setuptools]
 zip-safe = true

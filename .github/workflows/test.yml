@@ -64,7 +64,7 @@ jobs:
     - run: pip install --upgrade setuptools pip
     - name: Install dependencies
       run: |
-        pip install --upgrade .[develop,extra,gmpy2,gmp,ci]
+        pip install --upgrade .[ci]
     - run: pip uninstall -y gmpy2
       if: matrix.nogmpy
     - run: pip uninstall -y gmpy2 python-gmp
