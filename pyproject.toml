@@ -33,15 +33,14 @@ Homepage = 'https://mpmath.org/'
 Documentation = 'http://mpmath.org/doc/current/'
 
 [project.optional-dependencies]
-tests = ['pytest>=6', 'numpy', 'packaging', 'pytest-timeout',
-         'matplotlib; python_implementation != "GraalVM"',
-         'pexpect', 'ipython', 'hypothesis']
-develop = ['mpmath[tests]', 'pytest-cov>=7', 'wheel', 'build']
+extra = ['matplotlib; python_implementation != "GraalVM" and python_implementation != "PyPy"']
+tests = ['pytest>=6', 'pytest-timeout', 'pexpect', 'ipython', 'hypothesis']
+develop = ['mpmath[tests]', 'pytest-cov>=7']
 gmpy2 = ["gmpy2>=2.3; python_implementation != 'GraalVM'"]
 gmpy = ['mpmath[gmpy2]']
 gmp = ["python-gmp"]
 docs = ['sphinx', 'matplotlib', 'sphinxcontrib-autoprogram']
-ci = ['pytest-xdist', 'diff_cover']
+ci = ['pytest-xdist', 'diff_cover', 'mpmath[develop,extra,gmpy2,gmp]']
 
 [tool.setuptools]
 zip-safe = true

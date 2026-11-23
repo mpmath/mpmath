@@ -258,7 +258,6 @@ def test_issue548():
     assert False
 
 def test_compatibility():
-    from packaging.version import Version, parse
     np = pytest.importorskip("numpy")
     # numpy types
     for typecode in (np.typecodes['AllInteger']

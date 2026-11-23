@@ -63,18 +63,18 @@ def wrap_float_literals(lines):
 
 _HEXFLT_MATCHER = re.compile(r"""
     (?: [^"' ]|^)[ ]*(?P<hexflt>
-         0x
-         [0-9a-z]+
-         (?: \.[0-9a-z]*)?
-         p(?:[+-])?[0-9]+
+         0[xX]                                # mandatory prefix
+         (?=[0-9a-f]+p|[0-9a-f]*\.[0-9a-f])   # lookahead for dot or exponent
+         (?: [0-9a-f]+|[0-9a-f]*\.[0-9a-f]*)? # significand
+         p(?:[+-])?[0-9]+                     # mandatory binary exponent
      )
 """, re.VERBOSE | re.IGNORECASE)
 _BINFLT_MATCHER = re.compile(r"""
     (?: [^"' ]|^)[ ]*(?P<binflt>
-         0b
-         [01]+
-         (?: \.[01]*)?
-         p(?:[+-])?[0-9]+
+         0[bB]                    # mandatory prefix
+         (?=[01]+p|[01]*\.[01])   # lookahead for dot or exponent
+         (?: [01]+|[01]*\.[01]*)? # significand
+         p(?:[+-])?[0-9]+         # mandatory binary exponent
      )
 """, re.VERBOSE | re.IGNORECASE)
 
@@ -82,9 +82,7 @@ _BINFLT_MATCHER = re.compile(r"""
 def wrap_hexbinfloats(lines):
     new_lines = []
     for line in lines:
-        for r in _HEXFLT_MATCHER.findall(line):
-            line = line.replace(r, 'mpf("' + r + '", base=16)')
-        for r in _BINFLT_MATCHER.findall(line):
-            line = line.replace(r, 'mpf("' + r + '", base=2)')
+        for m in _HEXFLT_MATCHER.findall(line) + _BINFLT_MATCHER.findall(line):
+            line = line.replace(m, f'mpf({m!r})')
         new_lines.append(line)
     return new_lines
