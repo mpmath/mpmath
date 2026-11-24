@@ -2595,6 +2595,24 @@ def test_issue_1142():
     assert spherical_jn(8, 5).ae(+spherical_jn(8, -5))
     assert spherical_jn(9, 5).ae(-spherical_jn(9, -5))
 
+def test_issue_1216():
+    assert hyp2f1('5.9', '-26.4', '-570.5', '0.66').ae(4.47842706988679259e+120)
+
+def test_issue_1220():
+    # the results are scaled, as ae() has an absolute tolerance too
+    assert (hyp0f1(-1000.5, 115000)*1e26).ae(-8.07073042909916798)
+    assert hyp0f1(-1000.25, -130000).ae(9.47298830199394375e+60)
+    assert (hyp0f1(mpc(-1000.5, 2), 115000)*1e29).ae(mpc(5.51800363486988073,
+                                                         29.7459319432331330))
+    assert hyp1f1(1.25, -131.5, 40.25).ae(167306798.720223335)
+    assert hyper([], [-1000.5, -100.5], 1e7).ae(-1.00931098637294286e+42)
+    mp.dps = 30
+    assert hyp0f1(-50 + mpf('1e-20'),
+                  30).ae(mpf('0.550798444357557008824180189975168'))
+    mp.dps = 50
+    v = mpf('-8.0707304290991679842910395910941598897762966730552')
+    assert (hyp0f1(-1000.5, 115000)*10**26).ae(v)
+
 def test_harmonic_small_argument():
     # H(x) = zeta(2)*x - zeta(3)*x**2 + ...
     for x in [1e-20, -1e-20, 1e-300, -1e-300]:

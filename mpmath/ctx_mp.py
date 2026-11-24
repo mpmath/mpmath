@@ -4,6 +4,7 @@ operating with them.
 """
 
 import functools
+import math
 import re
 import sys
 
@@ -661,6 +662,98 @@ class MPContext(BaseMPContext, StandardBaseContext):
 using a working precision of %i bits. Try with a higher maxprec,
 maxterms, or set zeroprec."""
 
+    def _hypsum_term_mag(ctx, p, coeffs, z, n):
+        # Estimate log2 of the magnitude of the n-th term
+        extraprec = 60 + 2*max(ctx.mag(c) for c in [*coeffs, n])
+        for c in coeffs:
+            # Parameters close to integers must be distinguished from them
+            d = ctx.nint_distance(c)[1]
+            if ctx.ninf < d < 0:
+                extraprec -= d
+        with ctx.extraprec(extraprec):
+            s = n*ctx.log(abs(z)) - ctx.loggamma(n+1)
+            for i, c in enumerate(coeffs):
+                c = ctx.convert(c)
+                t = ctx.re(ctx.loggamma(c+n) - ctx.loggamma(c))
+                if i < p:
+                    s += t
+                else:
+                    s -= t
+            return int(s/ctx.ln2)
+
+    def _hypsum_humps(ctx, p, q, flags, coeffs, z, maxterms):
+        # The ratio of consecutive terms has a peak near n = -re(b) for
+        # each lower parameter b with negative real part.  The terms
+        # can therefore decrease to a local minimum (at n = n0) and
+        # then grow again to a local maximum (at n = n1).  Return a
+        # sorted list of such humps as triples (n0, n1, growth), where
+        # growth estimates log2 of the quotient of the n1-th and the
+        # n0-th term.
+        if p > q+1 or not z:
+            return []
+        for i in range(p+q):
+            if flags[i] == 'Z':
+                if i < p and coeffs[i] <= 0:
+                    return []
+            elif i >= p and coeffs[i].real < 0:
+                break
+        else:
+            return []
+        try:
+            lz = abs(complex(z))
+            cs = [complex(c) for c in coeffs]
+        except OverflowError:
+            return []
+        if 0 < lz < math.inf:
+            lz = math.log2(lz)
+        else:
+            lz = float(ctx.log(abs(z))/ctx.ln2)
+
+        def ratio(n):
+            # log2 of the quotient of the (n+1)-th and the n-th term
+            s = lz - math.log2(n+1)
+            for i, c in enumerate(cs):
+                d = abs(c+n)
+                if d:
+                    d = math.log2(d)
+                else:
+                    d = ctx.nint_distance(coeffs[i])[1]
+                if i < p:
+                    s += d
+                else:
+                    s -= d
+            return s
+
+        humps = set()
+        for i in range(p, p+q):
+            c = cs[i].real
+            if flags[i] == 'Z' or not -2**53 < c < 0:
+                continue
+            n0 = n1 = round(-c)
+            growth = ratio(n0)
+            if not growth > 0:
+                continue
+            while n0 and n1-n0 < maxterms:
+                r = ratio(n0-1)
+                if not r > 0:
+                    break
+                growth += r
+                n0 -= 1
+            if not n0:
+                # No local minimum, this is the initial growth
+                continue
+            n1 += 1
+            while n1-n0 < maxterms:
+                r = ratio(n1)
+                if not r > 0:
+                    break
+                growth += r
+                n1 += 1
+            else:
+                continue
+            humps.add((n0, n1, int(growth) + 1))
+        return sorted(humps)
+
     def hypsum(ctx, p, q, flags, coeffs, z, accurate_small=True, **kwargs):
         if hasattr(z, "_mpf_"):
             key = p, q, flags, 'R'
@@ -718,24 +811,60 @@ maxterms, or set zeroprec."""
                     magnitude_check[n] = d
                 extraprec = max(extraprec, d - prec + 60)
             max_total_jump += abs(d)
+        # The terms can also grow over many steps after first having
+        # become tiny.  Such humps must be included in the sum as well
+        humps = ctx._hypsum_humps(p, q, flags, coeffs, z,
+                                  kwargs.get('maxterms', 100*prec))
+        hump_mags = {}
         while True:
             if extraprec > maxprec:
                 raise ctx.NoConvergence(ctx._hypsum_msg % (prec, prec+extraprec))
             wp = prec + extraprec
-            if magnitude_check:
-                mag_dict = dict((n,None) for n in magnitude_check)
-            else:
-                mag_dict = {}
+            mag_dict = dict((n,None) for n in magnitude_check)
+            for n0, n1, growth in humps:
+                mag_dict[n0+1] = mag_dict[n1+1] = None
             zv, have_complex, magnitude = summator(coeffs, v, prec, rounding,
                                                    wp, epsshift, mag_dict,
                                                    **kwargs)
             cancel = -magnitude
             jumps_resolved = True
             if extraprec < max_total_jump:
-                for n in mag_dict.values():
-                    if (n is None) or (n < prec):
+                for n in magnitude_check:
+                    n = mag_dict[n]
+                    if (n is None) or (n[0] < prec):
                         jumps_resolved = False
                         break
+            skipped = 0
+            for n0, n1, growth in humps:
+                # A hump is negligible if its largest term is smaller
+                # than 2^(-prec-cancel-margin)
+                tol = prec + cancel + 10 + (n1-n0).bit_length()
+                if mag_dict[n1+1] is None:
+                    # The summator stopped before the hump, at a term
+                    # smaller than 2^(epsshift-wp)
+                    skipped += growth
+                    if skipped + epsshift - wp + tol <= 0:
+                        continue
+                    if n1 not in hump_mags:
+                        hump_mags[n1] = ctx._hypsum_term_mag(p, coeffs, z, n1)
+                    if hump_mags[n1] + tol <= 0:
+                        continue
+                elif mag_dict[n1+1][0] >= tol:
+                    continue
+                else:
+                    # The error of the term preceding the hump, relative
+                    # to this term, is transferred to the sum of all
+                    # the following terms
+                    tmag, smag = mag_dict[n0+1]
+                    need = tmag - min(cancel, smag)
+                    if accurate_small:
+                        need += cancel
+                    else:
+                        need += min(cancel, 0)
+                    if need < extraprec-25-5:
+                        continue
+                jumps_resolved = False
+                break
             accurate = (cancel < extraprec-25-5 or not accurate_small)
             if jumps_resolved:
                 if accurate:
