@@ -2597,6 +2597,31 @@ def test_issue_1142():
 
 def test_issue_658():
     assert hyperu(1, -473.1, 156).ae(0.00158642583521112109)
+    # cases from #1219 by @DresdenGman
+    mp.dps = 50
+    assert ae(hyp1f1(1, fraction(-4731, 10), 156),
+              mpf('5.3127028522211665826e+46'), tol=1e-20)
+    assert ae(hyp1f1(1, fraction(-47301, 100), 156),
+              mpf('5.7759255926099277430e+47'), tol=1e-20)
+    mp.dps = 15
+    assert ae(hyp1f1(1, -1000000.5, 10000), mpf('0.99009901489952688'))
+    assert ae(hyp1f1(1, -1000000.5, 1000, maxprec=100),
+              mpf('0.99900099950099726'))
+    assert ae(hyp1f1(1, -473.1, 118.275, maxprec=100),
+              mpf('0.80006768464970106'))
+    pytest.raises(NoConvergence, lambda: hyp1f1(1, -473.1, 156, maxprec=100))
+    # the hump is longer than maxterms
+    pytest.raises(NoConvergence, lambda: hyp1f1(1, -20600.5, 6800))
+    assert hyp1f1(1, -473.1, 156+50j).ae(-4.0004795648255753e+56 +
+                                         4.7385937507717590e+56j)
+    assert hyp1f1(1+2j, -473.1, 156).ae(3.3875876692319647e+47 +
+                                        6.7591371608758660e+46j)
+    assert hyp1f1(1, mpc(-473.1, 20), 156).ae(-2.3016525705006193e+18 -
+                                              2.5728636355501985e+19j)
+    assert ae(hyp1f1(1, mpf(-473) + mpf('1e-12'), 156),
+              mpf('-5.7071521865491568e+57'))
+    assert ae(hyp1f1(1, mpf(-473) - mpf('1e-12'), 156),
+              mpf('5.7071521865361897e+57'))
 
 def test_issue_1216():
     assert hyp2f1('5.9', '-26.4', '-570.5', '0.66').ae(4.47842706988679259e+120)

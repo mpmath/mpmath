@@ -724,6 +724,26 @@ maxterms, or set zeroprec."""
                     s -= d
             return s
 
+        def edge(n, step):
+            # Beyond maxterms steps, locate the end of the growth
+            # by bisection: the first m past n (in the direction of
+            # step) with ratio(m) <= 0, or -1 if there is none
+            while True:
+                m = max(n + step, -1)
+                if m < 0 or not ratio(m) > 0:
+                    break
+                if abs(step) > 2**62:
+                    return None
+                n = m
+                step *= 2
+            while abs(m - n) > 1:
+                k = (n + m)//2
+                if ratio(k) > 0:
+                    n = k
+                else:
+                    m = k
+            return m
+
         humps = set()
         for i in range(p, p+q):
             c = cs[i].real
@@ -739,6 +759,10 @@ maxterms, or set zeroprec."""
                     break
                 growth += r
                 n0 -= 1
+            else:
+                if n0:
+                    n0 = edge(n0, -1) + 1
+                    growth = None
             if not n0:
                 # No local minimum, this is the initial growth
                 continue
@@ -750,7 +774,13 @@ maxterms, or set zeroprec."""
                 growth += r
                 n1 += 1
             else:
-                continue
+                n1 = edge(n1 - 1, 1)
+                if n1 is None:
+                    continue
+                growth = None
+            if growth is None:
+                growth = (ctx._hypsum_term_mag(p, coeffs, z, n1) -
+                          ctx._hypsum_term_mag(p, coeffs, z, n0))
             humps.add((n0, n1, int(growth) + 1))
         return sorted(humps)
 
