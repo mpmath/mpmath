@@ -727,13 +727,11 @@ maxterms, or set zeroprec."""
         def edge(n, step):
             # Beyond maxterms steps, locate the end of the growth
             # by bisection: the first m past n (in the direction of
-            # step) with ratio(m) <= 0, or -1 if there is none
+            # step) with ratio(m) <= 0, clamped to [-1, 2**62]
             while True:
-                m = max(n + step, -1)
-                if m < 0 or not ratio(m) > 0:
+                m = min(max(n + step, -1), 2**62)
+                if not 0 <= m < 2**62 or not ratio(m) > 0:
                     break
-                if abs(step) > 2**62:
-                    return None
                 n = m
                 step *= 2
             while abs(m - n) > 1:
@@ -775,8 +773,6 @@ maxterms, or set zeroprec."""
                 n1 += 1
             else:
                 n1 = edge(n1 - 1, 1)
-                if n1 is None:
-                    continue
                 growth = None
             if growth is None:
                 growth = (ctx._hypsum_term_mag(p, coeffs, z, n1) -
