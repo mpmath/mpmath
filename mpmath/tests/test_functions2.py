@@ -2595,6 +2595,9 @@ def test_issue_1142():
     assert spherical_jn(8, 5).ae(+spherical_jn(8, -5))
     assert spherical_jn(9, 5).ae(-spherical_jn(9, -5))
 
+def test_issue_658():
+    assert hyperu(1, -473.1, 156).ae(0.00158642583521112109)
+
 def test_issue_1216():
     assert hyp2f1('5.9', '-26.4', '-570.5', '0.66').ae(4.47842706988679259e+120)
 
@@ -2612,6 +2615,14 @@ def test_issue_1220():
     mp.dps = 50
     v = mpf('-8.0707304290991679842910395910941598897762966730552')
     assert (hyp0f1(-1000.5, 115000)*10**26).ae(v)
+    mp.dps = 15
+    # the hump is not reached within maxterms
+    pytest.raises(NoConvergence, lambda: hyp0f1(-1000.5, 115000, maxterms=20))
+    assert mp.hypsum(1, 1, ('R', 'R'), [mpf(1.25), mpf(-131.5)], mpf(40.25),
+                     accurate_small=False).ae(167306798.720223335)
+    # parameters too large for the machine precision estimate
+    mp.dps = 330
+    assert (hyp0f1(mpf('-1e310') - 0.5, 1) - 1).ae(mpf('-1e-310'), 1e-15)
 
 def test_harmonic_small_argument():
     # H(x) = zeta(2)*x - zeta(3)*x**2 + ...
