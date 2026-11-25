@@ -1894,7 +1894,10 @@ def format_mpf(num, format_spec, prec, rnd, _pretty_repr_dps, unique):
             nchars, format_dict['width'], format_dict['align'])
 
     if format_dict['align'] == '=':
-        return sign + lpad*format_dict['fill_char'] + digits + \
+        prefix = ''
+        if format_dict['type'] in ('a', 'A') and digits[:2] in ('0x', '0X'):
+            prefix, digits = digits[:2], digits[2:]
+        return sign + prefix + lpad*format_dict['fill_char'] + digits + \
                 rpad*format_dict['fill_char']
 
     return lpad*format_dict['fill_char'] + sign + digits \

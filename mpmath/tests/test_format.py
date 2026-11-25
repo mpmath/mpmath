@@ -946,6 +946,31 @@ def test_hexadecimal_fmt():
         assert f"{mp.mpf('1.234567890123456789'):+.0a}" == '+0x1p+0'
 
 
+def test_hexadecimal_zero_padding():
+    # zeros go after the sign and the 0x prefix, as for integers (issue 1243)
+    x = mp.sin(1)
+    assert f'{x:030a}' == '0x00000000001.aed548f090ceep-1'
+    assert f'{-x:030a}' == '-0x0000000001.aed548f090ceep-1'
+    assert f'{x:+030a}' == '+0x0000000001.aed548f090ceep-1'
+    assert f'{x:030A}' == '0X00000000001.AED548F090CEEP-1'
+    assert f'{-x:030A}' == '-0X0000000001.AED548F090CEEP-1'
+    assert len(f'{x:030a}') == len(f'{-x:030a}') == 30
+    assert f'{mp.mpf(2):010a}' == '0x00001p+1'
+    assert f'{mp.mpf(-2):010a}' == '-0x0001p+1'
+    # explicit '=' alignment and non-zero fill behave the same way
+    assert f'{mp.mpf(-2):*=12a}' == '-0x*****1p+1'
+    assert f'{mp.mpf(2):x=#12a}' == '0xxxxxx1.p+1'
+    # width not larger than the natural length: nothing to pad
+    assert f'{mp.mpf(2):05a}' == '0x1p+1'
+    assert f'{mp.mpf(-2):06a}' == '-0x1p+1'
+    # other alignments still pad outside the prefix
+    assert f'{mp.mpf(2):0>10a}' == '00000x1p+1'
+    assert f'{mp.mpf(2):*<10a}' == '0x1p+1****'
+    assert f'{mp.mpf(2):*^10a}' == '**0x1p+1**'
+    # binary format has no prefix
+    assert f'{mp.mpf(-3):010b}' == '-0001.1p+1'
+
+
 @given(st.floats(allow_nan=False, allow_infinity=False,
                  allow_subnormal=False),
        st.integers(min_value=1, max_value=40),
