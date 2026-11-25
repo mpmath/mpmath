@@ -1844,7 +1844,7 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
                 or (dps and not strip_last_zero)):
             frac_part = '.' + frac_part
 
-    sep_range = 3
+    sep_range = 3 if fmt_type not in ['a', 'A', 'b'] else 4
     sep = format_dict['frac_separators']
     if sep and frac_part:
         frac_part = fill_sep(frac_part, sep, frac_part[0], 1, sep_range)
