@@ -938,6 +938,10 @@ def test_binary_fmt():
     # zero padding (issue 1243)
     assert f'{mp.mpf(-3):010b}' == '-0001.1p+1'
 
+    # issue 1242
+    x = mp.sin(1)
+    assert f'{x:020_.5_b}' == '0_0000_0001.1011_0p-1'
+
 
 def test_hexadecimal_fmt():
     with workdps(1000):
@@ -968,6 +972,9 @@ def test_hexadecimal_fmt():
     assert f'{mp.mpf(2):0>10a}' == '00000x1p+1'
     assert f'{mp.mpf(2):*<10a}' == '0x1p+1****'
     assert f'{mp.mpf(2):*^10a}' == '**0x1p+1**'
+
+    # issue 1242
+    assert f'{x:020_.5_a}' == '0x000_0001.aed5_5p-1'
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False,
