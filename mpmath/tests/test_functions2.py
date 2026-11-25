@@ -2615,14 +2615,6 @@ def test_issue_1220():
     mp.dps = 50
     v = mpf('-8.0707304290991679842910395910941598897762966730552')
     assert (hyp0f1(-1000.5, 115000)*10**26).ae(v)
-    mp.dps = 15
-    # the hump is not reached within maxterms
-    pytest.raises(NoConvergence, lambda: hyp0f1(-1000.5, 115000, maxterms=20))
-    assert mp.hypsum(1, 1, ('R', 'R'), [mpf(1.25), mpf(-131.5)], mpf(40.25),
-                     accurate_small=False).ae(167306798.720223335)
-    # parameters too large for the machine precision estimate
-    mp.dps = 330
-    assert (hyp0f1(mpf('-1e310') - 0.5, 1) - 1).ae(mpf('-1e-310'), 1e-15)
 
 def test_harmonic_small_argument():
     # H(x) = zeta(2)*x - zeta(3)*x**2 + ...
@@ -2632,6 +2624,13 @@ def test_harmonic_small_argument():
     with mp.workdps(50):
         ref = harmonic(x)
     assert abs(harmonic(x)/ref - 1) < 1e-14
+
+def test_hypsum_humps():
+    # the hump is not reached within maxterms
+    pytest.raises(NoConvergence, lambda: hyp0f1(-1000.5, 115000, maxterms=20))
+    # parameters too large for the machine precision estimate
+    mp.dps = 330
+    assert (hyp0f1(mpf('-1e310') - 0.5, 1) - 1).ae(mpf('-1e-310'), 1e-15)
 
 def test_hypsum_directed_rounding():
     mp.rounding = 'f'

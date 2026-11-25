@@ -857,10 +857,7 @@ maxterms, or set zeroprec."""
                     # the following terms
                     tmag, smag = mag_dict[n0+1]
                     need = tmag - min(cancel, smag)
-                    if accurate_small:
-                        need += cancel
-                    else:
-                        need += min(cancel, 0)
+                    need += cancel if accurate_small else min(cancel, 0)
                     if need < extraprec-25-5:
                         continue
                 jumps_resolved = False
