@@ -1712,6 +1712,7 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
 
     fmt_type = format_dict['type'].lower()
 
+    prefix = ''
     percent = False
     if fmt_type == '%':
         percent = True
@@ -1819,11 +1820,11 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
     elif fmt_type == 'a':
         int_part, frac_part, exponent = format_hexadecimal(num, dps, rnd=rnd)
         if capitalize:
-            int_part = '0X' + int_part
+            prefix = '0X'
             frac_part = frac_part.upper()
             exponent = exponent.replace('p', 'P')
         else:
-            int_part = '0x' + int_part
+            prefix = '0x'
         if frac_part or format_dict['alternate']:
             frac_part = '.' + frac_part
 
@@ -1864,9 +1865,8 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
 
     sep = format_dict['thousands_separators']
     width = format_dict['width']
-    min_leading = width - len(digits) - len(sign)
-    if (int_part and fmt_type not in ['a', 'b']
-            and format_dict['fill_char'] == '0' and format_dict['align'] == '='
+    min_leading = width - len(digits) - len(sign) - len(prefix)
+    if (int_part and format_dict['fill_char'] == '0' and format_dict['align'] == '='
             and min_leading > len(int_part)):
         int_part = int_part.zfill(sep_range*min_leading//(sep_range + 1) + 1
                                   if sep else min_leading)
@@ -1882,25 +1882,22 @@ def format_digits(num, format_dict, prec, rnd, _pretty_repr_dps, unique):
             prev = ''
         int_part = fill_sep(int_part, sep, prev, nmod, sep_range)
 
-    return sign, int_part + digits
+    return sign, prefix, int_part + digits
 
 
 def format_mpf(num, format_spec, prec, rnd, _pretty_repr_dps, unique):
     format_dict = read_format_spec(format_spec)
-    sign, digits = format_digits(num, format_dict, prec, rnd,
-                                 _pretty_repr_dps, unique)
-    nchars = len(digits) + len(sign)
+    sign, prefix, digits = format_digits(num, format_dict, prec, rnd,
+                                         _pretty_repr_dps, unique)
+    nchars = len(digits) + len(sign) + len(prefix)
     lpad, rpad = calc_padding(
             nchars, format_dict['width'], format_dict['align'])
 
     if format_dict['align'] == '=':
-        prefix = ''
-        if format_dict['type'] in ('a', 'A') and digits[:2] in ('0x', '0X'):
-            prefix, digits = digits[:2], digits[2:]
         return sign + prefix + lpad*format_dict['fill_char'] + digits + \
                 rpad*format_dict['fill_char']
 
-    return lpad*format_dict['fill_char'] + sign + digits \
+    return lpad*format_dict['fill_char'] + sign + prefix + digits \
             + rpad*format_dict['fill_char']
 
 
@@ -1920,12 +1917,16 @@ def format_mpc(num, format_spec, prec, rnd, _pretty_repr_dps, unique):
     fmt_type = format_dict['type'].lower()
     if not fmt_type and format_dict['precision'] >= 0:
         format_dict['type'] = 'g'
-    sign_re, digits_re = format_digits(num[0], format_dict, prec, rnd,
-                                       _pretty_repr_dps, unique)
+    sign_re, prefix_re, digits_re = format_digits(num[0], format_dict, prec,
+                                                  rnd, _pretty_repr_dps,
+                                                  unique)
+    digits_re = prefix_re + digits_re
     fmt_sign = format_dict['sign']
     format_dict['sign'] = '+'
-    sign_im, digits_im = format_digits(num[1], format_dict, prec, rnd,
-                                       _pretty_repr_dps, unique)
+    sign_im, prefix_im, digits_im = format_digits(num[1], format_dict, prec,
+                                                  rnd, _pretty_repr_dps,
+                                                  unique)
+    digits_im = prefix_im + digits_im
     if not format_dict['type']:
         if format_dict['alternate']:
             if 'e' not in digits_re:

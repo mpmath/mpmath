@@ -935,6 +935,9 @@ def test_binary_fmt():
     assert f'{x:.2b}' == '0.00p+0'
     assert f'{x:b}' == '0p+0'
 
+    # zero padding (issue 1243)
+    assert f'{mp.mpf(-3):010b}' == '-0001.1p+1'
+
 
 def test_hexadecimal_fmt():
     with workdps(1000):
@@ -945,8 +948,6 @@ def test_hexadecimal_fmt():
         assert f'{x:#.0a}' == '0x1.p+0'
         assert f"{mp.mpf('1.234567890123456789'):+.0a}" == '+0x1p+0'
 
-
-def test_hexadecimal_zero_padding():
     # zeros go after the sign and the 0x prefix, as for integers (issue 1243)
     x = mp.sin(1)
     assert f'{x:030a}' == '0x00000000001.aed548f090ceep-1'
@@ -967,8 +968,6 @@ def test_hexadecimal_zero_padding():
     assert f'{mp.mpf(2):0>10a}' == '00000x1p+1'
     assert f'{mp.mpf(2):*<10a}' == '0x1p+1****'
     assert f'{mp.mpf(2):*^10a}' == '**0x1p+1**'
-    # binary format has no prefix
-    assert f'{mp.mpf(-3):010b}' == '-0001.1p+1'
 
 
 @given(st.floats(allow_nan=False, allow_infinity=False,
