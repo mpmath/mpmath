@@ -2532,6 +2532,14 @@ def test_issue_1033():
     assert mp.polylog(2, mp.inf).real == -mp.inf
     assert mp.polylog(3, mp.inf).real == -mp.inf
 
+def test_polylog_order_one_small_argument():
+    # Li_1(z) = -log(1-z) = z + z**2/2 + O(z**3)
+    for z in [1e-20, -1e-20, 1e-10, 1e-20+1e-20j, 1e-10-1e-10j]:
+        v = polylog(1, z)
+        t = z + z**2/2 + z**3/3
+        assert abs(v.real - t.real) <= 4*eps*abs(t.real)
+        assert abs(v.imag - t.imag) <= 4*eps*abs(t.imag)
+
 def test_issue_634():
     assert mp.polylog(1+1e-15, -2).ae(mp.mpf('-1.09861228866811'))
 
