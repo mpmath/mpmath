@@ -153,9 +153,11 @@ def make_hyp_summator(key):
 
     add("    if n in magnitude_check:")
     add("        p_mag = PRE.bit_length()")
+    add("        s_mag = SRE.bit_length()")
     if have_complex:
         add("        p_mag = max(p_mag, PIM.bit_length())")
-    add("        magnitude_check[n] = wp-p_mag")
+        add("        s_mag = max(s_mag, SIM.bit_length())")
+    add("        magnitude_check[n] = wp-p_mag, wp-s_mag")
 
     # Real factors
     multiplier = " * ".join(["AINT_#".replace("#", str(i)) for i in aint] + \
