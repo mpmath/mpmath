@@ -1137,7 +1137,7 @@ def test_incomplete_beta():
     pytest.raises(ValueError, lambda: betainc(0, 2, 0.3, 0))
     pytest.raises(ValueError, lambda: betainc(0, 2, 0, 0.5, regularized=True))
     assert betainc(0, 2, 0, 0) == 0
-    # closed form: integral of (1-t)/t over [0.3, 0.5] = log(5/3) - 1/5
+    # integral of (1-t)/t over [3/10, 1/2] = log(5/3) - 1/5
     assert betainc(0, 2, 0.3, 0.5).ae(log(mpf(5)/3) - mpf(1)/5)
 
 def test_erf():
