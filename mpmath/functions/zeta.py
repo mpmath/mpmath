@@ -486,7 +486,7 @@ def polylog(ctx, s, z):
     if s == 0:
         return z/(1-z)
     if s == 1:
-        return -ctx.ln(1-z)
+        return -ctx.log1p(-z)
     if s == -1:
         return z/(1-z)**2
     if abs(z) <= 0.75 or (not ctx.isint(s) and abs(z) < 0.9):
