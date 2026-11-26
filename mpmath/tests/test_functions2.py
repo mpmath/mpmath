@@ -1130,6 +1130,15 @@ def test_incomplete_beta():
     assert betainc(-2,-3,0.5,0.75).ae(63.4305673311255413583969)
     assert betainc(4.5,0.5+2j,2.5,6).ae(0.2628801146130621387903065 + 0.5162565234467020592855378j)
     assert betainc(4,5,0,6).ae(90747.77142857142857142857)
+    # pole at a = 0 when either integration limit is 0 (issue 567)
+    pytest.raises(ValueError, lambda: betainc(0, 0, 0, 5))
+    pytest.raises(ValueError, lambda: betainc(0, 0, 5, 0))
+    pytest.raises(ValueError, lambda: betainc(0, 2, 0, 0.5))
+    pytest.raises(ValueError, lambda: betainc(0, 2, 0.3, 0))
+    pytest.raises(ValueError, lambda: betainc(0, 2, 0, 0.5, regularized=True))
+    assert betainc(0, 2, 0, 0) == 0
+    # integral of (1-t)/t over [3/10, 1/2] = log(5/3) - 1/5
+    assert betainc(0, 2, 0.3, 0.5).ae(log(mpf(5)/3) - mpf(1)/5)
 
 def test_erf():
     assert erf(0) == 0
