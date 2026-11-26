@@ -2525,9 +2525,7 @@ def test_issue_1033():
 
 def test_polylog_order_one_small_argument():
     # Li_1(z) = -log(1-z) = z + z**2/2 + O(z**3)
-    mp.dps = 15
-    for z in [mpf('1e-20'), mpf('-1e-20'), mpf('1e-10'),
-              mpc('1e-20', '1e-20'), mpc('1e-10', '-1e-10')]:
+    for z in [1e-20, -1e-20, 1e-10, 1e-20+1e-20j, 1e-10-1e-10j]:
         v = polylog(1, z)
         t = z + z**2/2 + z**3/3
         assert abs(v.real - t.real) <= 4*eps*abs(t.real)
