@@ -159,7 +159,7 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
         # and one of the size of K_n(y), so use (DLMF 10.27.11)
         # Y_n(iy) = e^((n+1)pi*i/2) I_n(y) - 2/pi e^(-n*pi*i/2) K_n(y),
         # y > 0, which has no cancellation, and Y_n(-iy) = conj(Y_n(iy)).
-        y = ctx.im(z)
+        y = ctx.convert(z).imag  # ctx.im() could round it
         a = y if y > 0 else ctx.fneg(y, exact=True)  # abs() would round y
         c, s = ctx.cospi_sinpi(n/2)    # exact for integer n, unlike expjpi
         v = ((ctx.j*c - s)*ctx.besseli(n, a, **kwargs) -
@@ -203,6 +203,8 @@ def bessely(ctx, n, z, derivative=0, *, eliminate=True, eliminate_all=False,
                                 ctx._default_hyper_maxprec(ctx.prec))
     if asymp_tol is None:
         kwargs['asymp_tol'] = ctx.eps/4
+    # TODO: avoid cancellation for imaginary arguments when derivative != 0
+    # (see #734) or the order is complex.
     cos, sin = ctx.cospi_sinpi(n)
     return (ctx.besselj(n,z,derivative,**kwargs)*cos - \
         ctx.besselj(-n,z,derivative,**kwargs))/sin
