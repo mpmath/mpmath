@@ -13,3 +13,4 @@ from . import zeta
 from . import rszeta
 from . import zetazeros
 from . import qfunctions
+from . import heun

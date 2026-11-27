@@ -349,6 +349,7 @@ appellf3 = mp.appellf3
 appellf4 = mp.appellf4
 hyper2d = mp.hyper2d
 bihyper = mp.bihyper
+heung = mp.heung
 erf = mp.erf
 erfc = mp.erfc
 erfi = mp.erfi

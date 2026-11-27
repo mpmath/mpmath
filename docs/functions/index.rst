@@ -16,6 +16,7 @@ Mpmath implements the standard functions from Python's ``math`` and ``cmath`` mo
    bessel
    orthogonal
    hypergeometric
+   heun
    elliptic
    abelian
    zeta
