@@ -645,8 +645,24 @@ def mpf_harmonic(x, prec, rnd):
 def mpc_harmonic(z, prec, rnd):
     if z[1] == fzero:
         return (mpf_harmonic(z[0], prec, rnd), fzero)
-    a = mpc_psi0(mpc_add_mpf(z, fone, prec+5), prec)
-    return mpc_add_mpf(a, mpf_euler(prec+5, rnd), prec, rnd)
+    x, y = z
+    wp = prec + 10
+    if y[1] and (x[1] or x == fzero):
+        ymag = y[2] + y[3]
+        xmag = x[2] + x[3] if x[1] else ymag
+        if max(xmag, ymag) < -(prec//2 + 10):
+            # H(z) = zeta(2)*z - zeta(3)*z**2 + O(z**3)
+            c = mpc_mul_mpf(z, mpf_neg(mpf_zeta_int(3, wp)), wp)
+            c = mpc_add_mpf(c, mpf_zeta_int(2, wp), wp)
+            return mpc_mul(z, c, prec, rnd)
+        # The real part of H(z) is about zeta(2)*x + zeta(3)*y**2 for
+        # small z, so that many more bits cancel in psi0(1+z)+euler.
+        k = -2*ymag
+        if x[1]:
+            k = min(k, -xmag)
+        wp += max(0, k)
+    a = mpc_psi0(mpc_add_mpf(z, fone, wp), wp)
+    return mpc_add_mpf(a, mpf_euler(wp, rnd), prec, rnd)
 
 def mpf_psi0(x, prec, rnd=round_down):
     """

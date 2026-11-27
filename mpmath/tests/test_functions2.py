@@ -2612,6 +2612,14 @@ def test_harmonic_small_argument():
     with mp.workdps(50):
         ref = harmonic(x)
     assert abs(harmonic(x)/ref - 1) < 1e-14
+    # both parts must be accurate for complex arguments too
+    for z in [1e-20j, 1e-300j, 1e-5j, 1e-20 + 1e-20j, 1e-30 + 1e-5j,
+              -1e-5 + 1e-5j, 1e-5 + 1e-100j]:
+        with mp.workdps(50):
+            ref = sum((-1)**k*zeta(k)*mpc(z)**(k - 1) for k in range(2, 14))
+        r = harmonic(z)
+        assert abs(r.real/ref.real - 1) < 1e-14
+        assert abs(r.imag/ref.imag - 1) < 1e-14
 
 def test_hypsum_directed_rounding():
     mp.rounding = 'f'
