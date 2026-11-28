@@ -1452,6 +1452,19 @@ def test_appellf1():
     assert appellf1(-2,1,3,2,3,3).ae(19)
     assert appellf1(1,2,3,4,0.5,0.125).ae( 1.53843285792549786518)
 
+def test_issue_633():
+    # F1(a; b1, b2; c; x, x) = 2F1(a, b1+b2; c; x), so that
+    # F1(1; 1, 1; 4; z, z) = 6*(1-z)*log(1-z)/z**3 + (6-3*z)/z**2 and
+    # F1(a; b1, b2; b1+b2; z, z) = (1-z)**(-a)
+    assert appellf1(1, 1, 1, 4, 1, 1).ae(3)
+    assert ae(fp.appellf1(1, 1, 1, 4, 1, 1), 3)
+    # with fixed precision, the double series is kept for |x| < 0.99
+    assert ae(fp.appellf1(0.5, 0.25, 0.75, 2.5, 0.81, 0.81), 1.2762927921382472707)
+    z = mpf(0.9)
+    assert appellf1(1, 1, 1, 4, z, z).ae(6*(1-z)*log(1-z)/z**3 + (6-3*z)/z**2)
+    z = mpc(0.5, 0.5)
+    assert appellf1(0.5, 0.25, 0.75, 1, z, z).ae((1-z)**-0.5)
+
 def test_coulomb():
     # Note: most tests are doctests
     # Test for a bug:

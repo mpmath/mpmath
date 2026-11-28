@@ -1229,13 +1229,17 @@ def appellf1(ctx, a, b1, b2, c, x, y, *, eliminate=True, eliminate_all=False,
     kwargs = ctx._set_hyper_kwargs(eliminate, eliminate_all,
                                    force_series, asymp_tol, maxprec,
                                    maxterms, zeroprec, infprec, verbose)
+    def ok(x):
+        return abs(x) < 0.99
+    # F1(a; b1, b2; c; x, x) = 2F1(a, b1+b2; c; x).  With fixed precision,
+    # hyp2f1() can be less accurate than the double series used for ok(x).
+    if x == y and not (ctx._fixed_precision and ok(x)):
+        return ctx.hyp2f1(a, b1+b2, c, x, **kwargs)
     # Assume x smaller
     # We will use x for the outer loop
     if abs(x) > abs(y):
         x, y = y, x
         b1, b2 = b2, b1
-    def ok(x):
-        return abs(x) < 0.99
     # Finite cases
     if ctx.isnpint(a):
         pass
