@@ -620,7 +620,14 @@ def _hurwitz(ctx, s, a=1, d=0, *, verbose=False, maxprec=None):
         while True:
             ctx.prec = prec + extraprec
             T1, total = _hurwitz_em(ctx, s, a, d, prec+10, verbose)
-            cancellation = ctx.mag(T1) - ctx.mag(total)
+            largest = ctx.mag(T1)
+            if ctx.re(a) < 0:
+                # The terms with a+k near 0 are the largest ones and can
+                # cancel each other inside T1, so check them separately.
+                k = int(ctx.floor(-ctx.re(a)))
+                largest = max(largest, ctx.mag((a+k)**-s),
+                              ctx.mag((a+k+1)**-s))
+            cancellation = largest - ctx.mag(total)
             if verbose:
                 print("Term 1:", T1)
                 print("Term 2:", total - T1)
