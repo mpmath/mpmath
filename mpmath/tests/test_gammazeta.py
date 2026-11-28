@@ -349,8 +349,7 @@ def test_zeta_negative():
     mp.dps = 50
     assert str(zeta(a)) == '2.5588049270871154960875033337384432038436330847333e+1233536161668617575553892558646631323374078'
 
-def test_zeta_negative_a_cancellation():
-    # issue 1240: the terms (a+k)^-s with a+k near 0 nearly cancel
+def test_issue_1240():
     for s, a in [(13, -0.4999999879220124), (3, -2.4994443912584825),
                  (33, -123.5), (mpc(7, 0.5), mpc(-0.5555802597, 0.0039321131))]:
         ref = extraprec(600)(zeta)(s, a)
