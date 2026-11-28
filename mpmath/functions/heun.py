@@ -218,14 +218,6 @@ def heung(ctx, a, q, alpha, beta, gamma, delta, z, *, maxprec=None,
     `\{t : t \in \mathbb{R}, t \ge 1\}` and
     `\{t a : t \in \mathbb{R}, t \ge 1\}`.
 
-    The power series at the origin is used for `|z| \le \min(1, |a|)/3`.
-    Farther out, the solution is continued with Taylor series about points on
-    the segment, each step at most one third of the distance to the nearest
-    singular point. The working precision is increased automatically until
-    two evaluations at different precisions agree, or until the value is
-    within an estimate of the rounding noise and that estimate is below
-    `2^{-(2p+40)}` (see below).
-
     A ``ValueError`` is raised if `a` is 0 or 1, if `\gamma` is a
     nonpositive integer (the solution at the origin is then not defined by
     this normalization), if any argument is infinite or NaN, or if `z` lies
@@ -233,22 +225,12 @@ def heung(ctx, a, q, alpha, beta, gamma, delta, z, *, maxprec=None,
     The test for the cuts is exact: a point one unit in the last place away
     from a cut is accepted. Evaluation very close to a cut can be slow.
 
-    A true value whose absolute size is below about `2^{-(2p+40)}`, where
-    `p` is the precision in bits, may be returned as exactly zero, because it
-    cannot be told apart from rounding noise. This applies when the true
-    value is that small, for example near a root of a polynomial solution.
-    Larger values are not returned as zero. The noise estimate does not
-    include the growth of rounding errors along the path, so an exact zero
-    is returned as 0 only when the estimate is small enough. An exact zero
-    reached along a path that passes close to a singular point can raise
-    ``NoConvergence`` instead.
-
     The keyword arguments *maxprec* (largest working precision in bits) and
     *maxterms* (largest term index in one series) limit the work, and
     ``NoConvergence`` is raised when either is exceeded. By default *maxprec*
-    is the limit :func:`~mpmath.hyp2f1` uses and *maxterms* is
-    ``2*maxprec + 1000``. The contexts ``fp`` and ``iv`` raise
-    ``NotImplementedError``.
+    is ``int(1000*p**0.25 + 4*p)``, where `p` is the working precision in
+    bits, and *maxterms* is ``2*maxprec + 1000``. The contexts ``fp`` and
+    ``iv`` raise ``NotImplementedError``.
 
     **Examples**
 
@@ -299,12 +281,33 @@ def heung(ctx, a, q, alpha, beta, gamma, delta, z, *, maxprec=None,
         ...              2 - gamma, delta, z)
         (0.724567559984042 + 0.297155917497087j)
 
+    **Algorithm**
+
+    The power series at the origin is used for `|z| \le \min(1, |a|)/3`.
+    Farther out, the solution is continued with Taylor series about points on
+    the segment, each step at most one third of the distance to the nearest
+    singular point. The working precision is increased automatically until
+    two evaluations at different precisions agree, or until the value is
+    within an estimate of the rounding noise and that estimate is below
+    `2^{-(2p+40)}`, where `p` is the precision in bits.
+
+    Hence a true value whose absolute size is below about `2^{-(2p+40)}` may
+    be returned as exactly zero, because it cannot be told apart from
+    rounding noise. This can happen for example near a root of a polynomial
+    solution. Larger values are not returned as zero. The noise estimate does
+    not include the growth of rounding errors along the path, so an exact
+    zero is returned as 0 only when the estimate is small enough. An exact
+    zero reached along a path that passes close to a singular point can raise
+    ``NoConvergence`` instead.
+
     **References**
 
     1. [DLMF]_ chapter 31, Heun functions.
 
     2. O. V. Motygin, "On evaluation of the Heun functions",
        arXiv:1506.03848 (2015).
+
+    3. Wolfram `HeunG <https://reference.wolfram.com/language/ref/HeunG.html>`_.
     """
     # A top-level import is circular: ctx_mp imports ctx_base, which imports
     # this package.
