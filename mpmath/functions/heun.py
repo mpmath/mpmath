@@ -155,15 +155,15 @@ def _on_ray(ctx, z, b):
     return pim == 0 and pr >= b2
 
 
-def _evaluate(ctx, wp, a, q, alpha, beta, gamma, delta, z, maxterms):
-    # Evaluates H(z) along the segment 0 -> z at working precision wp and
-    # returns (H(z), scale), where scale is the largest |H| or |h*H'| of any
-    # series sum on the path. 2**-wp * scale estimates the absolute rounding
-    # noise, without the growth of errors along the path. Returns None when a
-    # step can no longer be resolved at this precision, so that the caller
-    # retries with more bits. Sets ctx.prec to wp; the caller restores it.
-    # Raises NoConvergence when a series needs more than maxterms terms.
-    ctx.prec = wp
+def _evaluate(ctx, a, q, alpha, beta, gamma, delta, z, maxterms):
+    # Evaluates H(z) along the segment 0 -> z at the current ctx.prec (wp)
+    # and returns (H(z), scale), where scale is the largest |H| or |h*H'| of
+    # any series sum on the path. 2**-wp * scale estimates the absolute
+    # rounding noise, without the growth of errors along the path. Returns
+    # None when a step can no longer be resolved at this precision, so that
+    # the caller retries with more bits. Raises NoConvergence when a series
+    # needs more than maxterms terms.
+    wp = ctx.prec
     eps = ctx.ldexp(ctx.one, -wp)
     epsilon = 1 + alpha + beta - gamma - delta
     nmin = _min_terms(a, q, alpha, beta, gamma, delta, epsilon)
@@ -342,41 +342,39 @@ def heung(ctx, a, q, alpha, beta, gamma, delta, z, *, maxprec=None,
         maxprec = ctx._default_hyper_maxprec(prec)
     if maxterms is None:
         maxterms = 2*maxprec + 1000
-    try:
-        g = INITIAL_GUARD_BITS
-        while True:
-            wp1 = prec + g
-            wp2 = wp1 + CHECK_BITS
-            if wp2 > maxprec:
-                raise ctx.NoConvergence("heung: working precision above "
-                                        f"maxprec={maxprec} needed")
-            r1 = _evaluate(ctx, wp1, a, q, alpha, beta, gamma, delta, z,
-                           maxterms)
-            r2 = None
-            if r1 is not None:
-                r2 = _evaluate(ctx, wp2, a, q, alpha, beta, gamma, delta, z,
+    g = INITIAL_GUARD_BITS
+    while True:
+        wp1 = prec + g
+        wp2 = wp1 + CHECK_BITS
+        if wp2 > maxprec:
+            raise ctx.NoConvergence("heung: working precision above "
+                                    f"maxprec={maxprec} needed")
+        with ctx.workprec(wp1):
+            r1 = _evaluate(ctx, a, q, alpha, beta, gamma, delta, z, maxterms)
+        r2 = None
+        if r1 is not None:
+            with ctx.workprec(wp2):
+                r2 = _evaluate(ctx, a, q, alpha, beta, gamma, delta, z,
                                maxterms)
-            if r2 is not None:
-                (v1, _), (v2, s2) = r1, r2
-                # Both values come from the same path at different
-                # precisions, so agreement means the guard bits sufficed.
-                if abs(v1 - v2) <= abs(v2)*ctx.ldexp(ctx.one, -(prec+2)):
-                    break
-                # At a zero of Hl only rounding noise remains, and two noisy
-                # values rarely agree. Return 0 only when v2 is within the
-                # noise estimate and the estimate is below 2**-(2*prec + 40),
-                # far below the scale H(0) = 1. A higher estimate cannot tell
-                # a zero from too few guard bits or from a small true value,
-                # so the guard bits keep doubling. The estimate misses error
-                # growth along the path, so for an exact zero reached near a
-                # singular point it may never get small enough, and the loop
-                # ends in NoConvergence.
-                noise = s2*ctx.ldexp(ctx.one, NOISE_BITS - wp2)
-                if abs(v2) <= noise <= ctx.ldexp(ctx.one, -(2*prec + 40)):
-                    v2 = ctx.zero
-                    break
-            g *= 2
-    finally:
-        ctx.prec = prec
+        if r2 is not None:
+            (v1, _), (v2, s2) = r1, r2
+            # Both values come from the same path at different
+            # precisions, so agreement means the guard bits sufficed.
+            if abs(v1 - v2) <= abs(v2)*ctx.ldexp(ctx.one, -(prec+2)):
+                break
+            # At a zero of Hl only rounding noise remains, and two noisy
+            # values rarely agree. Return 0 only when v2 is within the
+            # noise estimate and the estimate is below 2**-(2*prec + 40),
+            # far below the scale H(0) = 1. A higher estimate cannot tell
+            # a zero from too few guard bits or from a small true value,
+            # so the guard bits keep doubling. The estimate misses error
+            # growth along the path, so for an exact zero reached near a
+            # singular point it may never get small enough, and the loop
+            # ends in NoConvergence.
+            noise = s2*ctx.ldexp(ctx.one, NOISE_BITS - wp2)
+            if abs(v2) <= noise <= ctx.ldexp(ctx.one, -(2*prec + 40)):
+                v2 = ctx.zero
+                break
+        g *= 2
     result = +v2
     return ctx.mpc(result) if cplx else result
